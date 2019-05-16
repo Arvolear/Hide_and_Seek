@@ -42,7 +42,7 @@ class Window : public GLFWEvents
     public:
         Window();
 
-        bool isOpened() const;
+        bool isOpen() const;
 
         bool isKeyPressed(int key) const;
         bool isButtonPressed(int button) const;

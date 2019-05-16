@@ -1,10 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

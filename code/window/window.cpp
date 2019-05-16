@@ -1,3 +1,4 @@
+#include "../global/convert.hpp"
 #include "glfwevents.hpp"
 #include "../global/shader.hpp"
 #include "framebuffer.hpp"
@@ -55,6 +56,9 @@ Window::Window() : GLFWEvents()
         cout << "Failed to initialize GLEW" << endl;
         return;
     }
+    
+    renderShader->loadShaders(path("./code/window/vertexRenderShader.glsl"), \
+                              path("./code/window/fragmentRenderShader.glsl")); //loading shaders
 
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_STENCIL_TEST);
@@ -99,7 +103,7 @@ void Window::mouse_moved(double posx, double posy)
 
 /******************/
         
-bool Window::isOpened() const
+bool Window::isOpen() const
 {
     return !glfwWindowShouldClose(window);
 }
@@ -138,6 +142,8 @@ vec2 Window::getMousePosition() const
 
 void Window::render(GLuint finalTexture)
 {
+    glfwPollEvents();
+
     resized = false;
     mouseMoved = false;
 
@@ -145,7 +151,7 @@ void Window::render(GLuint finalTexture)
 
     glViewport(0, 0, width, height); //set visible
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0.5f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderShader->use();
