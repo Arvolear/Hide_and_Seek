@@ -24,16 +24,23 @@ using namespace glm;
 using namespace Assimp;
 using namespace std;
 
-static string path(string p)
+inline static string path(string p)
 {
     char realPath[PATH_MAX];
+    char* ptr;
 
-    realpath(p.c_str(), realPath);
+    ptr = realpath(p.c_str(), realPath);
+
+    /* error */
+    if (ptr)
+    {
+        return ptr;
+    }
 
     return {realPath};
 }
 
-static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 &from)
+inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 &from)
 {
     mat4 to;
 
@@ -45,7 +52,7 @@ static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 &from)
     return to;
 }
 
-static aiMatrix4x4 glmToAiMatrix4x4(mat4 &from)
+inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 &from)
 {
     return aiMatrix4x4(
             from[0][0], from[1][0], from[2][0], from[3][0],
@@ -55,7 +62,7 @@ static aiMatrix4x4 glmToAiMatrix4x4(mat4 &from)
             );
 }
 
-static mat4 btScalar2glmMat4(btScalar *matrix) 
+inline static mat4 btScalar2glmMat4(btScalar *matrix) 
 {
     return mat4(
             matrix[0], matrix[1], matrix[2], matrix[3],
@@ -65,17 +72,17 @@ static mat4 btScalar2glmMat4(btScalar *matrix)
 }
 
 
-static btVector3 toBtVector3(vec3 &from)
+inline static btVector3 toBtVector3(vec3 &from)
 {
     return btVector3(from.x, from.y, from.z);
 }
 
-static vec3 toVec3(btVector3 &from)
+inline static vec3 toVec3(btVector3 &from)
 {
     return vec3(from.x(), from.y(), from.z());
 }
 
-static double toRads(double angle)
+inline static double toRads(double angle)
 {
     return angle / 180 * 3.14159265;
 };

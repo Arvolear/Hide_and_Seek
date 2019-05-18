@@ -165,6 +165,11 @@ void Window::render(GLuint finalTexture)
     glfwSwapBuffers(window); 
 }
 
+void Window::close()
+{
+    glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
 Window::~Window()
 {
     delete renderShader;

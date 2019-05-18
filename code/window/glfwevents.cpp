@@ -7,11 +7,6 @@ void GLFWEvents::window_size_callback(GLFWwindow* window, int width, int height)
 
 void GLFWEvents::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-
     if (action == GLFW_PRESS)
     {
         static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->mark_pressed(key);

@@ -17,6 +17,11 @@ void Menu::menuLoop()
 {
     while (window->isOpen())
     {
+        if (window->isKeyPressed(GLFW_KEY_ESCAPE))
+        {
+            window->close();
+        }
+
         window->render(0);
     }
 }

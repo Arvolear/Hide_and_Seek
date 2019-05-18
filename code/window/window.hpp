@@ -54,6 +54,7 @@ class Window : public GLFWEvents
         vec2 getMousePosition() const;
 
         void render(GLuint finalTexture);
+        void close();
 
         ~Window();
 };
