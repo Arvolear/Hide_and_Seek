@@ -1,7 +1,7 @@
 #include "../global/convert.hpp"
-#include "../world/openglmotionstate.hpp"
 #include "../global/shader.hpp"
 #include "../debug/debugsphere.hpp"
+#include "openglmotionstate.hpp"
 #include "animation.hpp"
 #include "mesh.hpp"
 #include "bone.hpp"
@@ -69,7 +69,7 @@ void GameObject::removeGraphicsObject()
     modelLoader->clear();
 }
 
-mat4 GameObject::getPhysicsObjectTransform()
+mat4 GameObject::getPhysicsObjectTransform() const
 {
     btScalar transform[16];
 
@@ -162,12 +162,12 @@ void GameObject::stopAnimation()
     skeleton->stopAnimation();
 }
 
-PhysicsObject* GameObject::getPhysicsObject()
+PhysicsObject* GameObject::getPhysicsObject() const
 {
     return physicsObject;
 }
 
-string GameObject::getGraphicsObject()
+string GameObject::getGraphicsObject() const
 {
     return graphicsObject;
 }
@@ -186,9 +186,9 @@ void GameObject::render(Shader* shader, bool check)
         }
     }
 
-    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "localTransform"), 1, GL_FALSE, value_ptr(localTransform));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "localTransform"), 1, GL_FALSE, value_ptr(localTransform));
     
-    glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, value_ptr(getPhysicsObjectTransform()));
+    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, value_ptr(getPhysicsObjectTransform()));
 
     skeleton->update(shader);
 

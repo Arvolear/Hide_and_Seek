@@ -80,37 +80,37 @@ void Animation::setLoop(bool loop)
     this->loop = loop;
 }
 
-int Animation::getId()
+int Animation::getId() const
 {
     return id;
 }
 
-string Animation::getStart()
+string Animation::getStart() const
 {
     return startFrame;
 }
 
-string Animation::getEnd()
+string Animation::getEnd() const
 {
     return endFrame;
 }
 
-string Animation::getFrames()
+string Animation::getFrames() const
 {
     return (startFrame + " " + endFrame);
 }
 
-string Animation::getSpeed()
+string Animation::getSpeed() const
 {
     return speed;
 }
 
-int Animation::getPriority()
+int Animation::getPriority() const
 {
     return priority;
 }
 
-bool Animation::getLoop()
+bool Animation::getLoop() const
 {
     return loop;
 }

@@ -5,23 +5,23 @@
 using namespace std;
 using namespace glm;
 
-#define BONES_AMOUNT 6 //also check in vertexObjectShader.glsl
+#define BONES_AMOUNT 6 
 
 struct Vertex
 {
     vec3 position;
     vec3 normal;
-    vec2 texCoords; //UV
+    vec2 texCoords; 
 
-    float boneIDs[BONES_AMOUNT] = {0.0f}; //bones that carry this vertex 
-    float weights[BONES_AMOUNT] = {0.0f}; //strength/weigth of the above bones 
+    float boneIDs[BONES_AMOUNT] = {0.0f}; 
+    float weights[BONES_AMOUNT] = {0.0f}; 
 };
 
 struct Texture
 {
-    unsigned int id; //opengl id
-    string type; //type diffuse/specular
-    string path; //path to the texture
+    unsigned int id; 
+    string type; 
+    string path; 
 };
 
 class Mesh
@@ -30,18 +30,18 @@ class Mesh
         GLuint VAO;
         GLuint VBO, EBO; 
 
-        vector < Vertex > vertices; //vector of vertices this mesh has
-        vector < GLuint > indices; //vector of indices for EBO
-        vector < Texture > textures; //textures this mesh has
+        vector < Vertex > vertices; 
+        vector < GLuint > indices; 
+        vector < Texture > textures; 
         
-        void setupMesh(); //here we generate VAO, VBO, EBO
+        void setupMesh(); 
         
     public:
         Mesh (vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > &t);
 
-        void draw(Shader *shader); //here we render the mesh to the given shader
+        void draw(Shader *shader) const; 
 
-        vector < Vertex > getVertices();
+        vector < Vertex > getVertices() const;
 
         ~Mesh();
 };

@@ -11,20 +11,20 @@ using namespace Assimp;
 
 Skeleton::Skeleton(map < string, Bone* > &bones)
 {
-    this->bones = bones; //set bones
+    this->bones = bones; 
 
-    time = 0; //time is 0
+    time = 0; 
 
     activeAnimation = nullptr;
 }
 
 void Skeleton::playAnimation(Animation* anim, bool reset)
 {
-    if (activeAnimation) //if something is playing
+    if (activeAnimation) 
     {
-        if (anim->getPriority() >= activeAnimation->getPriority()) //if new animation has greater or equal priority
+        if (anim->getPriority() >= activeAnimation->getPriority()) 
         {
-            activeAnimation = anim; //change the animation
+            activeAnimation = anim; 
         }
     }
     else
@@ -40,7 +40,7 @@ void Skeleton::playAnimation(Animation* anim, bool reset)
         }
         else
         {
-            time = atof(activeAnimation->getStart().data()); //set timer to the beginning
+            time = atof(activeAnimation->getStart().data()); 
         }
     }
 }
@@ -53,47 +53,47 @@ void Skeleton::stopAnimation()
 
 void Skeleton::renderBonesMatrices(Shader* shader)
 {
-    if (!bones.empty()) //if there are bones in the model
+    if (!bones.empty()) 
     {
-        glUniform1i(glGetUniformLocation(shader->ID, "meshWithBones"), 1); //say the shader that there are some bones in the mesh
+        glUniform1i(glGetUniformLocation(shader->getID(), "meshWithBones"), 1); 
 
-        bonesMatrices.clear(); //clear the values
+        bonesMatrices.clear(); 
 
         int index = 0;
         map < string, Bone* >::iterator it = bones.begin();
 
-        for (int i = 0; i < MAX_BONES_AMOUNT; i++, it++) //loop through 100 bones
+        for (int i = 0; i < MAX_BONES_AMOUNT; i++, it++) 
         {
-            if (i >= int(bones.size())) //if we have run out of bones
+            if (i >= int(bones.size())) 
             {
-                bonesMatrices.push_back(mat4(1.0)); //there is no transformation matrix, so we leave it as 1.0
+                bonesMatrices.push_back(mat4(1.0)); 
                 index = i;
             }
             else
             {
-                mat4 res = it->second->getParentTransforms() * aiMatrix4x4ToGlm(it->second->getNode()->mTransformation); //calculate transformation matrix for our bone
+                mat4 res = it->second->getFullTransform() * it->second->getOffset(); 
 
-                bonesMatrices.push_back(res * it->second->getOffset()); //calculate full transformation matrix
+                bonesMatrices.push_back(res); 
 
                 index = it->second->getId();
             }
 
-            glUniformMatrix4fv(glGetUniformLocation(shader->ID, ("bones[" + to_string(index) + "]").c_str()), 1, GL_FALSE, value_ptr(bonesMatrices[i])); //send the matrix to the shader
+            glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("bones[" + to_string(index) + "]").c_str()), 1, GL_FALSE, value_ptr(bonesMatrices[i])); 
         }
     }
-    else //if there arent any
+    else 
     {
-        glUniform1i(glGetUniformLocation(shader->ID, "meshWithBones"), 0); //say the shader that there are no bones in the mesh
+        glUniform1i(glGetUniformLocation(shader->getID(), "meshWithBones"), 0); 
     }
 }
 
 void Skeleton::update(Shader *shader)
 { 
-    renderBonesMatrices(shader); //send bones` matrices to the shader
+    renderBonesMatrices(shader); 
 
-    if (!activeAnimation) //if there is no animation
+    if (!activeAnimation) 
     {
-        return; //do nothing
+        return; 
     }
 
     if (activeAnimation->getSpeed() == "default")
@@ -103,53 +103,53 @@ void Skeleton::update(Shader *shader)
     }
     else
     {
-        time += atof(activeAnimation->getSpeed().data()); //update the timer
+        time += atof(activeAnimation->getSpeed().data()); 
     }
 
     if (activeAnimation->getStart() == "default" && activeAnimation->getEnd() == "default")
     {
         map < string, Bone* >::iterator it = bones.begin();
 
-        if (time < 0) //if time is less than starting time of the animation 
+        if (time < 0) 
         {
-            time = 0; //set time to the start
+            time = 0; 
         }
 
-        if (time >= it->second->getAnimation(activeAnimation->getId())->duration) //if the time is grater than the end time
+        if (time >= it->second->getAnimation(activeAnimation->getId())->duration) 
         {
-            if (activeAnimation->getLoop()) //if animation is looped
+            if (activeAnimation->getLoop()) 
             {
-                time = 0; //set time to the start
+                time = 0; 
             }
             else
             {
-                stopAnimation(); //stop animation
+                stopAnimation(); 
             }
         }
     }
     else
     {
-        if (time < atof(activeAnimation->getStart().data())) //if time is less than starting time of the animation 
+        if (time < atof(activeAnimation->getStart().data())) 
         {
-            time = atof(activeAnimation->getStart().data()); //set time to the start
+            time = atof(activeAnimation->getStart().data()); 
         }
 
-        if (time >= atof(activeAnimation->getEnd().data())) //if the time is grater than the end time
+        if (time >= atof(activeAnimation->getEnd().data())) 
         {
-            if (activeAnimation->getLoop()) //if animation is looped
+            if (activeAnimation->getLoop()) 
             {
-                time = atof(activeAnimation->getStart().data()); //set time to the start
+                time = atof(activeAnimation->getStart().data()); 
             }
             else
             {
-                stopAnimation(); //stop animation
+                stopAnimation(); 
             }
         }
     }
 
-    for (auto& it : bones) //loop through each bone
+    for (auto& it : bones) 
     {
-        it.second->updateKeyframeTransform(activeAnimation->getId(), time); //calculate it`s tranformation matrix
+        it.second->updateKeyframeTransform(activeAnimation->getId(), time); 
     }
 }
 

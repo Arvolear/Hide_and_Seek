@@ -7,6 +7,7 @@
 BoundSphere::BoundSphere(vector < Mesh* > &meshes)
 {
     transform = mat4(1);
+    centerAndBound = {vec3(0), vec3(0)};
 
     for (size_t i = 0; i < meshes.size(); i++)
     {
@@ -14,31 +15,25 @@ BoundSphere::BoundSphere(vector < Mesh* > &meshes)
     }
 }
 
-pair < vec3, vec3 > BoundSphere::findFurthest(pair < vec3, vec3 > centerAndBound)
+vec3 BoundSphere::findFurthest(vec3 point)
 {
+    vec3 curFur = allVertices[0][0].position;
+
     for (size_t i = 0; i < allVertices.size(); i++)
     {
         for (size_t j = 0; j < allVertices[i].size(); j++)
         {
-            double radius = distance(centerAndBound.first, centerAndBound.second);
-            double newRadius = distance(centerAndBound.first, allVertices[i][j].position);
+            float radius = distance(point, curFur);
+            float newRadius = distance(point, allVertices[i][j].position);
 
             if (newRadius > radius)
             {
-                centerAndBound.second = allVertices[i][j].position;
+                curFur = allVertices[i][j].position;
             }
         }
     }
 
-    return centerAndBound;
-
-    /* random vertices */
-    /*srand(time(0));
-
-    int a = rand() % allVertices.size();
-    int b = rand() % allVertices[a].size();
-
-    return {centerAndBound.first, allVertices[a][b].position};*/
+    return curFur;
 }
 
 vec3 BoundSphere::findCenter()
@@ -60,13 +55,8 @@ vec3 BoundSphere::findCenter()
 
 void BoundSphere::construct()
 {
-    pair < vec3, vec3 > centerAndBound;
-
     centerAndBound.first = findCenter();
-
-    centerAndBound.second = allVertices[0][0].position;
-    
-    points = findFurthest(centerAndBound);
+    centerAndBound.second = findFurthest(centerAndBound.first);
 }
 
 void BoundSphere::applyTransform(mat4 &transform)
@@ -74,24 +64,24 @@ void BoundSphere::applyTransform(mat4 &transform)
     this->transform = transform;
 }
 
-vec3 BoundSphere::getCenter()
+vec3 BoundSphere::getCenter() const
 {
-    return points.first;
+    return centerAndBound.first;
 }
 
-double BoundSphere::getRadius()
+float BoundSphere::getRadius() const
 {
-    return distance(points.first, points.second);
+    return distance(centerAndBound.first, centerAndBound.second);
 }
 
-vec3 BoundSphere::getTransformedCenter()
+vec3 BoundSphere::getTransformedCenter() const
 {
-    return vec3(transform * vec4(points.first, 1.0));
+    return vec3(transform * vec4(centerAndBound.first, 1.0));
 }
 
-double BoundSphere::getTransformedRadius()
+float BoundSphere::getTransformedRadius() const
 {
-    return distance(vec3(transform * vec4(points.first, 1.0)), vec3(transform * vec4(points.second, 1.0)));
+    return distance(vec3(transform * vec4(centerAndBound.first, 1.0)), vec3(transform * vec4(centerAndBound.second, 1.0)));
 }
 
 BoundSphere::~BoundSphere(){}

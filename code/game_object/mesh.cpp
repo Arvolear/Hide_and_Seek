@@ -6,23 +6,23 @@ using namespace glm;
 
 Mesh::Mesh (vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > &t)
 {
-    vertices = v; //copy vertex data
-    indices = i; //copy index data
-    textures = t; //copy textures data
+    vertices = v; 
+    indices = i; 
+    textures = t; 
 
-    setupMesh(); //call setup...bad stuff...
+    setupMesh(); 
 }
 
 void Mesh::setupMesh()
 {
-    glGenVertexArrays(1, &VAO); //generate VAO
-    glGenBuffers(1, &VBO); //generate VBO
-    glGenBuffers(1, &EBO); //generate EBO
+    glGenVertexArrays(1, &VAO); 
+    glGenBuffers(1, &VBO); 
+    glGenBuffers(1, &EBO); 
 
-    glBindVertexArray(VAO); //bind VAO
+    glBindVertexArray(VAO); 
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO); //bind VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW); //insert vertex data into VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); 
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW); 
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); //bind EBO
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW); //insert index data into EBO
@@ -48,10 +48,10 @@ void Mesh::setupMesh()
         glEnableVertexAttribArray(9 + i); //from 9 to 15 for the weights
     }
 
-    glBindVertexArray(0); //unbind 
+    glBindVertexArray(0); 
 }
 
-void Mesh::draw(Shader *shader)
+void Mesh::draw(Shader *shader) const
 {
     unsigned int diffuseNR = 1; //amount of diffuse textures
     unsigned int specularNR = 1; //amount of specular textures
@@ -73,7 +73,7 @@ void Mesh::draw(Shader *shader)
             specularNR++; //amount of specular + 1
         }
 
-        glUniform1i(glGetUniformLocation(shader->ID, ("material." + textures[i].type + number).c_str()), i); //send the texture to the shader (example: material.texture_diffuse1)
+        glUniform1i(glGetUniformLocation(shader->getID(), ("material." + textures[i].type + number).c_str()), i); //send the texture to the shader (example: material.texture_diffuse1)
         glBindTexture(GL_TEXTURE_2D, textures[i].id); //bind this texture
     }
 
@@ -84,7 +84,7 @@ void Mesh::draw(Shader *shader)
     glBindTexture(GL_TEXTURE_2D, 0); //unbind textures
 }
 
-vector < Vertex > Mesh::getVertices()
+vector < Vertex > Mesh::getVertices() const
 {
     return vertices;
 }

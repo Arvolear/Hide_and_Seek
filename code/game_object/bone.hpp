@@ -25,28 +25,27 @@ struct AnimationData
 class Bone
 {
     private:
-        string name; //the name of the bone
-        int id; //bones id in the model
+        string name; 
+        int id; 
 
-        aiNode* node; //the node this bone is attached to
-        //aiNodeAnim* nodeAnim; //this bone animation node
-
+        aiNode* node; 
+        
         vector < AnimationData* > animation; 
 
-        Bone* parentBone; //parent bone
-        mat4 offset; //offset matrix
+        Bone* parentBone; 
+        mat4 offset; 
 
-        vec3 calcInterpolatedPosition(int id, float time); //calculates interpolated position between two keyframes
-        quat calcInterpolatedRotation(int id, float time); //calculates interpolated rotation between two keyframes
+        vec3 calcInterpolatedPosition(int id, float time); 
+        quat calcInterpolatedRotation(int id, float time); 
         
-        int findPosition(int id, float time); //finds the index of the keyframe with the value less then time
-        int findRotation(int id, float time); //same as above
+        int findPosition(int id, float time); 
+        int findRotation(int id, float time); 
 
     public:
         Bone();
         
-        mat4 getParentTransforms(); //calculates the whole transformation matrix starting with the root bone 
-        void updateKeyframeTransform(int id, float time); //updates this bone transformation matrix
+        mat4 getFullTransform() const; 
+        void updateKeyframeTransform(int id, float time); 
         
         void setName(string &name);
         void setId(int id);
@@ -55,12 +54,12 @@ class Bone
         void setParentBone(Bone* parent);
         void setOffset(mat4 &offset);
 
-        string getName();
-        int getId();
-        aiNode* getNode();
-        AnimationData* getAnimation(int id);
-        Bone* getParent();
-        mat4 getOffset();
+        string getName() const;
+        int getId() const;
+        aiNode* getNode() const;
+        AnimationData* getAnimation(int id) const;
+        Bone* getParent() const;
+        mat4 getOffset() const;
 
         ~Bone();
 };

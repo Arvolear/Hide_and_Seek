@@ -14,22 +14,22 @@ using namespace glm;
 class Skeleton
 {
     private:
-        map < string, Bone* > bones; //here we keep our bones
-        vector < mat4 > bonesMatrices; //final transformation matrices that go to the shader
+        map < string, Bone* > bones; 
+        vector < mat4 > bonesMatrices; 
 
-        float time; //little timer
+        float time; 
 
-        Animation* activeAnimation; //little Animation class to keep the animation data
+        Animation* activeAnimation; 
 
-        void renderBonesMatrices(Shader* shader); //update and send bones` matrices to the shader
+        void renderBonesMatrices(Shader* shader); 
         
     public:
         Skeleton(map < string, Bone* > &bones);
 
-        void playAnimation(Animation* anim, bool reset = true); //play desired animation
-        void stopAnimation(); //stop playing
+        void playAnimation(Animation* anim, bool reset = true); 
+        void stopAnimation(); 
 
-        void update(Shader* shader); //here we update the animation and call updateSkeletonMatrices
+        void update(Shader* shader); 
 
         ~Skeleton();
 };

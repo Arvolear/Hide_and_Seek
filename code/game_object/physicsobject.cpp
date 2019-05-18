@@ -1,4 +1,4 @@
-#include "../world/openglmotionstate.hpp"
+#include "openglmotionstate.hpp"
 #include "physicsobject.hpp"
 
 using namespace std;
@@ -74,17 +74,17 @@ PhysicsObject::PhysicsObject(vector < PhysicsObjectCompound* > &compoundInfo, fl
     }
 }
 
-btRigidBody* PhysicsObject::getRigidBody()
+btRigidBody* PhysicsObject::getRigidBody() const
 {
     return m_Body;
 }
 
-btMotionState* PhysicsObject::getMotionState()
+btMotionState* PhysicsObject::getMotionState() const
 {
     return m_MotionState;
 }
 
-void PhysicsObject::getTransform(btScalar *transform)
+void PhysicsObject::getTransform(btScalar* transform) const
 {
     m_MotionState->getTransform(transform);
 }

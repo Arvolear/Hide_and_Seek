@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <stdexcept>
 #include <map>
 
 #define GLEW_STATIC
@@ -48,17 +48,17 @@ class ModelLoader
         vector < Texture > loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName); 
         unsigned int textureFromFile(const char* path); 
 
-        Bone* findBone(string name); 
-        int findBoneId(string name); 
-        aiNode* findAiNode(string name); 
-        vector < AnimationData* > findAiNodeAnims(string name); 
+        Bone* findBone(string name) const; 
+        int findBoneId(string name) const; 
+        aiNode* findAiNode(string name) const; 
+        vector < AnimationData* > findAiNodeAnims(string name) const; 
 
     public:
         ModelLoader();
 
         void loadModel(string path); 
 
-        void getModelData(Skeleton *&skeleton, vector < Mesh* > &meshes); 
+        void getModelData(Skeleton *&skeleton, vector < Mesh* > &meshes) const; 
 
         void clear();
 

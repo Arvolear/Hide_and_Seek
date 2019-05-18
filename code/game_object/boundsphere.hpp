@@ -11,13 +11,13 @@ using namespace glm;
 class BoundSphere
 {
     private:
-        pair < vec3, vec3 > points;
+        pair < vec3, vec3 > centerAndBound;
 
         vector < vector < Vertex > > allVertices;
 
         mat4 transform;
     
-        pair < vec3, vec3 > findFurthest(pair < vec3, vec3 > centerAndBound);
+        vec3 findFurthest(vec3 point);
         vec3 findCenter();
 
     public:
@@ -27,11 +27,11 @@ class BoundSphere
 
         void applyTransform(mat4 &matrix); //localTransform, model
 
-        vec3 getCenter();
-        double getRadius();
+        vec3 getCenter() const;
+        float getRadius() const;
         
-        vec3 getTransformedCenter();
-        double getTransformedRadius();
+        vec3 getTransformedCenter() const;
+        float getTransformedRadius() const;
 
         ~BoundSphere();
 };

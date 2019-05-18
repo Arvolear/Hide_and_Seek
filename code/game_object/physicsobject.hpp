@@ -18,22 +18,21 @@ struct PhysicsObjectCompound
 class PhysicsObject
 {
     private:
-        btCollisionShape *m_Shape = NULL;
+        btCollisionShape *m_Shape = nullptr;
         vector < btCollisionShape* > m_Shapes; 
-        btCompoundShape* m_Compound = NULL;
+        btCompoundShape* m_Compound = nullptr;
 
-        btRigidBody *m_Body = NULL;
+        btRigidBody *m_Body = nullptr;
 
-        OpenGLMotionState *m_MotionState = NULL;
+        OpenGLMotionState *m_MotionState = nullptr;
 
     public:
         PhysicsObject(btCollisionShape *Shape, float mass, const btVector3 &initialPosition = btVector3(0, 0, 0), const btQuaternion &initialRotation = btQuaternion(btVector3(0, 0, 0), 0));
         PhysicsObject(vector < PhysicsObjectCompound* > &compoundInfo, float mass, const btVector3 &initialPosition = btVector3(0, 0, 0), const btQuaternion &initialRotation = btQuaternion(btVector3(0, 0, 0), 0), bool clearVector = false);
 
-        btCollisionShape *getShape();
-        btRigidBody *getRigidBody();
-        btMotionState *getMotionState();
-        void getTransform(btScalar *transform);
+        btRigidBody* getRigidBody() const;
+        btMotionState* getMotionState() const;
+        void getTransform(btScalar *transform) const;
 
         ~PhysicsObject();
 };

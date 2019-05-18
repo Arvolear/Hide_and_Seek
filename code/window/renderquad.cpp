@@ -19,7 +19,7 @@ void RenderQuad::init()
     glBindVertexArray(0);
 }
 
-void RenderQuad::draw(Shader *shader)
+void RenderQuad::draw(Shader *shader) const
 {
     glBindVertexArray(VAO);
 

@@ -11,8 +11,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <GL/glew.h>
-
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -21,14 +19,17 @@ using namespace std;
 
 class Shader
 {
+    private:
+        GLuint ID;
+
     public:
-        unsigned int ID;
         
         Shader();
 
         GLuint loadShaders(string vertex_file_path, string fragment_file_path);
 
-        void use();
+        void use() const;
+        GLuint getID() const;
 
         ~Shader();
 };

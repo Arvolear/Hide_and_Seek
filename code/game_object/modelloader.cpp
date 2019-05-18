@@ -14,25 +14,24 @@ ModelLoader::ModelLoader(){}
 
 void ModelLoader::loadModel(string path)
 {
-    scene = import.ReadFile(path, aiProcess_Triangulate); //assimp loads the file
+    scene = import.ReadFile(path, aiProcess_Triangulate); 
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) //if something gone wrong
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
     {
-        cout << "ERROR::ASSIMP::" << import.GetErrorString() << endl; //error
-        return;
+        throw runtime_error("ERROR::ASSIMP::" + string(aiString(import.GetErrorString()).C_Str())); 
     }
 
-    directory = path.substr(0, path.find_last_of('/')); //get only the directory from the whole path to the file
+    directory = path.substr(0, path.find_last_of('/')); 
    
-    processNode(scene->mRootNode); //fill the nodes vector
-    processNodeAnim(); //fill the nodesAnim vector
-    processBone(); //get bones
-    processMeshes(scene->mRootNode); //get meshes
+    processNode(scene->mRootNode); 
+    processNodeAnim(); 
+    processBone(); 
+    processMeshes(scene->mRootNode); 
 
     skeleton = new Skeleton(bones);
 }
 
-void ModelLoader::getModelData(Skeleton *&skeleton, vector < Mesh* > &meshes)
+void ModelLoader::getModelData(Skeleton *&skeleton, vector < Mesh* > &meshes) const
 {
     skeleton = this->skeleton;
     meshes = this->meshes;
@@ -65,7 +64,7 @@ void ModelLoader::processNode(aiNode *node)
 {
     nodes.insert({node->mName.data, node});
 
-    for (size_t j = 0; j < node->mNumChildren; j++) //recursive loop through each child to fill the vector
+    for (size_t j = 0; j < node->mNumChildren; j++) 
     {
         processNode(node->mChildren[j]);
     }
@@ -73,18 +72,16 @@ void ModelLoader::processNode(aiNode *node)
 
 void ModelLoader::processNodeAnim()
 {
-    if (scene->mNumAnimations == 0) //if there are no animations 
+    if (scene->mNumAnimations == 0) 
     {
         return;
     }
 
-    //cout << scene->mNumAnimations << endl;
-
-    for (size_t i = 0; i < scene->mNumAnimations; i++) //loop through the animation to get each bone animation data
+    for (size_t i = 0; i < scene->mNumAnimations; i++) 
     {
         map < string, AnimationData* > nodesAnim;
 
-        for (size_t j = 0; j < scene->mAnimations[i]->mNumChannels; j++) //loop through the animation to get each bone animation data
+        for (size_t j = 0; j < scene->mAnimations[i]->mNumChannels; j++) 
         {
             AnimationData* AD = new AnimationData();
 
@@ -102,57 +99,44 @@ void ModelLoader::processNodeAnim()
 
 void ModelLoader::processBone()
 {
-    for (size_t i = 0; i < scene->mNumMeshes; i++) //loop through each mesh of the model
+    for (size_t i = 0; i < scene->mNumMeshes; i++) 
     {
-        for (size_t j = 0; j < scene->mMeshes[i]->mNumBones; j++) //loop through each bone which is connected to that mesh
+        for (size_t j = 0; j < scene->mMeshes[i]->mNumBones; j++) 
         {
-            string boneName = scene->mMeshes[i]->mBones[j]->mName.data; //get bone`s name
-            mat4 boneOffset = aiMatrix4x4ToGlm(scene->mMeshes[i]->mBones[j]->mOffsetMatrix); //get bone`s offset matrix. This is the matrix which transforms from the mesh space to the bone space
+            string boneName = scene->mMeshes[i]->mBones[j]->mName.data; 
+            mat4 boneOffset = aiMatrix4x4ToGlm(scene->mMeshes[i]->mBones[j]->mOffsetMatrix); 
 
-            Bone* bone = new Bone(); //make new bone from the data we got (index, name, offset)
+            Bone* bone = new Bone(); 
 
             bone->setId(bones.size());
             bone->setName(boneName);
             bone->setOffset(boneOffset);
-            bone->setNode(findAiNode(boneName)); //each bone has its node with same name
-            bone->setAnimation(findAiNodeAnims(boneName)); //same with the animation node
+            bone->setNode(findAiNode(boneName)); 
+            bone->setAnimation(findAiNodeAnims(boneName)); 
 
-            if (!bone->getAnimation(0)) //if there is no animations for the bode. This often happens with root bones
-            {
-                cout << "ERROR::NO ANIMATIONS FOUND FOR " << boneName << endl;
-            }
-
-            bones.insert({bone->getName(), bone}); //push back the bone
+            bones.insert({bone->getName(), bone}); 
         }
     }
 
-    for (auto& it: bones) //here we are looking for the parent bone for our bones
+    for (auto& it: bones) 
     {
-        string parentName = it.second->getNode()->mParent->mName.data; //get the bone parent name. For each aiNode assimp keeps the parent pointer, as the bone has the same name as it`s aiNode we can do like that
+        string parentName = it.second->getNode()->mParent->mName.data; 
 
-        Bone* parentBone = findBone(parentName); //find the parent bone by it`s name
+        Bone* parentBone = findBone(parentName); 
 
-        it.second->setParentBone(parentBone); //set the parent bone for the bone
-
-        if (!parentBone) //if there is no parent bone
-        {
-            cout << "NO PARENT BONE FOR " << it.second->getName() << endl;
-        }
-    }
-
-    //done
+        it.second->setParentBone(parentBone); 
+    }    
 }
 
 void ModelLoader::processMeshes(aiNode *node)
 {
-    //we start with the root node
-    for (size_t i = 0; i < node->mNumMeshes; i++) //loop through each mesh this node has
+    for (size_t i = 0; i < node->mNumMeshes; i++) 
     {
-        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; //get the mesh from it`s index
-        meshes.push_back(processMesh(mesh)); //here we call another function to extract the data and then push_back the complete mesh
+        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
+        meshes.push_back(processMesh(mesh)); 
     }
 
-    for (size_t j = 0; j < node->mNumChildren; j++) //recursive loop through the each node
+    for (size_t j = 0; j < node->mNumChildren; j++) 
     {
         processMeshes(node->mChildren[j]);
     }
@@ -160,36 +144,35 @@ void ModelLoader::processMeshes(aiNode *node)
 
 Mesh* ModelLoader::processMesh(aiMesh *mesh)
 {
-    vector < Vertex > vertices; //meshes vertices (position, normal, texture coords, bone ids, bone weights)
-    vector < unsigned int > indices; //vertex indices for EBO
-    vector < Texture > textures; //textures (id, type, path)
+    vector < Vertex > vertices; 
+    vector < unsigned int > indices; 
+    vector < Texture > textures; 
 
-    for (size_t i = 0; i < mesh->mNumVertices; i++) //loop through each vertex in the mesh
+    for (size_t i = 0; i < mesh->mNumVertices; i++) 
     {
         Vertex vertex;
         vec3 helpVec3;
 
-        helpVec3.x = mesh->mVertices[i].x; //positions
+        helpVec3.x = mesh->mVertices[i].x; 
         helpVec3.y = mesh->mVertices[i].y;
         helpVec3.z = mesh->mVertices[i].z;
 
-        vertex.position = helpVec3; //set position
+        vertex.position = helpVec3; 
         
-        helpVec3.x = mesh->mNormals[i].x; //normals
+        helpVec3.x = mesh->mNormals[i].x; 
         helpVec3.y = mesh->mNormals[i].y;
         helpVec3.z = mesh->mNormals[i].z;
 
-        vertex.normal = helpVec3; //set normal
+        vertex.normal = helpVec3; 
 
-
-        if (mesh->mTextureCoords[0]) //if there is a texture
+        if (mesh->mTextureCoords[0]) 
         {
             vec2 helpVec2;
 
-            helpVec2.x = mesh->mTextureCoords[0][i].x; //textures coords
+            helpVec2.x = mesh->mTextureCoords[0][i].x; 
             helpVec2.y = mesh->mTextureCoords[0][i].y;
 
-            vertex.texCoords = helpVec2; //set texture coords
+            vertex.texCoords = helpVec2; 
         }
         else
         {
@@ -198,60 +181,52 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
         vertices.push_back(vertex);
     }
-
-    //we have loaded the vertex data, its time for the bone data
-
-    for (size_t i = 0; i < mesh->mNumBones; i++) //loop through each bone that mesh has
+    
+    for (size_t i = 0; i < mesh->mNumBones; i++) 
     {
         aiBone* bone = mesh->mBones[i];
 
-        for (size_t j = 0; j < bone->mNumWeights; j++) //loop through the each bone`s vertex it carries in that mesh
+        for (size_t j = 0; j < bone->mNumWeights; j++) 
         {
-            aiVertexWeight vertexWeight = bone->mWeights[j]; //get the id and the weight of the carried vertex
+            aiVertexWeight vertexWeight = bone->mWeights[j]; 
 
-            int startVertexID = vertexWeight.mVertexId; //get the carried vertex id
+            int startVertexID = vertexWeight.mVertexId; 
 
-            for (int k = 0; k < BONES_AMOUNT; k++) //BONES_AMOUNT is a constant that is for the maximum amount of the bones per vertex
+            for (int k = 0; k < BONES_AMOUNT; k++) 
             {
-                if (vertices[startVertexID].weights[k] == 0.0) //if we have an empty space for one more bone in the vertex
+                if (vertices[startVertexID].weights[k] == 0.0) 
                 {
-                    vertices[startVertexID].boneIDs[k] = findBoneId(bone->mName.data); //set bone index to the vertex it carries
+                    vertices[startVertexID].boneIDs[k] = findBoneId(bone->mName.data); 
 
-                    vertices[startVertexID].weights[k] = vertexWeight.mWeight; //set bone weight/strength to the vertex it carries
+                    vertices[startVertexID].weights[k] = vertexWeight.mWeight; 
 
-                    break; //only one place for the single bone
+                    break; 
                 }
 
-                if (k == BONES_AMOUNT - 1) //if we have more that enough bones
-                {
-                    //cout << "ERROR::LOADING MORE THAN " << BONES_AMOUNT << " BONES\n"; //this could take a lot of time
+                if (k == BONES_AMOUNT - 1) 
+                {                
                     break;
                 }
             }
         }
     }
 
-    //we have loaded everything for the vertices
-
-    for (size_t i = 0; i < mesh->mNumFaces; i++) //loop through the mesh`s planes/faces
+    for (size_t i = 0; i < mesh->mNumFaces; i++) 
     {
         aiFace face = mesh->mFaces[i];
-
-        //if face.mNumIndices == 3 we are loading triangles
+        
         for (size_t j = 0; j < face.mNumIndices; j++)
         {
             indices.push_back(face.mIndices[j]);
         }
     }
 
-    //we have loaded indices, loading materials
+    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; 
 
-    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; //get the material by it`s index
+    vector < Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
 
-    vector < Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); //calling another function to load diffuse textures
-    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); //instead of the loop we can insert vector like that
-
-    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); //calling another function to load specular textures. We dont have lights in this app, but if you want to add some...
+    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
     return new Mesh(vertices, indices, textures);
@@ -259,39 +234,38 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
 vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
 {
-    vector < Texture > textures; //vector for the particular texture type
+    vector < Texture > textures; 
 
-    for (size_t i = 0; i < mat->GetTextureCount(type); i++) //loop through each typed texture
+    for (size_t i = 0; i < mat->GetTextureCount(type); i++) 
     {
         aiString helpStr;
 
-        mat->GetTexture(type, i, &helpStr); //get texture`s name
+        mat->GetTexture(type, i, &helpStr); 
 
         bool skip = false;
         map < string, Texture >::iterator it;
         it = textures_loaded.find(string(helpStr.C_Str()));
 
-        if (it != textures_loaded.end()) //if we have already loaded it
+        if (it != textures_loaded.end()) 
         {
-            textures.push_back(it->second); //use the loaded one instead of loading the new one
-
+            textures.push_back(it->second); 
             skip = true;
         }
 
-        if (!skip) //if the texture is new
+        if (!skip) 
         {
             Texture texture;
 
-            texture.id = textureFromFile(helpStr.C_Str()); //calling another function to load texture from file
+            texture.id = textureFromFile(helpStr.C_Str()); 
 
-            texture.type = typeName; //set the texture`s type
+            texture.type = typeName; 
 
-            cout << "Texture type: " << typeName << endl;
+            //cout << "Texture type: " << typeName << endl;
 
-            texture.path = helpStr.C_Str(); //set the texture`s path
+            texture.path = helpStr.C_Str(); 
 
-            textures.push_back(texture); //take the texture
-            textures_loaded.insert({helpStr.C_Str(), texture}); //remember the texture
+            textures.push_back(texture); 
+            textures_loaded.insert({helpStr.C_Str(), texture}); 
         }
     }
 
@@ -300,41 +274,40 @@ vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureT
 
 unsigned int ModelLoader::textureFromFile(const char *path)
 {
-    string filename = string(path); //convert to string
-    filename = directory + '/' + filename; //concatenate strings to get the whole path 
+    string filename = string(path); 
+    filename = directory + '/' + filename; 
 
     unsigned int textureID;
-    glGenTextures(1, &textureID); //gen texture, opengl function
-    glBindTexture(GL_TEXTURE_2D, textureID); //bind the texture
+    glGenTextures(1, &textureID); 
+    glBindTexture(GL_TEXTURE_2D, textureID); 
 
-    int W, H; //width and height
-    unsigned char* image = SOIL_load_image(filename.c_str(), &W, &H, 0, SOIL_LOAD_RGBA); //using SOIL to load the RGBA image
+    int W, H; 
+    unsigned char* image = SOIL_load_image(filename.c_str(), &W, &H, 0, SOIL_LOAD_RGBA); 
 
-    if (image) //if the image is fine
+    if (image) 
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); //fill the texture with image data
-        glGenerateMipmap(GL_TEXTURE_2D); //generate mipmaps 
-
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
+        glGenerateMipmap(GL_TEXTURE_2D); 
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        SOIL_free_image_data(image); //free the memory
+        SOIL_free_image_data(image); 
     }
     else
     {
-        cout << "Fail to load texture at path: " << path << endl;
         SOIL_free_image_data(image);
+        throw runtime_error("ERROR::Failed to load texture at path: " + filename);
     }
 
     return textureID;
 }
 
-Bone* ModelLoader::findBone(string name)
+Bone* ModelLoader::findBone(string name) const
 {
-    map < string, Bone* >::iterator it;
+    map < string, Bone* >::const_iterator it;
     it = bones.find(name);
 
     if (it != bones.end())
@@ -345,9 +318,9 @@ Bone* ModelLoader::findBone(string name)
     return 0;
 }
 
-int ModelLoader::findBoneId(string name)
+int ModelLoader::findBoneId(string name) const
 {
-    map < string, Bone* >::iterator it;
+    map < string, Bone* >::const_iterator it;
     it = bones.find(name);
 
     if (it != bones.end())
@@ -358,31 +331,31 @@ int ModelLoader::findBoneId(string name)
     return -1;
 }
 
-aiNode* ModelLoader::findAiNode(string name)
+aiNode* ModelLoader::findAiNode(string name) const
 {
-    map < string, aiNode* >::iterator it;
+    map < string, aiNode* >::const_iterator it;
     it = nodes.find(name);
 
-    if (it != nodes.end()) //if node name mathes the name
+    if (it != nodes.end()) 
     {
-        return it->second; //return node
+        return it->second; 
     }
 
     return 0;
 }
 
-vector < AnimationData* > ModelLoader::findAiNodeAnims(string name)
+vector < AnimationData* > ModelLoader::findAiNodeAnims(string name) const
 {
     vector < AnimationData* > animation;
 
     for (size_t i = 0; i < animations.size(); i++)
     {
-        map < string, AnimationData* >::iterator it;
+        map < string, AnimationData* >::const_iterator it;
         it = animations[i].find(name);
 
-        if (it != animations[i].end()) //if animation node name matches the name 
+        if (it != animations[i].end()) 
         {
-            animation.push_back(it->second); //return animation node
+            animation.push_back(it->second); 
         }
     }
 

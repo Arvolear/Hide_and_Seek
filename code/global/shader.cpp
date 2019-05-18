@@ -112,9 +112,14 @@ GLuint Shader::loadShaders(string vertex_path, string fragment_path)
     return ProgramID;
 }
 
-void Shader::use()
+void Shader::use() const
 {
     glUseProgram(ID);
+}
+        
+GLuint Shader::getID() const
+{
+    return ID;
 }
 
 Shader::~Shader(){}

@@ -42,17 +42,17 @@ void FrameBuffer::genBuffer(double width, double height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-GLuint FrameBuffer::getBuffer()
+GLuint FrameBuffer::getBuffer() const
 {
     return bufferID;
 }
 
-GLuint FrameBuffer::getDepthBuffer()
+GLuint FrameBuffer::getDepthBuffer() const
 {
     return depthBufferID;
 }
 
-GLuint FrameBuffer::getColorTexture()
+GLuint FrameBuffer::getColorTexture() const
 {
     return colorTextureID;
 }

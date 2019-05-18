@@ -7,14 +7,14 @@ using namespace std;
 class Animation
 {
     private:
-        int id; //name of the animation
+        int id; 
 
-        string startFrame; //start time of the animation
-        string endFrame; //end time of the animation
-        string speed; //speed of the animation
+        string startFrame; 
+        string endFrame; 
+        string speed; 
         
-        int priority; //priority of the animation
-        bool loop; //is this animation looped
+        int priority; 
+        bool loop; 
         
     public:
         Animation();
@@ -26,13 +26,13 @@ class Animation
         void setPriority(int priority);
         void setLoop(bool loop);
         
-        int getId();
-        string getStart();
-        string getEnd();
-        string getFrames();
-        string getSpeed();
-        int getPriority();
-        bool getLoop();
+        int getId() const;
+        string getStart() const;
+        string getEnd() const;
+        string getFrames() const;
+        string getSpeed() const;
+        int getPriority() const;
+        bool getLoop() const;
 
         ~Animation();
 };

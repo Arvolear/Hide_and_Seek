@@ -27,9 +27,9 @@ class FrameBuffer
 
         void genBuffer(double width, double height);
 
-        GLuint getBuffer();
-        GLuint getDepthBuffer();
-        GLuint getColorTexture();
+        GLuint getBuffer() const;
+        GLuint getDepthBuffer() const;
+        GLuint getColorTexture() const;
         //GLuint getDepthTexture();
 
         ~FrameBuffer();

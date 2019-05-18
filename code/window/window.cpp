@@ -156,7 +156,7 @@ void Window::render(GLuint finalTexture)
 
     renderShader->use();
 
-    glUniform1i(glGetUniformLocation(renderShader->ID, "finalTexture"), 0);
+    glUniform1i(glGetUniformLocation(renderShader->getID(), "finalTexture"), 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, finalTexture);
 

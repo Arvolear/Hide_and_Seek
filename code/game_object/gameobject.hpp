@@ -35,7 +35,7 @@ class GameObject
         
         void removePhysicsObject();
         void removeGraphicsObject();
-        mat4 getPhysicsObjectTransform();
+        mat4 getPhysicsObjectTransform() const;
 
     public:
         GameObject();
@@ -52,8 +52,8 @@ class GameObject
         void playAnimation(Animation* anim, bool reset = true);
         void stopAnimation();
 
-        PhysicsObject* getPhysicsObject();
-        string getGraphicsObject();
+        PhysicsObject* getPhysicsObject() const;
+        string getGraphicsObject() const;
 
         virtual void render(Shader* shader, bool check = true);
          

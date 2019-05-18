@@ -10,25 +10,25 @@ using namespace Assimp;
 
 Bone::Bone(){}
 
-mat4 Bone::getParentTransforms()
+mat4 Bone::getFullTransform() const
 {
-    Bone* b = parentBone; //this bone`s parent
+    const Bone* b = this; 
 
-    vector < mat4 > matrices; //vector to remember matrices
+    vector < mat4 > matrices; 
 
-    while (b) //loop through all parents to push_back all transformation matrices
+    while (b) 
     {
-        mat4 tmp = aiMatrix4x4ToGlm(b->node->mTransformation); //get transformation matrix
-        matrices.push_back(tmp); //remember it
+        mat4 tmp = aiMatrix4x4ToGlm(b->node->mTransformation); 
+        matrices.push_back(tmp); 
 
-        b = b->parentBone; //next parent
+        b = b->parentBone; 
     }
 
-    mat4 res; //all parent transformation matrix
+    mat4 res; 
 
-    for (int i = matrices.size() - 1; i >= 0; i--) //loop backward! The last element of the array is the root bone 
+    for (int i = matrices.size() - 1; i >= 0; i--) 
     {
-        res *= matrices[i]; //here we calculate the combined transformation matrix
+        res *= matrices[i]; 
     }
     
     return res;
@@ -36,55 +36,51 @@ mat4 Bone::getParentTransforms()
 
 vec3 Bone::calcInterpolatedPosition(int id, float time)
 {
-    vec3 out; //result
+    vec3 out; 
 
-    if (animation.at(id)->nodeAnim->mNumPositionKeys == 1) //if amount of keyframes == 1 we dont have to iterpolate anything
+    if (animation.at(id)->nodeAnim->mNumPositionKeys == 1) 
     {
-        aiVector3D help = animation.at(id)->nodeAnim->mPositionKeys[0].mValue; //get its value/position
+        aiVector3D help = animation.at(id)->nodeAnim->mPositionKeys[0].mValue; 
 
         out = vec3(help.x, help.y, help.z);
 
         return out;
     }
+    
+    int positionIndex = findPosition(id, time); 
+    int nextPositionIndex = positionIndex + 1; 
 
-    //if there is more than one keyframe
-    int positionIndex = findPosition(id, time); //find index of the keyframe
-    int nextPositionIndex = positionIndex + 1; //the next index
+    float deltaTime = (float)(animation.at(id)->nodeAnim->mPositionKeys[nextPositionIndex].mTime - animation.at(id)->nodeAnim->mPositionKeys[positionIndex].mTime); 
+    float factor = (time - (float)animation.at(id)->nodeAnim->mPositionKeys[positionIndex].mTime) / deltaTime; 
 
-    float deltaTime = (float)(animation.at(id)->nodeAnim->mPositionKeys[nextPositionIndex].mTime - animation.at(id)->nodeAnim->mPositionKeys[positionIndex].mTime); //calculate time difference between keyframes 
-    float factor = (time - (float)animation.at(id)->nodeAnim->mPositionKeys[positionIndex].mTime) / deltaTime; //calculate how far we are between keyframes in the interval of [0;1]
-
-    aiVector3D begin = animation.at(id)->nodeAnim->mPositionKeys[positionIndex].mValue; //get the first keyframe value
-    aiVector3D end = animation.at(id)->nodeAnim->mPositionKeys[nextPositionIndex].mValue; //get the second one
+    aiVector3D begin = animation.at(id)->nodeAnim->mPositionKeys[positionIndex].mValue; 
+    aiVector3D end = animation.at(id)->nodeAnim->mPositionKeys[nextPositionIndex].mValue; 
 
     vec3 p1(begin.x, begin.y, begin.z);
     vec3 p2(end.x, end.y, end.z);
 
-    out = mix(p1, p2, factor); //using glm function to mix the values dependent on factor
-
-    //cout << out.x << ' ' << out.y << ' ' << out.z << endl << endl;
-    
+    out = mix(p1, p2, factor); 
+ 
     return out;
 }
 
 quat Bone::calcInterpolatedRotation(int id, float time)
 {
-    quat out; //result
+    quat out; 
 
-    if (animation.at(id)->nodeAnim->mNumRotationKeys == 1) //if amount of keyframes == 1 we dont have to iterpolate anything
+    if (animation.at(id)->nodeAnim->mNumRotationKeys == 1) 
     {
-        aiQuaternion help = animation.at(id)->nodeAnim->mRotationKeys[0].mValue; //get it`s value/rotation quaternion
+        aiQuaternion help = animation.at(id)->nodeAnim->mRotationKeys[0].mValue; 
 
         out = quat(help.w, help.x, help.y, help.z);
         return out;
     }
+    
+    int rotationIndex = findRotation(id, time); 
+    int nextRotationIndex = rotationIndex + 1; 
 
-    //if there is more than one keyframe
-    int rotationIndex = findRotation(id, time); //find index of the keyframe
-    int nextRotationIndex = rotationIndex + 1; //the next index
-
-    float deltaTime = (float)(animation.at(id)->nodeAnim->mRotationKeys[nextRotationIndex].mTime - animation.at(id)->nodeAnim->mRotationKeys[rotationIndex].mTime); //calculate time difference between keyframes
-    float factor = (time - (float)animation.at(id)->nodeAnim->mRotationKeys[rotationIndex].mTime) / deltaTime;  //calculate how far we are between keyframes in the interval of [0;1]
+    float deltaTime = (float)(animation.at(id)->nodeAnim->mRotationKeys[nextRotationIndex].mTime - animation.at(id)->nodeAnim->mRotationKeys[rotationIndex].mTime); 
+    float factor = (time - (float)animation.at(id)->nodeAnim->mRotationKeys[rotationIndex].mTime) / deltaTime;  
 
     aiQuaternion begin = animation.at(id)->nodeAnim->mRotationKeys[rotationIndex].mValue;
     aiQuaternion end = animation.at(id)->nodeAnim->mRotationKeys[nextRotationIndex].mValue;
@@ -92,11 +88,7 @@ quat Bone::calcInterpolatedRotation(int id, float time)
     quat r1(begin.w, begin.x, begin.y, begin.z);
     quat r2(end.w, end.x, end.y, end.z);
 
-    //up to this point everything is the same as for position
-
-    out = slerp(r1, r2, factor); //here we use another glm function to mix the quternion values dependen on factor
-
-    //cout << out.x << ' ' << out.y << ' ' << out.z << endl << endl;
+    out = slerp(r1, r2, factor); 
     
     return out;
 }
@@ -106,12 +98,13 @@ int Bone::findPosition(int id, float time)
     int l = 0;
     int r = animation.at(id)->nodeAnim->mNumPositionKeys - 1;
 
-    if (animation.at(id)->nodeAnim->mPositionKeys[r].mTime <= time) //if the given time is more than the last frame
+    if (animation.at(id)->nodeAnim->mPositionKeys[r].mTime <= time) 
     {
         return r;
     }
 
-    while (l < r - 1) //binary search
+    /* binsearch through keyframes */
+    while (l < r - 1) 
     {
         int m = (l + r) / 2;
 
@@ -138,7 +131,8 @@ int Bone::findRotation(int id, float time)
         return r;
     }
 
-    while (l < r - 1) //binary search
+    /* binsearch through keyframes */
+    while (l < r - 1) 
     {
         int m = (l + r) / 2;
 
@@ -157,23 +151,22 @@ int Bone::findRotation(int id, float time)
 
 void Bone::updateKeyframeTransform(int id, float time)
 {
-    if (!animation.at(id)->nodeAnim) //if there is no animations for this bone
+    if (!animation.at(id)->nodeAnim) 
     {
         return;
     }
     
-    vec3 scal = vec3(1.0); //we don`t have scaling animations
-    vec3 pos = calcInterpolatedPosition(id, time); //calculate interpolated position
-    quat rot = calcInterpolatedRotation(id, time); //calculate interpolated rotation
+    vec3 scal = vec3(1.0); 
+    vec3 pos = calcInterpolatedPosition(id, time); 
+    quat rot = calcInterpolatedRotation(id, time); 
 
     mat4 res(1.0);
-
-    //here we construct the transformation matrix in STR order
+    
     res *= scale(scal);
     res *= translate(pos);
     res *= mat4_cast(rot);
 
-    node->mTransformation = glmToAiMatrix4x4(res); //mTransformation is public variable so we can store there our new transformation matrix
+    node->mTransformation = glmToAiMatrix4x4(res); 
 }
 
 void Bone::setName(string &name)
@@ -206,32 +199,32 @@ void Bone::setOffset(mat4 &offset)
     this->offset = offset;
 }
         
-string Bone::getName()
+string Bone::getName() const
 {
     return name;
 }
 
-int Bone::getId()
+int Bone::getId() const
 {
     return id;
 }
 
-aiNode* Bone::getNode()
+aiNode* Bone::getNode() const
 {
     return node;
 }
 
-AnimationData* Bone::getAnimation(int id)
+AnimationData* Bone::getAnimation(int id) const
 {
     return animation.at(id);
 }
 
-Bone* Bone::getParent()
+Bone* Bone::getParent() const
 {
     return parentBone;
 }
     
-mat4 Bone::getOffset()
+mat4 Bone::getOffset() const
 {
     return offset;
 }
