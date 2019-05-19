@@ -71,6 +71,11 @@ void GameObject::removeGraphicsObject()
 
 mat4 GameObject::getPhysicsObjectTransform() const
 {
+    if (!physicsObject)
+    {
+        return mat4(1.0);
+    }
+
     btScalar transform[16];
 
     physicsObject->getTransform(transform);
@@ -198,6 +203,8 @@ void GameObject::render(Shader* shader, bool check)
     }
 }
 
+/************************/
+
 void GameObject::createDebugSphere(int depth)
 {
     debugSphere = new DebugSphere();
@@ -218,6 +225,8 @@ void GameObject::renderDebugSphere(mat4 &view, mat4 &projection, Shader *shader)
         debugSphere->draw(shader);
     }
 }
+
+/************************/
 
 GameObject::~GameObject()
 {

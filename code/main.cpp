@@ -4,6 +4,10 @@
 #include "window/framebuffer.hpp"
 #include "window/renderquad.hpp"
 #include "window/window.hpp"
+
+#include "player/camera.hpp"
+#include "game/game.hpp"
+
 #include "menu/menu.hpp"
 
 int main()

@@ -1,5 +1,10 @@
 #include "glfwevents.hpp"
 
+void GLFWEvents::window_close_callback(GLFWwindow* window)
+{
+    static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->close_window();
+}
+
 void GLFWEvents::window_size_callback(GLFWwindow* window, int width, int height)
 {
     static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->reset_window_size(width, height);

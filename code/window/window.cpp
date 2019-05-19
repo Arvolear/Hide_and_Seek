@@ -7,6 +7,8 @@
 
 Window::Window() : GLFWEvents()
 {
+    cursor = true;
+
     width = 1920;
     height = 1080;
     resized = false;
@@ -43,8 +45,9 @@ Window::Window() : GLFWEvents()
 
     glfwSetWindowUserPointer(window, this);
     glfwMakeContextCurrent(window); // make current widow active
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   
+    glfwSetWindowCloseCallback(window, window_close_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, mouse_move_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -68,6 +71,11 @@ Window::Window() : GLFWEvents()
 
 /******************/
 
+void Window::close_window()
+{
+    glfwSetWindowShouldClose(window, GL_TRUE);
+}
+
 void Window::reset_window_size(double width, double height)
 {
     resized = true;
@@ -78,21 +86,25 @@ void Window::reset_window_size(double width, double height)
 void Window::mark_pressed(int key)
 {
     keysPressed[key] = true;
+    keysPressedOnce[key] = true;
 }
 
 void Window::mark_released(int key)
 {
     keysPressed[key] = false;
+    keysPressedOnce[key] = false;
 }
 
 void Window::mark_mouse_pressed(int button)
 {
     buttonsPressed[button] = true;
+    buttonsPressedOnce[button] = true;
 }
 
 void Window::mark_mouse_released(int button)
 {
     buttonsPressed[button] = false;
+    buttonsPressedOnce[button] = false;
 }
 
 void Window::mouse_moved(double posx, double posy)
@@ -102,7 +114,12 @@ void Window::mouse_moved(double posx, double posy)
 }
 
 /******************/
-        
+
+bool Window::isCursor() const
+{
+    return cursor;
+}
+
 bool Window::isOpen() const
 {
     return !glfwWindowShouldClose(window);
@@ -113,9 +130,19 @@ bool Window::isKeyPressed(int key) const
     return keysPressed[key];
 }
 
+bool Window::isKeyPressedOnce(int key) const
+{
+    return keysPressedOnce[key];
+}
+
 bool Window::isButtonPressed(int button) const
 {
     return buttonsPressed[button];
+}
+
+bool Window::isButtonPressedOnce(int button) const
+{
+    return buttonsPressedOnce[button];
 }
 
 bool Window::isResized() const
@@ -126,6 +153,11 @@ bool Window::isResized() const
 vec2 Window::getSize() const
 {
     return vec2(width, height); 
+}
+        
+vec2 Window::getRenderSize() const
+{
+    return vec2(renderWidth, renderHeight);
 }
 
 bool Window::isMouseMoved() const
@@ -140,18 +172,41 @@ vec2 Window::getMousePosition() const
 
 /******************/
 
-void Window::render(GLuint finalTexture)
+void Window::hideCursor()
+{
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    cursor = false;
+}
+
+void Window::showCursor()
+{
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    cursor = true;
+}
+
+void Window::pollEvents()
 {
     glfwPollEvents();
-
+}
+        
+void Window::clearEventsData()
+{
     resized = false;
     mouseMoved = false;
+
+    memset(keysPressedOnce, 0, sizeof(bool) * 512);
+    memset(buttonsPressedOnce, 0, sizeof(bool) * 64);
+}
+
+void Window::render(GLuint finalTexture)
+{
+    clearEventsData();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glViewport(0, 0, width, height); //set visible
 
-    glClearColor(0.5f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0, 0, 0, 1); // black
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderShader->use();
@@ -167,7 +222,7 @@ void Window::render(GLuint finalTexture)
 
 void Window::close()
 {
-    glfwSetWindowShouldClose(window, GL_TRUE);
+    close_window();
 }
 
 Window::~Window()
@@ -175,6 +230,5 @@ Window::~Window()
     delete renderShader;
     delete renderQuad;
 
-    glfwDestroyWindow(window);
     glfwTerminate();
 }

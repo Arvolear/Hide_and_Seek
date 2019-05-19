@@ -21,16 +21,21 @@ class FrameBuffer
 
         GLuint colorTextureID;
         //GLuint depthTextureID;
+        
+        int width, height;
 
     public:
         FrameBuffer();
 
         void genBuffer(double width, double height);
+        void genBuffer(vec2 size);
 
         GLuint getBuffer() const;
         GLuint getDepthBuffer() const;
         GLuint getColorTexture() const;
         //GLuint getDepthTexture();
+
+        vec2 getSize() const;
 
         ~FrameBuffer();
 };

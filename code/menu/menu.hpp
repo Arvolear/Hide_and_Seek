@@ -1,8 +1,5 @@
 #pragma once
 
-//native
-#include <iostream>
-
 //openGL
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -16,13 +13,15 @@ class Menu
 {
     private:
         Window* window;
-        Shader* menuShader;
 
+        Shader* menuShader;
         FrameBuffer* menuBuffer;
 
-        //Setting* settings
-        //Game* game
-        
+        //Setting* settings;
+        Game* game;
+       
+        void checkEvents();
+
     public:
         Menu();
 

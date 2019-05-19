@@ -4,23 +4,44 @@
 #include "../window/framebuffer.hpp"
 #include "../window/renderquad.hpp"
 #include "../window/window.hpp"
+
+#include "../player/camera.hpp"
+#include "../game/game.hpp"
+
 #include "menu.hpp"
 
 Menu::Menu()
 {
-    window = new Window();
+    window = nullptr;
+
     menuShader = new Shader();
     menuBuffer = new FrameBuffer();
+
+    game = nullptr;
+}
+
+void Menu::checkEvents()
+{
+    if (window->isKeyPressed(GLFW_KEY_ESCAPE))
+    {
+        window->close();
+    }
+    
+    if (window->isKeyPressed(GLFW_KEY_ENTER))
+    {
+        game = new Game(window, "");
+        game->gameLoop();
+    }
 }
 
 void Menu::menuLoop()
 {
+    window = new Window();
+
     while (window->isOpen())
     {
-        if (window->isKeyPressed(GLFW_KEY_ESCAPE))
-        {
-            window->close();
-        }
+        window->pollEvents();
+        checkEvents();
 
         window->render(0);
     }
@@ -28,11 +49,11 @@ void Menu::menuLoop()
 
 Menu::~Menu()
 {
-    delete window;
-
     delete menuShader;
     delete menuBuffer;
 
-    //delete setting
-    //delete game
+    //delete settings;
+    delete game;
+    
+    delete window;
 }

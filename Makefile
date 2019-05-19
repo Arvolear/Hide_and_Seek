@@ -10,9 +10,11 @@ DEBUG = debugsphere.o
 GLOBAL = shader.o 
 WINDOW = window.o glfwevents.o framebuffer.o renderquad.o 
 MENU = menu.o 
+GAME = game.o
+PLAYER = camera.o
 GAME_OBJECT = gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(GLOBAL) $(WINDOW) $(MENU) $(GAME_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(GLOBAL) $(WINDOW) $(MENU) $(GAME) $(PLAYER) $(GAME_OBJECT)) 
 
 ### ALL ###
 
@@ -52,6 +54,16 @@ $(OUTPUTDIR)/renderquad.o: $(INPUTDIR)/window/renderquad.cpp $(INPUTDIR)/window/
 
 $(OUTPUTDIR)/menu.o: $(INPUTDIR)/menu/menu.cpp $(INPUTDIR)/menu/menu.hpp
 	g++ -c $(INPUTDIR)/menu/menu.cpp -o $@ $(FLAGS)
+
+### GAME ###
+
+$(OUTPUTDIR)/game.o: $(INPUTDIR)/game/game.cpp $(INPUTDIR)/game/game.hpp
+	g++ -c $(INPUTDIR)/game/game.cpp -o $@ $(FLAGS)
+
+### PLAYER ###
+
+$(OUTPUTDIR)/camera.o: $(INPUTDIR)/player/camera.cpp $(INPUTDIR)/player/camera.hpp
+	g++ -c $(INPUTDIR)/player/camera.cpp -o $@ $(FLAGS)
 
 ### GAME_OBJECT ###
 

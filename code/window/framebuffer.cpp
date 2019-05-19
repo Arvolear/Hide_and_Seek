@@ -1,9 +1,20 @@
 #include "framebuffer.hpp"
 
-FrameBuffer::FrameBuffer(){}
+FrameBuffer::FrameBuffer()
+{
+    bufferID = 0;
+    depthBufferID = 0;
+    colorTextureID = 0;
+
+    width = 0;
+    height = 0;
+}
 
 void FrameBuffer::genBuffer(double width, double height)
 {
+    this->width = width;
+    this->height = height;
+
     glGenFramebuffers(1, &bufferID);
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
 
@@ -42,6 +53,11 @@ void FrameBuffer::genBuffer(double width, double height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void FrameBuffer::genBuffer(vec2 size)
+{
+    genBuffer(size.x, size.y);
+}
+
 GLuint FrameBuffer::getBuffer() const
 {
     return bufferID;
@@ -55,6 +71,11 @@ GLuint FrameBuffer::getDepthBuffer() const
 GLuint FrameBuffer::getColorTexture() const
 {
     return colorTextureID;
+}
+
+vec2 FrameBuffer::getSize() const
+{
+    return vec2(width, height);
 }
 
 FrameBuffer::~FrameBuffer(){}
