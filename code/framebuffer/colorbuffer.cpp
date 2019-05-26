@@ -1,16 +1,12 @@
 #include "framebuffer.hpp"
+#include "colorbuffer.hpp"
 
-FrameBuffer::FrameBuffer()
+ColorBuffer::ColorBuffer() : FrameBuffer() 
 {
-    bufferID = 0;
     depthBufferID = 0;
-    colorTextureID = 0;
-
-    width = 0;
-    height = 0;
 }
 
-void FrameBuffer::genBuffer(double width, double height)
+void ColorBuffer::genBuffer(double width, double height)
 {
     this->width = width;
     this->height = height;
@@ -18,8 +14,8 @@ void FrameBuffer::genBuffer(double width, double height)
     glGenFramebuffers(1, &bufferID);
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
 
-    glGenTextures(1, &colorTextureID);
-    glBindTexture(GL_TEXTURE_2D, colorTextureID);
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
@@ -35,47 +31,30 @@ void FrameBuffer::genBuffer(double width, double height)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTextureID, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-        cout << "ERROR::GAME BUFFER" << endl;
-        
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        return;
+        throw runtime_error("ERROR::ColorBuffer");
     }
     
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void FrameBuffer::genBuffer(vec2 size)
+void ColorBuffer::genBuffer(vec2 size)
 {
     genBuffer(size.x, size.y);
 }
 
-GLuint FrameBuffer::getBuffer() const
+void ColorBuffer::clear()
 {
-    return bufferID;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-GLuint FrameBuffer::getDepthBuffer() const
-{
-    return depthBufferID;
-}
-
-GLuint FrameBuffer::getColorTexture() const
-{
-    return colorTextureID;
-}
-
-vec2 FrameBuffer::getSize() const
-{
-    return vec2(width, height);
-}
-
-FrameBuffer::~FrameBuffer(){}
+ColorBuffer::~ColorBuffer() {}

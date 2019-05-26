@@ -1,7 +1,7 @@
 #pragma once
 
 //native
-#include <iostream>
+#include <stdexcept>
 
 //openGL
 #include <GLFW/glfw3.h>

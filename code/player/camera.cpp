@@ -1,8 +1,12 @@
-#include "../global/shader.hpp"
-#include "../window/framebuffer.hpp"
+#include "../shader/shader.hpp"
+
+#include "../framebuffer/framebuffer.hpp"
+#include "../framebuffer/colorbuffer.hpp"
+
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
+
 #include "camera.hpp"
 
 Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, double speed)

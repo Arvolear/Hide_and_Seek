@@ -1,25 +1,50 @@
 #include "../global/convert.hpp"
+
+#include "../shader/shader.hpp"
+
+#include "../framebuffer/framebuffer.hpp"
+#include "../framebuffer/colorbuffer.hpp"
+#include "../framebuffer/depthbuffer.hpp"
+
 #include "../window/glfwevents.hpp"
-#include "../global/shader.hpp"
-#include "../window/framebuffer.hpp"
 #include "../window/renderquad.hpp"
 #include "../window/window.hpp"
 
 #include "../player/camera.hpp"
 
+#include "../debug/debugsphere.hpp"
+
+#include "../game_object/openglmotionstate.hpp"
+#include "../game_object/animation.hpp"
+#include "../game_object/mesh.hpp"
+#include "../game_object/bone.hpp"
+#include "../game_object/skeleton.hpp"
+#include "../game_object/viewfrustum.hpp"
+#include "../game_object/boundsphere.hpp"
+#include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
+#include "../game_object/gameobject.hpp"
+
+#include "../level/dirlight.hpp"
+#include "../level/skybox.hpp"
+#include "../level/level.hpp"
+
 #include "game.hpp"
 
-Game::Game(Window* window, string level)
+Game::Game(Window* window, string levelName)
 {
     this->window = window;
-    this->level = level;
+    this->levelName = levelName;
     this->mode = PLAY;
 
     window->hideCursor();
 
-    gameBuffer = new FrameBuffer();
+    gameBuffer = new ColorBuffer();
     gameBuffer->genBuffer(window->getRenderSize());
 
+    level = new Level(window);
+
+    /* TAKE THIS DATA FROM THE LEVEL */
     camera = new Camera(window, vec3(0, 5, 0), vec3(0, 0, -1));
     // ...
 }
@@ -53,7 +78,12 @@ void Game::gameLoop()
             camera->update();
         }
 
-        window->render(gameBuffer->getColorTexture());
+        gameBuffer->use();
+        gameBuffer->clear();
+        
+        level->render();
+
+        window->render(gameBuffer->getTexture());
     }
 }
 
@@ -61,5 +91,6 @@ Game::~Game()
 {
     delete gameBuffer;
     delete camera;
+    delete level;
     // ...
 }

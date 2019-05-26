@@ -16,13 +16,14 @@ class Game
         int mode;
 
         Window* window;
-        string level;
 
         //Shader* gameShader; // ESCAPE & SHOP modes, blur...
-        FrameBuffer* gameBuffer;
+        ColorBuffer* gameBuffer;
         
-        //Level* level;
+        Level* level;
+        string levelName;
         //PhysicsWorld* physicsWorld;
+
         //Player* player
         Camera* camera;
 

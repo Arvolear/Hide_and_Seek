@@ -1,4 +1,4 @@
-#include "../global/shader.hpp"
+#include "../shader/shader.hpp"
 #include "debugsphere.hpp"
 
 DebugSphere::DebugSphere()

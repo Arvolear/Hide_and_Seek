@@ -15,7 +15,7 @@ class Menu
         Window* window;
 
         Shader* menuShader;
-        FrameBuffer* menuBuffer;
+        ColorBuffer* menuBuffer;
 
         //Setting* settings;
         Game* game;

@@ -1,7 +1,8 @@
 #include "../global/convert.hpp"
+
+#include "../shader/shader.hpp"
+
 #include "glfwevents.hpp"
-#include "../global/shader.hpp"
-#include "framebuffer.hpp"
 #include "renderquad.hpp"
 #include "window.hpp"
 
@@ -24,8 +25,7 @@ Window::Window() : GLFWEvents()
 
     if (!glfwInit())
     {
-        cout << "Failed to initialize glfw" << endl;
-        return;
+        throw runtime_error("ERROR::Failed to initialize glfw");
     }
 
     //glfwWindowHint(GLFW_SAMPLES, 4);
@@ -39,8 +39,7 @@ Window::Window() : GLFWEvents()
     {
         glfwTerminate();
 
-        cout << "Failed to initialize window" << endl;
-        return;
+        throw runtime_error("ERROR::Failed to initialize window");
     }
 
     glfwSetWindowUserPointer(window, this);
@@ -56,12 +55,11 @@ Window::Window() : GLFWEvents()
     glewExperimental = GL_TRUE; // new version of glew
     if (glewInit() != GLEW_OK) // trying to init glew
     {
-        cout << "Failed to initialize GLEW" << endl;
-        return;
+        throw runtime_error("ERROR::Failed to initialize GLEW");
     }
     
-    renderShader->loadShaders(path("./code/window/vertexRenderShader.glsl"), \
-                              path("./code/window/fragmentRenderShader.glsl")); //loading shaders
+    renderShader->loadShaders(path("./code/shader/vertexRenderShader.glsl"), \
+                              path("./code/shader/fragmentRenderShader.glsl")); //loading shaders
 
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_STENCIL_TEST);

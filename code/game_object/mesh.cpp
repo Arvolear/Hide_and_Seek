@@ -1,4 +1,5 @@
-#include "../global/shader.hpp"
+#include "../shader/shader.hpp"
+
 #include "mesh.hpp"
 
 using namespace std;

@@ -1,4 +1,5 @@
-#include "../global/shader.hpp"
+#include "../shader/shader.hpp"
+
 #include "renderquad.hpp"
 
 RenderQuad::RenderQuad(){}

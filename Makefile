@@ -7,14 +7,16 @@ OUTPUTDIR = ./build
 
 MAIN = main.o 
 DEBUG = debugsphere.o
-GLOBAL = shader.o 
-WINDOW = window.o glfwevents.o framebuffer.o renderquad.o 
+SHADER = shader.o 
+FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o
+WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
+LEVEL = level.o dirlight.o skybox.o 
 PLAYER = camera.o
 GAME_OBJECT = gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(GLOBAL) $(WINDOW) $(MENU) $(GAME) $(PLAYER) $(GAME_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(PLAYER) $(GAME_OBJECT)) 
 
 ### ALL ###
 
@@ -31,10 +33,21 @@ $(OUTPUTDIR)/main.o: $(INPUTDIR)/main.cpp
 $(OUTPUTDIR)/debugsphere.o: $(INPUTDIR)/debug/debugsphere.cpp $(INPUTDIR)/debug/debugsphere.hpp
 	g++ -c $(INPUTDIR)/debug/debugsphere.cpp -o $@ $(FLAGS)
 
-### GLOBAL ###
+### SHADER ###
 
-$(OUTPUTDIR)/shader.o: $(INPUTDIR)/global/shader.cpp $(INPUTDIR)/global/shader.hpp
-	g++ -c $(INPUTDIR)/global/shader.cpp -o $@ $(FLAGS)
+$(OUTPUTDIR)/shader.o: $(INPUTDIR)/shader/shader.cpp $(INPUTDIR)/shader/shader.hpp
+	g++ -c $(INPUTDIR)/shader/shader.cpp -o $@ $(FLAGS)
+
+### FRAMEBUFFER ###
+
+$(OUTPUTDIR)/framebuffer.o: $(INPUTDIR)/framebuffer/framebuffer.cpp $(INPUTDIR)/framebuffer/framebuffer.hpp
+	g++ -c $(INPUTDIR)/framebuffer/framebuffer.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/colorbuffer.o: $(INPUTDIR)/framebuffer/colorbuffer.cpp $(INPUTDIR)/framebuffer/colorbuffer.hpp
+	g++ -c $(INPUTDIR)/framebuffer/colorbuffer.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/depthbuffer.o: $(INPUTDIR)/framebuffer/depthbuffer.cpp $(INPUTDIR)/framebuffer/depthbuffer.hpp
+	g++ -c $(INPUTDIR)/framebuffer/depthbuffer.cpp -o $@ $(FLAGS)
 
 ### WINDOW ###
 
@@ -43,9 +56,6 @@ $(OUTPUTDIR)/window.o: $(INPUTDIR)/window/window.cpp $(INPUTDIR)/window/window.h
 
 $(OUTPUTDIR)/glfwevents.o: $(INPUTDIR)/window/glfwevents.cpp $(INPUTDIR)/window/glfwevents.hpp
 	g++ -c $(INPUTDIR)/window/glfwevents.cpp -o $@ $(FLAGS)
-
-$(OUTPUTDIR)/framebuffer.o: $(INPUTDIR)/window/framebuffer.cpp $(INPUTDIR)/window/framebuffer.hpp
-	g++ -c $(INPUTDIR)/window/framebuffer.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/renderquad.o: $(INPUTDIR)/window/renderquad.cpp $(INPUTDIR)/window/renderquad.hpp
 	g++ -c $(INPUTDIR)/window/renderquad.cpp -o $@ $(FLAGS)
@@ -59,6 +69,17 @@ $(OUTPUTDIR)/menu.o: $(INPUTDIR)/menu/menu.cpp $(INPUTDIR)/menu/menu.hpp
 
 $(OUTPUTDIR)/game.o: $(INPUTDIR)/game/game.cpp $(INPUTDIR)/game/game.hpp
 	g++ -c $(INPUTDIR)/game/game.cpp -o $@ $(FLAGS)
+
+### LEVEL ###
+
+$(OUTPUTDIR)/level.o: $(INPUTDIR)/level/level.cpp $(INPUTDIR)/level/level.hpp
+	g++ -c $(INPUTDIR)/level/level.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/dirlight.o: $(INPUTDIR)/level/dirlight.cpp $(INPUTDIR)/level/dirlight.hpp
+	g++ -c $(INPUTDIR)/level/dirlight.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/skybox.o: $(INPUTDIR)/level/skybox.cpp $(INPUTDIR)/level/skybox.hpp
+	g++ -c $(INPUTDIR)/level/skybox.cpp -o $@ $(FLAGS)
 
 ### PLAYER ###
 

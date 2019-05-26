@@ -1,6 +1,9 @@
 #include "../global/convert.hpp"
-#include "../global/shader.hpp"
+
+#include "../shader/shader.hpp"
+
 #include "../debug/debugsphere.hpp"
+
 #include "openglmotionstate.hpp"
 #include "animation.hpp"
 #include "mesh.hpp"

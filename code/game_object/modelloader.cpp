@@ -1,5 +1,7 @@
-#include "../global/shader.hpp"
 #include "../global/convert.hpp"
+
+#include "../shader/shader.hpp"
+
 #include "animation.hpp"
 #include "mesh.hpp"
 #include "bone.hpp"
