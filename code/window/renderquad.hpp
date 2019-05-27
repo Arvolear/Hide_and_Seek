@@ -31,7 +31,7 @@ class RenderQuad
         RenderQuad();
         
         void init();
-        void draw(Shader *shader) const;
+        void render(Shader *shader) const;
 
         ~RenderQuad();
 };

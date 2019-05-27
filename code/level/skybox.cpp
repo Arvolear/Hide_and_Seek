@@ -28,7 +28,7 @@ void SkyBox::init()
     glBindVertexArray(0);
 }
 
-void SkyBox::loadTexture(string path)
+void SkyBox::loadSkyBox(string path)
 {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -66,6 +66,8 @@ void SkyBox::loadTexture(string path)
 
 void SkyBox::render(Shader* shader)
 {
+    glDepthFunc(GL_LEQUAL);
+
     glUniform1i(glGetUniformLocation(shader->getID(), "skybox"), 0);
     glActiveTexture(GL_TEXTURE0); 
 
@@ -77,6 +79,8 @@ void SkyBox::render(Shader* shader)
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindVertexArray(0);
+
+    glDepthFunc(GL_LESS);
 }
 
 SkyBox::~SkyBox()

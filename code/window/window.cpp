@@ -20,9 +20,6 @@ Window::Window() : GLFWEvents()
     mousePosition = vec2(0);
     mouseMoved = false;
 
-    renderShader = new Shader();
-    renderQuad = new RenderQuad();
-
     if (!glfwInit())
     {
         throw runtime_error("ERROR::Failed to initialize glfw");
@@ -58,13 +55,17 @@ Window::Window() : GLFWEvents()
         throw runtime_error("ERROR::Failed to initialize GLEW");
     }
     
-    renderShader->loadShaders(path("./code/shader/vertexRenderShader.glsl"), \
-                              path("./code/shader/fragmentRenderShader.glsl")); //loading shaders
-
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_STENCIL_TEST);
     glEnable(GL_CULL_FACE);
     //glEnable(GL_FRAMEBUFFER_SRGB); 
+
+    /* LOAD SHADERS AT FIRST */
+    renderShader = new Shader();
+    renderShader->loadShaders(path("code/shader/vertexRenderShader.glsl"), path("code/shader/fragmentRenderShader.glsl")); //loading shaders
+
+    renderQuad = new RenderQuad();
+    renderQuad->init();
 }
 
 /******************/
@@ -201,10 +202,9 @@ void Window::render(GLuint finalTexture)
     clearEventsData();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     glViewport(0, 0, width, height); //set visible
 
-    glClearColor(0, 0, 0, 1); // black
+    glClearColor(0.0f, 0.2f, 0.0f, 1.0f); // black
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderShader->use();
@@ -213,7 +213,7 @@ void Window::render(GLuint finalTexture)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, finalTexture);
 
-    renderQuad->draw(renderShader);
+    renderQuad->render(renderShader);
 
     glfwSwapBuffers(window); 
 }

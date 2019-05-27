@@ -78,7 +78,7 @@ class SkyBox
         SkyBox();
 
         void init();
-        void loadTexture(string path);
+        void loadSkyBox(string path);
 
         void render(Shader* shader);
 

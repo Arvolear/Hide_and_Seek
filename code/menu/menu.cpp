@@ -27,6 +27,7 @@
 
 #include "../level/dirlight.hpp"
 #include "../level/skybox.hpp"
+#include "../level/levelloader.hpp"
 #include "../level/level.hpp"
 
 #include "../game/game.hpp"

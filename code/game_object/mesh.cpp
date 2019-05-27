@@ -5,7 +5,7 @@
 using namespace std;
 using namespace glm;
 
-Mesh::Mesh (vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > &t)
+Mesh::Mesh(vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > &t)
 {
     vertices = v; 
     indices = i; 

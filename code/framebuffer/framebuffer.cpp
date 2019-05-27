@@ -3,7 +3,7 @@
 FrameBuffer::FrameBuffer()
 {
     bufferID = 0;
-    bufferID = 0;
+    textureID = 0;
 
     width = height = 0;
 }
@@ -25,8 +25,8 @@ vec2 FrameBuffer::getSize() const
 
 void FrameBuffer::use()
 {
-    glViewport(0, 0, width, height);
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
+    glViewport(0, 0, width, height);
 }
 
 FrameBuffer::~FrameBuffer(){}

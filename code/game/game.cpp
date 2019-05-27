@@ -27,6 +27,7 @@
 
 #include "../level/dirlight.hpp"
 #include "../level/skybox.hpp"
+#include "../level/levelloader.hpp"
 #include "../level/level.hpp"
 
 #include "game.hpp"
@@ -43,9 +44,10 @@ Game::Game(Window* window, string levelName)
     gameBuffer->genBuffer(window->getRenderSize());
 
     level = new Level(window);
+    level->loadLevel("test1");
 
     /* TAKE THIS DATA FROM THE LEVEL */
-    camera = new Camera(window, vec3(0, 5, 0), vec3(0, 0, -1));
+    camera = level->getPlayer();
     // ...
 }
 
@@ -78,19 +80,19 @@ void Game::gameLoop()
             camera->update();
         }
 
-        gameBuffer->use();
-        gameBuffer->clear();
+        /*gameBuffer->use();
+        gameBuffer->clear();*/
         
         level->render();
 
-        window->render(gameBuffer->getTexture());
+        window->render(level->getRenderTexture());
     }
 }
 
 Game::~Game()
 {
     delete gameBuffer;
-    delete camera;
     delete level;
+    delete camera;
     // ...
 }

@@ -12,7 +12,7 @@ FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
-LEVEL = level.o dirlight.o skybox.o 
+LEVEL = level.o dirlight.o skybox.o levelloader.o
 PLAYER = camera.o
 GAME_OBJECT = gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
@@ -80,6 +80,9 @@ $(OUTPUTDIR)/dirlight.o: $(INPUTDIR)/level/dirlight.cpp $(INPUTDIR)/level/dirlig
 
 $(OUTPUTDIR)/skybox.o: $(INPUTDIR)/level/skybox.cpp $(INPUTDIR)/level/skybox.hpp
 	g++ -c $(INPUTDIR)/level/skybox.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/levelloader.o: $(INPUTDIR)/level/levelloader.cpp $(INPUTDIR)/level/levelloader.hpp
+	g++ -c $(INPUTDIR)/level/levelloader.cpp -o $@ $(FLAGS)
 
 ### PLAYER ###
 

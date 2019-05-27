@@ -33,7 +33,7 @@ void ModelLoader::loadModel(string path)
     skeleton = new Skeleton(bones);
 }
 
-void ModelLoader::getModelData(Skeleton *&skeleton, vector < Mesh* > &meshes) const
+void ModelLoader::getModelData(Skeleton*& skeleton, vector < Mesh* > &meshes) const
 {
     skeleton = this->skeleton;
     meshes = this->meshes;

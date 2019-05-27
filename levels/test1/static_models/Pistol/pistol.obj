@@ -1,6 +1,6 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib gun.mtl
+mtllib pistol.mtl
 o Cube.005_Cube.000
 v -0.754705 0.388588 0.000000
 v -0.749811 0.388588 0.000000

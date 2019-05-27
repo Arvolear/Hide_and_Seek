@@ -1,6 +1,6 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib house2.mtl
+mtllib house.mtl
 o Mesh05
 v 0.353597 1.539101 8.564480
 v 0.489261 1.773985 8.697041

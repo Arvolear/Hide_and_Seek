@@ -2,7 +2,11 @@
 
 #include "renderquad.hpp"
 
-RenderQuad::RenderQuad(){}
+RenderQuad::RenderQuad()
+{
+    VAO = 0;
+    VBO = 0;
+}
 
 void RenderQuad::init()
 {
@@ -20,7 +24,7 @@ void RenderQuad::init()
     glBindVertexArray(0);
 }
 
-void RenderQuad::draw(Shader *shader) const
+void RenderQuad::render(Shader *shader) const
 {
     glBindVertexArray(VAO);
 

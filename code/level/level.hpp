@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <map>
 #include <string>
 
@@ -14,21 +16,27 @@ class Level
 {
     private:
         Window* window;
-        //LevelLoader* levelLoader;
+        LevelLoader* levelLoader;
+        
+        string levelName;
 
         ColorBuffer* levelColorBuffer;
         DepthBuffer* levelDepthBuffer;
 
         Shader* objectShader;
         Shader* dirShadowShader;
+        Shader* skyBoxShader;
 
         map < size_t, GameObject* > gameObjects;
         map < PhysicsObject*, GameObject* > physicsObjects;
 
         DirLight* dirLight;
         SkyBox* skyBox;
-        
-        string levelName;
+
+        Camera* camera;
+        mat4 view;
+        mat4* projection;
+        mat4* shadowProjection;
 
     public:
         Level(Window* window);
@@ -36,6 +44,8 @@ class Level
         void loadLevel(string level);
         void render();
         GLuint getRenderTexture() const;
+
+        Camera* getPlayer() const;
 
         ~Level();
 };
