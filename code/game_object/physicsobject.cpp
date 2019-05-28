@@ -74,6 +74,16 @@ PhysicsObject::PhysicsObject(vector < PhysicsObjectCompound* > &compoundInfo, fl
     }
 }
 
+void PhysicsObject::setIndex(int index)
+{
+    this->index = index;
+}
+
+void PhysicsObject::removeIndex()
+{
+    index = -1;
+}
+
 btRigidBody* PhysicsObject::getRigidBody() const
 {
     return m_Body;
@@ -87,6 +97,11 @@ btMotionState* PhysicsObject::getMotionState() const
 void PhysicsObject::getTransform(btScalar* transform) const
 {
     m_MotionState->getTransform(transform);
+}
+
+unsigned long int PhysicsObject::getIndex() const
+{
+    return index;
 }
 
 PhysicsObject::~PhysicsObject()

@@ -33,19 +33,40 @@ LevelLoader::LevelLoader(Window* window)
 {
     this->window = window;
 
-    dirLight = nullptr;
     skyBox = nullptr;
     camera = nullptr;
 }
 
 void LevelLoader::loadObjects()
 {
-        
+    /* PARSE XML */
+    GameObject* GO0 = new GameObject();
+    GO0->setGraphicsObject(levelName + "/static_models/Box/box.obj");
+    int index = GO0->getIndex();
+
+    if (gameObjects.find(index) == gameObjects.end())
+    {
+        gameObjects.insert({index, GO0});
+    }
 }
 
 void LevelLoader::loadDirLight()
 {
+    /* PARSE XML */
+    DirLight* DL0 = new DirLight();
+    
+    DL0->setDirection(vec3(0.16f, -1.0f, 0.3f));
+    DL0->setAmbient(vec3(0.4f, 0.4f, 0.4f));
+    DL0->setDiffuse(vec3(1.0f, 1.0f, 1.0f));
+    DL0->setSpecular(vec3(0.5f, 0.5f, 0.5f));
 
+    DL0->genShadowBuffer(2048, 2048);
+    DL0->setProjection(ortho(-50.0f, 50.0f, -50.0f, 50.0f, -30.0f, 30.0f));
+
+    if (find(dirLights.begin(), dirLights.end(), DL0) == dirLights.end())
+    {
+        dirLights.push_back(DL0); 
+    }
 }
 
 void LevelLoader::loadSkyBox()
@@ -53,14 +74,14 @@ void LevelLoader::loadSkyBox()
     skyBox = new SkyBox();
     skyBox->init();
 
-    skyBox->loadSkyBox(path("levels/test1/skyboxes/Bluerocky"));
+    skyBox->loadSkyBox(levelName + "/skyboxes/Bluerocky");
 }
-        
+
 void LevelLoader::loadPlayer()
 {
-    camera = new Camera(window, vec3(0, 5, 0), vec3(0, 0, -1));
+    camera = new Camera(window, vec3(0, 5, 0), vec3(0, 0, -1), 1);
 }
-        
+
 void LevelLoader::loadLevel(string name)
 {
     this->levelName = name;
@@ -72,19 +93,14 @@ void LevelLoader::loadLevel(string name)
     loadPlayer();
 }
 
-void LevelLoader::getGameObjectsData(map < size_t, GameObject* > &gameObjects) const
+void LevelLoader::getGameObjectsData(map < unsigned long int, GameObject* > &gameObjects) const
 {
     gameObjects = this->gameObjects;
 }
 
-void LevelLoader::getPhysicsObjectsData(map < PhysicsObject*, GameObject* > &physicsObjects) const
+void LevelLoader::getDirLightData(vector < DirLight* > &dirLights) const
 {
-    physicsObjects = this->physicsObjects;
-}
-
-void LevelLoader::getDirLightData(DirLight*& dirLight) const
-{
-    dirLight = this->dirLight;
+    dirLights = this->dirLights;
 }
 
 void LevelLoader::getSkyBoxData(SkyBox*& skyBox) const

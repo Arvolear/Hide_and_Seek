@@ -17,6 +17,9 @@ using namespace glm;
 class GameObject
 {
     protected:
+        static unsigned long int globalIndex;
+        int index;
+
         btDynamicsWorld* world;
         ModelLoader* modelLoader;
 
@@ -44,6 +47,7 @@ class GameObject
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
+        void setWorld(btDynamicsWorld* world);
         
         void setLocalRotation(float angle, vec3 axis);
         void setLocalScale(vec3 growth);
@@ -54,6 +58,7 @@ class GameObject
 
         PhysicsObject* getPhysicsObject() const;
         string getGraphicsObject() const;
+        unsigned long int getIndex() const;
 
         virtual void render(Shader* shader, bool check = true);
          

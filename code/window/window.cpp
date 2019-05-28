@@ -59,6 +59,8 @@ Window::Window() : GLFWEvents()
     //glEnable(GL_STENCIL_TEST);
     glEnable(GL_CULL_FACE);
     //glEnable(GL_FRAMEBUFFER_SRGB); 
+        
+    glCullFace(GL_BACK);
 
     /* LOAD SHADERS AT FIRST */
     renderShader = new Shader();

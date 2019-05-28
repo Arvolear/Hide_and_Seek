@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include <GLFW/glfw3.h>
@@ -21,30 +22,34 @@ class Level
         string levelName;
 
         ColorBuffer* levelColorBuffer;
-        DepthBuffer* levelDepthBuffer;
 
-        Shader* objectShader;
+        Shader* gameObjectShader;
         Shader* dirShadowShader;
         Shader* skyBoxShader;
 
-        map < size_t, GameObject* > gameObjects;
-        map < PhysicsObject*, GameObject* > physicsObjects;
+        map < unsigned long int, GameObject* > gameObjects;
+        vector < DirLight* > dirLights;
 
-        DirLight* dirLight;
         SkyBox* skyBox;
 
         Camera* camera;
-        mat4 view;
-        mat4* projection;
-        mat4* shadowProjection;
+        mat4 projection;
 
     public:
         Level(Window* window);
         
         void loadLevel(string level);
         void render();
-        GLuint getRenderTexture() const;
 
+        /* TODO */
+        void addGameObject(GameObject* gameObject);
+        void getGameObject(PhysicsObject* physicsObject);
+
+        void removeGameObject(GameObject* gameObject);
+        void removeGameObject(PhysicsObject* physicsObject);
+        /* TODO */
+
+        GLuint getRenderTexture() const;
         Camera* getPlayer() const;
 
         ~Level();

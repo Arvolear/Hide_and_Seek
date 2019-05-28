@@ -1,7 +1,6 @@
 #version 330 core
 
 #define BONES_AMOUNT 6
-#define MAX_BONES_AMOUNT 50
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
@@ -14,17 +13,23 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform mat4 shadowView; ////////////////////////////
-uniform mat4 shadowProjection; /////////////////////////////
+struct DirLightMatrices
+{
+    mat4 shadowView;
+    mat4 shadowProjection;
+};
 
+# define MAX_DIR_LIGHTS 5
+uniform DirLightMatrices dirLightsMatrices[MAX_DIR_LIGHTS];
+out vec4 dirShadowCoords[MAX_DIR_LIGHTS];
+
+#define MAX_BONES_AMOUNT 50
 uniform mat4 bones[MAX_BONES_AMOUNT];
 uniform int meshWithBones;
 
 out vec3 fragmentPos;
 out vec3 fragmentNorm;
 out vec2 textureCoords;
-
-out vec4 shadowCoords;
 
 void main()
 {
@@ -51,5 +56,8 @@ void main()
 
     textureCoords = vec2(texture.x, -texture.y); //reverse textures
 
-    shadowCoords = shadowProjection * shadowView * model * localTransform * bonesTransform * vec4(position, 1.0);
+    for (int i = 0; i < MAX_DIR_LIGHTS; i++)
+    {
+        dirShadowCoords[i] = dirLightsMatrices[i].shadowProjection * dirLightsMatrices[i].shadowView * model * localTransform * bonesTransform * vec4(position, 1.0);
+    }
 }

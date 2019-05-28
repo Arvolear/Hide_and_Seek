@@ -56,6 +56,8 @@ void Mesh::draw(Shader *shader) const
 {
     unsigned int diffuseNR = 1; //amount of diffuse textures
     unsigned int specularNR = 1; //amount of specular textures
+        
+    glUniform1f(glGetUniformLocation(shader->getID(), "material.shininess"), 16.0f);
 
     for (size_t i = 0; i < textures.size(); i++) //loop through textures
     {

@@ -53,7 +53,7 @@ void Menu::checkEvents()
     
     if (window->isKeyPressed(GLFW_KEY_ENTER))
     {
-        game = new Game(window, "");
+        game = new Game(window, "test1");
         game->gameLoop();
     }
 }

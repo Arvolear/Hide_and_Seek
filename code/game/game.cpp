@@ -44,7 +44,7 @@ Game::Game(Window* window, string levelName)
     gameBuffer->genBuffer(window->getRenderSize());
 
     level = new Level(window);
-    level->loadLevel("test1");
+    level->loadLevel(levelName);
 
     /* TAKE THIS DATA FROM THE LEVEL */
     camera = level->getPlayer();

@@ -15,8 +15,12 @@
 #include "physicsobject.hpp"
 #include "gameobject.hpp"
 
+unsigned long int GameObject::globalIndex = 0;
+
 GameObject::GameObject()
 {
+    index = globalIndex++;
+
     world = nullptr;
     modelLoader = new ModelLoader();
     physicsObject = nullptr;
@@ -29,6 +33,8 @@ GameObject::GameObject()
 
 GameObject::GameObject(string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum)
 {
+    index = globalIndex++;
+
     this->world = world;
     this->physicsObject = physicsObject;
     this->viewFrustum = viewFrustum;
@@ -38,19 +44,26 @@ GameObject::GameObject(string path, PhysicsObject* physicsObject, btDynamicsWorl
     modelLoader->loadModel(path);
     
     modelLoader->getModelData(skeleton, meshes);
+
+    physicsObject->setIndex(index);
+    world->addRigidBody(physicsObject->getRigidBody()); 
     
     boundSphere = new BoundSphere(meshes);
     boundSphere->construct();
+
+    debugSphere = nullptr;
 }
 
 void GameObject::removePhysicsObject()
 {
     if (physicsObject)
     {
-        world->removeRigidBody(physicsObject->getRigidBody());
+        if (world)
+        {
+            world->removeRigidBody(physicsObject->getRigidBody());
+        }
 
         delete physicsObject;
-
         physicsObject = nullptr;
     }
 }
@@ -67,6 +80,7 @@ void GameObject::removeGraphicsObject()
     skeleton = nullptr;
 
     delete boundSphere;
+    boundSphere = nullptr;
 
     graphicsObject = "";
     modelLoader->clear();
@@ -103,13 +117,27 @@ void GameObject::setViewFrustum(ViewFrustum* viewFrustum)
     this->viewFrustum = viewFrustum;
 }
 
+void GameObject::setWorld(btDynamicsWorld* world)
+{
+    this->world = world;
+
+    if (physicsObject)
+    {
+        world->addRigidBody(physicsObject->getRigidBody()); 
+    }
+}
+
 void GameObject::setPhysicsObject(PhysicsObject* object)
 {
     removePhysicsObject();
 
     physicsObject = object;
+    physicsObject->setIndex(index);
 
-    world->addRigidBody(physicsObject->getRigidBody());
+    if (world)
+    {
+        world->addRigidBody(physicsObject->getRigidBody());
+    }
 }
 
 void GameObject::setLocalRotation(float angle, vec3 axis)
@@ -180,9 +208,14 @@ string GameObject::getGraphicsObject() const
     return graphicsObject;
 }
 
+unsigned long int GameObject::getIndex() const
+{
+    return index;
+}
+
 void GameObject::render(Shader* shader, bool check)
 {
-    if (check && viewFrustum)
+    if (check && viewFrustum && boundSphere)
     {
         mat4 transform = getPhysicsObjectTransform() * localTransform;
 
@@ -198,7 +231,10 @@ void GameObject::render(Shader* shader, bool check)
     
     glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, value_ptr(getPhysicsObjectTransform()));
 
-    skeleton->update(shader);
+    if (skeleton)
+    {
+        skeleton->update(shader);
+    }
 
     for (size_t i = 0; i < meshes.size(); i++)
     {
@@ -233,10 +269,10 @@ void GameObject::renderDebugSphere(mat4 &view, mat4 &projection, Shader *shader)
 
 GameObject::~GameObject()
 {
-    delete modelLoader;
-
-    removePhysicsObject();
     removeGraphicsObject();
+    removePhysicsObject();
+    
+    delete modelLoader;
 
     delete debugSphere;
 }

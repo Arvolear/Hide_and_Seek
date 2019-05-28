@@ -36,24 +36,22 @@ in vec3 fragmentPos;
 in vec3 fragmentNorm;
 in vec2 textureCoords;
 
-in vec4 shadowCoords;
-
-
 uniform Material material;
 
-#define NR_OF_POINT_LIGHTS 4
-uniform PointLight pointLights[NR_OF_POINT_LIGHTS];
+#define MAX_DIR_LIGHTS 5
+in vec4 dirShadowCoords[MAX_DIR_LIGHTS];
+uniform DirLight dirLights[MAX_DIR_LIGHTS];
 
-uniform DirLight dirLight;
+#define MAX_POINT_LIGHTS 5
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 uniform vec3 viewPos;
 
-
 out vec4 color;
 
-float calcDirShadow(DirLight light, vec3 normal, vec4 shadow)
+float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
 {
-    vec3 projCoords = shadow.xyz / shadow.w;
+    vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
@@ -62,6 +60,7 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadow)
     
     float shadowValue = 0.0;
 
+    /* bias */
     vec2 texelSize = 1.0 / textureSize(light.texture_shadow1, 0);        
     float bias = max(0.005 * (1.0 - dot(normal, direction)), 0.005);
 
@@ -84,14 +83,14 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadow)
     return shadowValue;
 }
 
-vec4 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+vec4 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec4 shadowCoords)
 {
     vec3 direction = normalize(-light.direction);
 
     float diff = max(dot(normal, direction), 0.0);
 
     vec3 halfwayRay = normalize(light.direction + viewDir);
-    float spec = pow(max(dot(viewDir, halfwayRay), 0.0), material.shininess); //Blinn-Phong
+    float spec = pow(max(dot(viewDir, halfwayRay), 0.0), material.shininess); // Blinn-Phong
 
     vec4 ambient = vec4(light.ambient, 1.0f) * texture(material.texture_diffuse1, textureCoords);
     vec4 diffuse = vec4(light.diffuse, 1.0f) * diff * texture(material.texture_diffuse1, textureCoords);
@@ -132,9 +131,12 @@ void main()
 
     vec4 result = vec4(0.0f);
 
-    result = calcDirLight(dirLight, norm, viewDir);
+    for (int i = 0; i < MAX_DIR_LIGHTS; i++)
+    {
+        result += calcDirLight(dirLights[i], norm, viewDir, dirShadowCoords[i]);
+    }
 
-    /*for (int i = 0; i < NR_OF_POINT_LIGHTS; i++)
+    /*for (int i = 0; i < MAX_POINT_LIGHTS; i++)
     {
         result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
     }*/

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include <GLFW/glfw3.h>
@@ -16,10 +17,9 @@ class LevelLoader
         Window* window;
         string levelName;
 
-        map < size_t, GameObject* > gameObjects;
-        map < PhysicsObject*, GameObject* > physicsObjects;
+        map < unsigned long int, GameObject* > gameObjects;
+        vector < DirLight* > dirLights;
 
-        DirLight* dirLight;
         SkyBox* skyBox;
 
         /* TO BE CHANGED INTO THE PLAYER */
@@ -36,11 +36,11 @@ class LevelLoader
 
         void loadLevel(string name);
 
-        void getGameObjectsData(map < size_t, GameObject* > &gameObjects) const;
-        void getPhysicsObjectsData(map < PhysicsObject*, GameObject* > &physicsObjects) const;
-        void getDirLightData(DirLight*& dirLight) const;
+        void getGameObjectsData(map < unsigned long int, GameObject* > &gameObjects) const;
+        void getDirLightData(vector < DirLight* > &dirLights) const;
         void getSkyBoxData(SkyBox*& skyBox) const;
         
+
         /*******/
         void getPlayerData(Camera*& player) const;
 
