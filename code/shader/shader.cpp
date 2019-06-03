@@ -117,6 +117,37 @@ void Shader::use() const
     glUseProgram(ID);
 }
         
+void Shader::setMat4(string key, mat4 value)
+{
+    glUniformMatrix4fv(glGetUniformLocation(getID(), key.c_str()), 1, GL_FALSE, value_ptr(value));
+}
+
+void Shader::setMat3(string key, mat3 value)
+{
+    glUniformMatrix3fv(glGetUniformLocation(getID(), key.c_str()), 1, GL_FALSE, value_ptr(value));
+}
+
+void Shader::setVec4(string key, vec4 value)
+{
+    glUniform4f(glGetUniformLocation(getID(), key.c_str()), value.x, value.y, value.z, value.w);
+}
+
+void Shader::setVec3(string key, vec3 value)
+{
+    glUniform3f(glGetUniformLocation(getID(), key.c_str()), value.x, value.y, value.z);
+}
+
+void Shader::setFloat(string key, float value)
+{
+    glUniform1f(glGetUniformLocation(getID(), key.c_str()), value);
+    
+}
+
+void Shader::setInt(string key, int value)
+{
+    glUniform1i(glGetUniformLocation(getID(), key.c_str()), value);
+}
+        
 GLuint Shader::getID() const
 {
     return ID;

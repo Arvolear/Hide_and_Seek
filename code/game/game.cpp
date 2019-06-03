@@ -13,6 +13,12 @@
 #include "../player/camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
@@ -43,7 +49,9 @@ Game::Game(Window* window, string levelName)
     gameBuffer = new ColorBuffer();
     gameBuffer->genBuffer(window->getRenderSize());
 
-    level = new Level(window);
+    physicsWorld = new World();
+
+    level = new Level(window, physicsWorld);
     level->loadLevel(levelName);
 
     /* TAKE THIS DATA FROM THE LEVEL */
@@ -66,23 +74,37 @@ void Game::checkEvents()
             mode = PLAY;
         }
     }
+
+    /* PHYSICS EVENTS */
 }
 
 void Game::gameLoop()
 {
+    int counter = 0;
     while (window->isOpen())
     {
         window->pollEvents();
+        physicsWorld->pollEvents();
         checkEvents();         
         
+        /*gameBuffer->use();
+        gameBuffer->clear();*/
+    
+        if (window->getTime() > 1)
+        {
+            physicsWorld->updateSimulation(window->getTime());
+        }
+
         if (mode == PLAY)
         {
             camera->update();
         }
 
-        /*gameBuffer->use();
-        gameBuffer->clear();*/
-        
+        if (window->isKeyPressed(GLFW_KEY_K))
+        {
+            cout << "K " << counter++ << endl;
+        }
+
         level->render();
 
         window->render(level->getRenderTexture());
@@ -92,7 +114,10 @@ void Game::gameLoop()
 Game::~Game()
 {
     delete gameBuffer;
+
     delete level;
     delete camera;
+    
+    delete physicsWorld;
     // ...
 }

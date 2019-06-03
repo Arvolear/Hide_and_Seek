@@ -20,9 +20,10 @@ class Game
         //Shader* gameShader; // ESCAPE & SHOP modes, blur...
         ColorBuffer* gameBuffer;
         
+        World* physicsWorld;
+        
         Level* level;
         string levelName;
-        //PhysicsWorld* physicsWorld;
 
         //Player* player
         Camera* camera;

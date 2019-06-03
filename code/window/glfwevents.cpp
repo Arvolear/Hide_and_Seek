@@ -16,8 +16,7 @@ void GLFWEvents::key_callback(GLFWwindow* window, int key, int scancode, int act
     {
         static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->mark_pressed(key);
     }
-
-    if (action == GLFW_RELEASE)
+    else if (action == GLFW_RELEASE)
     {
         static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->mark_released(key);
     }
@@ -34,8 +33,7 @@ void GLFWEvents::mouse_button_callback(GLFWwindow* window, int button, int actio
     {
         static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->mark_mouse_pressed(button);
     }
-
-    if (action == GLFW_RELEASE)
+    else if (action == GLFW_RELEASE)
     {
         static_cast < GLFWEvents* > (glfwGetWindowUserPointer(window))->mark_mouse_released(button);
     }

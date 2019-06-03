@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 using namespace glm;
@@ -17,6 +18,8 @@ class Level
 {
     private:
         Window* window;
+        World* physicsWorld;
+
         LevelLoader* levelLoader;
         
         string levelName;
@@ -27,7 +30,8 @@ class Level
         Shader* dirShadowShader;
         Shader* skyBoxShader;
 
-        map < unsigned long int, GameObject* > gameObjects;
+        /* all objects in the level */
+        map < string, GameObject* > gameObjects;
         vector < DirLight* > dirLights;
 
         SkyBox* skyBox;
@@ -36,17 +40,17 @@ class Level
         mat4 projection;
 
     public:
-        Level(Window* window);
+        Level(Window* window, World* physicsWorld);
         
         void loadLevel(string level);
         void render();
 
         /* TODO */
         void addGameObject(GameObject* gameObject);
-        void getGameObject(PhysicsObject* physicsObject);
+        void getGameObject(string name);
 
         void removeGameObject(GameObject* gameObject);
-        void removeGameObject(PhysicsObject* physicsObject);
+        void removeGameObject(string name);
         /* TODO */
 
         GLuint getRenderTexture() const;

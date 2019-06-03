@@ -26,6 +26,10 @@ Window::Window() : GLFWEvents()
     }
 
     //glfwWindowHint(GLFW_SAMPLES, 4);
+
+    /* 30 FPS */
+    glfwWindowHint(GLFW_REFRESH_RATE, 30);
+    
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -170,6 +174,11 @@ vec2 Window::getMousePosition() const
 {
     return mousePosition;
 }
+        
+float Window::getTime() const
+{
+    return glfwGetTime();
+}
 
 /******************/
 
@@ -204,14 +213,14 @@ void Window::render(GLuint finalTexture)
     clearEventsData();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, width, height); //set visible
+    glViewport(0, 0, width, height); // set visible
 
     glClearColor(0.0f, 0.2f, 0.0f, 1.0f); // black
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderShader->use();
 
-    glUniform1i(glGetUniformLocation(renderShader->getID(), "finalTexture"), 0);
+    renderShader->setInt("finalTexture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, finalTexture);
 
@@ -230,5 +239,6 @@ Window::~Window()
     delete renderShader;
     delete renderQuad;
 
+    glfwDestroyWindow(window);
     glfwTerminate();
 }

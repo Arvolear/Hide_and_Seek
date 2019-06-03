@@ -6,17 +6,18 @@ INPUTDIR = ./code
 OUTPUTDIR = ./build
 
 MAIN = main.o 
-DEBUG = debugsphere.o
+DEBUG = debugsphere.o debugdrawer.o
 SHADER = shader.o 
 FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
+WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o
 GAME_OBJECT = gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(PLAYER) $(GAME_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
 ### ALL ###
 
@@ -32,6 +33,9 @@ $(OUTPUTDIR)/main.o: $(INPUTDIR)/main.cpp
 
 $(OUTPUTDIR)/debugsphere.o: $(INPUTDIR)/debug/debugsphere.cpp $(INPUTDIR)/debug/debugsphere.hpp
 	g++ -c $(INPUTDIR)/debug/debugsphere.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/debugdrawer.o: $(INPUTDIR)/debug/debugdrawer.cpp $(INPUTDIR)/debug/debugdrawer.hpp
+	g++ -c $(INPUTDIR)/debug/debugdrawer.cpp -o $@ $(FLAGS)
 
 ### SHADER ###
 
@@ -83,6 +87,20 @@ $(OUTPUTDIR)/skybox.o: $(INPUTDIR)/level/skybox.cpp $(INPUTDIR)/level/skybox.hpp
 
 $(OUTPUTDIR)/levelloader.o: $(INPUTDIR)/level/levelloader.cpp $(INPUTDIR)/level/levelloader.hpp
 	g++ -c $(INPUTDIR)/level/levelloader.cpp -o $@ $(FLAGS)
+
+### WORLD ###
+
+$(OUTPUTDIR)/world.o: $(INPUTDIR)/world/world.cpp $(INPUTDIR)/world/world.hpp
+	g++ -c $(INPUTDIR)/world/world.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/bulletevents.o: $(INPUTDIR)/world/bulletevents.cpp $(INPUTDIR)/world/bulletevents.hpp
+	g++ -c $(INPUTDIR)/world/bulletevents.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/constrainthandler.o: $(INPUTDIR)/world/constrainthandler.cpp $(INPUTDIR)/world/constrainthandler.hpp
+	g++ -c $(INPUTDIR)/world/constrainthandler.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/raytracer.o: $(INPUTDIR)/world/raytracer.cpp $(INPUTDIR)/world/raytracer.hpp
+	g++ -c $(INPUTDIR)/world/raytracer.cpp -o $@ $(FLAGS)
 
 ### PLAYER ###
 

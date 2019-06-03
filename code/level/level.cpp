@@ -10,7 +10,15 @@
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
 
+#include "../player/camera.hpp"
+
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
@@ -23,18 +31,17 @@
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
 
-#include "../player/camera.hpp"
-
 #include "dirlight.hpp"
 #include "skybox.hpp"
 #include "levelloader.hpp"
 #include "level.hpp"
 
-Level::Level(Window* window)
+Level::Level(Window* window, World* physicsWorld)
 {
     this->window = window;
+    this->physicsWorld = physicsWorld;
 
-    levelLoader = new LevelLoader(window);
+    levelLoader = new LevelLoader(window, physicsWorld);
 
     levelName = "";
 
@@ -49,7 +56,7 @@ Level::Level(Window* window)
     camera = nullptr;
 
     /* AAAA CHANGE */
-    projection = mat4(perspective(45.0f, 1.77778f, 0.1f, 100.0f));
+    projection = mat4(perspective(45.0f, 1.77778f, 0.1f, 500.0f));
 }
 
 void Level::loadLevel(string level)
@@ -80,22 +87,22 @@ void Level::render()
 
     mat4 view = camera->getView();
 
+    /************************************
+     * DIR SHADOWS
+     * */ 
+
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        /************************************
-         * DIR SHADOWS
-         * */ 
-
-        dirLights[i]->updateView(camera->getPosition());
-
         /*** depth buffer ***/
         dirLights[i]->getShadowBuffer()->use();
         dirLights[i]->getShadowBuffer()->clear();
 
+        dirLights[i]->updateView(camera->getPosition());
+
         dirShadowShader->use();
 
-        glUniformMatrix4fv(glGetUniformLocation(dirShadowShader->getID(), "view"), 1, GL_FALSE, value_ptr(dirLights[i]->getView()));
-        glUniformMatrix4fv(glGetUniformLocation(dirShadowShader->getID(), "projection"), 1, GL_FALSE, value_ptr(dirLights[i]->getProjection()));
+        dirShadowShader->setMat4("view", dirLights[i]->getView());
+        dirShadowShader->setMat4("projection", dirLights[i]->getProjection());
 
         for (auto& i : gameObjects)
         {
@@ -113,13 +120,13 @@ void Level::render()
 
     gameObjectShader->use();
 
-    glUniformMatrix4fv(glGetUniformLocation(gameObjectShader->getID(), "view"), 1, GL_FALSE, value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(gameObjectShader->getID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+    gameObjectShader->setMat4("view", view);
+    gameObjectShader->setMat4("projection", projection);
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        glUniformMatrix4fv(glGetUniformLocation(gameObjectShader->getID(), ("dirLightsMatrices[" + to_string(i) + "].shadowView").c_str()), 1, GL_FALSE, value_ptr(dirLights[i]->getView()));
-        glUniformMatrix4fv(glGetUniformLocation(gameObjectShader->getID(), ("dirLightsMatrices[" + to_string(i) + "].shadowProjection").c_str()), 1, GL_FALSE, value_ptr(dirLights[i]->getProjection()));
+        gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowView", dirLights[i]->getView());
+        gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowProjection", dirLights[i]->getProjection());
 
         dirLights[i]->render(gameObjectShader, i);
     }
@@ -134,8 +141,8 @@ void Level::render()
      * */
     skyBoxShader->use();
 
-    glUniformMatrix4fv(glGetUniformLocation(skyBoxShader->getID(), "view"), 1, GL_FALSE, value_ptr(mat4(mat3(view))));
-    glUniformMatrix4fv(glGetUniformLocation(skyBoxShader->getID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+    skyBoxShader->setMat4("view", mat4(mat3(view)));
+    skyBoxShader->setMat4("projection", projection);
 
     skyBox->render(skyBoxShader);
 } 

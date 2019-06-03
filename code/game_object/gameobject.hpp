@@ -1,7 +1,8 @@
 #pragma once
 
-#include <iostream>
+#include <string>
 #include <vector>
+#include <set>
 #include <algorithm>
 
 #include <bullet/btBulletCollisionCommon.h>
@@ -17,8 +18,9 @@ using namespace glm;
 class GameObject
 {
     protected:
-        static unsigned long int globalIndex;
-        int index;
+        /* all object names are stored here */
+        static set < string > globalNames;
+        string name;
 
         btDynamicsWorld* world;
         ModelLoader* modelLoader;
@@ -41,9 +43,10 @@ class GameObject
         mat4 getPhysicsObjectTransform() const;
 
     public:
-        GameObject();
-        GameObject(string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum);
+        GameObject(string name);
+        GameObject(string name, string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum);
 
+        void setName(string name);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
@@ -58,10 +61,11 @@ class GameObject
 
         PhysicsObject* getPhysicsObject() const;
         string getGraphicsObject() const;
-        unsigned long int getIndex() const;
+        string getName() const;
 
         virtual void render(Shader* shader, bool check = true);
-         
+        
+        /*** DEBUG ***/
         void createDebugSphere(int depth);
         void renderDebugSphere(mat4 &view, mat4 &projection, Shader* shader);
 

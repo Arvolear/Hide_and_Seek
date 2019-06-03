@@ -76,14 +76,14 @@ void DirLight::setProjection(mat4 projection)
 
 void DirLight::render(Shader* shader, GLuint index)
 {
-    glUniform3f(glGetUniformLocation(shader->getID(), ("dirLights[" + to_string(index) + "].direction").c_str()), direction.x, direction.y, direction.z);
-    glUniform3f(glGetUniformLocation(shader->getID(), ("dirLights[" + to_string(index) + "].ambient").c_str()), ambient.x, ambient.y, ambient.z);
-    glUniform3f(glGetUniformLocation(shader->getID(), ("dirLights[" + to_string(index) + "].diffuse").c_str()), diffuse.x, diffuse.y, diffuse.z);
-    glUniform3f(glGetUniformLocation(shader->getID(), ("dirLights[" + to_string(index) + "].specular").c_str()), specular.x, specular.y, specular.z);
+    shader->setVec3("dirLights[" + to_string(index) + "].direction", direction);
+    shader->setVec3("dirLights[" + to_string(index) + "].ambient", ambient);
+    shader->setVec3("dirLights[" + to_string(index) + "].diffuse", diffuse);
+    shader->setVec3("dirLights[" + to_string(index) + "].specular", specular);
     
-    glActiveTexture(GL_TEXTURE0 + index + 10);
+    glActiveTexture(GL_TEXTURE0 + index + 5);
     glBindTexture(GL_TEXTURE_2D, shadowBuffer->getTexture());
-    glUniform1i(glGetUniformLocation(shader->getID(), ("dirLights[" + to_string(index) + "].texture_shadow1").c_str()), index + 10);
+    shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", index + 5);
 }
         
 DepthBuffer* DirLight::getShadowBuffer() const

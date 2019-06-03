@@ -38,7 +38,7 @@ class DebugSphere
 
         void applyTransform(mat4 &transform);
 
-        void draw(Shader* shader) const;
+        void render(Shader* shader) const;
 
         ~DebugSphere();
 };

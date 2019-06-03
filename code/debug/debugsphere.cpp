@@ -198,11 +198,11 @@ void DebugSphere::applyTransform(mat4 &transform)
     this->transform = transform;
 }
 
-void DebugSphere::draw(Shader* shader) const
+void DebugSphere::render(Shader* shader) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "transform"), 1, GL_FALSE, value_ptr(transform));
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "view"), 1, GL_FALSE, value_ptr(mat4(1.0)));
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "projection"), 1, GL_FALSE, value_ptr(mat4(1.0)));
+    shader->setMat4("transform", transform);
+    shader->setMat4("view", mat4(1.0));
+    shader->setMat4("projection", mat4(1.0));
 
     glBindVertexArray(VAO); //bind VAO
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());

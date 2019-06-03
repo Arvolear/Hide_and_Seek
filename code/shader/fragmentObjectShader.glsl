@@ -133,7 +133,10 @@ void main()
 
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
     {
-        result += calcDirLight(dirLights[i], norm, viewDir, dirShadowCoords[i]);
+        if (dirShadowCoords[i] != vec4(0, 0, 0, 0))
+        {
+            result += calcDirLight(dirLights[i], norm, viewDir, dirShadowCoords[i]);
+        }
     }
 
     /*for (int i = 0; i < MAX_POINT_LIGHTS; i++)

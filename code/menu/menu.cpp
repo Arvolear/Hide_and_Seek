@@ -13,6 +13,12 @@
 #include "../player/camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"

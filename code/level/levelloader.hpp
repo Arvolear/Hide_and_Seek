@@ -15,9 +15,11 @@ class LevelLoader
 {
     private:
         Window* window;
+        World* physicsWorld;
+
         string levelName;
 
-        map < unsigned long int, GameObject* > gameObjects;
+        map < string, GameObject* > gameObjects;
         vector < DirLight* > dirLights;
 
         SkyBox* skyBox;
@@ -32,11 +34,11 @@ class LevelLoader
         void loadPlayer();
 
     public:
-        LevelLoader(Window* window);
+        LevelLoader(Window* window, World* physicsWorld);
 
         void loadLevel(string name);
 
-        void getGameObjectsData(map < unsigned long int, GameObject* > &gameObjects) const;
+        void getGameObjectsData(map < string, GameObject* > &gameObjects) const;
         void getDirLightData(vector < DirLight* > &dirLights) const;
         void getSkyBoxData(SkyBox*& skyBox) const;
         

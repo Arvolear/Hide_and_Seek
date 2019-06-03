@@ -23,11 +23,10 @@ class RenderQuad
             1.0f,  1.0f, 0.0f
         };
 
+        GLuint VAO;
         GLuint VBO;
 
     public:
-        GLuint VAO;
-
         RenderQuad();
         
         void init();

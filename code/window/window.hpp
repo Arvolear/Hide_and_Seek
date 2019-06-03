@@ -67,6 +67,8 @@ class Window : public GLFWEvents
         bool isMouseMoved() const;
         vec2 getMousePosition() const;
 
+        float getTime() const;
+
         /**********/
 
         void pollEvents();

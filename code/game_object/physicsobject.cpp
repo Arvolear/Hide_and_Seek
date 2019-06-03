@@ -1,67 +1,64 @@
 #include "openglmotionstate.hpp"
 #include "physicsobject.hpp"
 
-using namespace std;
-
 PhysicsObject::PhysicsObject(btCollisionShape *shape, float mass, const btVector3 &initialPosition, const btQuaternion &initialRotation)
 {
-    m_Shape = shape;
+    this->shape = shape;
 
     btTransform transform;
     transform.setIdentity();
     transform.setOrigin(initialPosition);
     transform.setRotation(initialRotation);
 
-    m_MotionState = new OpenGLMotionState(transform);
+    motionState = new OpenGLMotionState(transform);
 
     btVector3 localInertia(0, 0, 0);
 
     if (mass)
     {
-        m_Shape->calculateLocalInertia(mass, localInertia);
+        shape->calculateLocalInertia(mass, localInertia);
     }
 
-    btRigidBody::btRigidBodyConstructionInfo cInfo(mass, m_MotionState, m_Shape, localInertia);
+    btRigidBody::btRigidBodyConstructionInfo cInfo(mass, motionState, shape, localInertia);
 
-    m_Body = new btRigidBody(cInfo);
+    body = new btRigidBody(cInfo);
 }
 
 PhysicsObject::PhysicsObject(vector < PhysicsObjectCompound* > &compoundInfo, float mass, const btVector3 &initialPosition, const btQuaternion &initialRotation, bool clearVector)
 {
-    m_Compound = new btCompoundShape();
+    compound = new btCompoundShape();
 
     for (size_t i = 0; i < compoundInfo.size(); i++)
     {
-        m_Shapes.push_back(compoundInfo[i]->bodyShape);
-
+        shapes.push_back(compoundInfo[i]->bodyShape);
 
         btTransform localTransform;
 
         localTransform.setIdentity();
         localTransform.setOrigin(compoundInfo[i]->position);
         localTransform.setRotation(compoundInfo[i]->rotation);
-        m_Compound->addChildShape(localTransform, compoundInfo[i]->bodyShape);
+        compound->addChildShape(localTransform, compoundInfo[i]->bodyShape);
     }
 
-    m_Shape = m_Compound;
+    shape = compound;
     
     btTransform transform;
     transform.setIdentity();
     transform.setOrigin(initialPosition);
     transform.setRotation(initialRotation);
 
-    m_MotionState = new OpenGLMotionState(transform);
+    motionState = new OpenGLMotionState(transform);
 
     btVector3 localInertia(0, 0, 0);
 
     if (mass)
     {
-        m_Shape->calculateLocalInertia(mass, localInertia);
+        shape->calculateLocalInertia(mass, localInertia);
     }
 
-    btRigidBody::btRigidBodyConstructionInfo cInfo(mass, m_MotionState, m_Compound, localInertia);
+    btRigidBody::btRigidBodyConstructionInfo cInfo(mass, motionState, compound, localInertia);
 
-    m_Body = new btRigidBody(cInfo);
+    body = new btRigidBody(cInfo);
 
     if (clearVector)
     {
@@ -74,47 +71,32 @@ PhysicsObject::PhysicsObject(vector < PhysicsObjectCompound* > &compoundInfo, fl
     }
 }
 
-void PhysicsObject::setIndex(int index)
-{
-    this->index = index;
-}
-
-void PhysicsObject::removeIndex()
-{
-    index = -1;
-}
-
 btRigidBody* PhysicsObject::getRigidBody() const
 {
-    return m_Body;
+    return body;
 }
 
 btMotionState* PhysicsObject::getMotionState() const
 {
-    return m_MotionState;
+    return motionState;
 }
 
 void PhysicsObject::getTransform(btScalar* transform) const
 {
-    m_MotionState->getTransform(transform);
-}
-
-unsigned long int PhysicsObject::getIndex() const
-{
-    return index;
+    motionState->getTransform(transform);
 }
 
 PhysicsObject::~PhysicsObject()
 {
-    delete m_Shape;
-    //delete m_Compound;
+    delete shape;
+    //delete compound;
 
-    for (size_t i = 0; i < m_Shapes.size(); i++)
+    for (size_t i = 0; i < shapes.size(); i++)
     {
-        delete m_Shapes[i];
+        delete shapes[i];
     }
 
-    delete m_Body;
+    delete body;
 
-    delete m_MotionState;
+    delete motionState;
 }

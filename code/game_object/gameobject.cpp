@@ -15,11 +15,17 @@
 #include "physicsobject.hpp"
 #include "gameobject.hpp"
 
-unsigned long int GameObject::globalIndex = 0;
+set < string > GameObject::globalNames;
 
-GameObject::GameObject()
+GameObject::GameObject(string name)
 {
-    index = globalIndex++;
+    if (globalNames.find(name) != globalNames.end())
+    {
+        throw runtime_error("ERROR::GameObject invalid name");
+    }
+
+    globalNames.insert(name);
+    this->name = name;
 
     world = nullptr;
     modelLoader = new ModelLoader();
@@ -31,9 +37,15 @@ GameObject::GameObject()
     debugSphere = nullptr;
 }
 
-GameObject::GameObject(string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum)
+GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum)
 {
-    index = globalIndex++;
+    if (globalNames.find(name) != globalNames.end())
+    {
+        throw runtime_error("ERROR::GameObject invalid name");
+    }
+
+    globalNames.insert(name);
+    this->name = name;
 
     this->world = world;
     this->physicsObject = physicsObject;
@@ -45,7 +57,6 @@ GameObject::GameObject(string path, PhysicsObject* physicsObject, btDynamicsWorl
     
     modelLoader->getModelData(skeleton, meshes);
 
-    physicsObject->setIndex(index);
     world->addRigidBody(physicsObject->getRigidBody()); 
     
     boundSphere = new BoundSphere(meshes);
@@ -100,6 +111,18 @@ mat4 GameObject::getPhysicsObjectTransform() const
     return btScalar2glmMat4(transform);
 }
 
+void GameObject::setName(string name)
+{
+    if (globalNames.find(name) != globalNames.end())
+    {
+        throw runtime_error("ERROR::GameObject invalid name");
+    }
+
+    globalNames.erase(this->name);
+    globalNames.insert(name);
+    this->name = name;
+}
+
 void GameObject::setGraphicsObject(string path)
 {
     removeGraphicsObject();
@@ -119,12 +142,12 @@ void GameObject::setViewFrustum(ViewFrustum* viewFrustum)
 
 void GameObject::setWorld(btDynamicsWorld* world)
 {
-    this->world = world;
-
-    if (physicsObject)
+    if (!(this->world) && physicsObject)
     {
         world->addRigidBody(physicsObject->getRigidBody()); 
     }
+
+    this->world = world;
 }
 
 void GameObject::setPhysicsObject(PhysicsObject* object)
@@ -132,7 +155,6 @@ void GameObject::setPhysicsObject(PhysicsObject* object)
     removePhysicsObject();
 
     physicsObject = object;
-    physicsObject->setIndex(index);
 
     if (world)
     {
@@ -208,9 +230,9 @@ string GameObject::getGraphicsObject() const
     return graphicsObject;
 }
 
-unsigned long int GameObject::getIndex() const
+string GameObject::getName() const
 {
-    return index;
+    return name;
 }
 
 void GameObject::render(Shader* shader, bool check)
@@ -227,9 +249,8 @@ void GameObject::render(Shader* shader, bool check)
         }
     }
 
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "localTransform"), 1, GL_FALSE, value_ptr(localTransform));
-    
-    glUniformMatrix4fv(glGetUniformLocation(shader->getID(), "model"), 1, GL_FALSE, value_ptr(getPhysicsObjectTransform()));
+    shader->setMat4("localTransform", localTransform);
+    shader->setMat4("model", getPhysicsObjectTransform());
 
     if (skeleton)
     {
@@ -242,7 +263,7 @@ void GameObject::render(Shader* shader, bool check)
     }
 }
 
-/************************/
+/********* DEBUG **********/
 
 void GameObject::createDebugSphere(int depth)
 {
@@ -261,14 +282,16 @@ void GameObject::renderDebugSphere(mat4 &view, mat4 &projection, Shader *shader)
         mat4 transform = viewFrustum->getProjection() * viewFrustum->getView() * getPhysicsObjectTransform() * localTransform;
         debugSphere->applyTransform(transform);
 
-        debugSphere->draw(shader);
+        debugSphere->render(shader);
     }
 }
 
-/************************/
+/********* DEBUG **********/
 
 GameObject::~GameObject()
 {
+    globalNames.erase(name);
+
     removeGraphicsObject();
     removePhysicsObject();
     

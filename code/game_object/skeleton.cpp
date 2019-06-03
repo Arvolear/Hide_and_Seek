@@ -57,7 +57,7 @@ void Skeleton::renderBonesMatrices(Shader* shader)
 {
     if (!bones.empty()) 
     {
-        glUniform1i(glGetUniformLocation(shader->getID(), "meshWithBones"), 1); 
+        shader->setInt("meshWithBones", 1); 
 
         bonesMatrices.clear(); 
 
@@ -80,12 +80,12 @@ void Skeleton::renderBonesMatrices(Shader* shader)
                 index = it->second->getId();
             }
 
-            glUniformMatrix4fv(glGetUniformLocation(shader->getID(), ("bones[" + to_string(index) + "]").c_str()), 1, GL_FALSE, value_ptr(bonesMatrices[i])); 
+            shader->setMat4("bones[" + to_string(index) + "]", bonesMatrices[i]); 
         }
     }
     else 
     {
-        glUniform1i(glGetUniformLocation(shader->getID(), "meshWithBones"), 0); 
+        shader->setInt("meshWithBones", 0); 
     }
 }
 
