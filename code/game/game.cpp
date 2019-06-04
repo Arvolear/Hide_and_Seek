@@ -74,22 +74,39 @@ void Game::checkEvents()
             mode = PLAY;
         }
     }
+    
+    if (window->isKeyPressedOnce(GLFW_KEY_C))
+    {
+        if (physicsWorld->getDebugDrawer()->getDebugMode() == 0)
+        {
+            physicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+        }
+        else if (physicsWorld->getDebugDrawer()->getDebugMode() == btIDebugDraw::DBG_DrawWireframe)
+        {
+            physicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawAabb);
+        }
+        else
+        {
+            physicsWorld->getDebugDrawer()->setDebugMode(0);
+        }
+    }
 
     /* PHYSICS EVENTS */
 }
 
 void Game::gameLoop()
 {
-    int counter = 0;
+    physicsWorld->createDebugDrawer();
+
     while (window->isOpen())
     {
         window->pollEvents();
         physicsWorld->pollEvents();
         checkEvents();         
-        
+
         /*gameBuffer->use();
-        gameBuffer->clear();*/
-    
+          gameBuffer->clear();*/
+
         if (window->getTime() > 1)
         {
             physicsWorld->updateSimulation(window->getTime());
@@ -98,11 +115,6 @@ void Game::gameLoop()
         if (mode == PLAY)
         {
             camera->update();
-        }
-
-        if (window->isKeyPressed(GLFW_KEY_K))
-        {
-            cout << "K " << counter++ << endl;
         }
 
         level->render();
@@ -117,7 +129,7 @@ Game::~Game()
 
     delete level;
     delete camera;
-    
+
     delete physicsWorld;
     // ...
 }

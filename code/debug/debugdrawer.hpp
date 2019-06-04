@@ -19,7 +19,6 @@ class DebugDrawer : public btIDebugDraw
         GLuint VAO, VBO;
 
         int debugMode;
-        mat4 view, projection;
         
         void init();
 
@@ -36,7 +35,7 @@ class DebugDrawer : public btIDebugDraw
         void reportErrorWarning(const char *warningString) override;
         void draw3dText(const btVector3 &location, const char* textString) override;
 
-        void applyViewProjection(Shader* shader, mat4 &view, mat4 &projection);
+        void applyViewProjection(Shader* shader, mat4 view, mat4 projection);
 
         ~DebugDrawer();
 };

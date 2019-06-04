@@ -51,6 +51,8 @@ Level::Level(Window* window, World* physicsWorld)
     dirShadowShader = new Shader();
     skyBoxShader = new Shader();
 
+    debugShader = new Shader();
+
     skyBox = nullptr;
 
     camera = nullptr;
@@ -69,6 +71,7 @@ void Level::loadLevel(string level)
     dirShadowShader->loadShaders(path("code/shader/vertexDirShadowShader.glsl"), path("code/shader/fragmentDirShadowShader.glsl"));
     skyBoxShader->loadShaders(path("code/shader/vertexSkyBoxShader.glsl"), path("code/shader/fragmentSkyBoxShader.glsl"));
     
+    debugShader->loadShaders(path("code/shader/vertexDebugShader.glsl"), path("code/shader/fragmentDebugShader.glsl"));
 
     levelLoader->loadLevel(path("levels/test1"));
 
@@ -145,6 +148,14 @@ void Level::render()
     skyBoxShader->setMat4("projection", projection);
 
     skyBox->render(skyBoxShader);
+    
+    /************************************
+     * DEBUG
+     * */
+    debugShader->use();
+    physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, camera->getView(), projection);
+
+    physicsWorld->renderDebug();
 } 
 
 GLuint Level::getRenderTexture() const
@@ -166,6 +177,8 @@ Level::~Level()
     delete gameObjectShader;
     delete dirShadowShader;
     delete skyBoxShader;
+
+    delete debugShader;
 
     for (auto& i : gameObjects)
     {

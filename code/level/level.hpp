@@ -29,6 +29,8 @@ class Level
         Shader* gameObjectShader;
         Shader* dirShadowShader;
         Shader* skyBoxShader;
+        
+        Shader* debugShader;
 
         /* all objects in the level */
         map < string, GameObject* > gameObjects;

@@ -49,16 +49,27 @@ void LevelLoader::loadObjects()
     /* TODO PARSE XML */
     GameObject* GO0 = new GameObject("floor"); //floor
     GO0->setGraphicsObject(levelName + "/static_models/Floor/floor.obj");
-    GO0->setWorld(physicsWorld->getWorld());
-    GO0->setPhysicsObject(new PhysicsObject(new btCylinderShape(btVector3(76, 0.93, 76)), 0, btVector3(0.0f, 0.0f, 0.0f), btQuaternion(btVector3(0, 0, 1), 0)));
+    GO0->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld(), new btCylinderShape(btVector3(76, 0.93, 76)), 0, btVector3(0.0f, 0.0f, 0.0f)));
     GO0->createDebugSphere(3);
     
     gameObjects.insert({GO0->getName(), GO0});
 
     GO0 = new GameObject("box");
     GO0->setGraphicsObject(levelName + "/static_models/Box/box.obj");
-    GO0->setWorld(physicsWorld->getWorld());
-    GO0->setPhysicsObject(new PhysicsObject(new btBoxShape(btVector3(1.46, 1.46, 1.46)), 100.0, btVector3(-0.8f, 30.0f, 0.0f), btQuaternion(btVector3(0, 0, 1), 0)));
+    GO0->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
+
+    CompoundShape* CS = new CompoundShape;
+
+    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(0, 0.7, 0));
+    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(0.3, -0.7, 0));
+    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(-0.7, -0.3, 0));
+    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(0.7, 0.7, 0));
+
+    GO0->getPhysicsObject()->setShape(CS);
+    GO0->getPhysicsObject()->setShape(new btBoxShape(btVector3(1.46, 1.46, 1.46)));
+    GO0->getPhysicsObject()->setPosition(btVector3(-0.8f, 30.0f, 0.0f));
+    GO0->getPhysicsObject()->setMass(100);
+    GO0->getPhysicsObject()->setRotation(btQuaternion(btVector3(0, 0, 1), toRads(60)));
 
     /* game object constructor verifies the name uniqueness */
     gameObjects.insert({GO0->getName(), GO0});

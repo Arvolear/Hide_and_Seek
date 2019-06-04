@@ -9,7 +9,7 @@
 
 #include "camera.hpp"
 
-Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, double speed)
+Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
 {
     this->window = window;
 
@@ -37,8 +37,8 @@ void Camera::lookAction()
         
     vec2 pos = window->getMousePosition();
 
-    double xoffset = pos.x - prevCoords.x; 
-    double yoffset = pos.y - prevCoords.y;
+    float xoffset = pos.x - prevCoords.x; 
+    float yoffset = pos.y - prevCoords.y;
 
     xoffset *= sensitivity.x;
     yoffset *= sensitivity.y;
@@ -95,9 +95,19 @@ void Camera::resetPrevCoords()
     prevCoords = window->getMousePosition();
 }
 
-void Camera::resetPosition(double worldX, double worldY, double worldZ)
+void Camera::setPosition(float worldX, float worldY, float worldZ)
 {
     Pos = vec3(worldX, worldY, worldZ);
+}
+        
+void Camera::setUp(vec3 Up)
+{
+    this->Up = Up;
+}
+        
+void Camera::setSpeed(float speed)
+{
+    this->speed = speed;
 }
 
 vec2 Camera::getWindowSize() const

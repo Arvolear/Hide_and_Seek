@@ -17,7 +17,7 @@ class Camera
         vec2 prevCoords;
         vec2 sensitivity;
 
-        double speed;
+        float speed;
 
         vec3 Pos;
 
@@ -30,10 +30,12 @@ class Camera
         virtual void moveAction();
 
     public:
-        Camera(Window* window, vec3 cameraPos, vec3 cameraForward, double speed = 5);
+        Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed = 1);
 
         void resetPrevCoords();
-        void resetPosition(double worldX, double worldY, double worldZ);
+        void setPosition(float worldX, float worldY, float worldZ);
+        void setUp(vec3 Up);
+        void setSpeed(float speed);
 
         vec2 getWindowSize() const;
         virtual vec3 getPosition() const;

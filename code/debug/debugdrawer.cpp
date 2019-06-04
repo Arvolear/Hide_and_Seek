@@ -80,7 +80,7 @@ void DebugDrawer::reportErrorWarning(const char *warningString){}
 
 void DebugDrawer::draw3dText(const btVector3 &location, const char* textString){}
 
-void DebugDrawer::applyViewProjection(Shader* shader, mat4 &view, mat4 &projection)
+void DebugDrawer::applyViewProjection(Shader* shader, mat4 view, mat4 projection)
 {
     shader->setMat4("transform", mat4(1.0));
     shader->setMat4("view", view);

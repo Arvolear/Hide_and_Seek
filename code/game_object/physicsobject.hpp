@@ -1,38 +1,63 @@
 #pragma once
 
 //native
+#include <iostream>
 #include <vector>
 
 //bullet
+#include <bullet/btBulletCollisionCommon.h>
 #include <bullet/btBulletDynamicsCommon.h>
 
 using namespace std;
 
-struct PhysicsObjectCompound
+class CompoundShape
 {
-    btCollisionShape* bodyShape = NULL;
-    btVector3 position = btVector3(0.0f, 0.0f, 0.0f);
-    btQuaternion rotation = btQuaternion(btVector3(0, 0, 0), 0);
+    private:
+        btCompoundShape* shape;
+        vector < btCollisionShape* > childShapes;
+    
+    public:
+        CompoundShape();
+
+        void setShape(btCompoundShape* shape);
+
+        void add(btCollisionShape* childShape, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+
+        btCollisionShape* getShape() const;
+
+        ~CompoundShape();
 };
 
 class PhysicsObject
 {
     private:
-        btCollisionShape* shape = nullptr;
-        vector < btCollisionShape* > shapes; 
-        btCompoundShape* compound = nullptr;
+        btDynamicsWorld* world;
 
-        btRigidBody* body = nullptr;
+        float mass;
+        btCollisionShape* phShape;
+        CompoundShape* comShape;
+        btRigidBody* body;
 
-        OpenGLMotionState* motionState = nullptr;
+        OpenGLMotionState* motionState;
+
+        void updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation);
 
     public:
-        PhysicsObject(btCollisionShape *Shape, float mass, const btVector3 &initialPosition = btVector3(0, 0, 0), const btQuaternion &initialRotation = btQuaternion(btVector3(0, 0, 0), 0));
-        PhysicsObject(vector < PhysicsObjectCompound* > &compoundInfo, float mass, const btVector3 &initialPosition = btVector3(0, 0, 0), const btQuaternion &initialRotation = btQuaternion(btVector3(0, 0, 0), 0), bool clearVector = true);
+        PhysicsObject(btDynamicsWorld* world);
+        PhysicsObject(btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+        PhysicsObject(btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation);
 
+        void setShape(btCollisionShape* shape);
+        void setShape(CompoundShape* shape);
+        void setMass(float mass);
+        void setPosition(btVector3 position);
+        void setRotation(btQuaternion rotation);
+
+        float getMass() const;
+        btCollisionShape* getShape() const;
         btRigidBody* getRigidBody() const;
-        btMotionState* getMotionState() const;
-        void getTransform(btScalar* transform) const;
+
+        btScalar* getTransform() const;
 
         ~PhysicsObject();
 };

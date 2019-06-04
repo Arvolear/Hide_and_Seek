@@ -22,7 +22,6 @@ class GameObject
         static set < string > globalNames;
         string name;
 
-        btDynamicsWorld* world;
         ModelLoader* modelLoader;
 
         string graphicsObject;
@@ -44,13 +43,12 @@ class GameObject
 
     public:
         GameObject(string name);
-        GameObject(string name, string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum);
+        GameObject(string name, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum);
 
         void setName(string name);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
-        void setWorld(btDynamicsWorld* world);
         
         void setLocalRotation(float angle, vec3 axis);
         void setLocalScale(vec3 growth);

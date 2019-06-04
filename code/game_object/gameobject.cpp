@@ -27,7 +27,6 @@ GameObject::GameObject(string name)
     globalNames.insert(name);
     this->name = name;
 
-    world = nullptr;
     modelLoader = new ModelLoader();
     physicsObject = nullptr;
 
@@ -37,7 +36,7 @@ GameObject::GameObject(string name)
     debugSphere = nullptr;
 }
 
-GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, btDynamicsWorld* world, ViewFrustum* viewFrustum)
+GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum)
 {
     if (globalNames.find(name) != globalNames.end())
     {
@@ -47,7 +46,6 @@ GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, b
     globalNames.insert(name);
     this->name = name;
 
-    this->world = world;
     this->physicsObject = physicsObject;
     this->viewFrustum = viewFrustum;
     this->graphicsObject = path;
@@ -57,8 +55,6 @@ GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, b
     
     modelLoader->getModelData(skeleton, meshes);
 
-    world->addRigidBody(physicsObject->getRigidBody()); 
-    
     boundSphere = new BoundSphere(meshes);
     boundSphere->construct();
 
@@ -69,11 +65,6 @@ void GameObject::removePhysicsObject()
 {
     if (physicsObject)
     {
-        if (world)
-        {
-            world->removeRigidBody(physicsObject->getRigidBody());
-        }
-
         delete physicsObject;
         physicsObject = nullptr;
     }
@@ -104,11 +95,14 @@ mat4 GameObject::getPhysicsObjectTransform() const
         return mat4(1.0);
     }
 
-    btScalar transform[16];
+    /* 16 elements */
+    btScalar* transform;
+    transform = physicsObject->getTransform();
 
-    physicsObject->getTransform(transform);
+    mat4 ret = btScalar2glmMat4(transform);
+    delete transform;
 
-    return btScalar2glmMat4(transform);
+    return ret;
 }
 
 void GameObject::setName(string name)
@@ -140,26 +134,11 @@ void GameObject::setViewFrustum(ViewFrustum* viewFrustum)
     this->viewFrustum = viewFrustum;
 }
 
-void GameObject::setWorld(btDynamicsWorld* world)
-{
-    if (!(this->world) && physicsObject)
-    {
-        world->addRigidBody(physicsObject->getRigidBody()); 
-    }
-
-    this->world = world;
-}
-
 void GameObject::setPhysicsObject(PhysicsObject* object)
 {
     removePhysicsObject();
 
     physicsObject = object;
-
-    if (world)
-    {
-        world->addRigidBody(physicsObject->getRigidBody());
-    }
 }
 
 void GameObject::setLocalRotation(float angle, vec3 axis)
