@@ -25,8 +25,7 @@ class Game
         Level* level;
         string levelName;
 
-        //Player* player
-        Camera* camera;
+        Player* player;
 
         void checkEvents();
 

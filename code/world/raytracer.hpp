@@ -31,7 +31,7 @@ class RayTracer
         void setProjection(mat4 &projection);
 
         btVector3 getPickingRay(double posx, double posy) const;
-        RayResult* rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool checkStatic = true) const;
+        RayResult* rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool missStatic = true) const;
 
         ~RayTracer();
 };

@@ -21,7 +21,7 @@ RayTracer::RayTracer(btDynamicsWorld* world)
 RayTracer::RayTracer(btDynamicsWorld* world, Camera* camera, mat4 &projection)
 {
     this->world = world; // pointer to our physics world
-    this->camera = camera;;
+    this->camera = camera;
     this->projection = projection;
 }
 
@@ -60,7 +60,7 @@ btVector3 RayTracer::getPickingRay(double posx, double posy) const
     return btVector3(ray.x, ray.y, ray.z);
 }
         
-RayResult* RayTracer::rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool checkStatic) const
+RayResult* RayTracer::rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool missStatic) const
 {
     if (!world)
     {
@@ -84,7 +84,7 @@ RayResult* RayTracer::rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool checkSt
             return nullptr;
         }
 
-        if ((body->isStaticObject() || body->isKinematicObject()) && checkStatic)
+        if ((body->isStaticObject() || body->isKinematicObject()) && missStatic)
         {
             return nullptr;
         }
@@ -99,4 +99,4 @@ RayResult* RayTracer::rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool checkSt
     return nullptr;
 }
         
-RayTracer::~RayTracer(){}
+RayTracer::~RayTracer() {}

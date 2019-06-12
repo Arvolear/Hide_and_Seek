@@ -31,6 +31,8 @@
 #include "game_object/physicsobject.hpp"
 #include "game_object/gameobject.hpp"
 
+#include "player/player.hpp"
+
 #include "level/dirlight.hpp"
 #include "level/skybox.hpp"
 #include "level/levelloader.hpp"
@@ -42,7 +44,7 @@
 
 int main()
 {
-    Menu *M = new Menu();
+    Menu* M = new Menu();
 
     M->menuLoop();
 

@@ -31,6 +31,8 @@
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
 
+#include "../player/player.hpp"
+
 #include "dirlight.hpp"
 #include "skybox.hpp"
 #include "levelloader.hpp"
@@ -55,10 +57,9 @@ Level::Level(Window* window, World* physicsWorld)
 
     skyBox = nullptr;
 
-    camera = nullptr;
+    player = nullptr;
 
-    /* AAAA CHANGE */
-    projection = mat4(perspective(45.0f, 1.77778f, 0.1f, 500.0f));
+    projection = mat4(1.0);
 }
 
 void Level::loadLevel(string level)
@@ -75,11 +76,12 @@ void Level::loadLevel(string level)
 
     levelLoader->loadLevel(path("levels/test1"));
 
-    /*** GET LOADED DATA **/
+    /*** GET LOADED DATA ***/
     levelLoader->getDirLightData(dirLights);
     levelLoader->getSkyBoxData(skyBox);
-    levelLoader->getPlayerData(camera);
+    levelLoader->getPlayerData(player);
     levelLoader->getGameObjectsData(gameObjects);
+    levelLoader->getProjectionData(projection);
 }
 
 void Level::render()
@@ -88,7 +90,7 @@ void Level::render()
     /*********** GAME RENDER ***********/
     /***********************************/
 
-    mat4 view = camera->getView();
+    mat4 view = player->getView();
 
     /************************************
      * DIR SHADOWS
@@ -100,7 +102,7 @@ void Level::render()
         dirLights[i]->getShadowBuffer()->use();
         dirLights[i]->getShadowBuffer()->clear();
 
-        dirLights[i]->updateView(camera->getPosition());
+        dirLights[i]->updateView(player->getPosition());
 
         dirShadowShader->use();
 
@@ -153,7 +155,7 @@ void Level::render()
      * DEBUG
      * */
     debugShader->use();
-    physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, camera->getView(), projection);
+    physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, view, projection);
 
     physicsWorld->renderDebug();
 } 
@@ -163,9 +165,9 @@ GLuint Level::getRenderTexture() const
     return levelColorBuffer->getTexture();
 }
 
-Camera* Level::getPlayer() const
+Player* Level::getPlayer() const
 {
-    return camera;
+    return player;
 }
 
 Level::~Level()

@@ -38,7 +38,7 @@ class Level
 
         SkyBox* skyBox;
 
-        Camera* camera;
+        Player* player;
         mat4 projection;
 
     public:
@@ -56,7 +56,7 @@ class Level
         /* TODO */
 
         GLuint getRenderTexture() const;
-        Camera* getPlayer() const;
+        Player* getPlayer() const;
 
         ~Level();
 };

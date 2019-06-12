@@ -23,7 +23,7 @@ void CompoundShape::add(btCollisionShape* childShape, btVector3 position, btQuat
     childShapes.push_back(childShape);
 }
         
-btCollisionShape* CompoundShape::getShape() const
+btCompoundShape* CompoundShape::getShape() const
 {
     return shape;
 }
@@ -160,6 +160,11 @@ btRigidBody* PhysicsObject::getRigidBody() const
 btCollisionShape* PhysicsObject::getShape() const
 {
     return phShape;
+}
+        
+CompoundShape* PhysicsObject::getCompoundShape() const
+{
+    return comShape;
 }
 
 btScalar* PhysicsObject::getTransform() const

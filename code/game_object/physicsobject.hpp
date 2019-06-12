@@ -23,7 +23,7 @@ class CompoundShape
 
         void add(btCollisionShape* childShape, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
 
-        btCollisionShape* getShape() const;
+        btCompoundShape* getShape() const;
 
         ~CompoundShape();
 };
@@ -55,6 +55,7 @@ class PhysicsObject
 
         float getMass() const;
         btCollisionShape* getShape() const;
+        CompoundShape* getCompoundShape() const;
         btRigidBody* getRigidBody() const;
 
         btScalar* getTransform() const;

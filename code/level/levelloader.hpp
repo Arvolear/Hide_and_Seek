@@ -24,12 +24,15 @@ class LevelLoader
 
         SkyBox* skyBox;
 
-        /* TO BE CHANGED INTO THE PLAYER */
-        Camera* camera;
+        mat4 projection;
+        
+        Player* player;
 
         void loadObjects();
         void loadDirLight();
         void loadSkyBox();
+
+        void loadProjection();
 
         void loadPlayer();
 
@@ -44,7 +47,8 @@ class LevelLoader
         
 
         /*******/
-        void getPlayerData(Camera*& player) const;
+        void getProjectionData(mat4 &projection) const;
+        void getPlayerData(Player*& player) const;
 
         ~LevelLoader();
 };

@@ -31,6 +31,8 @@
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
 
+#include "../player/player.hpp"
+
 #include "../level/dirlight.hpp"
 #include "../level/skybox.hpp"
 #include "../level/levelloader.hpp"
@@ -54,8 +56,7 @@ Game::Game(Window* window, string levelName)
     level = new Level(window, physicsWorld);
     level->loadLevel(levelName);
 
-    /* TAKE THIS DATA FROM THE LEVEL */
-    camera = level->getPlayer();
+    player = level->getPlayer();
     // ...
 }
 
@@ -114,7 +115,7 @@ void Game::gameLoop()
 
         if (mode == PLAY)
         {
-            camera->update();
+            player->update();
         }
 
         level->render();
@@ -128,7 +129,7 @@ Game::~Game()
     delete gameBuffer;
 
     delete level;
-    delete camera;
+    delete player;
 
     delete physicsWorld;
     // ...

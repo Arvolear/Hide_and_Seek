@@ -18,7 +18,7 @@ Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
 
     Pos = cameraPos;
     moveDirection = vec3(0, 0, 0);
-    Forward = cameraForward;
+    Forward = normalize(cameraForward);
     Up = vec3(0, 1, 0);
 
     Left = normalize(cross(Up, Forward));
@@ -102,7 +102,7 @@ void Camera::setPosition(float worldX, float worldY, float worldZ)
         
 void Camera::setUp(vec3 Up)
 {
-    this->Up = Up;
+    this->Up = normalize(Up);
 }
         
 void Camera::setSpeed(float speed)
