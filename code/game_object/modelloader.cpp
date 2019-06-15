@@ -16,7 +16,7 @@ ModelLoader::ModelLoader(){}
 
 void ModelLoader::loadModel(string path)
 {
-    scene = import.ReadFile(path, aiProcess_Triangulate); 
+    scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace); 
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
     {
@@ -166,6 +166,12 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
         helpVec3.z = mesh->mNormals[i].z;
 
         vertex.normal = helpVec3; 
+        
+        helpVec3.x = mesh->mTangents[i].x; 
+        helpVec3.y = mesh->mTangents[i].y;
+        helpVec3.z = mesh->mTangents[i].z;
+
+        vertex.tangent = helpVec3; 
 
         if (mesh->mTextureCoords[0]) 
         {
@@ -230,6 +236,9 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
     vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+    
+    vector < Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
+    textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
     return new Mesh(vertices, indices, textures);
 }

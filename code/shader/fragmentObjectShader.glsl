@@ -6,6 +6,7 @@ struct Material
     
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
+    sampler2D texture_normal1;
 };
 
 struct DirLight
@@ -35,6 +36,7 @@ struct PointLight
 in vec3 fragmentPos;
 in vec3 fragmentNorm;
 in vec2 textureCoords;
+in mat3 TBN;
 
 uniform Material material;
 
@@ -62,13 +64,13 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
 
     /* bias */
     vec2 texelSize = 1.0 / textureSize(light.texture_shadow1, 0);        
-    float bias = max(0.005 * (1.0 - dot(normal, direction)), 0.005);
+    float bias = max(0.01 * (1.0 - dot(normal, direction)), 0.005);
 
     for (float i = -1.5; i <= 1.5; i += 1.0)
     {
         for (float j = -1.5; j <= 1.5; j += 1.0)
         {
-            vec3 SC = vec3(projCoords.xy + vec2(i, j) * texelSize, projCoords.z - bias);
+            vec3 SC = vec3(projCoords.xy + vec2(i, j) * texelSize, currentDepth - bias);
             shadowValue += texture(light.texture_shadow1, SC);
         }
     }
@@ -83,14 +85,24 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
     return shadowValue;
 }
 
-vec4 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec4 shadowCoords)
+vec4 calcDirLight(DirLight light, vec4 shadowCoords)
 {
-    vec3 direction = normalize(-light.direction);
+    vec3 normal = normalize(fragmentNorm); 
+    vec3 viewDir = normalize(viewPos - fragmentPos);
+    vec3 lightDir = normalize(-light.direction);
+   
+    /* normal mapping */
+    if (TBN != mat3(0))
+    {
+        normal = texture(material.texture_normal1, textureCoords).rgb;
+        normal = normalize(normal * 2.0 - 1.0);
+        normal = normalize(TBN * normal);
+    }
 
-    float diff = max(dot(normal, direction), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
 
-    vec3 halfwayRay = normalize(light.direction + viewDir);
-    float spec = pow(max(dot(viewDir, halfwayRay), 0.0), material.shininess); // Blinn-Phong
+    vec3 halfwayRay = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayRay), 0.0), material.shininess); // Blinn-Phong
 
     vec4 ambient = vec4(light.ambient, 1.0f) * texture(material.texture_diffuse1, textureCoords);
     vec4 diffuse = vec4(light.diffuse, 1.0f) * diff * texture(material.texture_diffuse1, textureCoords);
@@ -101,48 +113,48 @@ vec4 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec4 shadowCoords)
     return (ambient + shadow * (diffuse + specular));
 }
 
-vec4 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-{
-    vec3 direction = normalize(light.position - fragPos);
+/*
+   vec4 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+   {
+   vec3 direction = normalize(light.position - fragPos);
 
-    float diff = max(dot(normal, direction), 0.0);
+   float diff = max(dot(normal, direction), 0.0);
 
-    vec3 reflectionRay = reflect(-direction, normal);
-    float spec = pow(max(dot(viewDir, reflectionRay), 0.0), material.shininess);
+   vec3 reflectionRay = reflect(-direction, normal);
+   float spec = pow(max(dot(viewDir, reflectionRay), 0.0), material.shininess);
 
-    float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + (light.linear * distance) + light.quadratic * (distance * distance));
+   float distance = length(light.position - fragPos);
+   float attenuation = 1.0 / (light.constant + (light.linear * distance) + light.quadratic * (distance * distance));
 
-    vec4 ambient = vec4(light.ambient, 1.0f) * texture(material.texture_diffuse1, textureCoords);
-    vec4 diffuse = vec4(light.diffuse, 1.0f) * diff * texture(material.texture_diffuse1, textureCoords);
-    vec4 specular = vec4(light.specular, 1.0f) * spec * texture(material.texture_specular1, textureCoords);
+   vec4 ambient = vec4(light.ambient, 1.0f) * texture(material.texture_diffuse1, textureCoords);
+   vec4 diffuse = vec4(light.diffuse, 1.0f) * diff * texture(material.texture_diffuse1, textureCoords);
+   vec4 specular = vec4(light.specular, 1.0f) * spec * texture(material.texture_specular1, textureCoords);
 
-    ambient *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
+   ambient *= attenuation;
+   diffuse *= attenuation;
+   specular *= attenuation;
 
-    return (ambient + diffuse + specular);
-}
+   return (ambient + diffuse + specular);
+   }
+*/
 
 void main()
 {
-    vec3 norm = normalize(fragmentNorm); 
-    vec3 viewDir = normalize(viewPos - fragmentPos);
-
     vec4 result = vec4(0.0f);
 
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
     {
         if (dirShadowCoords[i] != vec4(0, 0, 0, 0))
         {
-            result += calcDirLight(dirLights[i], norm, viewDir, dirShadowCoords[i]);
+            result += calcDirLight(dirLights[i], dirShadowCoords[i]);
         }
     }
 
     /*for (int i = 0; i < MAX_POINT_LIGHTS; i++)
-    {
-        result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
-    }*/
+      {
+      result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
+      }
+     */
 
     if (result.a < 0.1)
     {

@@ -44,14 +44,20 @@ void Camera::lookAction()
     yoffset *= sensitivity.y;
 
 
-    mat4 camView;
+    mat4 camView(1.0);
 
     Forward = mat3(rotate(camView, GLfloat(-xoffset), normalize(Up))) * Forward;
         
     Left = normalize(cross(Up, Forward));
-        
+       
+    vec3 ForwardTmp = Forward;
     Forward = mat3(rotate(camView, GLfloat(yoffset), normalize(Left))) * Forward;
         
+    if (dot(cross(Up, Forward), Left) < 0)
+    {
+        Forward = ForwardTmp;
+    }
+    
     Forward = normalize(Forward);
 
     prevCoords = pos;

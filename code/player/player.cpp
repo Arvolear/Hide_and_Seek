@@ -35,6 +35,8 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) 
 
     jumpAllowed = true;
     speedLock = false;
+
+    offset = vec2(0);
 }
         
 Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed) : Camera(window, playerPos, cameraForward, speed)
@@ -44,6 +46,8 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tr
     
     jumpAllowed = true;
     speedLock = false;
+    
+    offset = vec2(0);
 }
 
 /*
@@ -52,6 +56,11 @@ dist > 2.2
 
 bool Player::isGroundStanding()
 {
+    if (!(player && player->getPhysicsObject() && rayTracer))
+    {
+        return false;
+    }
+
     btVector3 from = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
     btVector3 to = btVector3(0, -1, 0);
 
@@ -75,7 +84,6 @@ bool Player::isGroundStanding()
 
     //cout << dist << " " << bottomDist << endl; 
     
-    // > 2.2
     if (dist > bottomDist + 0.1)
     {
         return false;
@@ -86,7 +94,7 @@ bool Player::isGroundStanding()
 
 void Player::jump()
 {
-    if (!jumpAllowed)
+    if (!(player && player->getPhysicsObject() && rayTracer && jumpAllowed))
     {
         return;
     }
@@ -94,7 +102,7 @@ void Player::jump()
     float power = 70;
     float loss = 0.5;
 
-    cout << "jump" << endl;
+    //cout << "jump" << endl;
 
     player->getPhysicsObject()->getRigidBody()->setActivationState(ACTIVE_TAG);
 
@@ -114,12 +122,26 @@ void Player::moveAction()
 
     if (window->isKeyPressed(GLFW_KEY_W))
     {
-        moveDirection += playerForward;
+        if (player && player->getPhysicsObject() && rayTracer)
+        {
+            moveDirection += playerForward;
+        }
+        else
+        {
+            moveDirection += Forward;
+        }
     }
 
     if (window->isKeyPressed(GLFW_KEY_S))
     {
-        moveDirection -= playerForward;
+        if (player && player->getPhysicsObject() && rayTracer)
+        {
+            moveDirection -= playerForward;
+        }
+        else
+        {
+            moveDirection -= Forward;
+        }
     }
 
     if (window->isKeyPressed(GLFW_KEY_D))
@@ -132,25 +154,56 @@ void Player::moveAction()
         moveDirection += Left;
     }
 
-    /*if (window->isKeyPressed(GLFW_KEY_E))
+    if (!(player && player->getPhysicsObject() && rayTracer))
     {
-        moveDirection += Up;
+        if (window->isKeyPressed(GLFW_KEY_E))
+        {
+            moveDirection += Up;
+        }
+
+        if (window->isKeyPressed(GLFW_KEY_Q))
+        {
+            moveDirection -= Up;
+        }
     }
 
-    if (window->isKeyPressed(GLFW_KEY_Q))
+    if (player && player->getPhysicsObject() && rayTracer)
     {
-        moveDirection -= Up;
-    }*/
-
-    if (window->isKeyPressedOnce(GLFW_KEY_SPACE))
-    {
-        jump();
+        if (window->isKeyPressedOnce(GLFW_KEY_SPACE))
+        {
+            jump();
+        }
     }
+}
+
+void Player::calcCameraPosition()
+{
+    btTransform globalTransform;
+    btTransform headTransform;
+    btVector3 globalCenter;
+    btVector3 headCenter;
+    btScalar headRadius;
+
+    globalTransform = player->getPhysicsObject()->getRigidBody()->getCenterOfMassTransform();
+    headTransform = player->getPhysicsObject()->getCompoundShape()->getChildTransform(0);
+    player->getPhysicsObject()->getCompoundShape()->getChildShape(0)->getBoundingSphere(headCenter, headRadius);
+
+    globalCenter = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
+    headCenter = globalTransform * headTransform * headCenter;
+    setPosition(headCenter.x(), headCenter.y(), headCenter.z());
+
+    /* new Up */
+    Up = normalize(toVec3(headCenter) - toVec3(globalCenter));
+
+    Pos += normalize(cross(Left, Up)) * offset.x;
+    Pos += Up * offset.y;
+
+    player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
 }
 
 void Player::moveGround()
 {
-    float speedFactor = 6.8;
+    float speedFactor = 34;
     float friction = 0.6;
 
     /* push the body */
@@ -174,12 +227,12 @@ void Player::moveGround()
 
 void Player::moveAir()
 {
-    float speedFactor = 3;
+    float speedFactor = 2.2;
 
     jumpAllowed = false;
 
     /* push the body */
-    player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed / speedFactor);
+    player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
 
     btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
 
@@ -205,7 +258,7 @@ void Player::speedHackControl()
         XZNormVel.normalize();
 
         velocity -= (XZVelocity.length() - maxSpeed) * XZNormVel; 
-    
+
         player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
     }
 }
@@ -218,23 +271,17 @@ void Player::movePhysics()
     }
 
     /* if physics object is applied */
-    if (player->getPhysicsObject() && rayTracer)
+    if (player && player->getPhysicsObject() && rayTracer)
     {
         if (!player->getPhysicsObject()->getCompoundShape())
         {
             throw runtime_error("ERROR::player no compound shape"); 
         }
-        
+
         if (player->getPhysicsObject()->getCompoundShape()->getShape()->getNumChildShapes() < 1)
         {
             throw runtime_error("ERROR::player compound shape < 1 children"); 
         }
-
-        btVector3 PP = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
-
-        setPosition(PP.x(), PP.y(), PP.z());
-
-        player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
 
         if (isGroundStanding()) // ground movement
         { 
@@ -247,6 +294,9 @@ void Player::movePhysics()
 
         /* speed hack control */
         speedHackControl();
+        
+        /* calc camera position */
+        calcCameraPosition();
     }
     else
     {
@@ -266,6 +316,11 @@ void Player::setGameObject(GameObject* player)
     this->player = player;
 }
 
+void Player::setOffset(vec2 offset)
+{
+    this->offset = offset;
+}
+
 void Player::removeGameObject()
 {
     delete player;
@@ -277,13 +332,18 @@ void Player::update()
 {
     lookAction();
     moveAction();
-        
+
     movePhysics();
 }
 
 GameObject* Player::getGameObject() const
 {
     return player;
+}
+
+vec2 Player::getOffset() const
+{
+    return offset;
 }
 
 Player::~Player()

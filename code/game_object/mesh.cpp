@@ -36,17 +36,20 @@ void Mesh::setupMesh()
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
     glEnableVertexAttribArray(2); // 2 layout for UV
+    
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+    glEnableVertexAttribArray(3); // 2 layout for tangent
    
     for (int i = 0; i < BONES_AMOUNT; i++)
     {
-        glVertexAttribPointer(3 + i, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, boneIDs) + sizeof(float) * i));
-        glEnableVertexAttribArray(3 + i); // from 3 to 9 (BONES_AMOUNT) layouts for bones ids. Array in shader uses N layouts, equal to the size, instead of single layout location the vec uses
+        glVertexAttribPointer(4 + i, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, boneIDs) + sizeof(float) * i));
+        glEnableVertexAttribArray(4 + i); // from 3 to 9 (BONES_AMOUNT) layouts for bones ids. Array in shader uses N layouts, equal to the size, instead of single layout location the vec uses
     }
     
     for (int i = 0; i < BONES_AMOUNT; i++)
     {
-        glVertexAttribPointer(9 + i, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, weights) + sizeof(float) * i));
-        glEnableVertexAttribArray(9 + i); // from 9 to 15 for the weights
+        glVertexAttribPointer(10 + i, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, weights) + sizeof(float) * i));
+        glEnableVertexAttribArray(10 + i); // from 9 to 15 for the weights
     }
 
     glBindVertexArray(0); 
@@ -56,6 +59,7 @@ void Mesh::draw(Shader *shader) const
 {
     unsigned int diffuseNR = 1; // amount of diffuse textures
     unsigned int specularNR = 1; // amount of specular textures
+    unsigned int normalNR = 1; // amount of normal textures
         
     shader->setFloat("material.shininess", 16.0f);
 
@@ -75,9 +79,26 @@ void Mesh::draw(Shader *shader) const
             number = to_string(specularNR); // this is the specularNR`s texture
             specularNR++; // amount of specular + 1
         }
+        else if (textures[i].type == "texture_normal")
+        {
+            number = to_string(normalNR); // this is the normalNR`s texture
+            normalNR++; // amount of normal + 1
+        }
+
+        //cout << "material." + textures[i].type + number << endl;
+        //cout << textures[i].id << endl;
 
         shader->setInt("material." + textures[i].type + number, i); // send the texture to the shader (example: material.texture_diffuse1)
         glBindTexture(GL_TEXTURE_2D, textures[i].id); // bind this texture
+    }
+
+    if (normalNR == 1)
+    {
+        shader->setInt("meshNormalMapped", 0);
+    }
+    else
+    {
+        shader->setInt("meshNormalMapped", 1); 
     }
 
     glBindVertexArray(VAO); // bind VAO

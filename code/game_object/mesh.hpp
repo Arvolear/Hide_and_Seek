@@ -12,6 +12,7 @@ struct Vertex
     vec3 position;
     vec3 normal;
     vec2 texCoords; 
+    vec3 tangent;
 
     float boneIDs[BONES_AMOUNT] = {0.0f}; 
     float weights[BONES_AMOUNT] = {0.0f}; 

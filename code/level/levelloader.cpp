@@ -71,7 +71,7 @@ void LevelLoader::loadObjects()
 
     GO0->getPhysicsObject()->setShape(CS);
     GO0->getPhysicsObject()->setShape(new btBoxShape(btVector3(1.46, 1.46, 1.46)));
-    GO0->getPhysicsObject()->setPosition(btVector3(-0.8f, 30.0f, 0.0f));
+    GO0->getPhysicsObject()->setPosition(btVector3(2.0f, 30.0f, 7.0f));
     GO0->getPhysicsObject()->setMass(100);
     GO0->getPhysicsObject()->setRotation(btQuaternion(btVector3(0, 0, 1), toRads(60)));
 
@@ -91,10 +91,10 @@ void LevelLoader::loadDirLight()
     /* TODO PARSE XML */
     DirLight* DL0 = new DirLight();
     
-    DL0->setDirection(vec3(-1.0f, -1.0f, -0.2f));
+    DL0->setDirection(vec3(1.0f, -1.0f, -0.2f));
     DL0->setAmbient(vec3(0.2f, 0.2f, 0.2f));
     DL0->setDiffuse(vec3(0.8f, 0.8f, 0.8f));
-    DL0->setSpecular(vec3(0.5f, 0.5f, 0.5f));
+    DL0->setSpecular(vec3(1.0f, 1.0f, 1.0f));
 
     DL0->genShadowBuffer(2048, 2048);
     DL0->setProjection(ortho(-50.0f, 50.0f, -50.0f, 50.0f, -50.0f, 50.0f));
@@ -123,17 +123,21 @@ void LevelLoader::loadPlayer()
 
     CompoundShape* CS = new CompoundShape;
 
-    CS->add(new btSphereShape(0.6), btVector3(0, 3, 0), btQuaternion(btVector3(0, 0, 1), 0));
+    CS->add(new btSphereShape(0.4), btVector3(0, 1.75, 0), btQuaternion(btVector3(0, 0, 1), 0));
     CS->add(new btCapsuleShape(0.4, 3.5), btVector3(0, 0, 0), btQuaternion(btVector3(0, 0, 1), 0));
 
     P->getPhysicsObject()->setShape(CS);
     P->getPhysicsObject()->setPosition(btVector3(10, 3, 10));
     P->getPhysicsObject()->setMass(10);
+    //P->getPhysicsObject()->setRotation(btQuaternion(btVector3(1, 0, 0), toRads(30)));
     P->getPhysicsObject()->getRigidBody()->setAngularFactor(btVector3(0, 0, 0));
 
     RayTracer* rayTracer = new RayTracer(physicsWorld->getWorld(), nullptr, projection);     
 
-    player = new Player(window, vec3(0, 5, 5), vec3(0, 0, -1), rayTracer, P);
+    player = new Player(window, vec3(0, 5, 5), vec3(0, 0, -1));
+    player->setRayTracer(rayTracer);
+    player->setGameObject(P);
+    //player->setOffset(vec2(0.43, 0));
     rayTracer->setCamera(player);
 }
 

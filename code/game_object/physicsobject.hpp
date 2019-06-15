@@ -24,6 +24,8 @@ class CompoundShape
         void add(btCollisionShape* childShape, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
 
         btCompoundShape* getShape() const;
+        btCollisionShape* getChildShape(unsigned int index) const;
+        btTransform getChildTransform(unsigned int index) const;
 
         ~CompoundShape();
 };

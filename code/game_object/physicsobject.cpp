@@ -28,6 +28,29 @@ btCompoundShape* CompoundShape::getShape() const
     return shape;
 }
         
+btCollisionShape* CompoundShape::getChildShape(unsigned int index) const
+{
+    if (index < 0 || index >= childShapes.size())
+    {
+        throw range_error("ERROR compound shape has no " + to_string(index) + " child");
+    }
+
+    return childShapes[index];
+}
+        
+btTransform CompoundShape::getChildTransform(unsigned int index) const
+{
+    if (index < 0 || index >= childShapes.size())
+    {
+        throw range_error("ERROR compound shape has no " + to_string(index) + " child");
+    }
+
+    btTransform transform;
+    transform = shape->getChildTransform(index);
+
+    return transform;
+}
+        
 CompoundShape::~CompoundShape()
 {
     //delete shape;

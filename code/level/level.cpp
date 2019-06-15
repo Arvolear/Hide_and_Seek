@@ -127,6 +127,7 @@ void Level::render()
 
     gameObjectShader->setMat4("view", view);
     gameObjectShader->setMat4("projection", projection);
+    gameObjectShader->setVec3("viewPos", player->getPosition());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
