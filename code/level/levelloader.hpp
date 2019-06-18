@@ -8,8 +8,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <tinyxml2/tinyxml2.h>
+
 using namespace std;
 using namespace glm;
+using namespace tinyxml2;
 
 class LevelLoader
 {

@@ -58,6 +58,7 @@ void LevelLoader::loadObjects()
     
     gameObjects.insert({GO0->getName(), GO0});
 
+
     GO0 = new GameObject("box");
     GO0->setGraphicsObject(levelName + "/static_models/Box/box.obj");
     GO0->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
@@ -73,7 +74,7 @@ void LevelLoader::loadObjects()
     GO0->getPhysicsObject()->setShape(new btBoxShape(btVector3(1.46, 1.46, 1.46)));
     GO0->getPhysicsObject()->setPosition(btVector3(2.0f, 30.0f, 7.0f));
     GO0->getPhysicsObject()->setMass(100);
-    GO0->getPhysicsObject()->setRotation(btQuaternion(btVector3(0, 0, 1), toRads(60)));
+    GO0->getPhysicsObject()->setRotation(btQuaternion(btVector3(0, 0, 1), toRads(60))); 
 
     /* game object constructor verifies the name uniqueness */
     gameObjects.insert({GO0->getName(), GO0});
@@ -143,7 +144,46 @@ void LevelLoader::loadPlayer()
 
 void LevelLoader::loadProjection()
 {
-    projection = mat4(perspective(45.0f, 1.77778f, 0.1f, 500.0f));
+    XMLDocument projDoc;
+    projDoc.LoadFile((levelName + "/projection.xml").c_str());
+
+    XMLNode* root = projDoc.FirstChildElement("ProjectionFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadProjection() failed to load XML");
+    }
+
+    XMLNode* projections = root->FirstChildElement("projections");
+    XMLElement* proj = projections->FirstChildElement("projection");
+
+    const char* type = nullptr;
+    proj->QueryStringAttribute("type", &type);
+
+    if (!strcmp(type, "perspective"))
+    {
+        float fovy = 0, aspect = 0, near = 0, far = 0;
+
+        proj->QueryFloatAttribute("fovy", &fovy);
+        proj->QueryFloatAttribute("aspect", &aspect);
+        proj->QueryFloatAttribute("near", &near);
+        proj->QueryFloatAttribute("far", &far);
+
+        projection = perspective(fovy, aspect, near, far);
+    }
+    else if (!strcmp(type, "orthogonal"))
+    {
+        float left = 0, right = 0, bottom = 0, top = 0, near = 0, far = 0;
+
+        proj->QueryFloatAttribute("left", &left);
+        proj->QueryFloatAttribute("right", &right);
+        proj->QueryFloatAttribute("bottom", &bottom);
+        proj->QueryFloatAttribute("top", &top);
+        proj->QueryFloatAttribute("near", &near);
+        proj->QueryFloatAttribute("far", &far);
+
+        projection = ortho(left, right, bottom, top, near, far); 
+    }
 }
 
 void LevelLoader::loadLevel(string name)
@@ -153,7 +193,7 @@ void LevelLoader::loadLevel(string name)
     loadObjects();
     loadDirLight();
     loadSkyBox();
-    
+
     loadProjection();
 
     loadPlayer();
@@ -173,7 +213,7 @@ void LevelLoader::getSkyBoxData(SkyBox*& skyBox) const
 {
     skyBox = this->skyBox;
 }
- 
+
 void LevelLoader::getProjectionData(mat4 &projection) const
 {
     projection = this->projection;

@@ -64,6 +64,10 @@ void main()
     {
         vec3 T = normalize(vec3(model * localTransform * bonesTransform * vec4(tangent, 0.0)));
         vec3 N = normalize(vec3(model * localTransform * bonesTransform * vec4(normal, 0.0)));
+
+        /* Gram-Schmidt re-orthogonalization process */
+        T = normalize(T - dot(T, N) * N);
+        
         vec3 B = cross(N, T);
 
         TBN = mat3(T, B, N);

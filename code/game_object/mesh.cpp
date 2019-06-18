@@ -71,18 +71,15 @@ void Mesh::draw(Shader *shader) const
         
         if (textures[i].type == "texture_diffuse") // if it is a diffuse texture
         {
-            number = to_string(diffuseNR); // this is the diffuseNR`s texture
-            diffuseNR++; // amount of diffuse + 1
+            number = to_string(diffuseNR++); // this is the diffuseNR`s texture
         }
         else if (textures[i].type == "texture_specular")
         {
-            number = to_string(specularNR); // this is the specularNR`s texture
-            specularNR++; // amount of specular + 1
+            number = to_string(specularNR++); // this is the specularNR`s texture
         }
         else if (textures[i].type == "texture_normal")
         {
-            number = to_string(normalNR); // this is the normalNR`s texture
-            normalNR++; // amount of normal + 1
+            number = to_string(normalNR++); // this is the normalNR`s texture
         }
 
         //cout << "material." + textures[i].type + number << endl;
@@ -102,10 +99,16 @@ void Mesh::draw(Shader *shader) const
     }
 
     glBindVertexArray(VAO); // bind VAO
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // draw mesh from indices
-    
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // draw mesh from indices 
     glBindVertexArray(0); // unbind VAO
-    glBindTexture(GL_TEXTURE_2D, 0); // unbind textures
+    
+    for (size_t i = 0; i < textures.size(); i++) // loop through textures
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    
+    glActiveTexture(GL_TEXTURE0);
 }
 
 vector < Vertex > Mesh::getVertices() const
