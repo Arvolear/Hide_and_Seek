@@ -50,70 +50,336 @@ LevelLoader::LevelLoader(Window* window, World* physicsWorld)
 
 void LevelLoader::loadObjects()
 {
-    /* TODO PARSE XML */
-    GameObject* GO0 = new GameObject("floor"); // floor
-    GO0->setGraphicsObject(levelName + "/static_models/Floor/floor.obj");
-    GO0->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld(), new btCylinderShape(btVector3(76, 0.93, 76)), 0, btVector3(0.0f, 0.0f, 0.0f)));
-    GO0->createDebugSphere(3);
+    XMLDocument gameObjectDoc;
     
-    gameObjects.insert({GO0->getName(), GO0});
+    gameObjectDoc.LoadFile((levelName + "/game_object.xml").c_str());
+    
+    XMLNode* root = gameObjectDoc.FirstChildElement("GameObjectFile");
 
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadObjects() failed to load XML");
+    }
+    
+    XMLNode* gameObjectsNode = root->FirstChildElement("gameobjects"); 
+    XMLElement* gameObjectElem = gameObjectsNode->FirstChildElement("gameobject");
 
-    GO0 = new GameObject("box");
-    GO0->setGraphicsObject(levelName + "/static_models/Box/box.obj");
-    GO0->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
+    while (gameObjectElem)
+    {
+        const char* name = nullptr;
+        gameObjectElem->QueryStringAttribute("name", &name);
 
-    CompoundShape* CS = new CompoundShape;
+        GameObject* GO = new GameObject(name);
 
-    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(0, 0.7, 0));
-    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(0.3, -0.7, 0));
-    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(-0.7, -0.3, 0));
-    CS->add(new btBoxShape(btVector3(1.46, 1.46, 1.46)), btVector3(0.7, 0.7, 0));
+        /* graphics object */
+        XMLElement* graphicsObjectElem = gameObjectElem->FirstChildElement("graphicsobject");
 
-    GO0->getPhysicsObject()->setShape(CS);
-    GO0->getPhysicsObject()->setShape(new btBoxShape(btVector3(1.46, 1.46, 1.46)));
-    GO0->getPhysicsObject()->setPosition(btVector3(2.0f, 30.0f, 7.0f));
-    GO0->getPhysicsObject()->setMass(100);
-    GO0->getPhysicsObject()->setRotation(btQuaternion(btVector3(0, 0, 1), toRads(60))); 
+        if (graphicsObjectElem)
+        {
+            const char* path = nullptr;
+            graphicsObjectElem->QueryStringAttribute("path", &path);
 
-    /* game object constructor verifies the name uniqueness */
-    gameObjects.insert({GO0->getName(), GO0});
+            GO->setGraphicsObject(levelName + path);
+        }
 
+        /* physics object */
+        XMLElement* physicsObjectElem = gameObjectElem->FirstChildElement("physicsobject");
 
-    GameObject* GO1 = new GameObject("Buddha");
-    GO1->setLocalScale(vec3(0.2, 0.2, 0.2));
-    GO1->setGraphicsObject(levelName + "/static_models/Buddha/Buddha.obj");
+        if (physicsObjectElem)
+        {
+            GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
 
-    gameObjects.insert({GO1->getName(), GO1});
+            /* shape */
+            XMLElement* shapeElem = physicsObjectElem->FirstChildElement("shape");
+
+            const char* type = nullptr;
+            shapeElem->QueryStringAttribute("type", &type);
+ 
+            if (!strcmp(type, "box"))
+            {
+                float x = 0, y = 0, z = 0;
+
+                shapeElem->QueryFloatAttribute("x", &x);
+                shapeElem->QueryFloatAttribute("y", &y);
+                shapeElem->QueryFloatAttribute("z", &z);
+
+                GO->getPhysicsObject()->setShape(new btBoxShape(btVector3(x, y, z)));    
+            }
+            else if (!strcmp(type, "cylinder"))
+            {
+                float radius = 0, height = 0, zup = 0;
+
+                shapeElem->QueryFloatAttribute("radius", &radius);
+                shapeElem->QueryFloatAttribute("height", &height);
+                shapeElem->QueryFloatAttribute("zup", &zup);
+
+                GO->getPhysicsObject()->setShape(new btCylinderShape(btVector3(radius, height, zup)));    
+            }
+            else if (!strcmp(type, "compound"))
+            {
+                CompoundShape* CS = new CompoundShape;
+
+                XMLElement* childShapeElem = shapeElem->FirstChildElement("childshape");
+
+                while (childShapeElem)
+                {
+                    const char* childType = nullptr;
+                    childShapeElem->QueryStringAttribute("type", &childType);
+                    
+                    /* child shape */
+                    btCollisionShape* childShape = nullptr;
+
+                    if (!strcmp(childType, "box"))
+                    {
+                        float x = 0, y = 0, z = 0;
+
+                        childShapeElem->QueryFloatAttribute("x", &x);
+                        childShapeElem->QueryFloatAttribute("y", &y);
+                        childShapeElem->QueryFloatAttribute("z", &z);
+                        
+                        childShape = new btBoxShape(btVector3(x, y, z));
+                    }
+                    else if (!strcmp(childType, "cylinder"))
+                    {
+                        float radius = 0, height = 0, zup = 0;
+
+                        childShapeElem->QueryFloatAttribute("radius", &radius);
+                        childShapeElem->QueryFloatAttribute("height", &height);
+                        childShapeElem->QueryFloatAttribute("zup", &zup);
+
+                        childShape = new btCylinderShape(btVector3(radius, height, zup));
+                    }
+                    
+                    /* child position */
+                    btVector3 childPosition = btVector3(0, 0, 0);
+                    XMLElement* childPositionElem = childShapeElem->FirstChildElement("position");
+
+                    if (childPositionElem)
+                    {
+                        float x = 0, y = 0, z = 0;
+
+                        childPositionElem->QueryFloatAttribute("x", &x);
+                        childPositionElem->QueryFloatAttribute("y", &y);
+                        childPositionElem->QueryFloatAttribute("z", &z);
+
+                        childPosition = btVector3(x, y, z);
+                    }
+
+                    /* child rotation */
+                    btQuaternion childRotation = btQuaternion(btVector3(0, 0, 1), 0);
+                    XMLElement* childRotationElem = childShapeElem->FirstChildElement("rotation");
+
+                    if (childRotationElem)
+                    {
+                        float x = 0, y = 0, z = 1, angle = 0;
+
+                        childRotationElem->QueryFloatAttribute("x", &x);
+                        childRotationElem->QueryFloatAttribute("y", &y);
+                        childRotationElem->QueryFloatAttribute("z", &z);
+                        childRotationElem->QueryFloatAttribute("angle", &angle);
+
+                        childRotation = btQuaternion(btVector3(x, y, z), toRads(angle));
+                    }
+
+                    CS->add(childShape, childPosition, childRotation);
+
+                    childShapeElem = childShapeElem->NextSiblingElement();
+                }
+
+                GO->getPhysicsObject()->setShape(CS);    
+            }
+
+            /* mass */
+            XMLElement* massElem = physicsObjectElem->FirstChildElement("mass");
+
+            if (massElem)
+            {
+                float mass = 0;
+                massElem->QueryFloatAttribute("mass", &mass);
+
+                GO->getPhysicsObject()->setMass(mass);
+            }
+
+            /* position */
+            XMLElement* positionElem = physicsObjectElem->FirstChildElement("position");
+
+            if (positionElem)
+            {
+                float x = 0, y = 0, z = 0;
+
+                positionElem->QueryFloatAttribute("x", &x);
+                positionElem->QueryFloatAttribute("y", &y);
+                positionElem->QueryFloatAttribute("z", &z);
+
+                GO->getPhysicsObject()->setPosition(btVector3(x, y, z));
+            }
+
+            /* rotation */
+            XMLElement* rotationElem = physicsObjectElem->FirstChildElement("rotation");
+
+            if (rotationElem)
+            {
+                float x = 0, y = 0, z = 0, angle = 0;
+
+                rotationElem->QueryFloatAttribute("x", &x);
+                rotationElem->QueryFloatAttribute("y", &y);
+                rotationElem->QueryFloatAttribute("z", &z);
+                rotationElem->QueryFloatAttribute("angle", &angle);
+
+                GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)));
+            }
+        }
+
+        gameObjects.insert({GO->getName(), GO});
+
+        gameObjectElem = gameObjectElem->NextSiblingElement();
+    }
 }
 
 void LevelLoader::loadDirLight()
 {
-    /* TODO PARSE XML */
-    DirLight* DL0 = new DirLight();
-    
-    DL0->setDirection(vec3(1.0f, -1.0f, -0.2f));
-    DL0->setAmbient(vec3(0.2f, 0.2f, 0.2f));
-    DL0->setDiffuse(vec3(0.8f, 0.8f, 0.8f));
-    DL0->setSpecular(vec3(1.0f, 1.0f, 1.0f));
+    XMLDocument dirLightDoc;
 
-    DL0->genShadowBuffer(2048, 2048);
-    DL0->setProjection(ortho(-50.0f, 50.0f, -50.0f, 50.0f, -50.0f, 50.0f));
+    dirLightDoc.LoadFile((levelName + "/dirlight.xml").c_str());
 
-    if (find(dirLights.begin(), dirLights.end(), DL0) == dirLights.end())
+    XMLNode* root = dirLightDoc.FirstChildElement("DirLightFile");
+
+    if (!root)
     {
-        dirLights.push_back(DL0); 
+        throw runtime_error("ERROR::loadDirLight() failed to load XML");
+    }
+
+    XMLNode* dirLightsNode = root->FirstChildElement("dirlights"); 
+    XMLElement* dirLightElem = dirLightsNode->FirstChildElement("dirlight");
+
+    while (dirLightElem)
+    {
+        DirLight* DL = new DirLight();
+
+        XMLElement* direction = dirLightElem->FirstChildElement("direction");
+
+        if (direction)
+        {
+            float x = 0, y = 0, z = 0;
+            direction->QueryFloatAttribute("x", &x);
+            direction->QueryFloatAttribute("y", &y);
+            direction->QueryFloatAttribute("z", &z);
+
+            DL->setDirection(vec3(x, y, z));
+        }
+
+        XMLElement* ambient = dirLightElem->FirstChildElement("ambient");
+
+        if (ambient)
+        {
+            float r = 0, g = 0, b = 0;
+            ambient->QueryFloatAttribute("r", &r);
+            ambient->QueryFloatAttribute("g", &g);
+            ambient->QueryFloatAttribute("b", &b);
+
+            DL->setAmbient(vec3(r, g, b));
+        }
+
+        XMLElement* diffuse = dirLightElem->FirstChildElement("diffuse");
+
+        if (diffuse)
+        {
+            float r = 0, g = 0, b = 0;
+            diffuse->QueryFloatAttribute("r", &r);
+            diffuse->QueryFloatAttribute("g", &g);
+            diffuse->QueryFloatAttribute("b", &b);
+
+            DL->setDiffuse(vec3(r, g, b));
+        }
+
+        XMLElement* specular = dirLightElem->FirstChildElement("specular");
+
+        if (specular)
+        {
+            float r = 0, g = 0, b = 0;
+            specular->QueryFloatAttribute("r", &r);
+            specular->QueryFloatAttribute("g", &g);
+            specular->QueryFloatAttribute("b", &b);
+
+            DL->setSpecular(vec3(r, g, b));
+        }
+
+        XMLElement* shadowBuffer = dirLightElem->FirstChildElement("shadowbuffer");
+
+        if (shadowBuffer)
+        {
+            float x = 0, y = 0;
+            shadowBuffer->QueryFloatAttribute("x", &x);
+            shadowBuffer->QueryFloatAttribute("y", &y);
+
+            DL->genShadowBuffer(x, y);
+        }
+
+        XMLElement* proj = dirLightElem->FirstChildElement("projection");
+
+        const char* type = nullptr;
+        proj->QueryStringAttribute("type", &type);
+        mat4 shadowProj = mat4(1.0);
+
+        if (!strcmp(type, "perspective"))
+        {
+            float fovy = 0, aspect = 0, near = 0, far = 0;
+
+            proj->QueryFloatAttribute("fovy", &fovy);
+            proj->QueryFloatAttribute("aspect", &aspect);
+            proj->QueryFloatAttribute("near", &near);
+            proj->QueryFloatAttribute("far", &far);
+
+            shadowProj = perspective(fovy, aspect, near, far);
+        }
+        else if (!strcmp(type, "orthogonal"))
+        {
+            float left = 0, right = 0, bottom = 0, top = 0, near = 0, far = 0;
+
+            proj->QueryFloatAttribute("left", &left);
+            proj->QueryFloatAttribute("right", &right);
+            proj->QueryFloatAttribute("bottom", &bottom);
+            proj->QueryFloatAttribute("top", &top);
+            proj->QueryFloatAttribute("near", &near);
+            proj->QueryFloatAttribute("far", &far);
+
+            shadowProj = ortho(left, right, bottom, top, near, far); 
+        }
+
+        DL->setProjection(shadowProj);
+
+        if (find(dirLights.begin(), dirLights.end(), DL) == dirLights.end())
+        {
+            dirLights.push_back(DL); 
+        }
+
+        dirLightElem = dirLightElem->NextSiblingElement();
     }
 }
 
 void LevelLoader::loadSkyBox()
 {
-    /* TODO PARSE XML */
+    XMLDocument skyBoxDoc;
+
+    skyBoxDoc.LoadFile((levelName + "/skybox.xml").c_str());
+
+    XMLNode* root = skyBoxDoc.FirstChildElement("SkyBoxFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadSkyBox() failed to load XML");
+    }
+
+    XMLNode* skyboxes = root->FirstChildElement("skyboxes"); 
+    XMLElement* skybox = skyboxes->FirstChildElement("skybox");
+
+    const char* path = nullptr;
+    skybox->QueryStringAttribute("path", &path);
+
     skyBox = new SkyBox();
     skyBox->init();
 
-    //skyBox->loadSkyBox(levelName + "/skyboxes/Bluerocky");
-    skyBox->loadSkyBox(levelName + "/skyboxes/Space");
+    skyBox->loadSkyBox(levelName + path);
 }
 
 void LevelLoader::loadPlayer()
@@ -137,7 +403,7 @@ void LevelLoader::loadPlayer()
 
     player = new Player(window, vec3(0, 5, 5), vec3(0, 0, -1));
     player->setRayTracer(rayTracer);
-    player->setGameObject(P);
+    //player->setGameObject(P);
     //player->setOffset(vec2(0.43, 0));
     rayTracer->setCamera(player);
 }

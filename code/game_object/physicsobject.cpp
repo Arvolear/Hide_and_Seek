@@ -65,6 +65,11 @@ CompoundShape::~CompoundShape()
 
 void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
 {
+    if (!shape)
+    {
+        return;
+    }
+
     if (body)
     {
         world->removeRigidBody(body);
