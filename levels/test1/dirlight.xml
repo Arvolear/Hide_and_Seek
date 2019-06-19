@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<DirLightFile>
+    <dirlights>
+
+        <dirlight>
+            <direction x="1.0" y="-1.0" z="-0.2"/>
+            <ambient r="0.2" g="0.2" b="0.2"/>
+            <diffuse r="0.8" g="0.8" b="0.8"/>
+            <specular r="1.0" g="1.0" b="1.0"/>
+
+            <shadowbuffer x="2048" y="2048"/>
+            <projection type="orthogonal" left="-50.0" right="50.0" bottom="-50.0" top="50.0" near="-50.0" far="50.0"/>
+        </dirlight>
+
+        <!-- <dirlight>
+            <direction x="-1.0" y="-1.0" z="0.2"/>
+            <ambient r="0.1" g="0.1" b="0.4"/>
+            <diffuse r="0.2" g="0.2" b="0.8"/>
+            <specular r="0.2" g="0.2" b="1.0"/>
+
+            <shadowbuffer x="2048" y="2048"/>
+            <projection type="orthogonal" left="-50.0" right="50.0" bottom="-50.0" top="50.0" near="-50.0" far="50.0"/>
+        </dirlight> -->
+
+    </dirlights>
+</DirLightFile>
