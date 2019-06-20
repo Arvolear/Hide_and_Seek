@@ -3,6 +3,7 @@
 #include "../shader/shader.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
 #include "openglmotionstate.hpp"
 #include "animation.hpp"
@@ -141,7 +142,7 @@ void GameObject::setPhysicsObject(PhysicsObject* object)
     physicsObject = object;
 }
 
-void GameObject::setLocalRotation(float angle, vec3 axis)
+void GameObject::setLocalRotation(vec3 axis, float angle)
 {
     vec3 sc;
     quat rot;
@@ -254,9 +255,9 @@ void GameObject::createDebugSphere(int depth)
     }
 }
 
-void GameObject::renderDebugSphere(mat4 &view, mat4 &projection, Shader *shader)
+void GameObject::renderDebugSphere(Shader *shader)
 {
-    if (debugSphere)
+    if (debugSphere && viewFrustum)
     {
         mat4 transform = viewFrustum->getProjection() * viewFrustum->getView() * getPhysicsObjectTransform() * localTransform;
         debugSphere->applyTransform(transform);

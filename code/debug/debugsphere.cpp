@@ -19,7 +19,7 @@ void DebugSphere::setUpSphere()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)0);
     glEnableVertexAttribArray(0); //0 layout for position
     
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)offsetof(DebugVertex, color));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, color));
     glEnableVertexAttribArray(1); //1 layout for color
 
     glBindVertexArray(0); //unbind 
@@ -30,7 +30,7 @@ void DebugSphere::constructOcta(vec3 center, double radius)
     double dist = sqrt(radius * radius / 2.0);
 
     vec3 pos;
-    vec3 color = vec3(0.3f, 0.3f, 0.3f);
+    vec3 color = vec3(0.1, 0.1, 0.1);
     
     //first up right
     pos = vec3(center.x + dist, center.y, center.z + dist);
@@ -126,17 +126,19 @@ void DebugSphere::constructSphere(vector < DebugVertex > curVertices, int curDep
     for (size_t i = 0; i < curVertices.size(); i += 3)
     {
         vec3 pos;
-        vec3 color = vec3(0.3f, 0.3f, 0.3f);
+        vec3 color;
 
         //first vertex
         localVertices.push_back(curVertices[i]);
 
         //second vertex
         pos = (curVertices[i].position + curVertices[i + 1].position) / float(2.0);
+        color = vec3(0.3, 0.0, 0.0);
         localVertices.push_back({pos, color});
 
         //third vertex
         pos = (curVertices[i].position + curVertices[i + 2].position) / float(2.0);
+        color = vec3(0.5, 0.3, 0.0);
         localVertices.push_back({pos, color});
 
         //fourth vertex
@@ -147,6 +149,7 @@ void DebugSphere::constructSphere(vector < DebugVertex > curVertices, int curDep
 
         //sixth vertex
         pos = (curVertices[i + 1].position + curVertices[i + 2].position) / float(2.0);
+        color = vec3(0.0, 0.5, 0.3);
         localVertices.push_back({pos, color});
 
         //seventh vertex

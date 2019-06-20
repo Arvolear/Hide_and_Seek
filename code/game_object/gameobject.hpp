@@ -50,7 +50,7 @@ class GameObject
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
         
-        void setLocalRotation(float angle, vec3 axis);
+        void setLocalRotation(vec3 axis, float angle);
         void setLocalScale(vec3 growth);
         void setLocalPosition(vec3 pos);
 
@@ -65,7 +65,7 @@ class GameObject
         
         /*** DEBUG ***/
         void createDebugSphere(int depth);
-        void renderDebugSphere(mat4 &view, mat4 &projection, Shader* shader);
+        void renderDebugSphere(Shader* shader);
 
         virtual ~GameObject();
 };

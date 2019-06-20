@@ -76,7 +76,7 @@ void Game::checkEvents()
         }
     }
     
-    if (window->isKeyPressedOnce(GLFW_KEY_C))
+    if (window->isKeyPressedOnce(GLFW_KEY_X))
     {
         if (physicsWorld->getDebugDrawer()->getDebugMode() == 0)
         {
@@ -90,6 +90,17 @@ void Game::checkEvents()
         {
             physicsWorld->getDebugDrawer()->setDebugMode(0);
         }
+    }
+    
+    if (window->isKeyPressedOnce(GLFW_KEY_C))
+    {
+        level->toggleDebug();
+    }
+    
+    if (window->isKeyPressedOnce(GLFW_KEY_V))
+    {
+        level->swapPlayers();
+        player = level->getPlayer();
     }
 
     /* PHYSICS EVENTS */
@@ -129,8 +140,6 @@ Game::~Game()
     delete gameBuffer;
 
     delete level;
-    delete player;
 
     delete physicsWorld;
-    // ...
 }

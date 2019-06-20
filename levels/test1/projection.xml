@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <ProjectionFile>
     <projections>
-        <!-- view projection -->
-        <projection type="perspective" fovy="45.0" aspect="1.7778" near="0.1" far="500.0"/>
+        
+        <projection type="perspective" fovy="45.0" aspect="1.7778" near="0.1" far="200.0"/>
 
         <!-- <projection type="orthogonal" left="-50.0" right="50.0" bottom="-50.0" top="50.0" near="-50.0" far="50.0"/> -->
+
     </projections> 
 </ProjectionFile>

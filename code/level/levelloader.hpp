@@ -28,8 +28,9 @@ class LevelLoader
         SkyBox* skyBox;
 
         mat4 projection;
+        ViewFrustum* viewFrustum;
         
-        Player* player;
+        vector < Player* > players;
 
         void loadObjects();
         void loadDirLight();
@@ -37,7 +38,7 @@ class LevelLoader
 
         void loadProjection();
 
-        void loadPlayer();
+        void loadPlayers();
 
     public:
         LevelLoader(Window* window, World* physicsWorld);
@@ -51,7 +52,9 @@ class LevelLoader
 
         /*******/
         void getProjectionData(mat4 &projection) const;
-        void getPlayerData(Player*& player) const;
+        void getViewFrustumData(ViewFrustum*& viewFrustum);
+
+        void getPlayersData(vector < Player* > &players) const;
 
         ~LevelLoader();
 };

@@ -57,9 +57,10 @@ Level::Level(Window* window, World* physicsWorld)
 
     skyBox = nullptr;
 
-    player = nullptr;
-
     projection = mat4(1.0);
+    viewFrustum = nullptr;
+
+    drawDebug = 0;
 }
 
 void Level::loadLevel(string level)
@@ -79,9 +80,10 @@ void Level::loadLevel(string level)
     /*** GET LOADED DATA ***/
     levelLoader->getDirLightData(dirLights);
     levelLoader->getSkyBoxData(skyBox);
-    levelLoader->getPlayerData(player);
+    levelLoader->getPlayersData(players);
     levelLoader->getGameObjectsData(gameObjects);
     levelLoader->getProjectionData(projection);
+    levelLoader->getViewFrustumData(viewFrustum);
 }
 
 void Level::render()
@@ -90,7 +92,9 @@ void Level::render()
     /*********** GAME RENDER ***********/
     /***********************************/
 
-    mat4 view = player->getView();
+    mat4 view = players[0]->getView();
+    
+    viewFrustum->updateFrustum(view, projection);
 
     /************************************
      * DIR SHADOWS
@@ -102,7 +106,7 @@ void Level::render()
         dirLights[i]->getShadowBuffer()->use();
         dirLights[i]->getShadowBuffer()->clear();
 
-        dirLights[i]->updateView(player->getPosition());
+        dirLights[i]->updateView(players[0]->getPosition());
 
         dirShadowShader->use();
 
@@ -127,7 +131,7 @@ void Level::render()
 
     gameObjectShader->setMat4("view", view);
     gameObjectShader->setMat4("projection", projection);
-    gameObjectShader->setVec3("viewPos", player->getPosition());
+    gameObjectShader->setVec3("viewPos", players[0]->getPosition());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
@@ -155,11 +159,64 @@ void Level::render()
     /************************************
      * DEBUG
      * */
+    glDisable(GL_CULL_FACE);
+
     debugShader->use();
     physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, view, projection);
-
+   
     physicsWorld->renderDebug();
+
+    if (drawDebug)
+    {
+        for (auto& i : gameObjects)
+        {
+            i.second->renderDebugSphere(debugShader); 
+        }
+       
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            viewFrustum->updateFrustum(players[i]->getView(), projection);
+            viewFrustum->render(physicsWorld->getDebugDrawer());
+        }
+    }
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 } 
+        
+void Level::addGameObject(GameObject* gameObject)
+{
+    if (gameObjects.find(gameObject->getName()) == gameObjects.end())
+    {
+        gameObjects.insert({gameObject->getName(), gameObject}); 
+    }
+}
+
+GameObject* Level::getGameObject(string name) const
+{
+    if (gameObjects.find(name) != gameObjects.end())
+    {
+        return gameObjects.find(name)->second;
+    }
+
+    return nullptr;
+}
+
+void Level::removeGameObject(GameObject* gameObject)
+{
+    if (gameObjects.find(gameObject->getName()) != gameObjects.end())
+    {
+        gameObjects.erase(gameObjects.find(gameObject->getName()));
+    }
+}
+        
+void Level::removeGameObject(string name)
+{
+    if (gameObjects.find(name) != gameObjects.end())
+    {
+        gameObjects.erase(gameObjects.find(name));
+    }
+}
 
 GLuint Level::getRenderTexture() const
 {
@@ -168,7 +225,17 @@ GLuint Level::getRenderTexture() const
 
 Player* Level::getPlayer() const
 {
-    return player;
+    return players[0];
+}
+
+void Level::toggleDebug()
+{
+    drawDebug = (drawDebug + 1) % 2;
+}
+        
+void Level::swapPlayers()
+{
+    rotate(players.begin(), players.begin() + 1, players.end());
 }
 
 Level::~Level()
@@ -194,4 +261,11 @@ Level::~Level()
     }
 
     delete skyBox;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        delete players[i];
+    }
+
+    delete viewFrustum;
 }

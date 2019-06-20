@@ -3,7 +3,9 @@
     <gameobjects>
 
         <gameobject name="floor">
-            <graphicsobject path="/static_models/Floor/floor.obj"/>
+            <graphicsobject path="/static_models/Floor/floor.obj">
+                <viewfrustum apply="true"/>
+            </graphicsobject>
             <physicsobject>
                 <shape type="cylinder" radius="76.0" height="0.93" zup="76.0"/>
                 <mass mass="0.0"/>
@@ -15,7 +17,9 @@
         </gameobject>
 
         <gameobject name="box">
-            <graphicsobject path="/static_models/Box/box.obj"/>
+            <graphicsobject path="/static_models/Box/box.obj">
+                <viewfrustum apply="true"/>
+            </graphicsobject>
             <physicsobject>
                 <shape type="compound">
                     <childshape type="box" x="1.46" y="1.46" z="1.46">
@@ -43,8 +47,12 @@
         
         <gameobject name="Buddha">
             <graphicsobject path="/static_models/Buddha/Buddha.obj">
+                <viewfrustum apply="true"/>
                 <scale x="0.2" y="0.2" z="0.2"/>
             </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
         </gameobject>
 
     </gameobjects>

@@ -37,9 +37,15 @@ class Level
         vector < DirLight* > dirLights;
 
         SkyBox* skyBox;
+        
+        /* [0] player is active */
+        vector < Player* > players;
 
-        Player* player;
         mat4 projection;
+        ViewFrustum* viewFrustum;
+
+        /* DEBUG */
+        int drawDebug;
 
     public:
         Level(Window* window, World* physicsWorld);
@@ -47,16 +53,18 @@ class Level
         void loadLevel(string level);
         void render();
 
-        /* TODO */
         void addGameObject(GameObject* gameObject);
-        void getGameObject(string name);
+        GameObject* getGameObject(string name) const;
 
         void removeGameObject(GameObject* gameObject);
         void removeGameObject(string name);
-        /* TODO */
 
         GLuint getRenderTexture() const;
         Player* getPlayer() const;
+
+        /* DEBUG */
+        void toggleDebug();
+        void swapPlayers();
 
         ~Level();
 };

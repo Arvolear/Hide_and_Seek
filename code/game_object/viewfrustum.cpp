@@ -1,3 +1,7 @@
+#include "../shader/shader.hpp"
+
+#include "../debug/debugdrawer.hpp"
+
 #include "viewfrustum.hpp"
 
 void Plane::setData(float a, float b, float c, float d)
@@ -13,7 +17,7 @@ float Plane::distance(vec3 point) const
 
     vec3 local = norm * point;
 
-    return (local.x + local.y + local.z - d) / l;
+    return (local.x + local.y + local.z + d) / l;
 }
 
 ViewFrustum::ViewFrustum()
@@ -21,7 +25,7 @@ ViewFrustum::ViewFrustum()
     frustum.resize(6);
 }
 
-void ViewFrustum::updateFrustum(mat4 &view, mat4 &projection)
+void ViewFrustum::updateFrustum(mat4 view, mat4 projection)
 {
     this->view = view;
     this->projection = projection;
@@ -49,34 +53,76 @@ void ViewFrustum::updateFrustum(mat4 &view, mat4 &projection)
 
 bool ViewFrustum::isPointInFrustum(vec3 point) const
 {
-    bool inside = true;
-
     for (size_t i = 0; i < frustum.size(); i++)
     {
-        if (frustum[i].distance(point) < 0)
+        if (frustum[i].distance(point) <= 0)
         {
-            inside = false;
-            return inside;
+            return false;
         }
     }
 
-    return inside;
+    return true;
 }
 
 bool ViewFrustum::isSphereInFrustum(vec3 center, float radius) const
 {
-    bool inside = true;
-
     for (size_t i = 0; i < frustum.size(); i++)
     {
-        if (frustum[i].distance(center) < -radius)
+        if (frustum[i].distance(center) <= -radius)
         {
-            inside = false;
-            return inside;
+            return false;
         }
     }
 
-    return inside;
+    return true;
+}
+
+void ViewFrustum::render(DebugDrawer* debugDrawer)
+{
+    mat4 inv = inverse(projection * view);
+
+    vec4 clipFrustum[8] =
+    {
+        // near face
+        {1, 1, -1, 1},
+        {-1, 1, -1, 1},
+        {1, -1, -1, 1},
+        {-1, -1, -1, 1},
+
+        // far face
+        {1, 1, 1, 1},
+        {-1, 1, 1, 1},
+        {1, -1, 1, 1},
+        {-1, -1, 1, 1}
+    };
+
+    btVector3 globalFrustum[8];
+
+    for (int i = 0; i < 8; i++)
+    {
+        vec4 globalVec = inv * clipFrustum[i];
+
+        globalFrustum[i].setX(globalVec.x / globalVec.w);
+        globalFrustum[i].setY(globalVec.y / globalVec.w);
+        globalFrustum[i].setZ(globalVec.z / globalVec.w);
+    }
+
+    btVector3 color(0.1, 0.1, 1.0);
+
+    debugDrawer->drawLine(globalFrustum[0], globalFrustum[1], color);
+    debugDrawer->drawLine(globalFrustum[0], globalFrustum[2], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[1], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[2], color);
+
+    debugDrawer->drawLine(globalFrustum[4], globalFrustum[5], color);
+    debugDrawer->drawLine(globalFrustum[4], globalFrustum[6], color);
+    debugDrawer->drawLine(globalFrustum[7], globalFrustum[5], color);
+    debugDrawer->drawLine(globalFrustum[7], globalFrustum[6], color);
+
+    debugDrawer->drawLine(globalFrustum[0], globalFrustum[4], color);
+    debugDrawer->drawLine(globalFrustum[1], globalFrustum[5], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[7], color);
+    debugDrawer->drawLine(globalFrustum[2], globalFrustum[6], color);
 }
 
 mat4 ViewFrustum::getView() const

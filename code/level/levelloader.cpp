@@ -43,7 +43,6 @@ LevelLoader::LevelLoader(Window* window, World* physicsWorld)
     this->physicsWorld = physicsWorld;
 
     skyBox = nullptr;
-    player = nullptr;
 
     projection = mat4(1.0);
 }
@@ -80,6 +79,63 @@ void LevelLoader::loadObjects()
             graphicsObjectElem->QueryStringAttribute("path", &path);
 
             GO->setGraphicsObject(levelName + path);
+                    
+            /* view frustum */
+            XMLElement* viewFrustumElem = graphicsObjectElem->FirstChildElement("viewfrustum");
+
+            if (viewFrustumElem)
+            {
+                const char* apply = nullptr;
+                viewFrustumElem->QueryStringAttribute("apply", &apply);
+                
+                if (!strcmp(apply, "true"))
+                {
+                    GO->setViewFrustum(viewFrustum);
+                }
+            }
+
+            /* scale */
+            XMLElement* scaleElem = graphicsObjectElem->FirstChildElement("scale");
+
+            if (scaleElem)
+            {
+                float x = 0, y = 0, z = 0;
+
+                scaleElem->QueryFloatAttribute("x", &x);
+                scaleElem->QueryFloatAttribute("y", &y);
+                scaleElem->QueryFloatAttribute("z", &z);
+
+                GO->setLocalScale(vec3(x, y, z));
+            }
+            
+            /* position */
+            XMLElement* positionElem = graphicsObjectElem->FirstChildElement("position");
+
+            if (positionElem)
+            {
+                float x = 0, y = 0, z = 0;
+
+                positionElem->QueryFloatAttribute("x", &x);
+                positionElem->QueryFloatAttribute("y", &y);
+                positionElem->QueryFloatAttribute("z", &z);
+
+                GO->setLocalPosition(vec3(x, y, z));
+            }
+            
+            /* rotation */
+            XMLElement* rotationElem = graphicsObjectElem->FirstChildElement("rotation");
+
+            if (rotationElem)
+            {
+                float x = 0, y = 0, z = 0, angle = 0;
+
+                rotationElem->QueryFloatAttribute("x", &x);
+                rotationElem->QueryFloatAttribute("y", &y);
+                rotationElem->QueryFloatAttribute("z", &z);
+                rotationElem->QueryFloatAttribute("angle", &angle);
+
+                GO->setLocalRotation(vec3(x, y, z), angle);
+            }
         }
 
         /* physics object */
@@ -227,6 +283,24 @@ void LevelLoader::loadObjects()
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
                 GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)));
+            }
+        }
+       
+        /* debug object */
+        XMLElement* debugObjectElem = gameObjectElem->FirstChildElement("debugobject");
+
+        if (debugObjectElem)
+        {
+            XMLElement* debugSphereElem = debugObjectElem->FirstChildElement("debugsphere");
+                
+            /* debug sphere */
+            if (debugSphereElem)
+            {
+                int detail = 0;
+                
+                debugSphereElem->QueryIntAttribute("detail", &detail);
+
+                GO->createDebugSphere(detail);
             }
         }
 
@@ -382,7 +456,7 @@ void LevelLoader::loadSkyBox()
     skyBox->loadSkyBox(levelName + path);
 }
 
-void LevelLoader::loadPlayer()
+void LevelLoader::loadPlayers()
 {
     /* TODO PARSE XML */
     GameObject* P = new GameObject("player");
@@ -401,11 +475,22 @@ void LevelLoader::loadPlayer()
 
     RayTracer* rayTracer = new RayTracer(physicsWorld->getWorld(), nullptr, projection);     
 
-    player = new Player(window, vec3(0, 5, 5), vec3(0, 0, -1));
+    Player* player = new Player(window, vec3(0, 5, 5), vec3(0, 0, -1));
     player->setRayTracer(rayTracer);
-    //player->setGameObject(P);
+    player->setGameObject(P);
     //player->setOffset(vec2(0.43, 0));
     rayTracer->setCamera(player);
+
+    players.push_back(player);
+    
+    player = new Player(window, vec3(0, 10, 20), vec3(-1, -0.2, -1));
+    
+    players.push_back(player);
+
+    if (players.empty())
+    {
+        throw runtime_error("ERROR::loadPlayers() at least 1 player is required");
+    }
 }
 
 void LevelLoader::loadProjection()
@@ -450,19 +535,21 @@ void LevelLoader::loadProjection()
 
         projection = ortho(left, right, bottom, top, near, far); 
     }
+
+    viewFrustum = new ViewFrustum;
 }
 
 void LevelLoader::loadLevel(string name)
 {
     this->levelName = name;
 
-    loadObjects();
-    loadDirLight();
-    loadSkyBox();
-
     loadProjection();
 
-    loadPlayer();
+    loadPlayers();
+    
+    loadSkyBox();
+    loadDirLight();
+    loadObjects();
 }
 
 void LevelLoader::getGameObjectsData(map < string, GameObject* > &gameObjects) const
@@ -484,10 +571,15 @@ void LevelLoader::getProjectionData(mat4 &projection) const
 {
     projection = this->projection;
 }
-
-void LevelLoader::getPlayerData(Player*& player) const
+        
+void LevelLoader::getViewFrustumData(ViewFrustum*& viewFrustum)
 {
-    player = this->player;
+    viewFrustum = this->viewFrustum;
+}
+
+void LevelLoader::getPlayersData(vector < Player* > &players) const
+{
+    players = this->players;
 }
 
 LevelLoader::~LevelLoader() {}

@@ -72,7 +72,7 @@ vec3 BoundSphere::getCenter() const
 
 float BoundSphere::getRadius() const
 {
-    return distance(centerAndBound.first, centerAndBound.second);
+    return distance(getCenter(), centerAndBound.second);
 }
 
 vec3 BoundSphere::getTransformedCenter() const
@@ -82,7 +82,7 @@ vec3 BoundSphere::getTransformedCenter() const
 
 float BoundSphere::getTransformedRadius() const
 {
-    return distance(vec3(transform * vec4(centerAndBound.first, 1.0)), vec3(transform * vec4(centerAndBound.second, 1.0)));
+    return distance(getTransformedCenter(), vec3(transform * vec4(centerAndBound.second, 1.0)));
 }
 
 BoundSphere::~BoundSphere(){}
