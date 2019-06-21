@@ -1,113 +1,74 @@
 #include "animation.hpp"
 
-Animation::Animation()
+Animation::Animation(string name)
 {
-    id = -1;
+    this->name = name;
+    animId = 0;
 
-    startFrame = "0";
-    endFrame = "0";
-    speed = "0.4"; //default is 0.2 ~ 24 frames per second
-    priority = 10; //default priority is 10
+    framesRange = vec2(0); // default is from start to the end
+    speed = 0.0; // default is 24 frames per second
     loop = false;
 }
 
-Animation::Animation(int id, string frames, string speed, int priority, bool loop)
+Animation::Animation(string name, int animId, vec2 framesRange, float speed, bool loop)
 {
-    this->id = id;
+    this->name = name;
+    this->animId = animId;
 
-    string start;
-    string end;
-
-    if (frames != "default")
-    {
-        start = frames.substr(0, frames.find(' '));
-        end = frames.substr(frames.find(' ') + 1, frames.length());
-    }
-    else
-    {
-        start = frames;
-        end = frames;
-    }
-
-    startFrame = start; //starting frame
-    endFrame = end; //ending frame
-
+    this->framesRange = framesRange;
     this->speed = speed;
-
-    this->priority = priority;
 
     this->loop = loop;
 }
 
-
-void Animation::setId(int id)
+void Animation::setAnimId(int animId)
 {
-    this->id = id;
+    this->animId = animId;
 }
 
-void Animation::setFrames(string frames)
+void Animation::setFramesRange(vec2 framesRange)
 {
-    string start;
-    string end;
-
-    if (frames != "default")
-    {
-        start = frames.substr(0, frames.find(' '));
-        end = frames.substr(frames.find(' ') + 1, frames.length());
-    }
-    else
-    {
-        start = frames;
-        end = frames;
-    }
-
-    startFrame = start; //starting frame
-    endFrame = end; //ending frame
+    this->framesRange = framesRange;
 }
 
-void Animation::setSpeed(string speed)
+void Animation::setSpeed(float speed)
 {
     this->speed = speed;
-}
-
-void Animation::setPriority(int priority)
-{
-    this->priority = priority;
 }
 
 void Animation::setLoop(bool loop)
 {
     this->loop = loop;
 }
-
-int Animation::getId() const
+        
+string Animation::getName() const
 {
-    return id;
+    return name;
 }
 
-string Animation::getStart() const
+int Animation::getAnimId() const
 {
-    return startFrame;
+    return animId;
 }
 
-string Animation::getEnd() const
+int Animation::getStartFrame() const
 {
-    return endFrame;
+    return framesRange.x;
 }
 
-string Animation::getFrames() const
+int Animation::getEndFrame() const
 {
-    return (startFrame + " " + endFrame);
+    return framesRange.y;
 }
 
-string Animation::getSpeed() const
+vec2 Animation::getFramesRange() const
+{
+    return framesRange;
+}
+
+float Animation::getSpeed() const
 {
     return speed;
-}
-
-int Animation::getPriority() const
-{
-    return priority;
 }
 
 bool Animation::getLoop() const

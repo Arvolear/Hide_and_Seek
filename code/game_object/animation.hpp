@@ -2,36 +2,36 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 using namespace std;
+using namespace glm;
 
 class Animation
 {
     private:
-        int id; 
+        string name;
+        int animId; 
 
-        string startFrame; 
-        string endFrame; 
-        string speed; 
-        
-        int priority; 
+        vec2 framesRange;
+        float speed;
         bool loop; 
         
     public:
-        Animation();
-        Animation(int id, string frames, string speed = "0.4", int priority = 10, bool loop = false);
+        Animation(string name);
+        Animation(string name, int animId, vec2 framesRange = vec2(0), float speed = 0.0, bool loop = false);
             
-        void setId(int id);
-        void setFrames(string frames);
-        void setSpeed(string speed);
-        void setPriority(int priority);
+        void setAnimId(int animId);
+        void setFramesRange(vec2 framesRange);
+        void setSpeed(float speed);
         void setLoop(bool loop);
         
-        int getId() const;
-        string getStart() const;
-        string getEnd() const;
-        string getFrames() const;
-        string getSpeed() const;
-        int getPriority() const;
+        string getName() const;
+        int getAnimId() const;
+        int getStartFrame() const;
+        int getEndFrame() const;
+        vec2 getFramesRange() const;
+        float getSpeed() const;
         bool getLoop() const;
 
         ~Animation();

@@ -22,37 +22,15 @@ Skeleton::Skeleton(map < string, Bone* > &bones)
 
 void Skeleton::playAnimation(Animation* anim, bool reset)
 {
-    if (activeAnimation) 
-    {
-        if (anim->getPriority() >= activeAnimation->getPriority()) 
-        {
-            activeAnimation = anim; 
-        }
-    }
-    else
-    {
-        activeAnimation = anim;
-    }
+    activeAnimation = anim;
     
     if (reset)
     {
-        if (activeAnimation->getStart() == "default")
-        {
-            time = 0;
-        }
-        else
-        {
-            time = atof(activeAnimation->getStart().data()); 
-        }
+        /* default + preferred one */
+        time = activeAnimation->getStartFrame(); 
     }
 }
         
-void Skeleton::stopAnimation()
-{
-    time = 0;
-    activeAnimation = nullptr;
-}
-
 void Skeleton::renderBonesMatrices(Shader* shader)
 {
     if (!bones.empty()) 
@@ -89,6 +67,17 @@ void Skeleton::renderBonesMatrices(Shader* shader)
     }
 }
 
+void Skeleton::stopAnimation()
+{
+    time = 0;
+    activeAnimation = nullptr;
+}
+        
+Animation* Skeleton::getAnimation() const
+{
+    return activeAnimation;
+}
+
 void Skeleton::update(Shader *shader)
 { 
     renderBonesMatrices(shader); 
@@ -98,17 +87,19 @@ void Skeleton::update(Shader *shader)
         return; 
     }
 
-    if (activeAnimation->getSpeed() == "default")
+    /* default */
+    if (!activeAnimation->getSpeed())
     {
         map < string, Bone* >::iterator it = bones.begin();
-        time += it->second->getAnimation(activeAnimation->getId())->speed;
+        time += it->second->getAnimation(activeAnimation->getAnimId())->speed;
     }
     else
     {
-        time += atof(activeAnimation->getSpeed().data()); 
+        time += activeAnimation->getSpeed(); 
     }
 
-    if (activeAnimation->getStart() == "default" && activeAnimation->getEnd() == "default")
+    /* default */
+    if (activeAnimation->getFramesRange() == vec2(0))
     {
         map < string, Bone* >::iterator it = bones.begin();
 
@@ -117,7 +108,7 @@ void Skeleton::update(Shader *shader)
             time = 0; 
         }
 
-        if (time >= it->second->getAnimation(activeAnimation->getId())->duration) 
+        if (time >= it->second->getAnimation(activeAnimation->getAnimId())->duration) 
         {
             if (activeAnimation->getLoop()) 
             {
@@ -131,16 +122,16 @@ void Skeleton::update(Shader *shader)
     }
     else
     {
-        if (time < atof(activeAnimation->getStart().data())) 
+        if (time < activeAnimation->getStartFrame()) 
         {
-            time = atof(activeAnimation->getStart().data()); 
+            time = activeAnimation->getStartFrame(); 
         }
 
-        if (time >= atof(activeAnimation->getEnd().data())) 
+        if (time >= activeAnimation->getEndFrame()) 
         {
             if (activeAnimation->getLoop()) 
             {
-                time = atof(activeAnimation->getStart().data()); 
+                time = activeAnimation->getStartFrame(); 
             }
             else
             {
@@ -151,7 +142,7 @@ void Skeleton::update(Shader *shader)
 
     for (auto& it : bones) 
     {
-        it.second->updateKeyframeTransform(activeAnimation->getId(), time); 
+        it.second->updateKeyframeTransform(activeAnimation->getAnimId(), time); 
     }
 }
 
@@ -161,6 +152,4 @@ Skeleton::~Skeleton()
     {
         delete it.second;
     } 
-
-    delete activeAnimation;
 }

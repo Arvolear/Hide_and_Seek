@@ -190,9 +190,20 @@ void GameObject::setLocalPosition(vec3 translation)
     localTransform *= toMat4(conjugate(rot));
 }
 
-void GameObject::playAnimation(Animation* anim, bool reset)
+void GameObject::addAnimation(Animation* anim)
 {
-    skeleton->playAnimation(anim, reset);
+    if (animations.find(anim->getName()) == animations.end())
+    {
+        animations.insert({anim->getName(), anim});
+    }
+}
+
+void GameObject::playAnimation(string name, bool reset)
+{
+    if (animations.find(name) != animations.end())
+    {
+        skeleton->playAnimation(animations.find(name)->second, reset);
+    }
 }
 
 void GameObject::stopAnimation()
@@ -214,10 +225,25 @@ string GameObject::getName() const
 {
     return name;
 }
-
-void GameObject::render(Shader* shader, bool check)
+        
+Animation* GameObject::getActiveAnimation() const
 {
-    if (check && viewFrustum && boundSphere)
+    return skeleton->getAnimation();
+}
+
+Animation* GameObject::getAnimation(string name) const
+{
+    if (animations.find(name) != animations.end())
+    {
+        return animations.find(name)->second;
+    }
+
+    return nullptr;
+}
+
+void GameObject::render(Shader* shader, bool cull)
+{
+    if (cull && viewFrustum && boundSphere)
     {
         mat4 transform = getPhysicsObjectTransform() * localTransform;
 
@@ -278,4 +304,9 @@ GameObject::~GameObject()
     delete modelLoader;
 
     delete debugSphere;
+
+    for (auto& i: animations)
+    {
+        delete i.second;
+    }
 }

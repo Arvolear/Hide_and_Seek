@@ -33,7 +33,7 @@ void ViewFrustum::updateFrustum(mat4 view, mat4 projection)
     mat4 clip = projection * view;
 
     //near plane
-    frustum[0].setData(clip[0][3] + clip[0][2], clip[1][3] + clip[1][2], clip[2][3] + clip[2][2], clip[3][3] + clip[3][2]);
+    frustum[0].setData(clip[0][2], clip[1][2], clip[2][2], clip[3][2]);
                                               
     //far plane                               
     frustum[1].setData(clip[0][3] - clip[0][2], clip[1][3] - clip[1][2], clip[2][3] - clip[2][2], clip[3][3] - clip[3][2]);
@@ -83,13 +83,17 @@ void ViewFrustum::render(DebugDrawer* debugDrawer)
 
     vec4 clipFrustum[8] =
     {
-        // near face
+        /* near face
+         * x, y, (back/front), w 
+         * */
         {1, 1, -1, 1},
         {-1, 1, -1, 1},
         {1, -1, -1, 1},
         {-1, -1, -1, 1},
 
-        // far face
+        /* far face
+         * x, y, (back/front), w 
+         * */
         {1, 1, 1, 1},
         {-1, 1, 1, 1},
         {1, -1, 1, 1},

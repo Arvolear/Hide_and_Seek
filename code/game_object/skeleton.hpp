@@ -28,6 +28,7 @@ class Skeleton
 
         void playAnimation(Animation* anim, bool reset = true); 
         void stopAnimation(); 
+        Animation* getAnimation() const;
 
         void update(Shader* shader); 
 

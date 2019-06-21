@@ -30,6 +30,8 @@ class GameObject
         vector < Mesh* > meshes;
         Skeleton* skeleton;
 
+        map < string, Animation* > animations;
+
         ViewFrustum* viewFrustum;
 
         BoundSphere* boundSphere;
@@ -53,15 +55,19 @@ class GameObject
         void setLocalRotation(vec3 axis, float angle);
         void setLocalScale(vec3 growth);
         void setLocalPosition(vec3 pos);
-
-        void playAnimation(Animation* anim, bool reset = true);
+        
+        void addAnimation(Animation* anim);
+        void playAnimation(string name, bool reset = true);
         void stopAnimation();
 
         PhysicsObject* getPhysicsObject() const;
         string getGraphicsObject() const;
         string getName() const;
 
-        virtual void render(Shader* shader, bool check = true);
+        Animation* getActiveAnimation() const;
+        Animation* getAnimation(string name) const;
+
+        virtual void render(Shader* shader, bool cull = true);
         
         /*** DEBUG ***/
         void createDebugSphere(int depth);

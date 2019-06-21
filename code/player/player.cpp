@@ -12,6 +12,7 @@
 #include "camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
