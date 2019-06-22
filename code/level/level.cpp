@@ -236,6 +236,7 @@ void Level::toggleDebug()
 void Level::swapPlayers()
 {
     rotate(players.begin(), players.begin() + 1, players.end());
+    players[0]->resetPrevCoords();
 }
 
 Level::~Level()

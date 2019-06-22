@@ -137,7 +137,7 @@ void ModelLoader::processMeshes(aiNode *node)
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
         meshes.push_back(processMesh(mesh)); 
     }
-
+    
     for (size_t j = 0; j < node->mNumChildren; j++) 
     {
         processMeshes(node->mChildren[j]);
@@ -161,19 +161,25 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
         vertex.position = helpVec3; 
         
-        helpVec3.x = mesh->mNormals[i].x; 
-        helpVec3.y = mesh->mNormals[i].y;
-        helpVec3.z = mesh->mNormals[i].z;
+        if (mesh->HasNormals()) 
+        {
+            helpVec3.x = mesh->mNormals[i].x; 
+            helpVec3.y = mesh->mNormals[i].y;
+            helpVec3.z = mesh->mNormals[i].z;
 
-        vertex.normal = helpVec3; 
-        
-        helpVec3.x = mesh->mTangents[i].x; 
-        helpVec3.y = mesh->mTangents[i].y;
-        helpVec3.z = mesh->mTangents[i].z;
+            vertex.normal = helpVec3; 
+        }
 
-        vertex.tangent = helpVec3; 
+        if (mesh->HasTangentsAndBitangents()) 
+        {
+            helpVec3.x = mesh->mTangents[i].x; 
+            helpVec3.y = mesh->mTangents[i].y;
+            helpVec3.z = mesh->mTangents[i].z;
 
-        if (mesh->mTextureCoords[0]) 
+            vertex.tangent = helpVec3; 
+        }
+
+        if (mesh->HasTextureCoords(0)) 
         {
             vec2 helpVec2;
 
@@ -189,7 +195,7 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
         vertices.push_back(vertex);
     }
-    
+
     for (size_t i = 0; i < mesh->mNumBones; i++) 
     {
         aiBone* bone = mesh->mBones[i];
@@ -222,7 +228,7 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
     for (size_t i = 0; i < mesh->mNumFaces; i++) 
     {
         aiFace face = mesh->mFaces[i];
-        
+
         for (size_t j = 0; j < face.mNumIndices; j++)
         {
             indices.push_back(face.mIndices[j]);
@@ -236,8 +242,16 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
     vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    
+
+    /* .obj */
     vector < Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
+
+    /* .fbx */
+    if (normalMaps.empty())
+    {
+        normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal"); 
+    }
+
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
     return new Mesh(vertices, indices, textures);

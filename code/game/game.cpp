@@ -72,6 +72,7 @@ void Game::checkEvents()
         else
         {
             window->hideCursor();
+            player->resetPrevCoords();
             mode = PLAY;
         }
     }
