@@ -79,6 +79,8 @@ bool ViewFrustum::isSphereInFrustum(vec3 center, float radius) const
 
 void ViewFrustum::render(DebugDrawer* debugDrawer)
 {
+    debugDrawer->updateViewProjection();
+
     mat4 inv = inverse(projection * view);
 
     vec4 clipFrustum[8] =
@@ -125,8 +127,8 @@ void ViewFrustum::render(DebugDrawer* debugDrawer)
 
     debugDrawer->drawLine(globalFrustum[0], globalFrustum[4], color);
     debugDrawer->drawLine(globalFrustum[1], globalFrustum[5], color);
-    debugDrawer->drawLine(globalFrustum[3], globalFrustum[7], color);
     debugDrawer->drawLine(globalFrustum[2], globalFrustum[6], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[7], color);
 }
 
 mat4 ViewFrustum::getView() const

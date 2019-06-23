@@ -82,6 +82,13 @@ void DebugDrawer::draw3dText(const btVector3 &location, const char* textString){
 
 void DebugDrawer::applyViewProjection(Shader* shader, mat4 view, mat4 projection)
 {
+    this->shader = shader;
+    this->view = view;
+    this->projection = projection;
+}
+
+void DebugDrawer::updateViewProjection()
+{
     shader->setMat4("transform", mat4(1.0));
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);

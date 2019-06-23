@@ -36,7 +36,7 @@ class DebugSphere
 
         void construct(vec3 center, double radius, int depth);
 
-        void applyTransform(mat4 &transform);
+        void applyTransform(mat4 transform);
 
         void render(Shader* shader) const;
 

@@ -153,8 +153,8 @@ void GameObject::setLocalRotation(vec3 axis, float angle)
     decompose(localTransform, sc, rot, tran, skew, perspective);
 
     localTransform = mat4(1.0);
-    localTransform *= scale(sc);
     localTransform *= translate(tran);
+    localTransform *= scale(sc);
     localTransform *= rotate(radians(angle), axis) * toMat4(conjugate(rot));
 }
 
@@ -169,8 +169,8 @@ void GameObject::setLocalScale(vec3 growth)
     decompose(localTransform, sc, rot, tran, skew, perspective);
 
     localTransform = mat4(1.0);
-    localTransform *= scale(growth) * scale(sc);
     localTransform *= translate(tran);
+    localTransform *= scale(growth) * scale(sc);
     localTransform *= toMat4(conjugate(rot));
 }
 
@@ -185,8 +185,8 @@ void GameObject::setLocalPosition(vec3 translation)
     decompose(localTransform, sc, rot, tran, skew, perspective);
 
     localTransform = mat4(1.0);
-    localTransform *= scale(sc);
     localTransform *= translate(translation) * translate(tran);
+    localTransform *= scale(sc);
     localTransform *= toMat4(conjugate(rot));
 }
 

@@ -39,19 +39,48 @@ vec3 BoundSphere::findFurthest(vec3 point)
 
 vec3 BoundSphere::findCenter()
 {
-    vec3 average = vec3(0);
-    float counter = 0;
+    vec3 minAABB = allVertices[0][0].position;
+    vec3 maxAABB = allVertices[0][0].position;
 
     for (size_t i = 0; i < allVertices.size(); i++)
     {
         for (size_t j = 0; j < allVertices[i].size(); j++)
         {
-            average += allVertices[i][j].position;
-            counter++;
+            /* MIN */
+            if (allVertices[i][j].position.x < minAABB.x)
+            {
+                minAABB.x = allVertices[i][j].position.x;
+            }
+
+            if (allVertices[i][j].position.y < minAABB.y)
+            {
+                minAABB.y = allVertices[i][j].position.y;
+            }
+
+            if (allVertices[i][j].position.z < minAABB.z)
+            {
+                minAABB.z = allVertices[i][j].position.z;
+            }
+
+            /* MAX */
+            if (allVertices[i][j].position.x > maxAABB.x)
+            {
+                maxAABB.x = allVertices[i][j].position.x;
+            }
+
+            if (allVertices[i][j].position.y > maxAABB.y)
+            {
+                maxAABB.y = allVertices[i][j].position.y;
+            }
+
+            if (allVertices[i][j].position.z > maxAABB.z)
+            {
+                maxAABB.z = allVertices[i][j].position.z;
+            }
         }
     }
 
-    return average / counter; 
+    return (minAABB + maxAABB) / 2.0f; 
 }
 
 void BoundSphere::construct()

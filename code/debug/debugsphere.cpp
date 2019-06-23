@@ -196,7 +196,7 @@ void DebugSphere::construct(vec3 center, double radius, int depth)
     setUpSphere();
 }
 
-void DebugSphere::applyTransform(mat4 &transform)
+void DebugSphere::applyTransform(mat4 transform)
 {
     this->transform = transform;
 }

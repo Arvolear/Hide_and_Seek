@@ -328,7 +328,6 @@ void Player::removeGameObject()
     player = nullptr;
 }
 
-//playerPhysicsObject->getRigidBody()->setAngularFactor(btVector3(0, 0, 0));
 void Player::update()
 {
     lookAction();
@@ -349,6 +348,6 @@ vec2 Player::getOffset() const
 
 Player::~Player()
 {
-    delete player;
+    //delete player;
     delete rayTracer;
 }

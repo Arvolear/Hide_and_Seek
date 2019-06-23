@@ -115,7 +115,7 @@ void Level::render()
 
         for (auto& i : gameObjects)
         {
-            i.second->render(gameObjectShader); 
+            i.second->render(dirShadowShader); 
         }
     }
 
@@ -163,6 +163,7 @@ void Level::render()
 
     debugShader->use();
     physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, view, projection);
+    physicsWorld->getDebugDrawer()->updateViewProjection();
    
     physicsWorld->renderDebug();
 

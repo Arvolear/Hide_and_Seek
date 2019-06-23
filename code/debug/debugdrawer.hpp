@@ -22,6 +22,10 @@ class DebugDrawer : public btIDebugDraw
         
         void init();
 
+        Shader* shader;
+        mat4 view;
+        mat4 projection;
+
     public:
         DebugDrawer();
 
@@ -36,6 +40,7 @@ class DebugDrawer : public btIDebugDraw
         void draw3dText(const btVector3 &location, const char* textString) override;
 
         void applyViewProjection(Shader* shader, mat4 view, mat4 projection);
+        void updateViewProjection();
 
         ~DebugDrawer();
 };
