@@ -3,6 +3,7 @@
 //native
 #include <algorithm>
 #include <vector>
+#include <cmath>
 #include <stdexcept>
 
 //bullet
@@ -20,6 +21,7 @@ class Player : public Camera
         RayTracer* rayTracer;
         
         GameObject* player;
+        vec3 modelForward;
 
         vec2 offset;
         
@@ -33,6 +35,9 @@ class Player : public Camera
         void moveGround();
         void moveAir();
         void speedHackControl();
+
+        void updateAnimation();
+        void rotateModel();
 
         void movePhysics();
 

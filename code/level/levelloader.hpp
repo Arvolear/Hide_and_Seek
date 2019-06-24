@@ -32,6 +32,9 @@ class LevelLoader
         
         vector < Player* > players;
 
+        mat4 loadProjection(XMLElement* projElem);
+        GameObject* loadGameObject(XMLElement* gameObjectElem);
+
         void loadObjects();
         void loadDirLight();
         void loadSkyBox();

@@ -55,6 +55,7 @@ class GameObject
         void setLocalRotation(vec3 axis, float angle);
         void setLocalScale(vec3 growth);
         void setLocalPosition(vec3 pos);
+        void clearLocalTransform();
         
         void addAnimation(Animation* anim);
         void playAnimation(string name, bool reset = true);

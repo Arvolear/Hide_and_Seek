@@ -190,6 +190,11 @@ void GameObject::setLocalPosition(vec3 translation)
     localTransform *= toMat4(conjugate(rot));
 }
 
+void GameObject::clearLocalTransform()
+{
+    localTransform = mat4(1.0);
+}
+
 void GameObject::addAnimation(Animation* anim)
 {
     if (animations.find(anim->getName()) == animations.end())

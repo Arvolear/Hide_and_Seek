@@ -38,6 +38,7 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) 
     speedLock = false;
 
     offset = vec2(0);
+    modelForward = normalize(cross(Left, Up));
 }
         
 Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed) : Camera(window, playerPos, cameraForward, speed)
@@ -49,6 +50,7 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tr
     speedLock = false;
     
     offset = vec2(0);
+    modelForward = normalize(cross(Left, Up));
 }
 
 /*
@@ -264,9 +266,58 @@ void Player::speedHackControl()
     }
 }
 
+void Player::updateAnimation()
+{
+    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0)))
+    {
+        player->playAnimation("run");
+    }
+    else if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
+    {
+        player->playAnimation("idle");
+    }
+}
+
+void Player::rotateModel()
+{
+    if (moveDirection == vec3(0))
+    {
+        return;
+    }
+
+    modelForward = normalize(modelForward);
+    moveDirection = normalize(moveDirection);
+
+    float cosRotAngle = dot(modelForward, moveDirection);
+
+    if (cosRotAngle < -1)
+    {
+        cosRotAngle = -1;
+    }
+    else if (cosRotAngle > 1)
+    {
+        cosRotAngle = 1;
+    }
+
+    float angle = toDegs(acos(cosRotAngle)); 
+
+    vec3 diff = moveDirection - modelForward;
+
+    if (dot(cross(Up, modelForward), diff) < 0)
+    {
+        angle *= -1;
+    }
+
+    //cout << angle << endl;
+
+    player->setLocalRotation(Up, angle);
+
+    modelForward = moveDirection;
+}
+
 void Player::movePhysics()
 {
-    if (moveDirection != vec3(0, 0, 0))
+    if (moveDirection != vec3(0))
     {
         moveDirection = normalize(moveDirection); // normalizing move direction for equal speeds
     }
@@ -295,9 +346,15 @@ void Player::movePhysics()
 
         /* speed hack control */
         speedHackControl();
-        
+
         /* calc camera position */
         calcCameraPosition();
+
+        /* rotate model */
+        rotateModel();
+
+        /* update animation */
+        updateAnimation();
     }
     else
     {

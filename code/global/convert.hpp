@@ -84,5 +84,10 @@ inline static vec3 toVec3(btVector3 &from)
 
 inline static double toRads(double angle)
 {
-    return angle / 180 * 3.14159265;
+    return angle / 180.0 * 3.14159265;
+};
+
+inline static double toDegs(double rads)
+{
+    return rads * 180.0 / 3.14159265;
 };
