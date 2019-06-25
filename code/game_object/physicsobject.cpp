@@ -95,7 +95,10 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
 
     body = new btRigidBody(cInfo);
 
-    world->addRigidBody(body);  
+    if (collidable)
+    {
+        world->addRigidBody(body);  
+    }
 }        
 
 PhysicsObject::PhysicsObject(btDynamicsWorld* world)
@@ -105,6 +108,7 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world)
     this->phShape = nullptr;
     this->comShape = nullptr;
     this->body = nullptr;
+    this->collidable = true;
 
     btTransform* transform = new btTransform();
     transform->setIdentity();
@@ -118,6 +122,7 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world, btCollisionShape* shape, fl
     this->mass = 0;
     this->body = nullptr;
     this->comShape = nullptr;
+    this->collidable = true;
 
     btTransform* transform = new btTransform();
     transform->setIdentity();
@@ -133,6 +138,7 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world, CompoundShape* shape, float
     this->mass = 0;
     this->body = nullptr;
     this->comShape = nullptr;
+    this->collidable = true;
 
     btTransform* transform = new btTransform();
     transform->setIdentity();
@@ -180,6 +186,26 @@ void PhysicsObject::setRotation(btQuaternion rotation)
     updateBody(phShape, mass, motionState->getBTTransform()->getOrigin(), rotation);
 }
 
+void PhysicsObject::setCollidable(bool collidable)
+{
+    if (this->collidable != collidable)
+    {
+        this->collidable = collidable;
+
+        if (body)
+        {
+            if (collidable)
+            {
+                world->addRigidBody(body);
+            }
+            else
+            {
+                world->removeRigidBody(body);
+            }
+        }
+    }
+}
+
 btRigidBody* PhysicsObject::getRigidBody() const
 {
     return body;
@@ -189,7 +215,7 @@ btCollisionShape* PhysicsObject::getShape() const
 {
     return phShape;
 }
-        
+
 CompoundShape* PhysicsObject::getCompoundShape() const
 {
     return comShape;
@@ -198,6 +224,11 @@ CompoundShape* PhysicsObject::getCompoundShape() const
 btScalar* PhysicsObject::getTransform() const
 {
     return motionState->getGLTransform();
+}
+
+bool PhysicsObject::isCollidable() const
+{
+    return collidable;
 }
 
 PhysicsObject::~PhysicsObject()

@@ -50,6 +50,7 @@ class GameObject
 
         void setName(string name);
         void setVisible(bool visible);
+        void setCollidable(bool collidable);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
@@ -67,6 +68,7 @@ class GameObject
         string getGraphicsObject() const;
         string getName() const;
         bool isVisible() const;
+        bool isCollidable() const;
 
         Animation* getActiveAnimation() const;
         Animation* getAnimation(string name) const;

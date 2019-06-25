@@ -124,6 +124,14 @@ void GameObject::setVisible(bool visible)
 {
     this->visible = visible;
 }
+        
+void GameObject::setCollidable(bool collidable)
+{
+    if (physicsObject)
+    {
+        physicsObject->setCollidable(collidable);
+    }
+}
 
 void GameObject::setGraphicsObject(string path)
 {
@@ -258,6 +266,16 @@ string GameObject::getName() const
 bool GameObject::isVisible() const
 {
     return visible;
+}
+
+bool GameObject::isCollidable() const
+{
+    if (physicsObject)
+    {
+        return physicsObject->isCollidable();
+    }
+
+    return true;
 }
         
 Animation* GameObject::getActiveAnimation() const

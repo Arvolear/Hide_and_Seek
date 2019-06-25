@@ -35,6 +35,8 @@ class PhysicsObject
     private:
         btDynamicsWorld* world;
 
+        bool collidable;
+
         float mass;
         btCollisionShape* phShape;
         CompoundShape* comShape;
@@ -54,11 +56,13 @@ class PhysicsObject
         void setMass(float mass);
         void setPosition(btVector3 position);
         void setRotation(btQuaternion rotation);
+        void setCollidable(bool collidable);
 
         float getMass() const;
         btCollisionShape* getShape() const;
         CompoundShape* getCompoundShape() const;
         btRigidBody* getRigidBody() const;
+        bool isCollidable() const;
 
         btScalar* getTransform() const;
 
