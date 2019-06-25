@@ -27,6 +27,7 @@ GameObject::GameObject(string name)
 
     globalNames.insert(name);
     this->name = name;
+    setVisible(true);
 
     modelLoader = new ModelLoader();
     physicsObject = nullptr;
@@ -37,7 +38,7 @@ GameObject::GameObject(string name)
     debugSphere = nullptr;
 }
 
-GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum)
+GameObject::GameObject(string name, bool visible, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum)
 {
     if (globalNames.find(name) != globalNames.end())
     {
@@ -46,6 +47,7 @@ GameObject::GameObject(string name, string path, PhysicsObject* physicsObject, V
 
     globalNames.insert(name);
     this->name = name;
+    setVisible(visible);
 
     this->physicsObject = physicsObject;
     this->viewFrustum = viewFrustum;
@@ -117,6 +119,11 @@ void GameObject::setName(string name)
     globalNames.insert(name);
     this->name = name;
 }
+        
+void GameObject::setVisible(bool visible)
+{
+    this->visible = visible;
+}
 
 void GameObject::setGraphicsObject(string path)
 {
@@ -142,7 +149,7 @@ void GameObject::setPhysicsObject(PhysicsObject* object)
     physicsObject = object;
 }
 
-void GameObject::setLocalRotation(vec3 axis, float angle)
+void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
 {
     vec3 sc;
     quat rot;
@@ -155,10 +162,15 @@ void GameObject::setLocalRotation(vec3 axis, float angle)
     localTransform = mat4(1.0);
     localTransform *= translate(tran);
     localTransform *= scale(sc);
-    localTransform *= rotate(radians(angle), axis) * toMat4(conjugate(rot));
+    localTransform *= rotate(radians(angle), axis);
+
+    if (add)
+    {
+        localTransform *= toMat4(conjugate(rot));
+    }
 }
 
-void GameObject::setLocalScale(vec3 growth)
+void GameObject::setLocalScale(vec3 growth, bool add)
 {
     vec3 sc;
     quat rot;
@@ -170,11 +182,17 @@ void GameObject::setLocalScale(vec3 growth)
 
     localTransform = mat4(1.0);
     localTransform *= translate(tran);
-    localTransform *= scale(growth) * scale(sc);
+    localTransform *= scale(growth);
+
+    if (add)
+    {
+        localTransform *= scale(sc);
+    }
+
     localTransform *= toMat4(conjugate(rot));
 }
 
-void GameObject::setLocalPosition(vec3 translation)
+void GameObject::setLocalPosition(vec3 translation, bool add)
 {
     vec3 sc;
     quat rot;
@@ -185,7 +203,13 @@ void GameObject::setLocalPosition(vec3 translation)
     decompose(localTransform, sc, rot, tran, skew, perspective);
 
     localTransform = mat4(1.0);
-    localTransform *= translate(translation) * translate(tran);
+    localTransform *= translate(translation);
+
+    if (add)
+    {
+        localTransform *= translate(tran);
+    }
+
     localTransform *= scale(sc);
     localTransform *= toMat4(conjugate(rot));
 }
@@ -231,6 +255,11 @@ string GameObject::getName() const
     return name;
 }
         
+bool GameObject::isVisible() const
+{
+    return visible;
+}
+        
 Animation* GameObject::getActiveAnimation() const
 {
     return skeleton->getAnimation();
@@ -248,7 +277,7 @@ Animation* GameObject::getAnimation(string name) const
 
 void GameObject::render(Shader* shader, bool cull)
 {
-    if (cull && viewFrustum && boundSphere)
+    if (visible && cull && viewFrustum && boundSphere)
     {
         mat4 transform = getPhysicsObjectTransform() * localTransform;
 
@@ -268,9 +297,12 @@ void GameObject::render(Shader* shader, bool cull)
         skeleton->update(shader);
     }
 
-    for (size_t i = 0; i < meshes.size(); i++)
+    if (visible)
     {
-        meshes[i]->draw(shader);
+        for (size_t i = 0; i < meshes.size(); i++)
+        {
+            meshes[i]->draw(shader);
+        }
     }
 }
 
@@ -305,7 +337,7 @@ GameObject::~GameObject()
 
     removeGraphicsObject();
     removePhysicsObject();
-    
+
     delete modelLoader;
 
     delete debugSphere;

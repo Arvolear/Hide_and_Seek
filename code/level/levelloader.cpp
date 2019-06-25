@@ -689,6 +689,21 @@ void LevelLoader::loadPlayers()
 
             player->setGameObject(GO);
         }
+        
+        /* visible */
+        XMLElement* activeElem = playerElem->FirstChildElement("active");
+
+        if (activeElem)
+        {
+            const char* active = nullptr;
+
+            activeElem->QueryStringAttribute("active", &active);
+
+            if (!strcmp("true", active))
+            {
+                player->setActive(true);
+            }
+        }
 
         /* raytracer */
         XMLElement* rayTracerElem = playerElem->FirstChildElement("raytracer");
@@ -708,17 +723,32 @@ void LevelLoader::loadPlayers()
             }
         }
 
-        /* offset */
-        XMLElement* offsetElem = playerElem->FirstChildElement("offset");
+        /* camera offset */
+        XMLElement* cameraOffsetElem = playerElem->FirstChildElement("cameraoffset");
 
-        if (offsetElem)
+        if (cameraOffsetElem)
         {
-            float x = 0, y = 0;
+            float x = 0, y = 0, z = 0;
 
-            offsetElem->QueryFloatAttribute("x", &x);
-            offsetElem->QueryFloatAttribute("y", &y);
+            cameraOffsetElem->QueryFloatAttribute("x", &x);
+            cameraOffsetElem->QueryFloatAttribute("y", &y);
+            cameraOffsetElem->QueryFloatAttribute("z", &z);
 
-            player->setOffset(vec2(x, y));
+            player->setCameraOffset(vec3(x, y, z));
+        }
+        
+        /* model offset */
+        XMLElement* modelOffsetElem = playerElem->FirstChildElement("modeloffset");
+
+        if (modelOffsetElem)
+        {
+            float x = 0, y = 0, z = 0;
+
+            modelOffsetElem->QueryFloatAttribute("x", &x);
+            modelOffsetElem->QueryFloatAttribute("y", &y);
+            modelOffsetElem->QueryFloatAttribute("z", &z);
+
+            player->setModelOffset(vec3(x, y, z));
         }
 
         players.push_back(player);

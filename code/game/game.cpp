@@ -98,10 +98,17 @@ void Game::checkEvents()
         level->toggleDebug();
     }
     
-    if (window->isKeyPressedOnce(GLFW_KEY_V))
+    if (window->isKeyPressedOnce(GLFW_KEY_P))
     {
         level->swapPlayers();
         player = level->getPlayer();
+
+        player->resetPrevCoords();
+    }
+    
+    if (window->isKeyPressedOnce(GLFW_KEY_O))
+    {
+        player->setActive((player->isActive() + 1) % 2);
     }
 
     /* PHYSICS EVENTS */

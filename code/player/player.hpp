@@ -15,15 +15,17 @@ using namespace std;
 class Player : public Camera
 {
     protected:
+        bool active;
         bool jumpAllowed;
         bool speedLock;
 
         RayTracer* rayTracer;
         
         GameObject* player;
-        vec3 modelForward;
 
-        vec2 offset;
+        vec3 cameraOffset;
+        vec3 modelOffset;
+        vec3 modelForward;
         
         bool isGroundStanding();
         void jump();
@@ -36,25 +38,29 @@ class Player : public Camera
         void moveAir();
         void speedHackControl();
 
-        void updateAnimation();
-        void rotateModel();
+        virtual void updateAnimation();
+        void calcModelPosition();
 
         void movePhysics();
 
     public:
         Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
-        Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1);
-
+        Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
+        
+        virtual void setActive(bool active);
         void setRayTracer(RayTracer* tracer);
         void setGameObject(GameObject* player);
-        void setOffset(vec2 offset);
+        void setCameraOffset(vec3 cameraOffset);
+        void setModelOffset(vec3 modelOffset);
 
         void removeGameObject();
+        bool isActive() const;
 
         virtual void update() override;
 
         GameObject* getGameObject() const;
-        vec2 getOffset() const;
+        vec3 getCameraOffset() const;
+        vec3 getModelOffset() const;
 
         virtual ~Player();
 };

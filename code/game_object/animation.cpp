@@ -21,6 +21,11 @@ Animation::Animation(string name, int animId, vec2 framesRange, float speed, boo
     this->loop = loop;
 }
 
+void Animation::setName(string name)
+{
+    this->name = name;
+}
+
 void Animation::setAnimId(int animId)
 {
     this->animId = animId;

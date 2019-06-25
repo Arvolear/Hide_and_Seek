@@ -20,7 +20,8 @@ class Animation
     public:
         Animation(string name);
         Animation(string name, int animId, vec2 framesRange = vec2(0), float speed = 0.0, bool loop = false);
-            
+        
+        void setName(string name);
         void setAnimId(int animId);
         void setFramesRange(vec2 framesRange);
         void setSpeed(float speed);

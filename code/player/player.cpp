@@ -37,11 +37,13 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) 
     jumpAllowed = true;
     speedLock = false;
 
-    offset = vec2(0);
+    cameraOffset = modelOffset = vec3(0);
     modelForward = normalize(cross(Left, Up));
+
+    setActive(false);
 }
         
-Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed) : Camera(window, playerPos, cameraForward, speed)
+Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Camera(window, playerPos, cameraForward, speed)
 {
     rayTracer = tracer;
     this->player = player;
@@ -49,8 +51,10 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tr
     jumpAllowed = true;
     speedLock = false;
     
-    offset = vec2(0);
+    cameraOffset = modelOffset = vec3(0);
     modelForward = normalize(cross(Left, Up));
+    
+    setActive(active);
 }
 
 /*
@@ -198,8 +202,9 @@ void Player::calcCameraPosition()
     /* new Up */
     Up = normalize(toVec3(headCenter) - toVec3(globalCenter));
 
-    Pos += normalize(cross(Left, Up)) * offset.x;
-    Pos += Up * offset.y;
+    Pos += normalize(cross(Left, Up)) * cameraOffset.x;
+    Pos += Up * cameraOffset.y;
+    Pos += Left * cameraOffset.z;
 
     player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
 }
@@ -278,41 +283,49 @@ void Player::updateAnimation()
     }
 }
 
-void Player::rotateModel()
+void Player::calcModelPosition()
 {
-    if (moveDirection == vec3(0))
+    float angle = 0.0;
+    
+    if (moveDirection != vec3(0))
     {
-        return;
-    }
+        modelForward = normalize(modelForward);
+        moveDirection = normalize(moveDirection);
 
-    modelForward = normalize(modelForward);
-    moveDirection = normalize(moveDirection);
+        float cosRotAngle = dot(modelForward, moveDirection);
 
-    float cosRotAngle = dot(modelForward, moveDirection);
+        if (cosRotAngle < -1)
+        {
+            cosRotAngle = -1;
+        }
+        else if (cosRotAngle > 1)
+        {
+            cosRotAngle = 1;
+        }
 
-    if (cosRotAngle < -1)
-    {
-        cosRotAngle = -1;
-    }
-    else if (cosRotAngle > 1)
-    {
-        cosRotAngle = 1;
-    }
+        angle = toDegs(acos(cosRotAngle)); 
 
-    float angle = toDegs(acos(cosRotAngle)); 
+        vec3 diff = moveDirection - modelForward;
 
-    vec3 diff = moveDirection - modelForward;
-
-    if (dot(cross(Up, modelForward), diff) < 0)
-    {
-        angle *= -1;
+        if (dot(cross(Up, modelForward), diff) < 0)
+        {
+            angle *= -1;
+        }
+    
+        modelForward = moveDirection;
     }
 
     //cout << angle << endl;
 
     player->setLocalRotation(Up, angle);
 
-    modelForward = moveDirection;
+    vec3 localPos = vec3(0);
+
+    localPos += modelForward * modelOffset.x;
+    localPos += Up * modelOffset.y;
+    localPos += Left * modelOffset.z;
+
+    player->setLocalPosition(localPos, false);
 }
 
 void Player::movePhysics()
@@ -351,7 +364,7 @@ void Player::movePhysics()
         calcCameraPosition();
 
         /* rotate model */
-        rotateModel();
+        calcModelPosition();
 
         /* update animation */
         updateAnimation();
@@ -364,6 +377,16 @@ void Player::movePhysics()
     moveDirection = vec3(0, 0, 0);
 }
 
+void Player::setActive(bool active)
+{
+    this->active = active;
+
+    if (player)
+    {
+        player->setVisible(!active);
+    }
+}
+
 void Player::setRayTracer(RayTracer* tracer)
 {
     this->rayTracer = tracer;
@@ -374,15 +397,25 @@ void Player::setGameObject(GameObject* player)
     this->player = player;
 }
 
-void Player::setOffset(vec2 offset)
+void Player::setCameraOffset(vec3 cameraOffset)
 {
-    this->offset = offset;
+    this->cameraOffset = cameraOffset;
+}
+
+void Player::setModelOffset(vec3 modelOffset)
+{
+    this->modelOffset = modelOffset;
 }
 
 void Player::removeGameObject()
 {
     delete player;
     player = nullptr;
+}
+
+bool Player::isActive() const
+{
+    return active;
 }
 
 void Player::update()
@@ -398,9 +431,14 @@ GameObject* Player::getGameObject() const
     return player;
 }
 
-vec2 Player::getOffset() const
+vec3 Player::getCameraOffset() const
 {
-    return offset;
+    return cameraOffset;
+}
+
+vec3 Player::getModelOffset() const
+{
+    return modelOffset;
 }
 
 Player::~Player()

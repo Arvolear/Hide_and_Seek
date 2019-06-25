@@ -21,6 +21,7 @@ class GameObject
         /* all object names are stored here */
         static set < string > globalNames;
         string name;
+        bool visible;
 
         ModelLoader* modelLoader;
 
@@ -45,16 +46,17 @@ class GameObject
 
     public:
         GameObject(string name);
-        GameObject(string name, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum);
+        GameObject(string name, bool visible, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum);
 
         void setName(string name);
+        void setVisible(bool visible);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
-        
-        void setLocalRotation(vec3 axis, float angle);
-        void setLocalScale(vec3 growth);
-        void setLocalPosition(vec3 pos);
+
+        void setLocalRotation(vec3 axis, float angle, bool add = true);
+        void setLocalScale(vec3 growth, bool add = true);
+        void setLocalPosition(vec3 pos, bool add = true);
         void clearLocalTransform();
         
         void addAnimation(Animation* anim);
@@ -64,6 +66,7 @@ class GameObject
         PhysicsObject* getPhysicsObject() const;
         string getGraphicsObject() const;
         string getName() const;
+        bool isVisible() const;
 
         Animation* getActiveAnimation() const;
         Animation* getAnimation(string name) const;
