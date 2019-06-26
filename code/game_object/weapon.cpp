@@ -24,15 +24,17 @@
 Weapon::Weapon(Window* window, string name) : GameObject(name)
 {
     this->window = window;
+    
     this->offset = vec3(0);
     this->twist = quat(0, vec3(0));
-}
 
-Weapon::Weapon(Window* window, vec3 offset, quat twist, string name, bool visible, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum) : GameObject(name, visible, path, physicsObject, viewFrustum)
-{
-    this->window = window;
-    this->offset = offset;
-    this->twist = twist;
+    this->lastShotTime = 0.0;
+    this->storageBullets = 0;
+    this->magazineSize = 0;
+    this->magazineBullets = 0;
+
+    this->shotSpeed = 0;
+    this->shotPower = 0;
 }
 
 void Weapon::setOffset(vec3 offset)
@@ -47,12 +49,18 @@ void Weapon::setTwist(quat twist)
 
 void Weapon::reload()
 {
-    if (!bulletsLeft)
+    if (!storageBullets)
     {
         return;
     }
 
-    /* move bullets from left to magaz */
+    if (magazineBullets == magazineSize)
+    {
+        return;
+    }
+
+    /* X move bullets from left to magaz
+     * */
 
     if (getActiveAnimation() || (getActiveAnimation()->getName() != "reload"))
     {
@@ -65,6 +73,7 @@ void Weapon::drop()
     /* pass soldier deque
      * remove from front
      * activate physics obj
+     * unlock rotation
      * apply impulses (torque + central)
      * */
 }
@@ -74,18 +83,53 @@ void Weapon::pick()
     /* pass soldier deque
      * add to front
      * deactivate physics obj
+     * lock rotation
      * play proper reload animation
      * */
 }
 
-void Weapon::fire()
+bool Weapon::fire()
 {
-    /* check bullets in magaz
-     * check speed
+    /* X check bullets in magaz 
+     * check speed or single press 
      * current recoil strick? window?
-     * play proper shot animation 
-     * return true if everything passed ifs (soldier raytracer)
+     * X play proper shot animation 
+     * X return true if everything passed ifs (soldier raytracer)
      * */
+
+    /* TO BE CHANGED */
+    if (window->isButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+    {
+        if (magazineBullets)
+        {
+            Animation* anim = getActiveAnimation();
+
+            if (anim && anim->getName() == "fire")
+            {
+                if (anim->getCurFrame() + anim->getSpeed() > anim->getEndFrame())
+                {
+                    /* reset = true */
+                    playAnimation("fire");
+                    magazineBullets--;
+
+                    return true;
+                }
+            }
+            else
+            {
+                playAnimation("fire");
+                magazineBullets--;
+
+                return true;
+            }
+        }
+        else
+        {
+            playAnimation("idle");
+        }
+    }
+
+    return false;
 }
 
 /* SETTERS */
@@ -99,6 +143,25 @@ vec3 Weapon::getOffset() const
 quat Weapon::getTwist() const
 {
     return twist;
+}
+
+void Weapon::updateStatus()
+{
+    Animation* anim = getActiveAnimation();
+
+    if (anim)
+    {
+        if (anim->getName() == "reload")
+        {
+            if (anim->getCurFrame() + anim->getSpeed() > anim->getEndFrame())
+            {
+                int toMove = std::min(storageBullets, magazineSize - magazineBullets);
+
+                storageBullets -= toMove;
+                magazineBullets += toMove;
+            }
+        }
+    }
 }
 
 void Weapon::updatePosition(vec3 center, vec3 left, vec3 up)

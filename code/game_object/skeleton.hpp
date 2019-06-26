@@ -17,8 +17,6 @@ class Skeleton
         map < string, Bone* > bones; 
         vector < mat4 > bonesMatrices; 
 
-        float time; 
-
         Animation* activeAnimation; 
 
         void renderBonesMatrices(Shader* shader); 

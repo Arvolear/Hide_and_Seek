@@ -38,32 +38,6 @@ GameObject::GameObject(string name)
     debugSphere = nullptr;
 }
 
-GameObject::GameObject(string name, bool visible, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum)
-{
-    if (globalNames.find(name) != globalNames.end())
-    {
-        throw runtime_error("ERROR::GameObject invalid name");
-    }
-
-    globalNames.insert(name);
-    this->name = name;
-    setVisible(visible);
-
-    this->physicsObject = physicsObject;
-    this->viewFrustum = viewFrustum;
-    this->graphicsObject = path;
-
-    modelLoader = new ModelLoader();
-    modelLoader->loadModel(path);
-    
-    modelLoader->getModelData(skeleton, meshes);
-
-    boundSphere = new BoundSphere(meshes);
-    boundSphere->construct();
-
-    debugSphere = nullptr;
-}
-
 void GameObject::removePhysicsObject()
 {
     if (physicsObject)

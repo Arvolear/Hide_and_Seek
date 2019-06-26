@@ -15,8 +15,6 @@ Skeleton::Skeleton(map < string, Bone* > &bones)
 {
     this->bones = bones; 
 
-    time = 0; 
-
     activeAnimation = nullptr;
 }
 
@@ -26,8 +24,7 @@ void Skeleton::playAnimation(Animation* anim, bool reset)
     
     if (reset)
     {
-        /* default + preferred one */
-        time = activeAnimation->getStartFrame(); 
+        activeAnimation->fromStart(); 
     }
 }
         
@@ -69,7 +66,6 @@ void Skeleton::renderBonesMatrices(Shader* shader)
 
 void Skeleton::stopAnimation()
 {
-    time = 0;
     activeAnimation = nullptr;
 }
         
@@ -87,62 +83,31 @@ void Skeleton::update(Shader *shader)
         return; 
     }
 
-    /* default */
+    /* default speed */
     if (!activeAnimation->getSpeed())
     {
         map < string, Bone* >::iterator it = bones.begin();
-        time += it->second->getAnimation(activeAnimation->getAnimId())->speed;
+        activeAnimation->setSpeed(it->second->getAnimation(activeAnimation->getAnimId())->speed);
     }
-    else
-    {
-        time += activeAnimation->getSpeed(); 
-    }
-
-    /* default */
+        
+    /* default frames range */
     if (activeAnimation->getFramesRange() == vec2(0))
     {
         map < string, Bone* >::iterator it = bones.begin();
 
-        if (time < 0) 
-        {
-            time = 0; 
-        }
-
-        if (time >= it->second->getAnimation(activeAnimation->getAnimId())->duration) 
-        {
-            if (activeAnimation->getLoop()) 
-            {
-                time = 0; 
-            }
-            else
-            {
-                stopAnimation(); 
-            }
-        }
+        activeAnimation->setFramesRange(vec2(1.0, it->second->getAnimation(activeAnimation->getAnimId())->duration));
+        activeAnimation->fromStart();
     }
-    else
-    {
-        if (time < activeAnimation->getStartFrame()) 
-        {
-            time = activeAnimation->getStartFrame(); 
-        }
-
-        if (time >= activeAnimation->getEndFrame()) 
-        {
-            if (activeAnimation->getLoop()) 
-            {
-                time = activeAnimation->getStartFrame(); 
-            }
-            else
-            {
-                stopAnimation(); 
-            }
-        }
-    }
-
+        
     for (auto& it : bones) 
     {
-        it.second->updateKeyframeTransform(activeAnimation->getAnimId(), time); 
+        it.second->updateKeyframeTransform(activeAnimation->getAnimId(), activeAnimation->getCurFrame()); 
+    }
+   
+    /* next frame */
+    if (!activeAnimation->nextFrame())
+    {
+        stopAnimation();
     }
 }
 

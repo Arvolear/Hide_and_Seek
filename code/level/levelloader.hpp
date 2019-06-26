@@ -32,10 +32,21 @@ class LevelLoader
         
         vector < Player* > players;
 
-        mat4 loadProjection(XMLElement* projElem);
-        GameObject* loadGameObject(XMLElement* gameObjectElem);
+        /* helpers */
+        void loadProjection(XMLElement* projElem, mat4 &proj);
+        void loadAnimation(XMLElement* animationElem, Animation*& anim);
 
-        void loadObjects();
+        void loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*& GO);
+        void loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& GO);
+        void loadDebugObject(XMLElement* debugObjectElem, GameObject*& GO);
+
+        void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);
+
+        //void loadWeapon(XMLElement* weaponElem, Weapon*& weapon);
+
+        /* main */
+        void loadGameObjects();
+        void loadWeapons();
         void loadDirLight();
         void loadSkyBox();
 

@@ -21,35 +21,47 @@ class Weapon : public GameObject
 
         float lastShotTime;
 
-        int bulletsLeft;
+        int storageBullets;
         int magazineSize;
-        int magazineBulletsLeft;
+        int magazineBullets;
 
         vector < vec3 > recoil;
 
+        /* animaiton duration? */
         float shotSpeed;
         float shotPower;
 
     public:
         Weapon(Window* window, string name);
-        Weapon(Window* window, vec3 offset, quat twist, string name, bool visible, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum);
 
         void setOffset(vec3 offset);
         void setTwist(quat twist);
+
+        void setTotalBullets(int totalBullets);
+        void setMagazineSize(int magazineSize);
+        void setMagazineBullets(int magazineBullets);
+
+        void setShotSpeed(float shotSpeed);
+        void setShotPower(float shotPower);
 
         void reload();
         void drop();
         void pick();
         void choose();
         
-        /* perform dynamic cast to differ pistols from rifles? 
-         * or take info from the window?
-         * */
-        void fire();
+        bool fire();
 
         vec3 getOffset() const;
         quat getTwist() const;
+        
+        int getStorageBullets() const;
+        int getMagazineSize() const;
+        int getMagazineBullets() const;
 
+        float getShotSpeed() const;
+        float getShotPower() const;
+
+        void updateStatus();
         void updatePosition(vec3 center, vec3 left, vec3 up);
 
         ~Weapon();

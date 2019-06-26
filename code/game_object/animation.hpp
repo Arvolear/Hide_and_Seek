@@ -14,6 +14,9 @@ class Animation
         int animId; 
 
         vec2 framesRange;
+        
+        float curFrame;
+
         float speed;
         bool loop; 
         
@@ -34,6 +37,11 @@ class Animation
         vec2 getFramesRange() const;
         float getSpeed() const;
         bool getLoop() const;
+
+        void fromStart();
+        void fromFrame(float frame);
+        bool nextFrame();
+        float getCurFrame() const;
 
         ~Animation();
 };

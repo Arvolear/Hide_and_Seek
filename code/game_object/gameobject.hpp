@@ -46,7 +46,6 @@ class GameObject
 
     public:
         GameObject(string name);
-        GameObject(string name, bool visible, string path, PhysicsObject* physicsObject, ViewFrustum* viewFrustum);
 
         void setName(string name);
         void setVisible(bool visible);
