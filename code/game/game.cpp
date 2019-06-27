@@ -30,6 +30,7 @@
 #include "../game_object/modelloader.hpp"
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/weapon.hpp"
 
 #include "../player/player.hpp"
 
@@ -57,11 +58,13 @@ Game::Game(Window* window, string levelName)
     level->loadLevel(levelName);
 
     player = level->getPlayer();
+    testW = dynamic_cast < Weapon* >(level->getGameObject("testW"));
     // ...
 }
 
 void Game::checkEvents()
 {
+    /* menu */
     if (window->isKeyPressedOnce(GLFW_KEY_ESCAPE))
     {
         if (mode == PLAY)
@@ -77,6 +80,7 @@ void Game::checkEvents()
         }
     }
     
+    /* Xray (physics) */
     if (window->isKeyPressedOnce(GLFW_KEY_X))
     {
         if (physicsWorld->getDebugDrawer()->getDebugMode() == 0)
@@ -93,11 +97,13 @@ void Game::checkEvents()
         }
     }
     
+    /* draw debug spheres */
     if (window->isKeyPressedOnce(GLFW_KEY_C))
     {
         level->toggleDebug();
     }
     
+    /* swap players */
     if (window->isKeyPressedOnce(GLFW_KEY_P))
     {
         level->swapPlayers();
@@ -106,9 +112,21 @@ void Game::checkEvents()
         player->resetPrevCoords();
     }
     
+    /* visible player */
     if (window->isKeyPressedOnce(GLFW_KEY_O))
     {
         player->setActive((player->isActive() + 1) % 2);
+    }
+
+    /* T E S T */
+    if (window->isKeyPressedOnce(GLFW_KEY_R))
+    {
+        testW->reload(); 
+    }
+    
+    if (window->isButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+    {
+        testW->fire(); 
     }
 
     /* PHYSICS EVENTS */
@@ -138,6 +156,7 @@ void Game::gameLoop()
         }
 
         level->render();
+        testW->updateStatus();
 
         window->render(level->getRenderTexture());
     }

@@ -15,7 +15,7 @@ GAME = game.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o
-GAME_OBJECT = gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
+GAME_OBJECT = weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
@@ -111,6 +111,9 @@ $(OUTPUTDIR)/player.o: $(INPUTDIR)/player/player.cpp $(INPUTDIR)/player/player.h
 	g++ -c $(INPUTDIR)/player/player.cpp -o $@ $(FLAGS)
 
 ### GAME_OBJECT ###
+
+$(OUTPUTDIR)/weapon.o: $(INPUTDIR)/game_object/weapon.cpp $(INPUTDIR)/game_object/weapon.hpp
+	g++ -c $(INPUTDIR)/game_object/weapon.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/gameobject.o: $(INPUTDIR)/game_object/gameobject.cpp $(INPUTDIR)/game_object/gameobject.hpp
 	g++ -c $(INPUTDIR)/game_object/gameobject.cpp -o $@ $(FLAGS)

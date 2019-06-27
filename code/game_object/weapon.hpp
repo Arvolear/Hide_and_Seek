@@ -35,9 +35,9 @@ class Weapon : public GameObject
         Weapon(Window* window, string name);
 
         void setOffset(vec3 offset);
-        void setTwist(quat twist);
+        void setTwist(vec3 axis, float angle);
 
-        void setTotalBullets(int totalBullets);
+        void setStorageBullets(int storageBullets);
         void setMagazineSize(int magazineSize);
         void setMagazineBullets(int magazineBullets);
 

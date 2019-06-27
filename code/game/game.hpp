@@ -26,6 +26,7 @@ class Game
         string levelName;
 
         Player* player;
+        Weapon* testW;
 
         void checkEvents();
 

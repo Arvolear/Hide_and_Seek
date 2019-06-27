@@ -42,7 +42,7 @@ class LevelLoader
 
         void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);
 
-        //void loadWeapon(XMLElement* weaponElem, Weapon*& weapon);
+        void loadWeapon(XMLElement* weaponElem, Weapon*& weapon);
 
         /* main */
         void loadGameObjects();

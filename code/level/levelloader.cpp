@@ -30,6 +30,7 @@
 #include "../game_object/modelloader.hpp"
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/weapon.hpp"
 
 #include "../player/player.hpp"
 
@@ -492,6 +493,123 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
         loadDebugObject(debugObjectElem, GO);
     }
 }
+        
+void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& weapon)
+{
+    const char* name = nullptr;
+    weaponElem->QueryStringAttribute("name", &name);
+
+    GameObject* GO = new Weapon(window, name);
+
+    /* graphics object */
+    XMLElement* graphicsObjectElem = weaponElem->FirstChildElement("graphicsobject");
+
+    if (graphicsObjectElem)
+    {
+        loadGraphicsObject(graphicsObjectElem, GO);
+    }
+
+    /* physics object */
+    XMLElement* physicsObjectElem = weaponElem->FirstChildElement("physicsobject");
+
+    if (physicsObjectElem)
+    {
+        loadPhysicsObject(physicsObjectElem, GO);
+    }
+
+    /* debug object */
+    XMLElement* debugObjectElem = weaponElem->FirstChildElement("debugobject");
+
+    if (debugObjectElem)
+    {
+        loadDebugObject(debugObjectElem, GO);
+    }
+
+    weapon = dynamic_cast < Weapon* >(GO);
+
+    /* info */
+    XMLElement* weaponInfoElem = weaponElem->FirstChildElement("weaponinfo");
+
+    if (weaponInfoElem)
+    {
+        /* offset */
+        XMLElement* offsetElem = weaponInfoElem->FirstChildElement("offset");
+
+        if (offsetElem)
+        {
+            float x = 0, y = 0, z = 0;
+
+            offsetElem->QueryFloatAttribute("x", &x);
+            offsetElem->QueryFloatAttribute("y", &y);
+            offsetElem->QueryFloatAttribute("z", &z);
+            
+            weapon->setOffset(vec3(x, y, z));
+        }
+
+        /* twist */
+        XMLElement* twistElem = weaponInfoElem->FirstChildElement("twist");
+
+        if (twistElem)
+        {
+            float x = 0, y = 0, z = 0, angle = 0;
+
+            twistElem->QueryFloatAttribute("x", &x);
+            twistElem->QueryFloatAttribute("y", &y);
+            twistElem->QueryFloatAttribute("z", &z);
+            twistElem->QueryFloatAttribute("angle", &angle);
+            
+            weapon->setTwist(vec3(x, y, z), angle);
+        }
+        
+        /* storage bullets */
+        XMLElement* storageBulletsElem = weaponInfoElem->FirstChildElement("storagebullets");
+
+        if (storageBulletsElem)
+        {
+            int amount = 0;
+
+            storageBulletsElem->QueryIntAttribute("amount", &amount);
+            
+            weapon->setStorageBullets(amount);
+        }
+        
+        /* magazine size */
+        XMLElement* magazineSizeElem = weaponInfoElem->FirstChildElement("magazinesize");
+
+        if (magazineSizeElem)
+        {
+            int size = 0;
+
+            magazineSizeElem->QueryIntAttribute("size", &size);
+            
+            weapon->setMagazineSize(size);
+        }
+        
+        /* magazine bullets */
+        XMLElement* magazineBulletsElem = weaponInfoElem->FirstChildElement("magazinebullets");
+
+        if (magazineBulletsElem)
+        {
+            int amount = 0;
+
+            magazineBulletsElem->QueryIntAttribute("amount", &amount);
+            
+            weapon->setMagazineBullets(amount);
+        }
+        
+        /* shot speed */
+        XMLElement* shotSpeedElem = weaponInfoElem->FirstChildElement("shotspeed");
+
+        if (shotSpeedElem)
+        {
+            float speed = 0;
+
+            shotSpeedElem->QueryFloatAttribute("speed", &speed);
+            
+            weapon->setShotSpeed(speed);
+        }
+    }
+}
 
 void LevelLoader::loadGameObjects()
 {
@@ -517,6 +635,33 @@ void LevelLoader::loadGameObjects()
         gameObjects.insert({GO->getName(), GO});
 
         gameObjectElem = gameObjectElem->NextSiblingElement();
+    }
+}
+
+void LevelLoader::loadWeapons()
+{
+    XMLDocument weaponDoc;
+
+    weaponDoc.LoadFile((levelName + "/weapon.xml").c_str());
+
+    XMLNode* root = weaponDoc.FirstChildElement("WeaponFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadWeapons() failed to load XML"); 
+    }
+
+    XMLNode* weaponsNode = root->FirstChildElement("weapons");
+    XMLElement* weaponElem = weaponsNode->FirstChildElement("weapon");
+
+    while (weaponElem)
+    {
+        Weapon* weapon = nullptr;
+        loadWeapon(weaponElem, weapon);
+
+        gameObjects.insert({weapon->getName(), weapon});
+
+        weaponElem = weaponElem->NextSiblingElement();
     }
 }
 
@@ -814,6 +959,8 @@ void LevelLoader::loadLevel(string name)
     loadSkyBox();
     loadDirLight();
     loadGameObjects();
+
+    loadWeapons();
 }
 
 void LevelLoader::getGameObjectsData(map < string, GameObject* > &gameObjects) const

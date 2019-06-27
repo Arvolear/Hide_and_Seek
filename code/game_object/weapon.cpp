@@ -42,9 +42,36 @@ void Weapon::setOffset(vec3 offset)
     this->offset = offset;
 }
 
-void Weapon::setTwist(quat twist)
+void Weapon::setTwist(vec3 axis, float angle)
 {
-    this->twist = twist;
+    this->twist = quat(angle, axis);
+}
+
+void Weapon::setStorageBullets(int storageBullets)
+{
+    this->storageBullets = storageBullets;
+}
+
+void Weapon::setMagazineSize(int magazineSize)
+{
+    this->magazineSize = magazineSize;
+
+    magazineBullets = std::min(magazineSize, magazineBullets);
+}
+
+void Weapon::setMagazineBullets(int magazineBullets)
+{
+    this->magazineBullets = std::min(magazineBullets, magazineSize);
+}
+
+void Weapon::setShotSpeed(float shotSpeed)
+{
+    this->shotSpeed = shotSpeed;
+}
+
+void Weapon::setShotPower(float shotPower)
+{
+    this->shotPower = shotPower;
 }
 
 void Weapon::reload()
@@ -62,9 +89,9 @@ void Weapon::reload()
     /* X move bullets from left to magaz
      * */
 
-    if (getActiveAnimation() || (getActiveAnimation()->getName() != "reload"))
+    if (!getActiveAnimation() || (getActiveAnimation()->getName() != "reload1"))
     {
-        playAnimation("reload");
+        playAnimation("reload1");
     }
 }
 
@@ -102,25 +129,14 @@ bool Weapon::fire()
     {
         if (magazineBullets)
         {
-            Animation* anim = getActiveAnimation();
-
-            if (anim && anim->getName() == "fire")
+            if (lastShotTime + shotSpeed <= window->getTime())
             {
-                if (anim->getCurFrame() + anim->getSpeed() > anim->getEndFrame())
-                {
-                    /* reset = true */
-                    playAnimation("fire");
-                    magazineBullets--;
+                lastShotTime = window->getTime();
 
-                    return true;
-                }
-            }
-            else
-            {
                 playAnimation("fire");
                 magazineBullets--;
 
-                return true;
+                return true; 
             }
         }
         else
@@ -132,9 +148,6 @@ bool Weapon::fire()
     return false;
 }
 
-/* SETTERS */
-/* GETTERS */
-
 vec3 Weapon::getOffset() const
 {
     return offset;
@@ -145,13 +158,38 @@ quat Weapon::getTwist() const
     return twist;
 }
 
+int Weapon::getStorageBullets() const
+{
+    return storageBullets;
+}
+
+int Weapon::getMagazineSize() const
+{
+    return magazineSize;
+}
+
+int Weapon::getMagazineBullets() const
+{
+    return magazineBullets;
+}
+
+float Weapon::getShotSpeed() const
+{
+    return shotSpeed;
+}
+
+float Weapon::getShotPower() const
+{
+    return shotPower;
+}
+
 void Weapon::updateStatus()
 {
     Animation* anim = getActiveAnimation();
 
     if (anim)
     {
-        if (anim->getName() == "reload")
+        if (anim->getName() == "reload1" || anim->getName() == "reload2")
         {
             if (anim->getCurFrame() + anim->getSpeed() > anim->getEndFrame())
             {
@@ -162,6 +200,15 @@ void Weapon::updateStatus()
             }
         }
     }
+    else
+    {
+        playAnimation("idle");
+    }
+
+    /*cout << "Storage " << storageBullets << endl;
+    cout << "Size " << magazineSize << endl;
+    cout << "Magazine " << magazineBullets << endl;
+    cout << "shotSpeed " << shotSpeed << endl << endl;*/
 }
 
 void Weapon::updatePosition(vec3 center, vec3 left, vec3 up)
