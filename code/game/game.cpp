@@ -155,8 +155,16 @@ void Game::gameLoop()
             player->update();
         }
 
-        level->render();
         testW->updateStatus();
+
+        if (player->getGameObject())
+        {
+            testW->updatePosition(player->getPosition(), player->getForward(), player->getUp());
+            testW->updateRotation(player->getHorizontalViewRotation());
+            testW->updateRotation(player->getVerticalViewRotation());
+        }
+        
+        level->render();
 
         window->render(level->getRenderTexture());
     }

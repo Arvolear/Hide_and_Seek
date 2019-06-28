@@ -558,7 +558,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& weapon)
             twistElem->QueryFloatAttribute("z", &z);
             twistElem->QueryFloatAttribute("angle", &angle);
             
-            weapon->setTwist(vec3(x, y, z), angle);
+            weapon->setTwist(vec3(x, y, z), toRads(angle));
         }
         
         /* storage bullets */

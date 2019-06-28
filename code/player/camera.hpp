@@ -3,7 +3,7 @@
 #define GLEW_STATIC
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
@@ -16,6 +16,9 @@ class Camera
 
         vec2 prevCoords;
         vec2 sensitivity;
+
+        mat3 horizontalViewRotation;
+        mat3 verticalViewRotation;
 
         float speed;
 
@@ -36,13 +39,19 @@ class Camera
         void setPosition(float worldX, float worldY, float worldZ);
         void setUp(vec3 Up);
         void setSpeed(float speed);
+        void setSensitivity(vec2 sens);
 
         vec2 getWindowSize() const;
-        virtual vec3 getPosition() const;
-        virtual vec3 getForward() const;
-        virtual vec3 getLeft() const;
-        virtual vec3 getUp() const;
-
+        vec3 getPosition() const;
+        vec3 getForward() const;
+        vec3 getLeft() const;
+        vec3 getUp() const;
+        
+        float getSpeed() const;
+        vec2 getSensitivity() const;
+        
+        mat3 getHorizontalViewRotation() const;
+        mat3 getVerticalViewRotation() const;
         mat4 getView() const;
 
         virtual void update();

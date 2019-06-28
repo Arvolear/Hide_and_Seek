@@ -171,19 +171,39 @@ void PhysicsObject::setShape(CompoundShape* shape)
     updateBody(shape->getShape(), mass, motionState->getBTTransform()->getOrigin(), motionState->getBTTransform()->getRotation());
 }
 
-void PhysicsObject::setMass(float mass)
+void PhysicsObject::setMass(float mass, bool add)
 {
+    if (add)
+    {
+        mass += this->mass;
+    }
+        
     updateBody(phShape, mass, motionState->getBTTransform()->getOrigin(), motionState->getBTTransform()->getRotation());
 }
 
-void PhysicsObject::setPosition(btVector3 position)
+void PhysicsObject::setPosition(btVector3 position, bool add)
 {
+    if (add)
+    {
+        position += motionState->getBTTransform()->getOrigin();
+    }
+
     updateBody(phShape, mass, position, motionState->getBTTransform()->getRotation());
 }
 
-void PhysicsObject::setRotation(btQuaternion rotation)
+void PhysicsObject::setRotation(btQuaternion rotation, bool add)
 {
+    if (add)
+    {
+        rotation *= motionState->getBTTransform()->getRotation();
+    }
+
     updateBody(phShape, mass, motionState->getBTTransform()->getOrigin(), rotation);
+}
+
+void PhysicsObject::clearTransform()
+{
+    updateBody(phShape, mass, btVector3(0, 0, 0), btQuaternion(btVector3(0, 1, 0), 0));
 }
 
 void PhysicsObject::setCollidable(bool collidable)

@@ -40,7 +40,7 @@ inline static string path(string p)
     return {realPath};
 }
 
-inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 &from)
+inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 from)
 {
     mat4 to;
 
@@ -52,7 +52,7 @@ inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 &from)
     return to;
 }
 
-inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 &from)
+inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 from)
 {
     return aiMatrix4x4(
             from[0][0], from[1][0], from[2][0], from[3][0],
@@ -71,15 +71,19 @@ inline static mat4 btScalar2glmMat4(btScalar *matrix)
             matrix[12], matrix[13], matrix[14], matrix[15]);
 }
 
-
-inline static btVector3 toBtVector3(vec3 &from)
+inline static btVector3 toBtVector3(vec3 from)
 {
     return btVector3(from.x, from.y, from.z);
 }
 
-inline static vec3 toVec3(btVector3 &from)
+inline static vec3 toVec3(btVector3 from)
 {
     return vec3(from.x(), from.y(), from.z());
+}
+
+inline static btQuaternion toBtQuaternion(quat from)
+{
+    return btQuaternion(toBtVector3(axis(from)), angle(from));
 }
 
 inline static double toRads(double angle)

@@ -16,6 +16,9 @@ Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
     sensitivity.x = 2 / window->getSize().x;
     sensitivity.y = (2 / (window->getSize().x / window->getSize().y)) / window->getSize().y;
 
+    horizontalViewRotation = mat3(1.0);
+    verticalViewRotation = mat3(1.0);
+
     Pos = cameraPos;
     moveDirection = vec3(0, 0, 0);
     Forward = normalize(cameraForward);
@@ -30,6 +33,9 @@ Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
 
 void Camera::lookAction()
 {
+    horizontalViewRotation = mat3(1.0);
+    verticalViewRotation = mat3(1.0);
+
     if (!window->isMouseMoved())
     {
         return;
@@ -43,19 +49,23 @@ void Camera::lookAction()
     xoffset *= sensitivity.x;
     yoffset *= sensitivity.y;
 
+    /* around Up */
+    Forward = mat3(rotate(-xoffset, normalize(Up))) * Forward;
+    horizontalViewRotation *= mat3(rotate(-xoffset, normalize(Up)));
 
-    mat4 camView(1.0);
-
-    Forward = mat3(rotate(camView, GLfloat(-xoffset), normalize(Up))) * Forward;
-        
     Left = normalize(cross(Up, Forward));
        
+    /* fix camera jumps */
     vec3 ForwardTmp = Forward;
-    Forward = mat3(rotate(camView, GLfloat(yoffset), normalize(Left))) * Forward;
+
+    /* around Left */
+    Forward = mat3(rotate(yoffset, normalize(Left))) * Forward;
+    verticalViewRotation *= mat3(rotate(yoffset, normalize(Left)));
         
     if (dot(cross(Up, Forward), Left) < 0)
     {
         Forward = ForwardTmp;
+        verticalViewRotation = mat3(1.0);
     }
     
     Forward = normalize(Forward);
@@ -115,6 +125,12 @@ void Camera::setSpeed(float speed)
 {
     this->speed = speed;
 }
+        
+void Camera::setSensitivity(vec2 sens)
+{
+    sensitivity.x = sens.x / window->getSize().x;
+    sensitivity.y = (sens.y / (window->getSize().x / window->getSize().y)) / window->getSize().y; 
+}
 
 vec2 Camera::getWindowSize() const
 {
@@ -139,6 +155,26 @@ vec3 Camera::getLeft() const
 vec3 Camera::getUp() const
 {
     return Up;
+}
+
+float Camera::getSpeed() const
+{
+    return speed; 
+}
+
+vec2 Camera::getSensitivity() const
+{
+    return sensitivity;
+}
+
+mat3 Camera::getHorizontalViewRotation() const
+{
+    return horizontalViewRotation;
+}
+
+mat3 Camera::getVerticalViewRotation() const
+{
+    return verticalViewRotation;
 }
 
 mat4 Camera::getView() const

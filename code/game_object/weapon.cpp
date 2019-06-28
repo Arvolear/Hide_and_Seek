@@ -26,7 +26,7 @@ Weapon::Weapon(Window* window, string name) : GameObject(name)
     this->window = window;
     
     this->offset = vec3(0);
-    this->twist = quat(0, vec3(0));
+    this->twist = quat(0, vec3(0, 1, 0));
 
     this->lastShotTime = 0.0;
     this->storageBullets = 0;
@@ -103,6 +103,8 @@ void Weapon::drop()
      * unlock rotation
      * apply impulses (torque + central)
      * */
+
+    stopAnimation();
 }
 
 void Weapon::pick()
@@ -113,6 +115,8 @@ void Weapon::pick()
      * lock rotation
      * play proper reload animation
      * */
+    
+    physicsObject->setRotation(toBtQuaternion(twist), false);
 }
 
 bool Weapon::fire()
@@ -211,14 +215,23 @@ void Weapon::updateStatus()
     cout << "shotSpeed " << shotSpeed << endl << endl;*/
 }
 
-void Weapon::updatePosition(vec3 center, vec3 left, vec3 up)
+void Weapon::updateRotation(mat3 rotation)
 {
-    center += normalize(cross(left, up)) * offset.x;
-    center += up * offset.y;
-    center += left * offset.z;
+    btQuaternion rot = toBtQuaternion(quat_cast(rotation)); 
+    
+    physicsObject->setRotation(rot);
+}
 
-    setLocalPosition(center, false);
-    setLocalRotation(axis(twist), angle(twist), false);
+void Weapon::updatePosition(vec3 center, vec3 forward, vec3 up)
+{
+    vec3 left = normalize(cross(up, forward));
+    vec3 localUp = normalize(cross(forward, left));
+
+    center += forward * offset.x;
+    center += localUp * offset.y;
+    center += left * offset.z;
+    
+    physicsObject->setPosition(toBtVector3(center), false);
 }
 
 Weapon::~Weapon() {}

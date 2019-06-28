@@ -53,9 +53,10 @@ class PhysicsObject
 
         void setShape(btCollisionShape* shape);
         void setShape(CompoundShape* shape);
-        void setMass(float mass);
-        void setPosition(btVector3 position);
-        void setRotation(btQuaternion rotation);
+        void setMass(float mass, bool add = true);
+        void setPosition(btVector3 position, bool add = true);
+        void setRotation(btQuaternion rotation, bool add = true);
+        void clearTransform();
         void setCollidable(bool collidable);
 
         float getMass() const;

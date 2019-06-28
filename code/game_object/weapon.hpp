@@ -62,7 +62,8 @@ class Weapon : public GameObject
         float getShotPower() const;
 
         void updateStatus();
-        void updatePosition(vec3 center, vec3 left, vec3 up);
+        void updateRotation(mat3 rotation);
+        void updatePosition(vec3 center, vec3 forward, vec3 up);
 
         ~Weapon();
 };
