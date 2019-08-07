@@ -44,6 +44,8 @@ class PhysicsObject
 
         OpenGLMotionState* motionState;
 
+        void* userPointer;
+
         void updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation);
 
     public:
@@ -59,11 +61,15 @@ class PhysicsObject
         void clearTransform();
         void setCollidable(bool collidable);
 
+        void setUserPointer(void* userPointer);
+
         float getMass() const;
         btCollisionShape* getShape() const;
         CompoundShape* getCompoundShape() const;
         btRigidBody* getRigidBody() const;
         bool isCollidable() const;
+
+        void* getUserPointer() const;
 
         btScalar* getTransform() const;
 

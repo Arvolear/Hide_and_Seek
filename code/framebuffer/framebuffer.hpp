@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <vector>
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -15,18 +16,19 @@ class FrameBuffer
 {
     protected:
         GLuint bufferID;
-        GLuint textureID;
+        
+        vector < GLuint > texturesID;
         
         int width, height;
 
         FrameBuffer();
 
     public:
-        virtual void genBuffer(double width, double height) = 0;
-        virtual void genBuffer(vec2 size) = 0;
+        virtual void genBuffer(double width, double height, unsigned int layouts = 1) = 0;
+        virtual void genBuffer(vec2 size, unsigned int layouts = 1) = 0;
 
         GLuint getBuffer() const;
-        GLuint getTexture() const;
+        GLuint getTexture(size_t num = 0) const;
 
         vec2 getSize() const;
 

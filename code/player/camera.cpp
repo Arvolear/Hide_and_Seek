@@ -183,10 +183,13 @@ mat4 Camera::getView() const
 }
 
 /* consider mode? */
-void Camera::update(/* mode */)
+void Camera::update(bool events)
 {
-    lookAction();
-    moveAction();
+    if (events)
+    {
+        lookAction();
+        moveAction();
+    }
 
     if (moveDirection != vec3(0, 0, 0))
     {

@@ -42,17 +42,19 @@ class LevelLoader
 
         void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);
 
-        void loadWeapon(XMLElement* weaponElem, Weapon*& weapon);
+        void loadRifle(XMLElement* rifleElem, Rifle*& rifle);
 
         /* main */
         void loadGameObjects();
-        void loadWeapons();
+        void loadRifles();
+        void loadPistols();
         void loadDirLight();
         void loadSkyBox();
 
         void loadProjection();
 
         void loadPlayers();
+        void loadSoldiers();
 
     public:
         LevelLoader(Window* window, World* physicsWorld);

@@ -6,6 +6,7 @@ INPUTDIR = ./code
 OUTPUTDIR = ./build
 
 MAIN = main.o 
+GLOBAL = gaussianblur.o
 DEBUG = debugsphere.o debugdrawer.o
 SHADER = shader.o 
 FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o
@@ -14,10 +15,10 @@ MENU = menu.o
 GAME = game.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
-PLAYER = camera.o player.o
-GAME_OBJECT = weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
+PLAYER = camera.o player.o soldier.o
+GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
 ### ALL ###
 
@@ -28,6 +29,11 @@ Hide_and_Seek: $(OBJECTFILES)
 
 $(OUTPUTDIR)/main.o: $(INPUTDIR)/main.cpp
 	g++ -c $(INPUTDIR)/main.cpp -o $@ $(FLAGS)
+
+### GLOBAL ###
+
+$(OUTPUTDIR)/gaussianblur.o: $(INPUTDIR)/global/gaussianblur.cpp $(INPUTDIR)/global/gaussianblur.hpp
+	g++ -c $(INPUTDIR)/global/gaussianblur.cpp -o $@ $(FLAGS)
 
 ### DEBUG ###
 
@@ -110,7 +116,13 @@ $(OUTPUTDIR)/camera.o: $(INPUTDIR)/player/camera.cpp $(INPUTDIR)/player/camera.h
 $(OUTPUTDIR)/player.o: $(INPUTDIR)/player/player.cpp $(INPUTDIR)/player/player.hpp
 	g++ -c $(INPUTDIR)/player/player.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/soldier.o: $(INPUTDIR)/player/soldier.cpp $(INPUTDIR)/player/soldier.hpp
+	g++ -c $(INPUTDIR)/player/soldier.cpp -o $@ $(FLAGS)
+
 ### GAME_OBJECT ###
+
+$(OUTPUTDIR)/rifle.o: $(INPUTDIR)/game_object/rifle.cpp $(INPUTDIR)/game_object/rifle.hpp
+	g++ -c $(INPUTDIR)/game_object/rifle.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/weapon.o: $(INPUTDIR)/game_object/weapon.cpp $(INPUTDIR)/game_object/weapon.hpp
 	g++ -c $(INPUTDIR)/game_object/weapon.cpp -o $@ $(FLAGS)

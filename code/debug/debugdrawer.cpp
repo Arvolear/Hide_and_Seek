@@ -94,4 +94,15 @@ void DebugDrawer::updateViewProjection()
     shader->setMat4("projection", projection);
 }
 
-DebugDrawer::~DebugDrawer() {}
+DebugDrawer::~DebugDrawer() 
+{
+    if (VAO)
+    {
+        glDeleteVertexArrays(1, &VAO);
+    }
+    
+    if (VBO)
+    {
+        glDeleteBuffers(1, &VBO);
+    }
+}

@@ -94,10 +94,13 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
     btRigidBody::btRigidBodyConstructionInfo cInfo(mass, motionState, phShape, localInertia);
 
     body = new btRigidBody(cInfo);
+    body->setUserPointer(this);
 
-    if (collidable)
+    world->addRigidBody(body);
+
+    if (!collidable)
     {
-        world->addRigidBody(body);  
+        body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
     }
 }        
 
@@ -109,6 +112,7 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world)
     this->comShape = nullptr;
     this->body = nullptr;
     this->collidable = true;
+    this->userPointer = nullptr;
 
     btTransform* transform = new btTransform();
     transform->setIdentity();
@@ -216,14 +220,24 @@ void PhysicsObject::setCollidable(bool collidable)
         {
             if (collidable)
             {
-                world->addRigidBody(body);
+                body->setCollisionFlags(0);
             }
             else
             {
-                world->removeRigidBody(body);
+                body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
             }
         }
     }
+}
+
+void PhysicsObject::setUserPointer(void* userPointer)
+{
+    this->userPointer = userPointer;
+}
+
+float PhysicsObject::getMass() const
+{
+    return mass;
 }
 
 btRigidBody* PhysicsObject::getRigidBody() const
@@ -241,14 +255,19 @@ CompoundShape* PhysicsObject::getCompoundShape() const
     return comShape;
 }
 
-btScalar* PhysicsObject::getTransform() const
-{
-    return motionState->getGLTransform();
-}
-
 bool PhysicsObject::isCollidable() const
 {
     return collidable;
+}
+
+void* PhysicsObject::getUserPointer() const
+{
+    return userPointer;
+}
+
+btScalar* PhysicsObject::getTransform() const
+{
+    return motionState->getGLTransform();
 }
 
 PhysicsObject::~PhysicsObject()

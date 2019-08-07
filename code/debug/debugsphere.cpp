@@ -213,4 +213,15 @@ void DebugSphere::render(Shader* shader) const
     glBindVertexArray(0); //unbind VAO
 }
 
-DebugSphere::~DebugSphere(){}
+DebugSphere::~DebugSphere()
+{
+    if (VAO)
+    {
+        glDeleteVertexArrays(1, &VAO);
+    }
+    
+    if (VBO)
+    {
+        glDeleteBuffers(1, &VBO);
+    }
+}

@@ -116,4 +116,14 @@ vector < Vertex > Mesh::getVertices() const
     return vertices;
 }
 
-Mesh::~Mesh(){}
+Mesh::~Mesh()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+
+    for (size_t i = 0; i < textures.size(); i++)
+    {
+        glDeleteTextures(1, &textures[i].id);
+    }
+}

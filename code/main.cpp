@@ -10,6 +10,8 @@
 #include "window/renderquad.hpp"
 #include "window/window.hpp"
 
+#include "global/gaussianblur.hpp"
+
 #include "player/camera.hpp"
 
 #include "debug/debugsphere.hpp"
@@ -31,6 +33,7 @@
 #include "game_object/physicsobject.hpp"
 #include "game_object/gameobject.hpp"
 #include "game_object/weapon.hpp"
+#include "game_object/rifle.hpp"
 
 #include "player/player.hpp"
 

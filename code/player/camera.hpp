@@ -54,7 +54,7 @@ class Camera
         mat3 getVerticalViewRotation() const;
         mat4 getView() const;
 
-        virtual void update();
+        virtual void update(bool events = true);
 
         virtual ~Camera();
 };

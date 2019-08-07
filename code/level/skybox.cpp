@@ -87,4 +87,5 @@ SkyBox::~SkyBox()
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteTextures(1, &textureID);
 }

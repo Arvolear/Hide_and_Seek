@@ -129,6 +129,7 @@ void GameObject::setPhysicsObject(PhysicsObject* object)
     removePhysicsObject();
 
     physicsObject = object;
+    physicsObject->setUserPointer(this);
 }
 
 void GameObject::setLocalRotation(vec3 axis, float angle, bool add)

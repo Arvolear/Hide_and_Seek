@@ -3,7 +3,6 @@
 FrameBuffer::FrameBuffer()
 {
     bufferID = 0;
-    textureID = 0;
 
     width = height = 0;
 }
@@ -13,9 +12,14 @@ GLuint FrameBuffer::getBuffer() const
     return bufferID;
 }
 
-GLuint FrameBuffer::getTexture() const
+GLuint FrameBuffer::getTexture(size_t num) const
 {
-    return textureID;
+    if (num >= texturesID.size())
+    {
+        throw out_of_range("ERROR::FrameBuffer.getTextures()");
+    }
+
+    return texturesID[num];
 }
 
 vec2 FrameBuffer::getSize() const

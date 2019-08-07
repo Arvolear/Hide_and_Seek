@@ -86,6 +86,11 @@ inline static btQuaternion toBtQuaternion(quat from)
     return btQuaternion(toBtVector3(axis(from)), angle(from));
 }
 
+inline static quat toQuat(btQuaternion from)
+{
+    return quat(from.getAngle(), toVec3(from.getAxis()));
+}
+
 inline static double toRads(double angle)
 {
     return angle / 180.0 * 3.14159265;

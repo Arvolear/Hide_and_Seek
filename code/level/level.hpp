@@ -51,16 +51,19 @@ class Level
         Level(Window* window, World* physicsWorld);
         
         void loadLevel(string level);
-        void render();
-
+        
         void addGameObject(GameObject* gameObject);
         GameObject* getGameObject(string name) const;
 
         void removeGameObject(GameObject* gameObject);
         void removeGameObject(string name);
+        
+        void render();
+        void updatePlayers(int mode);
 
-        GLuint getRenderTexture() const;
+        GLuint getRenderTexture(unsigned int num = 0) const;
         Player* getPlayer() const;
+        string getLevelName() const;
 
         /* DEBUG */
         void toggleDebug();

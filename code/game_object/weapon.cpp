@@ -89,67 +89,95 @@ void Weapon::reload()
     /* X move bullets from left to magaz
      * */
 
-    if (!getActiveAnimation() || (getActiveAnimation()->getName() != "reload1"))
-    {
-        playAnimation("reload1");
-    }
+    playAnimation("reload2");
 }
 
-void Weapon::drop()
+void Weapon::drop(vec3 where)
 {
-    /* pass soldier deque
-     * remove from front
-     * activate physics obj
-     * unlock rotation
-     * apply impulses (torque + central)
-     * */
+    int power = 3;
 
+    physicsObject->getRigidBody()->applyCentralImpulse(toBtVector3(where) * power); 
     stopAnimation();
-}
-
-void Weapon::pick()
-{
-    /* pass soldier deque
-     * add to front
-     * deactivate physics obj
-     * lock rotation
-     * play proper reload animation
-     * */
     
-    physicsObject->setRotation(toBtQuaternion(twist), false);
+    physicsObject->setCollidable(true);
 }
 
-bool Weapon::fire()
+void Weapon::pick(vec3 forward, vec3 up)
 {
-    /* X check bullets in magaz 
-     * check speed or single press 
-     * current recoil strick? window?
-     * X play proper shot animation 
-     * X return true if everything passed ifs (soldier raytracer)
-     * */
+     /* 
+      * play proper reload animation
+      * */
+    
+    physicsObject->clearTransform();
+    
+    float angle = 0.0;
+    
+    vec3 weaponForward = vec3(0, 0, -1);
+    vec3 horiForward(forward.x, 0, forward.z);
 
-    /* TO BE CHANGED */
-    if (window->isButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+    if (horiForward != vec3(0, 0, 0))
     {
-        if (magazineBullets)
-        {
-            if (lastShotTime + shotSpeed <= window->getTime())
-            {
-                lastShotTime = window->getTime();
+        horiForward = normalize(horiForward);
 
-                playAnimation("fire");
-                magazineBullets--;
+        float cosRotAngle = dot(weaponForward, horiForward);
 
-                return true; 
-            }
-        }
-        else
+        if (cosRotAngle < -1)
         {
-            playAnimation("idle");
+            cosRotAngle = -1;
         }
+        else if (cosRotAngle > 1)
+        {
+            cosRotAngle = 1;
+        }
+
+        angle = acos(cosRotAngle); 
+
+        vec3 diff = horiForward - weaponForward;
+
+        if (dot(cross(up, weaponForward), diff) < 0)
+        {
+            angle *= -1;
+        }
+
+        btQuaternion rot(toBtVector3(up), angle);
+        physicsObject->setRotation(rot);
+    }
+    
+    weaponForward = vec3(forward.x, 0, forward.z);
+    vec3 vertForward = forward;
+
+    if (vertForward != vec3(0, 0, 0))
+    {
+        weaponForward = normalize(weaponForward);
+        vertForward = normalize(vertForward);
+
+        float cosRotAngle = dot(weaponForward, vertForward);
+
+        if (cosRotAngle < -1)
+        {
+            cosRotAngle = -1;
+        }
+        else if (cosRotAngle > 1)
+        {
+            cosRotAngle = 1;
+        }
+
+        angle = acos(cosRotAngle); 
+
+        /*vec3 diff = vertForward - weaponForward;
+
+        if (dot(cross(up, weaponForward), diff) < 0)
+        {
+            angle *= -1;
+        }*/
+
+        btQuaternion rot(toBtVector3(cross(up, forward)), angle);
+        physicsObject->setRotation(rot);
     }
 
-    return false;
+    physicsObject->setCollidable(false);
+
+    //physicsObject->setRotation(toBtQuaternion(twist), false);
 }
 
 vec3 Weapon::getOffset() const
@@ -210,15 +238,14 @@ void Weapon::updateStatus()
     }
 
     /*cout << "Storage " << storageBullets << endl;
-    cout << "Size " << magazineSize << endl;
-    cout << "Magazine " << magazineBullets << endl;
-    cout << "shotSpeed " << shotSpeed << endl << endl;*/
+      cout << "Size " << magazineSize << endl;
+      cout << "Magazine " << magazineBullets << endl;
+      cout << "shotSpeed " << shotSpeed << endl << endl;*/
 }
 
 void Weapon::updateRotation(mat3 rotation)
 {
     btQuaternion rot = toBtQuaternion(quat_cast(rotation)); 
-    
     physicsObject->setRotation(rot);
 }
 
@@ -230,7 +257,7 @@ void Weapon::updatePosition(vec3 center, vec3 forward, vec3 up)
     center += forward * offset.x;
     center += localUp * offset.y;
     center += left * offset.z;
-    
+
     physicsObject->setPosition(toBtVector3(center), false);
 }
 

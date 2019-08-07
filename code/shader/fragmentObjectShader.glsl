@@ -1,5 +1,10 @@
 #version 330 core
 
+#extension GL_ARB_separate_shader_objects : enable
+
+layout (location = 0) out vec4 fragColor;
+layout (location = 1) out vec4 brightColor;
+
 struct Material
 {
     float shininess;
@@ -48,8 +53,6 @@ uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 uniform vec3 viewPos;
-
-out vec4 color;
 
 float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
 {
@@ -161,5 +164,16 @@ void main()
         discard;    
     }
 
-    color = result;
+    fragColor = result;
+
+    float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+
+    if (brightness > 1.0)
+    {
+        brightColor = vec4(fragColor.rgb, 1.0);
+    }
+    else
+    {
+        brightColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
 }

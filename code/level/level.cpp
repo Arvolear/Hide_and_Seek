@@ -31,6 +31,7 @@
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
 #include "../game_object/weapon.hpp"
+#include "../game_object/rifle.hpp"
 
 #include "../player/player.hpp"
 
@@ -68,7 +69,7 @@ void Level::loadLevel(string level)
 {
     levelName = level;
 
-    levelColorBuffer->genBuffer(window->getRenderSize());
+    levelColorBuffer->genBuffer(window->getRenderSize(), 2);
     
     gameObjectShader->loadShaders(path("code/shader/vertexObjectShader.glsl"), path("code/shader/fragmentObjectShader.glsl"));
     dirShadowShader->loadShaders(path("code/shader/vertexDirShadowShader.glsl"), path("code/shader/fragmentDirShadowShader.glsl"));
@@ -85,6 +86,40 @@ void Level::loadLevel(string level)
     levelLoader->getGameObjectsData(gameObjects);
     levelLoader->getProjectionData(projection);
     levelLoader->getViewFrustumData(viewFrustum);
+}
+
+void Level::addGameObject(GameObject* gameObject)
+{
+    if (gameObjects.find(gameObject->getName()) == gameObjects.end())
+    {
+        gameObjects.insert({gameObject->getName(), gameObject}); 
+    }
+}
+
+GameObject* Level::getGameObject(string name) const
+{
+    if (gameObjects.find(name) != gameObjects.end())
+    {
+        return gameObjects.find(name)->second;
+    }
+
+    return nullptr;
+}
+
+void Level::removeGameObject(GameObject* gameObject)
+{
+    if (gameObjects.find(gameObject->getName()) != gameObjects.end())
+    {
+        gameObjects.erase(gameObjects.find(gameObject->getName()));
+    }
+}
+        
+void Level::removeGameObject(string name)
+{
+    if (gameObjects.find(name) != gameObjects.end())
+    {
+        gameObjects.erase(gameObjects.find(name));
+    }
 }
 
 void Level::render()
@@ -186,48 +221,27 @@ void Level::render()
     glCullFace(GL_BACK);
 } 
         
-void Level::addGameObject(GameObject* gameObject)
+void Level::updatePlayers(int mode)
 {
-    if (gameObjects.find(gameObject->getName()) == gameObjects.end())
-    {
-        gameObjects.insert({gameObject->getName(), gameObject}); 
-    }
+   for (size_t i = 0; i < players.size(); i++)
+   {
+       players[i]->update(!mode);
+   }
 }
 
-GameObject* Level::getGameObject(string name) const
+GLuint Level::getRenderTexture(unsigned int num) const
 {
-    if (gameObjects.find(name) != gameObjects.end())
-    {
-        return gameObjects.find(name)->second;
-    }
-
-    return nullptr;
-}
-
-void Level::removeGameObject(GameObject* gameObject)
-{
-    if (gameObjects.find(gameObject->getName()) != gameObjects.end())
-    {
-        gameObjects.erase(gameObjects.find(gameObject->getName()));
-    }
-}
-        
-void Level::removeGameObject(string name)
-{
-    if (gameObjects.find(name) != gameObjects.end())
-    {
-        gameObjects.erase(gameObjects.find(name));
-    }
-}
-
-GLuint Level::getRenderTexture() const
-{
-    return levelColorBuffer->getTexture();
+    return levelColorBuffer->getTexture(num);
 }
 
 Player* Level::getPlayer() const
 {
     return players[0];
+}
+
+string Level::getLevelName() const
+{
+    return levelName;
 }
 
 void Level::toggleDebug()
@@ -238,6 +252,11 @@ void Level::toggleDebug()
 void Level::swapPlayers()
 {
     rotate(players.begin(), players.begin() + 1, players.end());
+
+    players[0]->setActive(true);
+    players[0]->resetPrevCoords();
+
+    players[players.size() - 1]->setActive(false);
 }
 
 Level::~Level()

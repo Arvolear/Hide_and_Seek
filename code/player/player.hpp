@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
+#include <memory>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -56,7 +57,7 @@ class Player : public Camera
         void removeGameObject();
         bool isActive() const;
 
-        virtual void update() override;
+        virtual void update(bool events = true) override;
 
         GameObject* getGameObject() const;
         vec3 getCameraOffset() const;

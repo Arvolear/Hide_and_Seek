@@ -71,7 +71,7 @@ bool Player::isGroundStanding()
     btVector3 from = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
     btVector3 to = btVector3(0, -1, 0);
 
-    RayResult* result = rayTracer->rayCast(from, to, false);
+    unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
 
     if (!result)
     {
@@ -86,8 +86,6 @@ bool Player::isGroundStanding()
     player->getPhysicsObject()->getRigidBody()->getAabb(Min, Max);
 
     float bottomDist = (from - btVector3(from.x(), Min.y(), from.z())).length();
-
-    delete result;
 
     //cout << dist << " " << bottomDist << endl; 
     
@@ -418,10 +416,13 @@ bool Player::isActive() const
     return active;
 }
 
-void Player::update()
+void Player::update(bool events)
 {
-    lookAction();
-    moveAction();
+    if (events && active)
+    {
+        lookAction();
+        moveAction();
+    }
 
     movePhysics();
 }

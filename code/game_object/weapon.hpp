@@ -45,11 +45,11 @@ class Weapon : public GameObject
         void setShotPower(float shotPower);
 
         void reload();
-        void drop();
-        void pick();
+        void drop(vec3 where);
+        void pick(vec3 forward, vec3 up);
         void choose();
         
-        bool fire();
+        virtual bool fire() = 0;
 
         vec3 getOffset() const;
         quat getTwist() const;
@@ -65,5 +65,5 @@ class Weapon : public GameObject
         void updateRotation(mat3 rotation);
         void updatePosition(vec3 center, vec3 forward, vec3 up);
 
-        ~Weapon();
+        virtual ~Weapon();
 };

@@ -33,4 +33,8 @@ void RenderQuad::render(Shader *shader) const
     glBindVertexArray(0);
 }
 
-RenderQuad::~RenderQuad() {}
+RenderQuad::~RenderQuad() 
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+}

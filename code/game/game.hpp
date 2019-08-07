@@ -17,18 +17,17 @@ class Game
 
         Window* window;
 
-        //Shader* gameShader; // ESCAPE & SHOP modes, blur...
-        ColorBuffer* gameBuffer;
-        
-        World* physicsWorld;
-        
         Level* level;
-        string levelName;
+        World* physicsWorld;
 
-        Player* player;
-        Weapon* testW;
+        Shader* gameShader;
+        ColorBuffer* gameBuffer;
+        RenderQuad* quad;
 
-        void checkEvents();
+        GaussianBlur* gaussianBlur;
+
+        void init();
+        void checkEvents(); 
 
     public:
         Game(Window* window, string level);

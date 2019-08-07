@@ -19,8 +19,8 @@ class ColorBuffer : public FrameBuffer
     public:
         ColorBuffer();
        
-        void genBuffer(double width, double height) override;
-        void genBuffer(vec2 size) override;
+        void genBuffer(double width, double height, unsigned int layouts = 1) override;
+        void genBuffer(vec2 size, unsigned int layouts = 1) override;
 
         void clear() override;
 

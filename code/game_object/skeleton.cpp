@@ -66,6 +66,11 @@ void Skeleton::renderBonesMatrices(Shader* shader)
 
 void Skeleton::stopAnimation()
 {
+    for (auto& it : bones) 
+    {
+        it.second->updateKeyframeTransform(activeAnimation->getAnimId(), 0); 
+    }
+    
     activeAnimation = nullptr;
 }
         
