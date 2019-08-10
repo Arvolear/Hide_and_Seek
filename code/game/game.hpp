@@ -24,7 +24,7 @@ class Game
         ColorBuffer* gameBuffer;
         RenderQuad* quad;
 
-        GaussianBlur* gaussianBlur;
+        GaussianBlur < ColorBuffer >* gaussianBlur;
 
         void init();
         void checkEvents(); 

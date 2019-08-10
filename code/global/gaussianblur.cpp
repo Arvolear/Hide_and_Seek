@@ -6,29 +6,43 @@
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
 
-#include "../window/glfwevents.hpp"
 #include "../window/renderquad.hpp"
-#include "../window/window.hpp"
 
 #include "gaussianblur.hpp"
 
-GaussianBlur::GaussianBlur(Window* window)
+template < typename T >
+GaussianBlur<T>::GaussianBlur()
 {
     blurShader = new Shader();
-    blurShader->loadShaders(path("code/shader/vertexGaussBlurShader.glsl"), path("code/shader/fragmentGaussBlurShader.glsl"));
+    blurShader->loadShaders(path("code/shader/gaussianBlurShader.vert"), path("code/shader/gaussianBlurShader.frag"));
 
     for (int i = 0; i < 2; i++)
     {
-        colorBuffers.push_back(new ColorBuffer());
-        colorBuffers[i]->genBuffer(window->getRenderSize() / vec2(2.0));
+        colorBuffers.push_back(new T());
     }
     
     quad = new RenderQuad();
+}
+
+template < typename T >
+void GaussianBlur<T>::genBuffer(float width, float height)
+{
+    for (int i = 0; i < 2; i++)
+    {
+        colorBuffers[i]->genBuffer(width, height);
+    }
+
     quad->init();
 }
 
+template < typename T >
+void GaussianBlur<T>::genBuffer(vec2 size)
+{
+    genBuffer(size.x, size.y);
+}
     
-GLuint GaussianBlur::blur(GLuint textureID, float intensity)
+template < typename T >
+GLuint GaussianBlur<T>::blur(GLuint textureID, float intensity, float radius)
 {
     int buffer = 0;
     
@@ -41,7 +55,7 @@ GLuint GaussianBlur::blur(GLuint textureID, float intensity)
 
         textureID = !i ? textureID : colorBuffers[(buffer + 1) % 2]->getTexture();
         blurShader->setInt("isHorizontal", (buffer + 1) % 2);
-        blurShader->setFloat("intensity", intensity);
+        blurShader->setFloat("intensity", radius);
     
         blurShader->setInt("blurTexture", textureID);
         glActiveTexture(GL_TEXTURE0 + textureID);
@@ -55,10 +69,18 @@ GLuint GaussianBlur::blur(GLuint textureID, float intensity)
         buffer = (buffer + 1) % 2;
     }
     
+    bluredTexture = colorBuffers[1]->getTexture();
     return colorBuffers[1]->getTexture();
 }
+        
+template < typename T >
+GLuint GaussianBlur<T>::getTexture() const
+{
+    return bluredTexture;
+}
 
-GaussianBlur::~GaussianBlur()
+template < typename T >
+GaussianBlur<T>::~GaussianBlur()
 {
     delete blurShader;
 

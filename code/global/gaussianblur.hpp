@@ -8,18 +8,26 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+template < typename T >
 class GaussianBlur
 {
     private:
        Shader* blurShader; 
 
-       vector < ColorBuffer* > colorBuffers;
+       vector < T* > colorBuffers;
        RenderQuad* quad;
 
-    public:
-        GaussianBlur(Window* window);
+       GLuint bluredTexture;
 
-        GLuint blur(GLuint textureID, float intensity);
+    public:
+        GaussianBlur();
+
+        void genBuffer(float width, float height);
+        void genBuffer(vec2 size);
+
+        GLuint blur(GLuint textureID, float intensity, float radius = 1);
+
+        GLuint getTexture() const;
 
         ~GaussianBlur();
 

@@ -16,6 +16,8 @@ uniform mat4 projection;
 uniform mat4 bones[MAX_BONES_AMOUNT];
 uniform int meshWithBones;
 
+out vec4 fragmentPos;
+
 void main()
 {
     mat4 bonesTransform;
@@ -35,4 +37,6 @@ void main()
     }
 
     gl_Position = projection * view * model * localTransform * bonesTransform * vec4(position, 1.0f);    
+
+    fragmentPos = gl_Position;
 }

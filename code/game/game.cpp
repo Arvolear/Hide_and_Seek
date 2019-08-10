@@ -5,12 +5,14 @@
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
+#include "../framebuffer/depthcolorbuffer.hpp"
 
 #include "../window/glfwevents.hpp"
 #include "../window/renderquad.hpp"
 #include "../window/window.hpp"
 
 #include "../global/gaussianblur.hpp"
+#include "../global/gaussianblur.cpp"
 
 #include "../player/camera.hpp"
 
@@ -61,7 +63,8 @@ Game::Game(Window* window, string levelName)
     gameBuffer = new ColorBuffer();
     quad = new RenderQuad();
 
-    gaussianBlur = new GaussianBlur(window);
+    gaussianBlur = new GaussianBlur < ColorBuffer >();
+    gaussianBlur->genBuffer(window->getRenderSize());
     // ...
 }
 
@@ -121,7 +124,7 @@ void Game::init()
 {
     physicsWorld->createDebugDrawer();
 
-    gameShader->loadShaders(path("code/shader/vertexGameShader.glsl"), path("code/shader/fragmentGameShader.glsl"));
+    gameShader->loadShaders(path("code/shader/gameShader.vert"), path("code/shader/gameShader.frag"));
     gameBuffer->genBuffer(window->getRenderSize());
 
     quad->init();
@@ -148,7 +151,7 @@ void Game::gameLoop()
         /***********************************
          * GAMEBUFFER
          * */
-        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 4);
+        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 4, 2);
         
         gameBuffer->use();
         gameBuffer->clear();

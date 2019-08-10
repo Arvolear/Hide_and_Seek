@@ -1,7 +1,5 @@
 #version 330 core
 
-#extension GL_ARB_separate_shader_objects : enable
-
 layout (location = 0) out vec4 fragColor;
 layout (location = 1) out vec4 brightColor;
 
@@ -22,9 +20,10 @@ struct DirLight
     vec3 diffuse;
     vec3 specular;
 
-    sampler2DShadow texture_shadow1;
+    sampler2D texture_shadow1;
 };
 
+/*
 struct PointLight
 {
     vec3 position;
@@ -36,7 +35,8 @@ struct PointLight
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-};
+}; 
+ */
 
 in vec3 fragmentPos;
 in vec3 fragmentNorm;
@@ -49,12 +49,14 @@ uniform Material material;
 in vec4 dirShadowCoords[MAX_DIR_LIGHTS];
 uniform DirLight dirLights[MAX_DIR_LIGHTS];
 
+/*
 #define MAX_POINT_LIGHTS 5
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
+ */
 
 uniform vec3 viewPos;
 
-float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
+/*float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
 {
     vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
@@ -65,10 +67,11 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
     
     float shadowValue = 0.0;
 
-    /* bias */
+    // bias 
     vec2 texelSize = 1.0 / textureSize(light.texture_shadow1, 0);        
     float bias = max(0.01 * (1.0 - dot(normal, direction)), 0.005);
 
+    // pcf 
     for (float i = -1.5; i <= 1.5; i += 1.0)
     {
         for (float j = -1.5; j <= 1.5; j += 1.0)
@@ -86,6 +89,34 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
     }
 
     return shadowValue;
+}*/
+
+float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
+{
+    vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    vec2 moments = texture2D(light.texture_shadow1, projCoords.xy).rg;
+ 
+    float currentDepth = projCoords.z;
+    
+    if (currentDepth < moments.x)
+    {
+        return 1.0;    
+    }
+    
+    if (currentDepth < 0 || currentDepth >= 0.85)
+    {
+        return 1.0;    
+    }
+
+    float variance = moments.y - (moments.x * moments.x);
+    variance = max(variance, 0.000005);
+
+    float d = currentDepth - moments.x;
+    float p_max = smoothstep(0.9, 1.0, variance / (variance + d * d));
+
+    return p_max;
 }
 
 vec4 calcDirLight(DirLight light, vec4 shadowCoords)
@@ -113,7 +144,7 @@ vec4 calcDirLight(DirLight light, vec4 shadowCoords)
 
     float shadow = calcDirShadow(light, normal, shadowCoords);
 
-    return (ambient + shadow * (diffuse + specular));
+    return ambient + shadow * (diffuse + specular);
 }
 
 /*
@@ -145,6 +176,7 @@ void main()
 {
     vec4 result = vec4(0.0f);
 
+    /* dir light */
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
     {
         if (dirShadowCoords[i] != vec4(0, 0, 0, 0))
@@ -153,17 +185,21 @@ void main()
         }
     }
 
-    /*for (int i = 0; i < MAX_POINT_LIGHTS; i++)
-      {
-      result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
-      }
+    /* point light */
+    /*
+    for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
+    }
      */
 
+    /* alpha */
     if (result.a < 0.1)
     {
         discard;    
     }
 
+    /* bloom */
     fragColor = result;
 
     float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));

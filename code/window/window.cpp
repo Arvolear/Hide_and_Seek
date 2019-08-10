@@ -14,8 +14,8 @@ Window::Window() : GLFWEvents()
     height = 1080;
     resized = false;
 
-    renderWidth = 1920;
-    renderHeight = 1080;
+    renderWidth = 1600;
+    renderHeight = 900;
 
     mousePosition = vec2(0);
     mouseMoved = false;
@@ -61,14 +61,14 @@ Window::Window() : GLFWEvents()
     
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_STENCIL_TEST);
-    glEnable(GL_CULL_FACE);
     //glEnable(GL_FRAMEBUFFER_SRGB); 
         
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
     /* LOAD SHADERS AT FIRST */
     renderShader = new Shader();
-    renderShader->loadShaders(path("code/shader/vertexRenderShader.glsl"), path("code/shader/fragmentRenderShader.glsl")); //loading shaders
+    renderShader->loadShaders(path("code/shader/renderShader.vert"), path("code/shader/renderShader.frag")); //loading shaders
 
     renderQuad = new RenderQuad();
     renderQuad->init();

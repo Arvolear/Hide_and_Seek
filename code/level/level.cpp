@@ -5,10 +5,13 @@
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
+#include "../framebuffer/depthcolorbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
+
+#include "../global/gaussianblur.hpp"
 
 #include "../player/camera.hpp"
 
@@ -71,11 +74,11 @@ void Level::loadLevel(string level)
 
     levelColorBuffer->genBuffer(window->getRenderSize(), 2);
     
-    gameObjectShader->loadShaders(path("code/shader/vertexObjectShader.glsl"), path("code/shader/fragmentObjectShader.glsl"));
-    dirShadowShader->loadShaders(path("code/shader/vertexDirShadowShader.glsl"), path("code/shader/fragmentDirShadowShader.glsl"));
-    skyBoxShader->loadShaders(path("code/shader/vertexSkyBoxShader.glsl"), path("code/shader/fragmentSkyBoxShader.glsl"));
+    gameObjectShader->loadShaders(path("code/shader/objectShader.vert"), path("code/shader/objectShader.frag"));
+    dirShadowShader->loadShaders(path("code/shader/dirShadowShader.vert"), path("code/shader/dirShadowShader.frag"));
+    skyBoxShader->loadShaders(path("code/shader/skyBoxShader.vert"), path("code/shader/skyBoxShader.frag"));
     
-    debugShader->loadShaders(path("code/shader/vertexDebugShader.glsl"), path("code/shader/fragmentDebugShader.glsl"));
+    debugShader->loadShaders(path("code/shader/debugShader.vert"), path("code/shader/debugShader.frag"));
 
     levelLoader->loadLevel(path("levels/test1"));
 
@@ -128,6 +131,9 @@ void Level::render()
     /*********** GAME RENDER ***********/
     /***********************************/
 
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     mat4 view = players[0]->getView();
     
     viewFrustum->updateFrustum(view, projection);
@@ -135,10 +141,12 @@ void Level::render()
     /************************************
      * DIR SHADOWS
      * */ 
+    
+    glCullFace(GL_FRONT);
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        /*** depth buffer ***/
+        /*** shadow buffer ***/
         dirLights[i]->getShadowBuffer()->use();
         dirLights[i]->getShadowBuffer()->clear();
 
@@ -158,6 +166,8 @@ void Level::render()
     /************************************
      * GAMEOBJECT
      * */ 
+    
+    glCullFace(GL_BACK);
 
     /*** color buffer ***/
     levelColorBuffer->use();
@@ -173,6 +183,11 @@ void Level::render()
     {
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowView", dirLights[i]->getView());
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowProjection", dirLights[i]->getProjection());
+
+        dirLights[i]->blur(4, 1);
+    
+        levelColorBuffer->use();
+        gameObjectShader->use();
 
         dirLights[i]->render(gameObjectShader, i);
     }
@@ -216,9 +231,6 @@ void Level::render()
             viewFrustum->render(physicsWorld->getDebugDrawer());
         }
     }
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
 } 
         
 void Level::updatePlayers(int mode)

@@ -1,12 +1,12 @@
 #include "framebuffer.hpp"
-#include "colorbuffer.hpp"
+#include "depthcolorbuffer.hpp"
 
-ColorBuffer::ColorBuffer() : FrameBuffer() 
+DepthColorBuffer::DepthColorBuffer() : FrameBuffer() 
 {
     depthBufferID = 0;
 }
 
-void ColorBuffer::genBuffer(double width, double height, unsigned int layouts)
+void DepthColorBuffer::genBuffer(double width, double height, unsigned int layouts)
 {
     this->width = width;
     this->height = height;
@@ -21,14 +21,16 @@ void ColorBuffer::genBuffer(double width, double height, unsigned int layouts)
         glGenTextures(1, &texturesID[i]);
         glBindTexture(GL_TEXTURE_2D, texturesID[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, 0);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG32F, width, height, 0, GL_RGB, GL_FLOAT, 0);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     
+        float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texturesID[i], 0);
     }
 
@@ -54,25 +56,25 @@ void ColorBuffer::genBuffer(double width, double height, unsigned int layouts)
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        throw runtime_error("ERROR::ColorBuffer");
+        throw runtime_error("ERROR::DepthColorBuffer");
     }
 
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ColorBuffer::genBuffer(vec2 size, unsigned int layouts)
+void DepthColorBuffer::genBuffer(vec2 size, unsigned int layouts)
 {
     genBuffer(size.x, size.y, layouts);
 }
 
-void ColorBuffer::clear()
+void DepthColorBuffer::clear()
 {
     glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-ColorBuffer::~ColorBuffer() 
+DepthColorBuffer::~DepthColorBuffer() 
 {
     glDeleteFramebuffers(1, &bufferID);  
     glDeleteRenderbuffers(1, &depthBufferID);  

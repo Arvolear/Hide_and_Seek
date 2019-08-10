@@ -13,7 +13,7 @@ out vec4 fragColor;
 
 void main()
 {
-    vec2 size = textureSize(blurTexture, 0) / (intensity / 2.0);
+    vec2 size = textureSize(blurTexture, 0) / intensity;
     vec3 result = texture(blurTexture, UV).rgb * weight[0];
 
     if (isHorizontal)

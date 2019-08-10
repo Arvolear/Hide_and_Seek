@@ -5,10 +5,13 @@
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
+#include "../framebuffer/depthcolorbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
+
+#include "../global/gaussianblur.hpp"
 
 #include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"

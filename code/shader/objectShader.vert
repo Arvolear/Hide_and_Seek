@@ -20,7 +20,7 @@ struct DirLightMatrices
     mat4 shadowProjection;
 };
 
-# define MAX_DIR_LIGHTS 5
+#define MAX_DIR_LIGHTS 5
 uniform DirLightMatrices dirLightsMatrices[MAX_DIR_LIGHTS];
 out vec4 dirShadowCoords[MAX_DIR_LIGHTS];
 

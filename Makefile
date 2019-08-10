@@ -9,7 +9,7 @@ MAIN = main.o
 GLOBAL = gaussianblur.o
 DEBUG = debugsphere.o debugdrawer.o
 SHADER = shader.o 
-FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o
+FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
@@ -58,6 +58,9 @@ $(OUTPUTDIR)/colorbuffer.o: $(INPUTDIR)/framebuffer/colorbuffer.cpp $(INPUTDIR)/
 
 $(OUTPUTDIR)/depthbuffer.o: $(INPUTDIR)/framebuffer/depthbuffer.cpp $(INPUTDIR)/framebuffer/depthbuffer.hpp
 	g++ -c $(INPUTDIR)/framebuffer/depthbuffer.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/depthcolorbuffer.o: $(INPUTDIR)/framebuffer/depthcolorbuffer.cpp $(INPUTDIR)/framebuffer/depthcolorbuffer.hpp
+	g++ -c $(INPUTDIR)/framebuffer/depthcolorbuffer.cpp -o $@ $(FLAGS)
 
 ### WINDOW ###
 

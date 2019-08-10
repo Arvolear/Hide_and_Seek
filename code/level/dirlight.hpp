@@ -19,7 +19,8 @@ class DirLight
         mat4 view;
         mat4 projection;
 
-        DepthBuffer* shadowBuffer;
+        DepthColorBuffer* shadowBuffer;
+        GaussianBlur < DepthColorBuffer >* gaussianBlur;
         
     public:
         DirLight();
@@ -37,8 +38,9 @@ class DirLight
         void setProjection(mat4 projection);
 
         vec3 getDirection() const;
-        DepthBuffer* getShadowBuffer() const;
-        
+        DepthColorBuffer* getShadowBuffer() const;
+       
+        void blur(float intensity, float radius = 1.0);
         void render(Shader* shader, GLuint index);
         void updateView(vec3 playerPosition);
 
