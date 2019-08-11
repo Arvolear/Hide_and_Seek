@@ -96,27 +96,28 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
     vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    vec2 moments = texture2D(light.texture_shadow1, projCoords.xy).rg;
- 
     float currentDepth = projCoords.z;
-    
+
+    vec2 moments = texture2D(light.texture_shadow1, projCoords.xy).rg;
+
     if (currentDepth < moments.x)
     {
         return 1.0;    
     }
-    
-    if (currentDepth < 0 || currentDepth >= 0.85)
+
+    if (currentDepth < 0 || currentDepth > 0.85)
     {
         return 1.0;    
     }
 
-    float variance = moments.y - (moments.x * moments.x);
-    variance = max(variance, 0.0000005);
+    float esmBias = -0.08;
+    float esmFactor = 40.0;
 
-    float d = currentDepth - moments.x;
-    float p_max = smoothstep(0.6, 1.0, variance / (variance + d * d));
+    float occluder = moments.y;
+    float receiver = exp(esmBias - esmFactor * currentDepth);
+    float shadow = smoothstep(0.6, 1.0, occluder * receiver);
 
-    return p_max;
+    return shadow;
 }
 
 vec4 calcDirLight(DirLight light, vec4 shadowCoords)
@@ -124,7 +125,7 @@ vec4 calcDirLight(DirLight light, vec4 shadowCoords)
     vec3 normal = normalize(fragmentNorm); 
     vec3 viewDir = normalize(viewPos - fragmentPos);
     vec3 lightDir = normalize(-light.direction);
-   
+
     /* normal mapping */
     if (TBN != mat3(0))
     {
@@ -170,7 +171,7 @@ vec4 calcDirLight(DirLight light, vec4 shadowCoords)
 
    return (ambient + diffuse + specular);
    }
-*/
+ */
 
 void main()
 {
@@ -187,10 +188,10 @@ void main()
 
     /* point light */
     /*
-    for (int i = 0; i < MAX_POINT_LIGHTS; i++)
-    {
-        result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
-    }
+       for (int i = 0; i < MAX_POINT_LIGHTS; i++)
+       {
+       result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
+       }
      */
 
     /* alpha */

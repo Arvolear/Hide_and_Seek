@@ -184,7 +184,7 @@ void Level::render()
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowView", dirLights[i]->getView());
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowProjection", dirLights[i]->getProjection());
 
-        dirLights[i]->blur(4, 1);
+        dirLights[i]->blur(2, 1);
     
         levelColorBuffer->use();
         gameObjectShader->use();
