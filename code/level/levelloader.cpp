@@ -738,6 +738,15 @@ void LevelLoader::loadDirLight()
             DL->setSpecular(vec3(r, g, b));
         }
 
+        XMLElement* blurScaleElem = dirLightElem->FirstChildElement("blurscale");
+
+        float scale = 1.0;
+
+        if (blurScaleElem)
+        {
+            blurScaleElem->QueryFloatAttribute("scale", &scale);
+        }
+
         XMLElement* shadowBufferElem = dirLightElem->FirstChildElement("shadowbuffer");
 
         if (shadowBufferElem)
@@ -746,7 +755,7 @@ void LevelLoader::loadDirLight()
             shadowBufferElem->QueryFloatAttribute("x", &x);
             shadowBufferElem->QueryFloatAttribute("y", &y);
 
-            DL->genShadowBuffer(x, y);
+            DL->genShadowBuffer(x, y, scale);
         }
 
         XMLElement* projElem = dirLightElem->FirstChildElement("projection");

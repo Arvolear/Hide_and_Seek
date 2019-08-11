@@ -13,8 +13,11 @@ class GaussianBlur
 {
     private:
        Shader* blurShader; 
+       Shader* scaleShader; 
 
        vector < T* > colorBuffers;
+       T* upscaleBuffer;
+       T* downscaleBuffer;
        RenderQuad* quad;
 
        GLuint bluredTexture;
@@ -22,8 +25,8 @@ class GaussianBlur
     public:
         GaussianBlur();
 
-        void genBuffer(float width, float height);
-        void genBuffer(vec2 size);
+        void genBuffer(float width, float height, float scaleFactor = 1);
+        void genBuffer(vec2 size, float scaleFactor = 1);
 
         GLuint blur(GLuint textureID, float intensity, float radius = 1);
 

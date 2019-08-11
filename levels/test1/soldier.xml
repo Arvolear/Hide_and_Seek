@@ -13,7 +13,7 @@
                     <animations>
                         <animation name="idle" active="false">
                             <animid id="1"/>
-                            <framesrange start="0.0" end="0.0"/>
+                            <framesrange start="1.0" end="44.0"/>
                             <speed speed="0.0"/>
                             <loop loop="true"/>
                         </animation>

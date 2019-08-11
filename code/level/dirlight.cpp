@@ -37,15 +37,15 @@ DirLight::DirLight(vec3 dir, vec3 amb, vec3 diff, vec3 spec)
     shadowBuffer = new DepthColorBuffer();
 }
 
-void DirLight::genShadowBuffer(int width, int height)
+void DirLight::genShadowBuffer(int width, int height, float blurScale)
 {
     shadowBuffer->genBuffer(width, height);
-    gaussianBlur->genBuffer(width, height);
+    gaussianBlur->genBuffer(width, height, blurScale);
 }
 
-void DirLight::genShadowBuffer(vec2 size)
+void DirLight::genShadowBuffer(vec2 size, float blurScale)
 {
-    genShadowBuffer(size.x, size.y);
+    genShadowBuffer(size.x, size.y, blurScale);
 }
 
 void DirLight::setDirection(vec3 dir)

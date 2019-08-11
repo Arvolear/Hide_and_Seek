@@ -111,10 +111,10 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
     }
 
     float variance = moments.y - (moments.x * moments.x);
-    variance = max(variance, 0.000005);
+    variance = max(variance, 0.0000005);
 
     float d = currentDepth - moments.x;
-    float p_max = smoothstep(0.9, 1.0, variance / (variance + d * d));
+    float p_max = smoothstep(0.6, 1.0, variance / (variance + d * d));
 
     return p_max;
 }

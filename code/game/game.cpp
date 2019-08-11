@@ -64,7 +64,7 @@ Game::Game(Window* window, string levelName)
     quad = new RenderQuad();
 
     gaussianBlur = new GaussianBlur < ColorBuffer >();
-    gaussianBlur->genBuffer(window->getRenderSize());
+    gaussianBlur->genBuffer(window->getRenderSize(), 4);
     // ...
 }
 
@@ -151,7 +151,7 @@ void Game::gameLoop()
         /***********************************
          * GAMEBUFFER
          * */
-        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 4, 2);
+        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 4, 1);
         
         gameBuffer->use();
         gameBuffer->clear();

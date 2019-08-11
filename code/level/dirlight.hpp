@@ -26,8 +26,8 @@ class DirLight
         DirLight();
         DirLight(vec3 dir, vec3 amb, vec3 diff, vec3 spec);
        
-        void genShadowBuffer(int width, int height);
-        void genShadowBuffer(vec2 size);
+        void genShadowBuffer(int width, int height, float blurScale = 1.0);
+        void genShadowBuffer(vec2 size, float blurScale = 1.0);
 
         void setDirection(vec3 dir);
         void setAmbient(vec3 amb);
