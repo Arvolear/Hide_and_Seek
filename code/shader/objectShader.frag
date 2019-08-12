@@ -110,12 +110,11 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
         return 1.0;    
     }
 
-    float esmBias = -0.08;
-    float esmFactor = 40.0;
+    float esmFactor = 80.0;
 
     float occluder = moments.y;
-    float receiver = exp(esmBias - esmFactor * currentDepth);
-    float shadow = smoothstep(0.6, 1.0, occluder * receiver);
+    float receiver = esmFactor * currentDepth;
+    float shadow = smoothstep(0.4, 1.0, exp(occluder - receiver));
 
     return shadow;
 }

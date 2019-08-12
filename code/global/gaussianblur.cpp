@@ -71,7 +71,7 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, float intensity, float radius)
     /* blur */
     int buffer = 0;
     
-    for (int i = 0; i < intensity; i++)
+    for (int i = 0; i < intensity * 2; i++)
     {
         colorBuffers[buffer]->use();
         colorBuffers[buffer]->clear();

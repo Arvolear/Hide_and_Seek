@@ -178,13 +178,16 @@ void Level::render()
     gameObjectShader->setMat4("view", view);
     gameObjectShader->setMat4("projection", projection);
     gameObjectShader->setVec3("viewPos", players[0]->getPosition());
+      
+    //gameObjectShader->setMat4("view", dirLights[0]->getView());
+    //gameObjectShader->setMat4("projection", dirLights[0]->getProjection());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowView", dirLights[i]->getView());
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowProjection", dirLights[i]->getProjection());
 
-        dirLights[i]->blur(2, 1);
+        dirLights[i]->blur(1, 1);
     
         levelColorBuffer->use();
         gameObjectShader->use();
