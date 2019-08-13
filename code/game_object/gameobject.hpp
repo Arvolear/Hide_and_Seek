@@ -22,6 +22,7 @@ class GameObject
         static set < string > globalNames;
         string name;
         bool visible;
+        bool shadow;
 
         ModelLoader* modelLoader;
 
@@ -49,6 +50,7 @@ class GameObject
 
         void setName(string name);
         void setVisible(bool visible);
+        void setShadow(bool shadow);
         void setCollidable(bool collidable);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
@@ -67,6 +69,7 @@ class GameObject
         string getGraphicsObject() const;
         string getName() const;
         bool isVisible() const;
+        bool isShadow() const;
         bool isCollidable() const;
 
         Animation* getActiveAnimation() const;

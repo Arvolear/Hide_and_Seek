@@ -33,4 +33,17 @@ void FrameBuffer::use()
     glViewport(0, 0, width, height);
 }
 
+void FrameBuffer::copyDepthBuffer(FrameBuffer* frameBuffer)
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer->getBuffer());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getBuffer());
+
+    int width = getSize().x;
+    int height = getSize().y;
+
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 FrameBuffer::~FrameBuffer(){}

@@ -3,13 +3,13 @@
 layout (location = 0) out vec4 fragColor;
 layout (location = 1) out vec4 brightColor;
 
-struct Material
+struct GBuffer
 {
-    float shininess;
-    
-    sampler2D texture_diffuse1;
-    sampler2D texture_specular1;
-    sampler2D texture_normal1;
+    sampler2D texture_position;
+    sampler2D texture_normal;
+    sampler2D texture_albedo;
+    sampler2D texture_specular;
+    sampler2D texture_shininess;
 };
 
 struct DirLight
@@ -23,82 +23,31 @@ struct DirLight
     sampler2D texture_shadow1;
 };
 
-/*
-struct PointLight
+struct DirLightMatrices
 {
-    vec3 position;
+    mat4 shadowView;
+    mat4 shadowProjection;
+};
 
-    float constant;
-    float linear;
-    float quadratic;
+in vec2 UV;
 
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-}; 
- */
+uniform GBuffer gBuffer;
 
-in vec3 fragmentPos;
-in vec3 fragmentNorm;
-in vec2 textureCoords;
-in mat3 TBN;
-
-uniform Material material;
-
-#define MAX_DIR_LIGHTS 5
-in vec4 dirShadowCoords[MAX_DIR_LIGHTS];
+#define MAX_DIR_LIGHTS 1
 uniform DirLight dirLights[MAX_DIR_LIGHTS];
-
-/*
-#define MAX_POINT_LIGHTS 5
-uniform PointLight pointLights[MAX_POINT_LIGHTS];
- */
+uniform DirLightMatrices dirLightsMatrices[MAX_DIR_LIGHTS];
 
 uniform vec3 viewPos;
 
-/*float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
+float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
+    /* ESM shadows */
     vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
 
-    vec3 direction = normalize(-light.direction);
-    
-    float shadowValue = 0.0;
-
-    // bias 
-    vec2 texelSize = 1.0 / textureSize(light.texture_shadow1, 0);        
-    float bias = max(0.01 * (1.0 - dot(normal, direction)), 0.005);
-
-    // pcf 
-    for (float i = -1.5; i <= 1.5; i += 1.0)
-    {
-        for (float j = -1.5; j <= 1.5; j += 1.0)
-        {
-            vec3 SC = vec3(projCoords.xy + vec2(i, j) * texelSize, currentDepth - bias);
-            shadowValue += texture(light.texture_shadow1, SC);
-        }
-    }
-
-    shadowValue /= 16.0;
-
-    if (projCoords.z > 1.0)
-    {
-        shadowValue = 1.0;    
-    }
-
-    return shadowValue;
-}*/
-
-float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
-{
-    vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
-    projCoords = projCoords * 0.5 + 0.5;
-
-    float currentDepth = projCoords.z;
-
-    vec2 moments = texture2D(light.texture_shadow1, projCoords.xy).rg;
+    vec2 moments = texture(light.texture_shadow1, projCoords.xy).rg;
 
     if (currentDepth < moments.x)
     {
@@ -121,56 +70,29 @@ float calcDirShadow(DirLight light, vec3 normal, vec4 shadowCoords)
 
 vec4 calcDirLight(DirLight light, vec4 shadowCoords)
 {
-    vec3 normal = normalize(fragmentNorm); 
+    vec3 fragmentPos = texture(gBuffer.texture_position, UV).rgb;
+    vec3 normal = texture(gBuffer.texture_normal, UV).rgb;
+    vec4 diffuseFrag = texture(gBuffer.texture_albedo, UV);
+    vec4 specularFrag = texture(gBuffer.texture_specular, UV);
+    float shininessFrag = texture(gBuffer.texture_shininess, UV).r * 255;
+
     vec3 viewDir = normalize(viewPos - fragmentPos);
     vec3 lightDir = normalize(-light.direction);
 
-    /* normal mapping */
-    if (TBN != mat3(0))
-    {
-        normal = texture(material.texture_normal1, textureCoords).rgb;
-        normal = normalize(normal * 2.0 - 1.0);
-        normal = normalize(TBN * normal);
-    }
-
     float diff = max(dot(normal, lightDir), 0.0);
 
+    /* Blinn-Phong */
     vec3 halfwayRay = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayRay), 0.0), material.shininess); // Blinn-Phong
+    float spec = pow(max(dot(normal, halfwayRay), 0.0), shininessFrag); 
 
-    vec4 ambient = vec4(light.ambient, 1.0f) * texture(material.texture_diffuse1, textureCoords);
-    vec4 diffuse = vec4(light.diffuse, 1.0f) * diff * texture(material.texture_diffuse1, textureCoords);
-    vec4 specular = vec4(light.specular, 1.0f) * spec * texture(material.texture_specular1, textureCoords);
+    vec4 ambient = vec4(light.ambient, 1.0) * diffuseFrag;
+    vec4 diffuse = vec4(light.diffuse, 1.0) * diff * diffuseFrag;
+    vec4 specular = vec4(light.specular, 1.0) * spec * specularFrag;
 
-    float shadow = calcDirShadow(light, normal, shadowCoords);
+    float shadow = calcDirShadow(light, shadowCoords);
 
     return ambient + shadow * (diffuse + specular);
 }
-
-/*
-   vec4 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-   {
-   vec3 direction = normalize(light.position - fragPos);
-
-   float diff = max(dot(normal, direction), 0.0);
-
-   vec3 reflectionRay = reflect(-direction, normal);
-   float spec = pow(max(dot(viewDir, reflectionRay), 0.0), material.shininess);
-
-   float distance = length(light.position - fragPos);
-   float attenuation = 1.0 / (light.constant + (light.linear * distance) + light.quadratic * (distance * distance));
-
-   vec4 ambient = vec4(light.ambient, 1.0f) * texture(material.texture_diffuse1, textureCoords);
-   vec4 diffuse = vec4(light.diffuse, 1.0f) * diff * texture(material.texture_diffuse1, textureCoords);
-   vec4 specular = vec4(light.specular, 1.0f) * spec * texture(material.texture_specular1, textureCoords);
-
-   ambient *= attenuation;
-   diffuse *= attenuation;
-   specular *= attenuation;
-
-   return (ambient + diffuse + specular);
-   }
- */
 
 void main()
 {
@@ -179,19 +101,12 @@ void main()
     /* dir light */
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
     {
-        if (dirShadowCoords[i] != vec4(0, 0, 0, 0))
-        {
-            result += calcDirLight(dirLights[i], dirShadowCoords[i]);
-        }
-    }
+        /* calc shadow coords */
+        vec3 fragmentPos = texture(gBuffer.texture_position, UV).rgb;
+        vec4 dirShadowCoords = dirLightsMatrices[i].shadowProjection * dirLightsMatrices[i].shadowView * vec4(fragmentPos, 1.0);
 
-    /* point light */
-    /*
-       for (int i = 0; i < MAX_POINT_LIGHTS; i++)
-       {
-       result += calcPointLight(pointLights[i], norm, fragmentPos, viewDir);
-       }
-     */
+        result += calcDirLight(dirLights[i], dirShadowCoords);
+    }
 
     /* alpha */
     if (result.a < 0.1)

@@ -61,11 +61,11 @@ void Mesh::draw(Shader *shader) const
     unsigned int specularNR = 1; // amount of specular textures
     unsigned int normalNR = 1; // amount of normal textures
         
-    shader->setFloat("material.shininess", 16.0f);
+    shader->setFloat("material.shininess", 0.06f);
 
     for (size_t i = 0; i < textures.size(); i++) // loop through textures
     {
-        glActiveTexture(GL_TEXTURE0 + i); // set the texture active
+        glActiveTexture(GL_TEXTURE0 + textures[i].id); // set the texture active
 
         string number; // this one is needed if we use more than one texture of the same type
         
@@ -85,8 +85,8 @@ void Mesh::draw(Shader *shader) const
         //cout << "material." + textures[i].type + number << endl;
         //cout << textures[i].id << endl;
 
-        shader->setInt("material." + textures[i].type + number, i); // send the texture to the shader (example: material.texture_diffuse1)
         glBindTexture(GL_TEXTURE_2D, textures[i].id); // bind this texture
+        shader->setInt("material." + textures[i].type + number, textures[i].id); // send the texture to the shader (example: material.texture_diffuse1)
     }
 
     if (normalNR == 1)
@@ -104,11 +104,12 @@ void Mesh::draw(Shader *shader) const
     
     for (size_t i = 0; i < textures.size(); i++) // loop through textures
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+        glActiveTexture(GL_TEXTURE0 + textures[i].id);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     
     glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 vector < Vertex > Mesh::getVertices() const

@@ -28,6 +28,7 @@ GameObject::GameObject(string name)
     globalNames.insert(name);
     this->name = name;
     setVisible(true);
+    setShadow(true);
 
     modelLoader = new ModelLoader();
     physicsObject = nullptr;
@@ -97,6 +98,11 @@ void GameObject::setName(string name)
 void GameObject::setVisible(bool visible)
 {
     this->visible = visible;
+}
+
+void GameObject::setShadow(bool shadow)
+{
+    this->shadow = shadow;
 }
         
 void GameObject::setCollidable(bool collidable)
@@ -237,10 +243,15 @@ string GameObject::getName() const
 {
     return name;
 }
-        
+
 bool GameObject::isVisible() const
 {
     return visible;
+}
+
+bool GameObject::isShadow() const
+{
+    return shadow;
 }
 
 bool GameObject::isCollidable() const

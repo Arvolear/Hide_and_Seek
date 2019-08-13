@@ -25,7 +25,9 @@ class Level
         string levelName;
 
         ColorBuffer* levelColorBuffer;
+        GBuffer* gBuffer;
 
+        Shader* gBufferShader;
         Shader* gameObjectShader;
         Shader* dirShadowShader;
         Shader* skyBoxShader;
@@ -38,11 +40,12 @@ class Level
 
         SkyBox* skyBox;
         
-        /* [0] player is active */
+        /* player[0] is active */
         vector < Player* > players;
 
         mat4 projection;
         ViewFrustum* viewFrustum;
+        RenderQuad* quad;
 
         /* DEBUG */
         int drawDebug;

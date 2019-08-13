@@ -6,6 +6,7 @@
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
 #include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/gbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
@@ -53,7 +54,9 @@ Level::Level(Window* window, World* physicsWorld)
     levelName = "";
 
     levelColorBuffer = new ColorBuffer();
+    gBuffer = new GBuffer();
 
+    gBufferShader = new Shader();
     gameObjectShader = new Shader();
     dirShadowShader = new Shader();
     skyBoxShader = new Shader();
@@ -65,6 +68,8 @@ Level::Level(Window* window, World* physicsWorld)
     projection = mat4(1.0);
     viewFrustum = nullptr;
 
+    quad = new RenderQuad();
+
     drawDebug = 0;
 }
 
@@ -73,7 +78,9 @@ void Level::loadLevel(string level)
     levelName = level;
 
     levelColorBuffer->genBuffer(window->getRenderSize(), 2);
+    gBuffer->genBuffer(window->getRenderSize());
     
+    gBufferShader->loadShaders(path("code/shader/gBufferShader.vert"), path("code/shader/gBufferShader.frag"));
     gameObjectShader->loadShaders(path("code/shader/objectShader.vert"), path("code/shader/objectShader.frag"));
     dirShadowShader->loadShaders(path("code/shader/dirShadowShader.vert"), path("code/shader/dirShadowShader.frag"));
     skyBoxShader->loadShaders(path("code/shader/skyBoxShader.vert"), path("code/shader/skyBoxShader.frag"));
@@ -89,6 +96,8 @@ void Level::loadLevel(string level)
     levelLoader->getGameObjectsData(gameObjects);
     levelLoader->getProjectionData(projection);
     levelLoader->getViewFrustumData(viewFrustum);
+    
+    quad->init();
 }
 
 void Level::addGameObject(GameObject* gameObject)
@@ -159,29 +168,45 @@ void Level::render()
 
         for (auto& i : gameObjects)
         {
-            i.second->render(dirShadowShader); 
+            if (i.second->isShadow())
+            {
+                i.second->render(dirShadowShader); 
+            }
         }
+    }
+    
+    /************************************
+     * GBUFFER
+     * */ 
+    
+    glCullFace(GL_BACK);
+    
+    /*** gbuffer ***/
+    gBuffer->use();
+    gBuffer->clear();
+
+    gBufferShader->use();
+
+    gBufferShader->setMat4("view", view);
+    gBufferShader->setMat4("projection", projection);
+      
+    for (auto& i : gameObjects)
+    {
+        i.second->render(gBufferShader); 
     }
 
     /************************************
      * GAMEOBJECT
      * */ 
     
-    glCullFace(GL_BACK);
-
     /*** color buffer ***/
     levelColorBuffer->use();
     levelColorBuffer->clear();
 
     gameObjectShader->use();
 
-    gameObjectShader->setMat4("view", view);
-    gameObjectShader->setMat4("projection", projection);
     gameObjectShader->setVec3("viewPos", players[0]->getPosition());
       
-    //gameObjectShader->setMat4("view", dirLights[0]->getView());
-    //gameObjectShader->setMat4("projection", dirLights[0]->getProjection());
-
     for (size_t i = 0; i < dirLights.size(); i++)
     {
         gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowView", dirLights[i]->getView());
@@ -195,14 +220,16 @@ void Level::render()
         dirLights[i]->render(gameObjectShader, i);
     }
 
-    for (auto& i : gameObjects)
-    {
-        i.second->render(gameObjectShader); 
-    }
+    gBuffer->render(gameObjectShader);
+    quad->render(gameObjectShader);
 
     /************************************
      * SKYBOX 
      * */
+    
+    levelColorBuffer->copyDepthBuffer(gBuffer);
+    levelColorBuffer->use();
+
     skyBoxShader->use();
 
     skyBoxShader->setMat4("view", mat4(mat3(view)));
@@ -213,6 +240,7 @@ void Level::render()
     /************************************
      * DEBUG
      * */
+    
     glDisable(GL_CULL_FACE);
 
     debugShader->use();
@@ -247,6 +275,7 @@ void Level::updatePlayers(int mode)
 GLuint Level::getRenderTexture(unsigned int num) const
 {
     return levelColorBuffer->getTexture(num);
+    //return gBuffer->getTexture(3);
 }
 
 Player* Level::getPlayer() const
@@ -279,7 +308,9 @@ Level::~Level()
     delete levelLoader;
 
     delete levelColorBuffer;
+    delete gBuffer;
 
+    delete gBufferShader;
     delete gameObjectShader;
     delete dirShadowShader;
     delete skyBoxShader;
@@ -304,4 +335,5 @@ Level::~Level()
     }
 
     delete viewFrustum;
+    delete quad;
 }

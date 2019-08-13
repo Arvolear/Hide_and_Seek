@@ -8,6 +8,12 @@
                 <scale x="0.2" y="0.2" z="0.2"/>
                 <rotation x="1.0" y="0.0" z="0.0" angle="-90.0"/>
                 <animations>
+                    <animation name="pick" active="false">
+                        <animid id="5"/>
+                        <framesrange start="40.0" end="60.0"/>
+                        <speed speed="0.0"/>
+                        <loop loop="false"/>
+                    </animation>
                     <animation name="reload1" active="false">
                         <animid id="5"/>
                         <framesrange start="0.0" end="0.0"/>
@@ -17,7 +23,7 @@
                     <animation name="reload2" active="false">
                         <animid id="4"/>
                         <framesrange start="0.0" end="0.0"/>
-                        <speed speed="0.0"/>
+                        <speed speed="0.5"/>
                         <loop loop="false"/>
                     </animation>
                     <animation name="walk" active="false">
@@ -42,8 +48,18 @@
             </graphicsobject>
             <physicsobject>
                 <shape type="compound">
-                    <childshape type="box" x="0.1" y="0.2" z="0.2">
-                        <position x="0.0" y="0.0" z="0.0"/>
+                    <childshape type="box" x="0.08" y="0.1" z="0.9">
+                        <position x="0.0" y="0.12" z="0.2"/>
+                    </childshape>
+                    <childshape type="box" x="0.04" y="0.04" z="0.25">
+                        <position x="0.0" y="0.12" z="-0.95"/>
+                    </childshape>
+                    <childshape type="box" x="0.08" y="0.25" z="0.1">
+                        <position x="0.0" y="-0.23" z="0.025"/>
+                    </childshape>
+                    <childshape type="box" x="0.08" y="0.18" z="0.08">
+                        <position x="0.0" y="-0.18" z="0.43"/>
+                        <rotation x="1.0" y="0.0" z="0.0" angle="-25.0"/>
                     </childshape>
                 </shape>
                 <mass mass="1.0"/>

@@ -86,9 +86,6 @@ void Weapon::reload()
         return;
     }
 
-    /* X move bullets from left to magaz
-     * */
-
     playAnimation("reload2");
 }
 
@@ -100,6 +97,7 @@ void Weapon::drop(vec3 where)
     stopAnimation();
     
     physicsObject->setCollidable(true);
+    setShadow(true);
 }
 
 void Weapon::pick(vec3 forward, vec3 up)
@@ -164,18 +162,12 @@ void Weapon::pick(vec3 forward, vec3 up)
 
         angle = acos(cosRotAngle); 
 
-        /*vec3 diff = vertForward - weaponForward;
-
-        if (dot(cross(up, weaponForward), diff) < 0)
-        {
-            angle *= -1;
-        }*/
-
         btQuaternion rot(toBtVector3(cross(up, forward)), angle);
         physicsObject->setRotation(rot);
     }
 
     physicsObject->setCollidable(false);
+    setShadow(false);
 
     //physicsObject->setRotation(toBtQuaternion(twist), false);
 }

@@ -33,6 +33,8 @@ class FrameBuffer
         vec2 getSize() const;
 
         void use();
+        void copyDepthBuffer(FrameBuffer* frameBuffer);
+
         virtual void clear() = 0;
 
         virtual ~FrameBuffer();

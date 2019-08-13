@@ -6,6 +6,7 @@
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
 #include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/gbuffer.hpp"
 
 #include "../window/glfwevents.hpp"
 #include "../window/renderquad.hpp"
@@ -151,7 +152,9 @@ void Game::gameLoop()
         /***********************************
          * GAMEBUFFER
          * */
-        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 4, 1);
+
+        /* bloom */
+        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 2, 1);
         
         gameBuffer->use();
         gameBuffer->clear();

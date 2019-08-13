@@ -6,6 +6,7 @@
 #include "framebuffer/colorbuffer.hpp"
 #include "framebuffer/depthbuffer.hpp"
 #include "framebuffer/depthcolorbuffer.hpp"
+#include "framebuffer/gbuffer.hpp"
 
 #include "window/glfwevents.hpp"
 #include "window/renderquad.hpp"

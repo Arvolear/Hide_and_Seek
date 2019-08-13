@@ -14,8 +14,8 @@ Window::Window() : GLFWEvents()
     height = 1080;
     resized = false;
 
-    renderWidth = 1920;
-    renderHeight = 1080;
+    renderWidth = 1600;
+    renderHeight = 900;
 
     mousePosition = vec2(0);
     mouseMoved = false;
