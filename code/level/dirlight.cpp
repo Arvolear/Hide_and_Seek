@@ -35,6 +35,7 @@ DirLight::DirLight(vec3 dir, vec3 amb, vec3 diff, vec3 spec)
     specular = spec;
 
     shadowBuffer = new DepthColorBuffer();
+    gaussianBlur = new GaussianBlur < DepthColorBuffer >();
 }
 
 void DirLight::genShadowBuffer(int width, int height, float blurScale)
@@ -85,7 +86,10 @@ void DirLight::setProjection(mat4 projection)
         
 void DirLight::blur(float intensity, float radius)
 {
-    gaussianBlur->blur(shadowBuffer->getTexture(), intensity, radius);
+    if (shadowBuffer->getBuffer())
+    {
+        gaussianBlur->blur(shadowBuffer->getTexture(), intensity, radius);
+    }
 }
 
 void DirLight::render(Shader* shader, GLuint index)
@@ -94,21 +98,32 @@ void DirLight::render(Shader* shader, GLuint index)
     shader->setVec3("dirLights[" + to_string(index) + "].ambient", ambient);
     shader->setVec3("dirLights[" + to_string(index) + "].diffuse", diffuse);
     shader->setVec3("dirLights[" + to_string(index) + "].specular", specular);
-   
-    GLuint shadowTexture;
 
-    if (gaussianBlur->getTexture())
+    GLuint shadowTexture = 0;
+
+    if (gaussianBlur->getBuffers().first && gaussianBlur->getTexture())
     {
         shadowTexture = gaussianBlur->getTexture();
     }
-    else
+    else if (shadowBuffer->getBuffer())
     {
         shadowTexture = shadowBuffer->getTexture();
     }
+
+    if (shadowTexture)
+    {
+        shader->setInt("dirLights[" + to_string(index) + "].isShadow", 1);
+        glActiveTexture(GL_TEXTURE0 + shadowTexture);
+        glBindTexture(GL_TEXTURE_2D, shadowTexture);
+        shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", shadowTexture);
     
-    glActiveTexture(GL_TEXTURE0 + index + shadowTexture);
-    glBindTexture(GL_TEXTURE_2D, shadowTexture);
-    shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", index + shadowTexture);
+        shader->setMat4("dirLights[" + to_string(index) + "].shadowView", getView());
+        shader->setMat4("dirLights[" + to_string(index) + "].shadowProjection", getProjection());
+    }
+    else
+    {
+        shader->setInt("dirLights[" + to_string(index) + "].isShadow", 0);
+    }
 }
 
 DepthColorBuffer* DirLight::getShadowBuffer() const
@@ -134,4 +149,5 @@ mat4 DirLight::getProjection() const
 DirLight::~DirLight()
 {
     delete shadowBuffer;
+    delete gaussianBlur;
 }

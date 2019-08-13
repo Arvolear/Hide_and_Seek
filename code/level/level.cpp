@@ -155,32 +155,35 @@ void Level::render()
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        /*** shadow buffer ***/
-        dirLights[i]->getShadowBuffer()->use();
-        dirLights[i]->getShadowBuffer()->clear();
-
-        dirLights[i]->updateView(players[0]->getPosition());
-
-        dirShadowShader->use();
-
-        dirShadowShader->setMat4("view", dirLights[i]->getView());
-        dirShadowShader->setMat4("projection", dirLights[i]->getProjection());
-
-        for (auto& i : gameObjects)
+        if (dirLights[i]->getShadowBuffer())
         {
-            if (i.second->isShadow())
+            /*** shadow buffer ***/
+            dirLights[i]->getShadowBuffer()->use();
+            dirLights[i]->getShadowBuffer()->clear();
+
+            dirLights[i]->updateView(players[0]->getPosition());
+
+            dirShadowShader->use();
+
+            dirShadowShader->setMat4("view", dirLights[i]->getView());
+            dirShadowShader->setMat4("projection", dirLights[i]->getProjection());
+
+            for (auto& i : gameObjects)
             {
-                i.second->render(dirShadowShader); 
+                if (i.second->isShadow())
+                {
+                    i.second->render(dirShadowShader); 
+                }
             }
         }
     }
-    
+
     /************************************
      * GBUFFER
      * */ 
-    
+
     glCullFace(GL_BACK);
-    
+
     /*** gbuffer ***/
     gBuffer->use();
     gBuffer->clear();
@@ -189,7 +192,7 @@ void Level::render()
 
     gBufferShader->setMat4("view", view);
     gBufferShader->setMat4("projection", projection);
-      
+
     for (auto& i : gameObjects)
     {
         i.second->render(gBufferShader); 
@@ -198,7 +201,7 @@ void Level::render()
     /************************************
      * GAMEOBJECT
      * */ 
-    
+
     /*** color buffer ***/
     levelColorBuffer->use();
     levelColorBuffer->clear();
@@ -206,14 +209,11 @@ void Level::render()
     gameObjectShader->use();
 
     gameObjectShader->setVec3("viewPos", players[0]->getPosition());
-      
+
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowView", dirLights[i]->getView());
-        gameObjectShader->setMat4("dirLightsMatrices[" + to_string(i) + "].shadowProjection", dirLights[i]->getProjection());
-
         dirLights[i]->blur(1, 1);
-    
+
         levelColorBuffer->use();
         gameObjectShader->use();
 
@@ -226,7 +226,7 @@ void Level::render()
     /************************************
      * SKYBOX 
      * */
-    
+
     levelColorBuffer->copyDepthBuffer(gBuffer);
     levelColorBuffer->use();
 
@@ -236,17 +236,18 @@ void Level::render()
     skyBoxShader->setMat4("projection", projection);
 
     skyBox->render(skyBoxShader);
-    
+
     /************************************
      * DEBUG
      * */
-    
+
     glDisable(GL_CULL_FACE);
 
     debugShader->use();
+
     physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, view, projection);
     physicsWorld->getDebugDrawer()->updateViewProjection();
-   
+
     physicsWorld->renderDebug();
 
     if (drawDebug)
@@ -255,7 +256,7 @@ void Level::render()
         {
             i.second->renderDebugSphere(debugShader); 
         }
-       
+
         for (size_t i = 0; i < players.size(); i++)
         {
             viewFrustum->updateFrustum(players[i]->getView(), projection);
@@ -263,13 +264,13 @@ void Level::render()
         }
     }
 } 
-        
+
 void Level::updatePlayers(int mode)
 {
-   for (size_t i = 0; i < players.size(); i++)
-   {
-       players[i]->update(!mode);
-   }
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        players[i]->update(!mode);
+    }
 }
 
 GLuint Level::getRenderTexture(unsigned int num) const
@@ -292,7 +293,7 @@ void Level::toggleDebug()
 {
     drawDebug = (drawDebug + 1) % 2;
 }
-        
+
 void Level::swapPlayers()
 {
     rotate(players.begin(), players.begin() + 1, players.end());

@@ -55,37 +55,40 @@ LevelLoader::LevelLoader(Window* window, World* physicsWorld)
         
 void LevelLoader::loadProjection(XMLElement* projElem, mat4 &proj)
 {
-    proj = mat4(1.0);
-
-    const char* type = nullptr;
-    projElem->QueryStringAttribute("type", &type);
-
-    if (!strcmp(type, "perspective"))
+    if (projElem)
     {
-        float fovy = 0, aspect = 0, near = 0, far = 0;
+        proj = mat4(1.0);
 
-        projElem->QueryFloatAttribute("fovy", &fovy);
-        projElem->QueryFloatAttribute("aspect", &aspect);
-        projElem->QueryFloatAttribute("near", &near);
-        projElem->QueryFloatAttribute("far", &far);
+        const char* type = nullptr;
+        projElem->QueryStringAttribute("type", &type);
 
-        proj = perspective(fovy, aspect, near, far);
-    }
-    else if (!strcmp(type, "orthogonal"))
-    {
-        float left = 0, right = 0, bottom = 0, top = 0, near = 0, far = 0;
+        if (!strcmp(type, "perspective"))
+        {
+            float fovy = 0, aspect = 0, near = 0, far = 0;
 
-        projElem->QueryFloatAttribute("left", &left);
-        projElem->QueryFloatAttribute("right", &right);
-        projElem->QueryFloatAttribute("bottom", &bottom);
-        projElem->QueryFloatAttribute("top", &top);
-        projElem->QueryFloatAttribute("near", &near);
-        projElem->QueryFloatAttribute("far", &far);
+            projElem->QueryFloatAttribute("fovy", &fovy);
+            projElem->QueryFloatAttribute("aspect", &aspect);
+            projElem->QueryFloatAttribute("near", &near);
+            projElem->QueryFloatAttribute("far", &far);
 
-        proj = ortho(left, right, bottom, top, near, far);
+            proj = perspective(fovy, aspect, near, far);
+        }
+        else if (!strcmp(type, "orthogonal"))
+        {
+            float left = 0, right = 0, bottom = 0, top = 0, near = 0, far = 0;
+
+            projElem->QueryFloatAttribute("left", &left);
+            projElem->QueryFloatAttribute("right", &right);
+            projElem->QueryFloatAttribute("bottom", &bottom);
+            projElem->QueryFloatAttribute("top", &top);
+            projElem->QueryFloatAttribute("near", &near);
+            projElem->QueryFloatAttribute("far", &far);
+
+            proj = ortho(left, right, bottom, top, near, far);
+        }
     }
 }
-        
+
 void LevelLoader::loadAnimation(XMLElement* animationElem, Animation*& anim)
 {
     const char* name = nullptr;
@@ -451,7 +454,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& 
         }
     }
 }
-        
+
 void LevelLoader::loadDebugObject(XMLElement* debugObjectElem, GameObject*& GO)
 {
     XMLElement* debugSphereElem = debugObjectElem->FirstChildElement("debugsphere");
@@ -498,7 +501,7 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
         loadDebugObject(debugObjectElem, GO);
     }
 }
-        
+
 void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
 {
     const char* name = nullptr;
@@ -547,7 +550,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             offsetElem->QueryFloatAttribute("x", &x);
             offsetElem->QueryFloatAttribute("y", &y);
             offsetElem->QueryFloatAttribute("z", &z);
-            
+
             rifle->setOffset(vec3(x, y, z));
         }
 
@@ -562,10 +565,10 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             twistElem->QueryFloatAttribute("y", &y);
             twistElem->QueryFloatAttribute("z", &z);
             twistElem->QueryFloatAttribute("angle", &angle);
-            
+
             rifle->setTwist(vec3(x, y, z), toRads(angle));
         }
-        
+
         /* storage bullets */
         XMLElement* storageBulletsElem = rifleInfoElem->FirstChildElement("storagebullets");
 
@@ -574,10 +577,10 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             int amount = 0;
 
             storageBulletsElem->QueryIntAttribute("amount", &amount);
-            
+
             rifle->setStorageBullets(amount);
         }
-        
+
         /* magazine size */
         XMLElement* magazineSizeElem = rifleInfoElem->FirstChildElement("magazinesize");
 
@@ -586,10 +589,10 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             int size = 0;
 
             magazineSizeElem->QueryIntAttribute("size", &size);
-            
+
             rifle->setMagazineSize(size);
         }
-        
+
         /* magazine bullets */
         XMLElement* magazineBulletsElem = rifleInfoElem->FirstChildElement("magazinebullets");
 
@@ -598,10 +601,10 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             int amount = 0;
 
             magazineBulletsElem->QueryIntAttribute("amount", &amount);
-            
+
             rifle->setMagazineBullets(amount);
         }
-        
+
         /* shot speed */
         XMLElement* shotSpeedElem = rifleInfoElem->FirstChildElement("shotspeed");
 
@@ -610,7 +613,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             float speed = 0;
 
             shotSpeedElem->QueryFloatAttribute("speed", &speed);
-            
+
             rifle->setShotSpeed(speed);
         }
     }
@@ -738,32 +741,38 @@ void LevelLoader::loadDirLight()
             DL->setSpecular(vec3(r, g, b));
         }
 
-        XMLElement* blurScaleElem = dirLightElem->FirstChildElement("blurscale");
+        /* shadow */
+        XMLElement* shadowElem = dirLightElem->FirstChildElement("shadow");
 
-        float scale = 1.0;
-
-        if (blurScaleElem)
+        if (shadowElem)
         {
-            blurScaleElem->QueryFloatAttribute("scale", &scale);
+            XMLElement* blurScaleElem = shadowElem->FirstChildElement("blurscale");
+
+            float scale = 1.0;
+
+            if (blurScaleElem)
+            {
+                blurScaleElem->QueryFloatAttribute("scale", &scale);
+            }
+
+            XMLElement* shadowBufferElem = shadowElem->FirstChildElement("shadowbuffer");
+
+            if (shadowBufferElem)
+            {
+                float x = 0, y = 0;
+                shadowBufferElem->QueryFloatAttribute("x", &x);
+                shadowBufferElem->QueryFloatAttribute("y", &y);
+
+                DL->genShadowBuffer(x, y, scale);
+            }
+
+            XMLElement* projElem = shadowElem->FirstChildElement("projection");
+
+            mat4 shadowProj = mat4(1.0);
+            loadProjection(projElem, shadowProj);
+
+            DL->setProjection(shadowProj);
         }
-
-        XMLElement* shadowBufferElem = dirLightElem->FirstChildElement("shadowbuffer");
-
-        if (shadowBufferElem)
-        {
-            float x = 0, y = 0;
-            shadowBufferElem->QueryFloatAttribute("x", &x);
-            shadowBufferElem->QueryFloatAttribute("y", &y);
-
-            DL->genShadowBuffer(x, y, scale);
-        }
-
-        XMLElement* projElem = dirLightElem->FirstChildElement("projection");
-
-        mat4 shadowProj = mat4(1.0);
-        loadProjection(projElem, shadowProj);
-
-        DL->setProjection(shadowProj);
 
         if (find(dirLights.begin(), dirLights.end(), DL) == dirLights.end())
         {
@@ -1092,7 +1101,7 @@ void LevelLoader::loadSoldiers()
 
             soldier->setModelOffset(vec3(x, y, z));
         }
-        
+
         /* add weapon */
         XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
         XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
@@ -1111,7 +1120,7 @@ void LevelLoader::loadSoldiers()
             }
 
             soldier->pick(weapon);
-            
+
             weaponElem = weaponElem->NextSiblingElement();
         }
 
@@ -1132,7 +1141,7 @@ void LevelLoader::loadLevel(string name)
     loadGameObjects();
 
     loadRifles();
-    
+
     loadSoldiers();
     loadPlayers();
 

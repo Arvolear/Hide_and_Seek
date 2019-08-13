@@ -31,6 +31,7 @@ class GaussianBlur
         GLuint blur(GLuint textureID, float intensity, float radius = 1);
 
         GLuint getTexture() const;
+        pair < GLuint, GLuint > getBuffers() const;
 
         ~GaussianBlur();
 

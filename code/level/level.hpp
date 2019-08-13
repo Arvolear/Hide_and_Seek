@@ -43,9 +43,10 @@ class Level
         /* player[0] is active */
         vector < Player* > players;
 
-        mat4 projection;
         ViewFrustum* viewFrustum;
         RenderQuad* quad;
+        
+        mat4 projection;
 
         /* DEBUG */
         int drawDebug;

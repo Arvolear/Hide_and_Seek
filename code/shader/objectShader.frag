@@ -20,11 +20,9 @@ struct DirLight
     vec3 diffuse;
     vec3 specular;
 
+    int isShadow; 
     sampler2D texture_shadow1;
-};
-
-struct DirLightMatrices
-{
+    
     mat4 shadowView;
     mat4 shadowProjection;
 };
@@ -35,7 +33,6 @@ uniform GBuffer gBuffer;
 
 #define MAX_DIR_LIGHTS 1
 uniform DirLight dirLights[MAX_DIR_LIGHTS];
-uniform DirLightMatrices dirLightsMatrices[MAX_DIR_LIGHTS];
 
 uniform vec3 viewPos;
 
@@ -68,7 +65,7 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
     return shadow;
 }
 
-vec4 calcDirLight(DirLight light, vec4 shadowCoords)
+vec4 calcDirLight(DirLight light)
 {
     vec3 fragmentPos = texture(gBuffer.texture_position, UV).rgb;
     vec3 normal = texture(gBuffer.texture_normal, UV).rgb;
@@ -89,7 +86,15 @@ vec4 calcDirLight(DirLight light, vec4 shadowCoords)
     vec4 diffuse = vec4(light.diffuse, 1.0) * diff * diffuseFrag;
     vec4 specular = vec4(light.specular, 1.0) * spec * specularFrag;
 
-    float shadow = calcDirShadow(light, shadowCoords);
+    float shadow = 1.0;
+    
+    if (light.isShadow == 1)
+    {
+        /* calc shadow coords */
+        vec4 dirShadowCoords = light.shadowProjection * light.shadowView * vec4(fragmentPos, 1.0);
+
+        shadow = calcDirShadow(light, dirShadowCoords);
+    }
 
     return ambient + shadow * (diffuse + specular);
 }
@@ -101,11 +106,7 @@ void main()
     /* dir light */
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
     {
-        /* calc shadow coords */
-        vec3 fragmentPos = texture(gBuffer.texture_position, UV).rgb;
-        vec4 dirShadowCoords = dirLightsMatrices[i].shadowProjection * dirLightsMatrices[i].shadowView * vec4(fragmentPos, 1.0);
-
-        result += calcDirLight(dirLights[i], dirShadowCoords);
+        result += calcDirLight(dirLights[i]);
     }
 
     /* alpha */

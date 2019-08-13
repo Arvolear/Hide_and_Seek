@@ -142,6 +142,4 @@ void Soldier::update(bool events)
     updateWeapon();
 }
 
-Soldier::~Soldier()
-{
-}
+Soldier::~Soldier() {}

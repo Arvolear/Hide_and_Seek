@@ -181,8 +181,11 @@ void Game::gameLoop()
 Game::~Game()
 {
     delete level;
-
     delete physicsWorld;
+
+    delete gameShader;
+    delete gameBuffer;
+    delete quad;
 
     delete gaussianBlur;
 }

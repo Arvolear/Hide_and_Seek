@@ -119,6 +119,12 @@ GLuint GaussianBlur<T>::getTexture() const
 }
 
 template < typename T >
+pair < GLuint, GLuint > GaussianBlur<T>::getBuffers() const
+{
+    return {colorBuffers[0]->getBuffer(), colorBuffers[1]->getBuffer()};
+}
+
+template < typename T >
 GaussianBlur<T>::~GaussianBlur()
 {
     delete blurShader;

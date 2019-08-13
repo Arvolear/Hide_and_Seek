@@ -166,6 +166,7 @@ void Weapon::pick(vec3 forward, vec3 up)
         physicsObject->setRotation(rot);
     }
 
+    playAnimation("pick");
     physicsObject->setCollidable(false);
     setShadow(false);
 
