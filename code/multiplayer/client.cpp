@@ -14,7 +14,7 @@ Client::Client(string ip, int port)
     addr.sin_port = htons(port);
 
     buffer = nullptr;
-    id = 0;
+    id = -1;
 
     if (connect(sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
     {
@@ -23,8 +23,6 @@ Client::Client(string ip, int port)
 
     recvMSG(128);
     id = stoi(buffer);
-
-    cout << "My id: " << id << endl;
 }
 
 void Client::sendMSG(string data)
@@ -34,7 +32,7 @@ void Client::sendMSG(string data)
 
 void Client::recvMSG(int size)
 {
-    delete buffer;
+    delete[] buffer;
     buffer = new char[size];
     memset(buffer, 0, size);
 
@@ -53,6 +51,6 @@ int Client::getID() const
 
 Client::~Client()
 {
-    delete buffer;
+    delete[] buffer;
     close(sock);
 }

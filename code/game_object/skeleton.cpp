@@ -14,6 +14,7 @@ using namespace Assimp;
 Skeleton::Skeleton(map < string, Bone* > &bones)
 {
     this->bones = bones; 
+    meshWithBones = !bones.empty();
 
     activeAnimation = nullptr;
 }
@@ -30,10 +31,10 @@ void Skeleton::playAnimation(Animation* anim, bool reset)
         
 void Skeleton::renderBonesMatrices(Shader* shader)
 {
+    shader->setInt("meshWithBones", meshWithBones); 
+
     if (!bones.empty()) 
     {
-        shader->setInt("meshWithBones", 1); 
-
         bonesMatrices.clear(); 
 
         int index = 0;
@@ -58,10 +59,6 @@ void Skeleton::renderBonesMatrices(Shader* shader)
             shader->setMat4("bones[" + to_string(index) + "]", bonesMatrices[i]); 
         }
     }
-    else 
-    {
-        shader->setInt("meshWithBones", 0); 
-    }
 }
 
 void Skeleton::stopAnimation()
@@ -82,6 +79,11 @@ Animation* Skeleton::getAnimation() const
 vector < mat4 > Skeleton::getBonesMatrices() const
 {
     return bonesMatrices;
+}
+
+bool Skeleton::isMeshWithBones() const
+{
+    return meshWithBones;
 }
 
 void Skeleton::update(Shader *shader)

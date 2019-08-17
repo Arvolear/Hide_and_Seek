@@ -66,23 +66,6 @@ void GameObject::removeGraphicsObject()
     modelLoader->clear();
 }
 
-mat4 GameObject::getPhysicsObjectTransform() const
-{
-    if (!physicsObject)
-    {
-        return mat4(1.0);
-    }
-
-    /* 16 elements */
-    btScalar* transform;
-    transform = physicsObject->getTransform();
-
-    mat4 ret = btScalar2glmMat4(transform);
-    delete transform;
-
-    return ret;
-}
-
 void GameObject::setName(string name)
 {
     if (globalNames.find(name) != globalNames.end())
@@ -268,6 +251,28 @@ bool GameObject::isCollidable() const
 
     return true;
 }
+
+mat4 GameObject::getPhysicsObjectTransform() const
+{
+    if (!physicsObject)
+    {
+        return mat4(1.0);
+    }
+
+    /* 16 elements */
+    btScalar* transform;
+    transform = physicsObject->getTransform();
+
+    mat4 ret = btScalar2glmMat4(transform);
+    delete transform;
+
+    return ret;
+}
+
+mat4 GameObject::getLocalTransform() const
+{
+    return localTransform;
+}
         
 Animation* GameObject::getActiveAnimation() const
 {
@@ -310,7 +315,7 @@ void GameObject::render(Shader* shader, bool cull)
     {
         for (size_t i = 0; i < meshes.size(); i++)
         {
-            meshes[i]->draw(shader);
+            meshes[i]->render(shader);
         }
     }
 }

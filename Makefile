@@ -13,12 +13,13 @@ FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o gbuff
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
+MULTIPLAYER = client.o playerdatacollector.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
 GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
 ### ALL ###
 
@@ -85,6 +86,14 @@ $(OUTPUTDIR)/menu.o: $(INPUTDIR)/menu/menu.cpp $(INPUTDIR)/menu/menu.hpp
 
 $(OUTPUTDIR)/game.o: $(INPUTDIR)/game/game.cpp $(INPUTDIR)/game/game.hpp
 	g++ -c $(INPUTDIR)/game/game.cpp -o $@ $(FLAGS)
+
+### MULTIPLAYER ###
+
+$(OUTPUTDIR)/client.o: $(INPUTDIR)/multiplayer/client.cpp $(INPUTDIR)/multiplayer/client.hpp
+	g++ -c $(INPUTDIR)/multiplayer/client.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/playerdatacollector.o: $(INPUTDIR)/multiplayer/playerdatacollector.cpp $(INPUTDIR)/multiplayer/playerdatacollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/playerdatacollector.cpp -o $@ $(FLAGS)
 
 ### LEVEL ###
 

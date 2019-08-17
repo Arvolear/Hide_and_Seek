@@ -24,9 +24,7 @@ GLuint Shader::loadShaders(string vertex_path, string fragment_path)
     }
     else
     {
-        printf("Impossible to open %s\n", vertex_file_path);
-        getchar();
-        return 0;
+        throw(runtime_error("Impossible to open" + vertex_path + "\n"));
     }
 
     // Read the Fragment Shader code from the file
@@ -40,12 +38,16 @@ GLuint Shader::loadShaders(string vertex_path, string fragment_path)
         FragmentShaderCode = sstr.str();
         FragmentShaderStream.close();
     }
+    else
+    {
+        throw(runtime_error("Impossible to open" + fragment_path + "\n"));
+    }
 
     GLint Result = GL_FALSE;
     int InfoLogLength;
 
     // Compile Vertex Shader
-    printf("Compiling shader : %s\n", vertex_file_path);
+    //printf("Compiling shader : %s\n", vertex_file_path);
 
     char const * VertexSourcePointer = VertexShaderCode.c_str();
     glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
@@ -64,7 +66,7 @@ GLuint Shader::loadShaders(string vertex_path, string fragment_path)
 
 
     // Compile Fragment Shader
-    printf("Compiling shader : %s\n", fragment_file_path);
+    //printf("Compiling shader : %s\n", fragment_file_path);
 
     char const * FragmentSourcePointer = FragmentShaderCode.c_str();
     glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
@@ -83,7 +85,7 @@ GLuint Shader::loadShaders(string vertex_path, string fragment_path)
 
 
     // Link the program
-    printf("Linking program\n");
+    //printf("Linking program\n");
     GLuint ProgramID = glCreateProgram();
 
     glAttachShader(ProgramID, VertexShaderID);

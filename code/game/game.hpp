@@ -26,6 +26,10 @@ class Game
 
         GaussianBlur < ColorBuffer >* gaussianBlur;
 
+        /* multiplayer */
+        PlayerDataCollector* playerDataCollector;
+        Client* client;
+
         void init();
         void checkEvents(); 
 

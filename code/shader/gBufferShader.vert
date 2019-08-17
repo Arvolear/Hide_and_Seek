@@ -17,12 +17,12 @@ uniform mat4 projection;
 #define MAX_BONES_AMOUNT 50
 uniform mat4 bones[MAX_BONES_AMOUNT];
 uniform int meshWithBones;
+uniform int meshNormalMapped;
 
 out vec3 fragmentPos;
 out vec3 fragmentNorm;
 out vec2 textureCoords;
 out mat3 TBN;
-uniform int meshNormalMapped;
 
 void main()
 {

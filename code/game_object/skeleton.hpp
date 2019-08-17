@@ -14,6 +14,8 @@ using namespace glm;
 class Skeleton
 {
     private:
+        bool meshWithBones;
+
         map < string, Bone* > bones; 
         vector < mat4 > bonesMatrices; 
 
@@ -29,6 +31,7 @@ class Skeleton
         Animation* getAnimation() const;
 
         vector < mat4 > getBonesMatrices() const;
+        bool isMeshWithBones() const;
 
         void update(Shader* shader); 
 

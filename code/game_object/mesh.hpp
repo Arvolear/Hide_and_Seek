@@ -40,7 +40,7 @@ class Mesh
     public:
         Mesh (vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > &t);
 
-        void draw(Shader *shader) const; 
+        void render(Shader *shader) const; 
 
         vector < Vertex > getVertices() const;
 

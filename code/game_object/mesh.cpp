@@ -55,7 +55,7 @@ void Mesh::setupMesh()
     glBindVertexArray(0); 
 }
 
-void Mesh::draw(Shader *shader) const
+void Mesh::render(Shader *shader) const
 {
     unsigned int diffuseNR = 1; // amount of diffuse textures
     unsigned int specularNR = 1; // amount of specular textures

@@ -43,7 +43,6 @@ class GameObject
         
         void removePhysicsObject();
         void removeGraphicsObject();
-        mat4 getPhysicsObjectTransform() const;
 
     public:
         GameObject(string name);
@@ -72,6 +71,9 @@ class GameObject
         bool isVisible() const;
         bool isShadow() const;
         bool isCollidable() const;
+
+        mat4 getLocalTransform() const;
+        mat4 getPhysicsObjectTransform() const;
 
         Animation* getActiveAnimation() const;
         Animation* getAnimation(string name) const;

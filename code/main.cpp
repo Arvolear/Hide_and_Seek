@@ -39,6 +39,9 @@
 
 #include "player/player.hpp"
 
+#include "multiplayer/client.hpp"
+#include "multiplayer/playerdatacollector.hpp"
+
 #include "level/dirlight.hpp"
 #include "level/skybox.hpp"
 #include "level/levelloader.hpp"
