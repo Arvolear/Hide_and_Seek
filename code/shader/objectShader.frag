@@ -109,12 +109,6 @@ void main()
         result += calcDirLight(dirLights[i]);
     }
 
-    /* alpha */
-    if (result.a < 0.1)
-    {
-        discard;    
-    }
-
     /* bloom */
     fragColor = result;
 

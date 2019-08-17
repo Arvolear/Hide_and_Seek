@@ -1,0 +1,45 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump ./Textures/Sequoia_Base/Sequoia_Base_Normal.jpg
+map_Ka ./Textures/Sequoia_Base/Sequoia_Base_Diff.jpg
+map_Kd ./Textures/Sequoia_Base/Sequoia_Base_Diff.jpg
+map_Ks ./Textures/Sequoia_Base/Sequoia_Base_Refl.jpg
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump ./Textures/Sequoia_Trunk/Sequoia_Bark_Normal.jpg
+map_Kd ./Textures/Sequoia_Trunk/Sequoia_Trunk_Diff.jpg
+map_Ks ./Textures/Sequoia_Trunk/Sequoia_Trunk_Refl.jpg
+map_Ns ./Textures/Sequoia_Trunk/Sequoia_Trunk_Refl.jpg
+
+newmtl Material.004
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Bump ./Textures/Sequoia_Leaves/Sequoia_Leaves_Normal.jpg
+map_Kd ./Textures/Sequoia_Leaves/Sequoia_Leaves_Diff+Alpha.png
+map_Ks ./Textures/Sequoia_Leaves/Sequoia_Leaves_Spec.jpg
+map_Ns ./Textures/Sequoia_Leaves/Sequoia_Leaves_Spec.jpg
+map_d ./Textures/Sequoia_Leaves/Sequoia_Leaves_Diff+Alpha.png

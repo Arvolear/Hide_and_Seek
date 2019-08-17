@@ -79,6 +79,11 @@ Animation* Skeleton::getAnimation() const
     return activeAnimation;
 }
 
+vector < mat4 > Skeleton::getBonesMatrices() const
+{
+    return bonesMatrices;
+}
+
 void Skeleton::update(Shader *shader)
 { 
     renderBonesMatrices(shader); 
@@ -96,14 +101,14 @@ void Skeleton::update(Shader *shader)
     }
         
     /* default frames range */
-    if (activeAnimation->getFramesRange() == vec2(0))
+    if (activeAnimation->getFramesRange().y == 0.0)
     {
         map < string, Bone* >::iterator it = bones.begin();
 
-        activeAnimation->setFramesRange(vec2(1.0, it->second->getAnimation(activeAnimation->getAnimId())->duration));
+        activeAnimation->setFramesRange(vec2(activeAnimation->getFramesRange().x, it->second->getAnimation(activeAnimation->getAnimId())->duration));
         activeAnimation->fromStart();
     }
-        
+    
     for (auto& it : bones) 
     {
         it.second->updateKeyframeTransform(activeAnimation->getAnimId(), activeAnimation->getCurFrame()); 

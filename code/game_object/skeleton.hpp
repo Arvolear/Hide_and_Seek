@@ -28,6 +28,8 @@ class Skeleton
         void stopAnimation(); 
         Animation* getAnimation() const;
 
+        vector < mat4 > getBonesMatrices() const;
+
         void update(Shader* shader); 
 
         ~Skeleton();

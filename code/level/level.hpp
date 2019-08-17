@@ -40,7 +40,7 @@ class Level
 
         SkyBox* skyBox;
         
-        /* player[0] is active */
+        int playerID;
         vector < Player* > players;
 
         ViewFrustum* viewFrustum;
@@ -55,6 +55,8 @@ class Level
         Level(Window* window, World* physicsWorld);
         
         void loadLevel(string level);
+
+        void setPlayerID(int playerID);
         
         void addGameObject(GameObject* gameObject);
         GameObject* getGameObject(string name) const;

@@ -238,6 +238,11 @@ string GameObject::getGraphicsObject() const
 {
     return graphicsObject;
 }
+        
+Skeleton* GameObject::getSkeleton() const
+{
+    return skeleton;
+}
 
 string GameObject::getName() const
 {

@@ -65,6 +65,8 @@ Level::Level(Window* window, World* physicsWorld)
 
     skyBox = nullptr;
 
+    playerID = 0;
+
     projection = mat4(1.0);
     viewFrustum = nullptr;
 
@@ -98,6 +100,11 @@ void Level::loadLevel(string level)
     levelLoader->getViewFrustumData(viewFrustum);
     
     quad->init();
+}
+        
+void Level::setPlayerID(int playerID)
+{
+    this->playerID = playerID;
 }
 
 void Level::addGameObject(GameObject* gameObject)
@@ -143,7 +150,7 @@ void Level::render()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    mat4 view = players[0]->getView();
+    mat4 view = players[playerID]->getView();
     
     viewFrustum->updateFrustum(view, projection);
 
@@ -161,7 +168,7 @@ void Level::render()
             dirLights[i]->getShadowBuffer()->use();
             dirLights[i]->getShadowBuffer()->clear();
 
-            dirLights[i]->updateView(players[0]->getPosition());
+            dirLights[i]->updateView(players[playerID]->getPosition());
 
             dirShadowShader->use();
 
@@ -208,7 +215,7 @@ void Level::render()
 
     gameObjectShader->use();
 
-    gameObjectShader->setVec3("viewPos", players[0]->getPosition());
+    gameObjectShader->setVec3("viewPos", players[playerID]->getPosition());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
@@ -281,7 +288,7 @@ GLuint Level::getRenderTexture(unsigned int num) const
 
 Player* Level::getPlayer() const
 {
-    return players[0];
+    return players[playerID];
 }
 
 string Level::getLevelName() const
@@ -296,12 +303,12 @@ void Level::toggleDebug()
 
 void Level::swapPlayers()
 {
+    players[playerID]->setActive(false);
+
     rotate(players.begin(), players.begin() + 1, players.end());
 
-    players[0]->setActive(true);
-    players[0]->resetPrevCoords();
-
-    players[players.size() - 1]->setActive(false);
+    players[playerID]->setActive(true);
+    players[playerID]->resetPrevCoords();
 }
 
 Level::~Level()

@@ -67,6 +67,7 @@ class GameObject
 
         PhysicsObject* getPhysicsObject() const;
         string getGraphicsObject() const;
+        Skeleton* getSkeleton() const;
         string getName() const;
         bool isVisible() const;
         bool isShadow() const;

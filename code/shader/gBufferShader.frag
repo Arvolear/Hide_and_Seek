@@ -39,4 +39,10 @@ void main()
     gAlbedo = texture(material.texture_diffuse1, textureCoords);
     gSpecular = texture(material.texture_specular1, textureCoords);
     gShininess = material.shininess;
+
+    /* alpha */
+    if (gAlbedo.a < 0.1)
+    {
+        discard;
+    }
 }
