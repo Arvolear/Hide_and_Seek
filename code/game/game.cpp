@@ -40,13 +40,15 @@
 
 #include "../player/player.hpp"
 
-#include "../multiplayer/client.hpp"
-#include "../multiplayer/playerdatacollector.hpp"
-
 #include "../level/dirlight.hpp"
 #include "../level/skybox.hpp"
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"
+
+#include "../multiplayer/client.hpp"
+#include "../multiplayer/playerdatacollector.hpp"
+#include "../multiplayer/playerdataupdater.hpp"
+#include "../multiplayer/multiplayer.hpp"
 
 #include "game.hpp"
 
@@ -69,6 +71,8 @@ Game::Game(Window* window, string levelName)
 
     gaussianBlur = new GaussianBlur < ColorBuffer >();
     gaussianBlur->genBuffer(window->getRenderSize(), 4);
+
+    multiplayer = new Multiplayer(window, level);
 }
 
 void Game::checkEvents()
@@ -131,12 +135,18 @@ void Game::init()
     gameBuffer->genBuffer(window->getRenderSize());
 
     quad->init();
+
+    /* multiplayer */
+    multiplayer->connect();
 }
         
 void Game::gameLoop()
 {
     init();
-
+        
+    thread sender(&Multiplayer::broadcast, multiplayer);
+    thread receiver(&Multiplayer::update, multiplayer);
+        
     while (window->isOpen())
     {
         window->pollEvents();
@@ -178,6 +188,9 @@ void Game::gameLoop()
         //window->render(blured);
         window->render(gameBuffer->getTexture());
     }
+        
+    sender.join();
+    receiver.join();
 }
 
 Game::~Game()
@@ -190,4 +203,6 @@ Game::~Game()
     delete quad;
 
     delete gaussianBlur;
+    
+    delete multiplayer;
 }

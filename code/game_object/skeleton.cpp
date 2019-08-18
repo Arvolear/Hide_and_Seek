@@ -17,6 +17,8 @@ Skeleton::Skeleton(map < string, Bone* > &bones)
     meshWithBones = !bones.empty();
 
     activeAnimation = nullptr;
+
+    ready = false;
 }
 
 void Skeleton::playAnimation(Animation* anim, bool reset)
@@ -78,12 +80,26 @@ Animation* Skeleton::getAnimation() const
         
 void Skeleton::setBonesMatrices(vector < mat4 > &bonesMatrices)
 {
+    unique_lock < mutex > lck(mtx);
+    
+    while (!ready)
+    {
+        cv.wait(lck);
+    }
+
     this->bonesMatrices = bonesMatrices;
     meshWithBones = !bonesMatrices.empty();
 }
 
 vector < mat4 > Skeleton::getBonesMatrices() const
 {
+    unique_lock < mutex > lck(mtx);
+    
+    while (!ready)
+    {
+        cv.wait(lck);
+    }
+
     return bonesMatrices;
 }
 
@@ -94,10 +110,16 @@ bool Skeleton::isMeshWithBones() const
 
 void Skeleton::update(Shader *shader)
 { 
+    unique_lock < mutex > lck(mtx);
+    ready = false;
+
     renderBonesMatrices(shader); 
 
     if (!activeAnimation) 
     {
+        ready = true;
+        cv.notify_all();
+
         return; 
     }
 
@@ -127,6 +149,9 @@ void Skeleton::update(Shader *shader)
     {
         stopAnimation();
     }
+
+    ready = true;
+    cv.notify_all();
 }
 
 Skeleton::~Skeleton()

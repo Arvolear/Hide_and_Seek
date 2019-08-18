@@ -68,7 +68,7 @@ class Level
         void updatePlayers(int mode);
 
         GLuint getRenderTexture(unsigned int num = 0) const;
-        Player* getPlayer() const;
+        Player* getPlayer(int id = -1) const;
         string getLevelName() const;
 
         /* DEBUG */

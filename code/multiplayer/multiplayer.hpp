@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <mutex>
 
 using namespace std;
 
@@ -13,13 +14,15 @@ class Multiplayer
         PlayerDataCollector* playerDataCollector;
         PlayerDataUpdater* playerDataUpdater;
 
+        Window* window;
         Level* level;
 
     public:
-        Multiplayer();
+        Multiplayer(Window* window, Level* level);
 
         void connect();
-
+        
+        void broadcast();
         void update();
 
         ~Multiplayer();

@@ -24,7 +24,9 @@ class Client
         int id;
 
     public:
-        Client(string ip, int port);
+        Client();
+
+        void connectToServer(string ip, int port);
 
         void sendMSG(string data);
         void recvMSG(int size = 2048);

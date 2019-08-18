@@ -47,12 +47,15 @@ void PlayerDataCollector::setPlayerID(int playerID)
 
 void PlayerDataCollector::collect(Player* player)
 {
-    localTransform = player->getGameObject()->getLocalTransform();
-    model = player->getGameObject()->getPhysicsObjectTransform();
-    
-    bones = player->getGameObject()->getSkeleton()->getBonesMatrices();
+    if (player->getGameObject())
+    {
+        localTransform = player->getGameObject()->getLocalTransform();
+        model = player->getGameObject()->getPhysicsObjectTransform();
 
-    animation = player->getGameObject()->getActiveAnimation();
+        bones = player->getGameObject()->getSkeleton()->getBonesMatrices();
+             
+        animation = player->getGameObject()->getActiveAnimation();
+    }
 }
 
 string PlayerDataCollector::getData() const
@@ -123,51 +126,53 @@ string PlayerDataCollector::getData() const
 
         bonesElem->InsertEndChild(boneElem);
     }
-    
+
     root->InsertEndChild(bonesElem);
 
-    /* animation */
-    XMLElement* animationElem = playerDataCollectorDoc.NewElement("animation");
-   
-        /* name */
-    XMLElement* nameElem = playerDataCollectorDoc.NewElement("name");
-    nameElem->SetText(animation->getName().c_str());
+    if (animation)
+    {
+        /* animation */
+        XMLElement* animationElem = playerDataCollectorDoc.NewElement("animation");
 
-    animationElem->InsertEndChild(nameElem);
+        /* name */
+        XMLElement* nameElem = playerDataCollectorDoc.NewElement("name");
+        nameElem->SetText(animation->getName().c_str());
+
+        animationElem->InsertEndChild(nameElem);
 
         /* animId */
-    XMLElement* animIdElem = playerDataCollectorDoc.NewElement("animid");
-    animIdElem->SetText(animation->getAnimId());
+        XMLElement* animIdElem = playerDataCollectorDoc.NewElement("animid");
+        animIdElem->SetText(animation->getAnimId());
 
-    animationElem->InsertEndChild(animIdElem);
-    
+        animationElem->InsertEndChild(animIdElem);
+
         /* framesRange */
-    XMLElement* framesRangeElem = playerDataCollectorDoc.NewElement("framesrange");
-    framesRangeElem->SetAttribute("start", animation->getFramesRange().x);
-    framesRangeElem->SetAttribute("end", animation->getFramesRange().y);
+        XMLElement* framesRangeElem = playerDataCollectorDoc.NewElement("framesrange");
+        framesRangeElem->SetAttribute("start", animation->getFramesRange().x);
+        framesRangeElem->SetAttribute("end", animation->getFramesRange().y);
 
-    animationElem->InsertEndChild(framesRangeElem);
-    
+        animationElem->InsertEndChild(framesRangeElem);
+
         /* curFrame */
-    XMLElement* curFrameElem = playerDataCollectorDoc.NewElement("curframe");
-    curFrameElem->SetText(animation->getCurFrame());
+        XMLElement* curFrameElem = playerDataCollectorDoc.NewElement("curframe");
+        curFrameElem->SetText(animation->getCurFrame());
 
-    animationElem->InsertEndChild(curFrameElem);
+        animationElem->InsertEndChild(curFrameElem);
 
         /* speed */
-    XMLElement* speedElem = playerDataCollectorDoc.NewElement("speed");
-    speedElem->SetText(animation->getSpeed());
+        XMLElement* speedElem = playerDataCollectorDoc.NewElement("speed");
+        speedElem->SetText(animation->getSpeed());
 
-    animationElem->InsertEndChild(speedElem);
-    
+        animationElem->InsertEndChild(speedElem);
+
         /* loop */
-    XMLElement* loopElem = playerDataCollectorDoc.NewElement("loop");
-    loopElem->SetText(animation->getLoop());
+        XMLElement* loopElem = playerDataCollectorDoc.NewElement("loop");
+        loopElem->SetText(animation->getLoop());
 
-    animationElem->InsertEndChild(loopElem);
+        animationElem->InsertEndChild(loopElem);
 
-    root->InsertEndChild(animationElem);
-
+        root->InsertEndChild(animationElem);
+    }
 
     /* printer */
     XMLPrinter playerDataCollectorPrinter;

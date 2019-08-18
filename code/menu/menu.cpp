@@ -47,6 +47,11 @@
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"
 
+#include "../multiplayer/client.hpp"
+#include "../multiplayer/playerdatacollector.hpp"
+#include "../multiplayer/playerdataupdater.hpp"
+#include "../multiplayer/multiplayer.hpp"
+
 #include "../game/game.hpp"
 
 #include "menu.hpp"

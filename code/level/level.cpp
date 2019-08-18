@@ -286,9 +286,18 @@ GLuint Level::getRenderTexture(unsigned int num) const
     //return gBuffer->getTexture(3);
 }
 
-Player* Level::getPlayer() const
+Player* Level::getPlayer(int id) const
 {
-    return players[playerID];
+    if (id == -1)
+    {
+        return players[playerID];
+    }
+    else if (id >= 0 && id < (int)players.size())
+    {
+        return players[id];
+    }
+
+    return nullptr;
 }
 
 string Level::getLevelName() const

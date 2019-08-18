@@ -1,6 +1,13 @@
 #include "client.hpp"
 
-Client::Client(string ip, int port)
+Client::Client()
+{
+    sock = 0;
+    buffer = nullptr;
+    id = -1;
+}
+        
+void Client::connectToServer(string ip, int port)
 {
     sock = socket(AF_INET, SOCK_STREAM, 0);
 

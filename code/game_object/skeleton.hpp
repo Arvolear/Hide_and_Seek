@@ -3,6 +3,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <mutex>
+#include <condition_variable>
 
 #include <glm/glm.hpp>
 
@@ -20,6 +22,11 @@ class Skeleton
         vector < mat4 > bonesMatrices; 
 
         Animation* activeAnimation; 
+
+        /* multiplayer */
+        bool ready;
+        mutable mutex mtx;
+        mutable condition_variable cv;
 
         void renderBonesMatrices(Shader* shader); 
         

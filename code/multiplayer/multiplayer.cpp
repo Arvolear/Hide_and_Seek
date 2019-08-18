@@ -49,14 +49,23 @@
 #include "playerdataupdater.hpp"
 #include "multiplayer.hpp"
 
-
-
+Multiplayer::Multiplayer(Window* window, Level* level)
+{
+    client = new Client();
     playerDataCollector = new PlayerDataCollector();
-    client = new Client("159.224.87.241", 5040);
-    
+    playerDataUpdater = new PlayerDataUpdater();
+
+    this->window = window;
+    this->level = level;
+}
+
+void Multiplayer::connect()
+{
+    client->connectToServer("159.224.87.241", 5040);
+
     if (client->getID() < 0)
     {
-        throw(runtime_error("ERROR::Game() bad playerID"));
+        throw(runtime_error("ERROR::Multiplayer::connect() bad playerID"));
     }
     else
     {
@@ -65,8 +74,35 @@
         level->setPlayerID(client->getID());
         playerDataCollector->setPlayerID(client->getID());
     }
+}
         
-playerDataCollector->collect(level->getPlayer());
-        cout << playerDataCollector->getData() << endl;
+void Multiplayer::broadcast()
+{
+    while (window->isOpen())
+    {
+        playerDataCollector->collect(level->getPlayer());
 
         client->sendMSG(playerDataCollector->getData());
+        //cout << playerDataCollector->getData() << endl;
+    }
+}
+
+void Multiplayer::update()
+{
+    while (window->isOpen())
+    {
+        client->recvMSG(2048);
+
+        //cout << client->getBuffer() << endl;
+
+        playerDataUpdater->collect(client->getBuffer());
+        playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+    }
+}
+
+Multiplayer::~Multiplayer()
+{
+    delete client;
+    delete playerDataCollector;
+    delete playerDataUpdater;
+}
