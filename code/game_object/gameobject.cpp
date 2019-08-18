@@ -185,10 +185,27 @@ void GameObject::setLocalPosition(vec3 translation, bool add)
     localTransform *= scale(sc);
     localTransform *= toMat4(conjugate(rot));
 }
+        
+void GameObject::setLocalTransform(mat4 localTransform)
+{
+    this->localTransform = localTransform;
+}
 
 void GameObject::clearLocalTransform()
 {
     localTransform = mat4(1.0);
+}
+        
+void GameObject::setPhysicsObjectTransform(mat4 model)
+{
+    if (!physicsObject)
+    {
+        throw(runtime_error("ERROR::GameObject::setPhysicsObjectTrasnform() no physics object"));
+    }
+
+    unique_ptr < btScalar > transform(glmMat42BtScalar(model));
+
+    physicsObject->setTransform(transform.get());
 }
 
 void GameObject::addAnimation(Animation* anim)
@@ -196,6 +213,18 @@ void GameObject::addAnimation(Animation* anim)
     if (animations.find(anim->getName()) == animations.end())
     {
         animations.insert({anim->getName(), anim});
+    }
+}
+        
+void GameObject::removeAnimation(string name)
+{
+    if (animations.find(name) != animations.end())
+    {
+        Animation* anim = animations.find(name)->second;
+
+        animations.erase(name);
+
+        delete anim;
     }
 }
 
@@ -260,11 +289,9 @@ mat4 GameObject::getPhysicsObjectTransform() const
     }
 
     /* 16 elements */
-    btScalar* transform;
-    transform = physicsObject->getTransform();
+    unique_ptr < btScalar > transform(physicsObject->getTransform());
 
-    mat4 ret = btScalar2glmMat4(transform);
-    delete transform;
+    mat4 ret = btScalar2glmMat4(transform.get());
 
     return ret;
 }

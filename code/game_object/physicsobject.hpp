@@ -58,6 +58,7 @@ class PhysicsObject
         void setMass(float mass, bool add = true);
         void setPosition(btVector3 position, bool add = true);
         void setRotation(btQuaternion rotation, bool add = true);
+        void setTransform(btScalar* GLtransform);
         void clearTransform();
         void setCollidable(bool collidable);
 

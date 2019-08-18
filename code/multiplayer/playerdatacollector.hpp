@@ -17,8 +17,9 @@ class PlayerDataCollector
         mat4 localTransform;
         mat4 model;
 
-        bool meshWithBones;
         vector < mat4 > bones;
+
+        Animation* animation;
 
     public:
         PlayerDataCollector();

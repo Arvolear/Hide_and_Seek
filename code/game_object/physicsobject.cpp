@@ -204,6 +204,11 @@ void PhysicsObject::setRotation(btQuaternion rotation, bool add)
 
     updateBody(phShape, mass, motionState->getBTTransform()->getOrigin(), rotation);
 }
+        
+void PhysicsObject::setTransform(btScalar* GLtransform)
+{
+    motionState->setGLTransform(GLtransform);
+}
 
 void PhysicsObject::clearTransform()
 {

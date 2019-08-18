@@ -12,10 +12,12 @@ class OpenGLMotionState : public btDefaultMotionState
     public:
         OpenGLMotionState(btTransform* transform);
 
-        void update();
+        void setGLTransform(btScalar* GLtransform);
 
         btScalar* getGLTransform() const;
         btTransform* getBTTransform() const;
+        
+        void update();
 
         ~OpenGLMotionState();
 };

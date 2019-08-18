@@ -1,0 +1,180 @@
+#include "../shader/shader.hpp"
+
+#include "../global/convert.hpp"
+
+#include "../framebuffer/framebuffer.hpp"
+#include "../framebuffer/colorbuffer.hpp"
+
+#include "../window/renderquad.hpp"
+#include "../window/glfwevents.hpp"
+#include "../window/window.hpp"
+
+#include "../player/camera.hpp"
+
+#include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
+
+#include "../game_object/openglmotionstate.hpp"
+#include "../game_object/animation.hpp"
+#include "../game_object/mesh.hpp"
+#include "../game_object/bone.hpp"
+#include "../game_object/skeleton.hpp"
+#include "../game_object/viewfrustum.hpp"
+#include "../game_object/boundsphere.hpp"
+#include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
+#include "../game_object/gameobject.hpp"
+
+#include "../world/raytracer.hpp"
+
+#include "../player/player.hpp"
+
+#include "playerdataupdater.hpp"
+        
+PlayerDataUpdater::PlayerDataUpdater()
+{
+    playerID = 0;
+
+    localTransform = model = mat4(1.0);
+
+    animation = nullptr;
+}
+
+void PlayerDataUpdater::collect(string info)
+{
+    XMLDocument playerDataUpdaterDoc;
+    
+    playerDataUpdaterDoc.Parse(info.c_str());
+
+    /* root */
+    XMLNode* root = playerDataUpdaterDoc.FirstChildElement("PlayerDataFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::PlayerDataUpdater::collect() failed to load XML");
+    }
+
+    /* playerID */
+    XMLElement* playerIDElem = root->FirstChildElement("playerID");
+    
+    if (playerIDElem)
+    {
+        playerIDElem->QueryIntText(&playerID);
+    }
+
+    /* localTransform */
+    XMLElement* localTransformElem = root->FirstChildElement("localTransform");
+
+    if (localTransformElem)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                XMLElement* cellElem = localTransformElem->FirstChildElement((to_string(i) + ";" + to_string(j)).c_str());
+
+                cellElem->QueryFloatText(&localTransform[i][j]);
+            }
+        }
+    }      
+    
+    /* model */
+    XMLElement* modelElem = root->FirstChildElement("model");
+
+    if (modelElem)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                XMLElement* cellElem = modelElem->FirstChildElement((to_string(i) + ";" + to_string(j)).c_str());
+
+                cellElem->QueryFloatText(&model[i][j]);
+            }
+        }
+    }      
+
+    /* bones */
+    XMLElement* bonesElem = root->FirstChildElement("bones");
+
+    if (bonesElem)
+    {
+        unsigned int size;
+        bonesElem->QueryUnsignedText(&size);
+
+        bones.resize(size);
+
+        for (unsigned int k = 0; k < size; k++)
+        {
+            XMLElement* boneElem = bonesElem->FirstChildElement(("bone" + to_string(k)).c_str());    
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    XMLElement* cellElem = boneElem->FirstChildElement((to_string(i) + ";" + to_string(j)).c_str());
+
+                    cellElem->QueryFloatText(&bones[k][i][j]);
+                }
+            }
+        }
+    }      
+
+    /* animation */
+    XMLElement* animationElem = root->FirstChildElement("animation");
+
+    if (animationElem)
+    {
+        XMLElement* nameElem = animationElem->FirstChildElement("name");
+        const char* name = nameElem->GetText();
+
+        animation = new Animation(name);
+
+        XMLElement* animIdElem = animationElem->FirstChildElement("animid");
+        int animId;
+        animIdElem->QueryIntText(&animId);
+        animation->setAnimId(animId);
+        
+        XMLElement* framesRangeElem = animationElem->FirstChildElement("framesrange");
+
+        int x, y;
+        framesRangeElem->QueryIntAttribute("start", &x);
+        framesRangeElem->QueryIntAttribute("end", &y);
+
+        animation->setFramesRange(vec2(x, y));
+
+        XMLElement* curFrameElem = animationElem->FirstChildElement("curframe");
+        int curFrame;
+        curFrameElem->QueryIntText(&curFrame);
+        animation->fromFrame(curFrame);
+        
+        XMLElement* speedElem = animationElem->FirstChildElement("speed");
+        int speed;
+        speedElem->QueryIntText(&speed);
+        animation->setSpeed(speed);
+        
+        XMLElement* loopElem = animationElem->FirstChildElement("loop");
+        bool loop;
+        loopElem->QueryBoolText(&loop);
+        animation->setLoop(loop);
+    }
+}
+
+void PlayerDataUpdater::updateData(Player* player)
+{
+    player->getGameObject()->setLocalTransform(localTransform);
+    player->getGameObject()->setPhysicsObjectTransform(model);
+
+    player->getGameObject()->getSkeleton()->setBonesMatrices(bones);
+
+    player->getGameObject()->removeAnimation(animation->getName());
+    player->getGameObject()->addAnimation(animation);
+    player->getGameObject()->playAnimation(animation->getName());
+}
+
+int PlayerDataUpdater::getPlayerID() const
+{
+    return playerID;
+}
+
+PlayerDataUpdater::~PlayerDataUpdater() {}

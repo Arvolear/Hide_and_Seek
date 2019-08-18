@@ -69,21 +69,6 @@ Game::Game(Window* window, string levelName)
 
     gaussianBlur = new GaussianBlur < ColorBuffer >();
     gaussianBlur->genBuffer(window->getRenderSize(), 4);
-
-    playerDataCollector = new PlayerDataCollector();
-    client = new Client("159.224.87.241", 5040);
-    
-    if (client->getID() < 0)
-    {
-        throw(runtime_error("ERROR::Game() bad playerID"));
-    }
-    else
-    {
-        cout << "\nConnected!\nPlayerID: " << client->getID() << endl << endl;
-
-        level->setPlayerID(client->getID());
-        playerDataCollector->setPlayerID(client->getID());
-    }
 }
 
 void Game::checkEvents()
@@ -166,11 +151,6 @@ void Game::gameLoop()
         level->updatePlayers(mode);
         level->render();
 
-        playerDataCollector->collect(level->getPlayer());
-        //cout << playerDataCollector->getData() << endl;
-
-        client->sendMSG(playerDataCollector->getData());
-
         /***********************************
          * GAMEBUFFER
          * */
@@ -210,7 +190,4 @@ Game::~Game()
     delete quad;
 
     delete gaussianBlur;
-
-    delete playerDataCollector;
-    delete client;
 }

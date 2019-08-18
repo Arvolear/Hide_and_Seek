@@ -4,10 +4,11 @@ OpenGLMotionState::OpenGLMotionState(btTransform* transform) : btDefaultMotionSt
 {
     this->transform = transform;
 }
-        
-void OpenGLMotionState::update()
+
+void OpenGLMotionState::setGLTransform(btScalar* GLtransform)
 {
-    setWorldTransform(*transform);
+    transform->setFromOpenGLMatrix(GLtransform);
+    update();
 }
 
 btScalar* OpenGLMotionState::getGLTransform() const
@@ -23,6 +24,11 @@ btScalar* OpenGLMotionState::getGLTransform() const
 btTransform* OpenGLMotionState::getBTTransform() const
 {
     return transform;
+}
+
+void OpenGLMotionState::update()
+{
+    setWorldTransform(*transform);
 }
 
 OpenGLMotionState::~OpenGLMotionState()

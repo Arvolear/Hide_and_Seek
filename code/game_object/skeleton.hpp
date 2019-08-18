@@ -30,6 +30,8 @@ class Skeleton
         void stopAnimation(); 
         Animation* getAnimation() const;
 
+        void setBonesMatrices(vector < mat4 > &bonesMatrices);
+
         vector < mat4 > getBonesMatrices() const;
         bool isMeshWithBones() const;
 

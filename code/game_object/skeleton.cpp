@@ -75,6 +75,12 @@ Animation* Skeleton::getAnimation() const
 {
     return activeAnimation;
 }
+        
+void Skeleton::setBonesMatrices(vector < mat4 > &bonesMatrices)
+{
+    this->bonesMatrices = bonesMatrices;
+    meshWithBones = !bonesMatrices.empty();
+}
 
 vector < mat4 > Skeleton::getBonesMatrices() const
 {

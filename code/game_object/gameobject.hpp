@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <memory>
 
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/btBulletDynamicsCommon.h>
@@ -58,9 +59,13 @@ class GameObject
         void setLocalRotation(vec3 axis, float angle, bool add = true);
         void setLocalScale(vec3 growth, bool add = true);
         void setLocalPosition(vec3 pos, bool add = true);
+        void setLocalTransform(mat4 localTransform);
         void clearLocalTransform();
+
+        void setPhysicsObjectTransform(mat4 model);
         
         void addAnimation(Animation* anim);
+        void removeAnimation(string name);
         void playAnimation(string name, bool reset = true);
         void stopAnimation();
 

@@ -13,7 +13,7 @@ FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o gbuff
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
-MULTIPLAYER = client.o playerdatacollector.o
+MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
@@ -89,11 +89,17 @@ $(OUTPUTDIR)/game.o: $(INPUTDIR)/game/game.cpp $(INPUTDIR)/game/game.hpp
 
 ### MULTIPLAYER ###
 
+$(OUTPUTDIR)/multiplayer.o: $(INPUTDIR)/multiplayer/multiplayer.cpp $(INPUTDIR)/multiplayer/multiplayer.hpp
+	g++ -c $(INPUTDIR)/multiplayer/multiplayer.cpp -o $@ $(FLAGS)
+
 $(OUTPUTDIR)/client.o: $(INPUTDIR)/multiplayer/client.cpp $(INPUTDIR)/multiplayer/client.hpp
 	g++ -c $(INPUTDIR)/multiplayer/client.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/playerdatacollector.o: $(INPUTDIR)/multiplayer/playerdatacollector.cpp $(INPUTDIR)/multiplayer/playerdatacollector.hpp
 	g++ -c $(INPUTDIR)/multiplayer/playerdatacollector.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/playerdataupdater.o: $(INPUTDIR)/multiplayer/playerdataupdater.cpp $(INPUTDIR)/multiplayer/playerdataupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/playerdataupdater.cpp -o $@ $(FLAGS)
 
 ### LEVEL ###
 

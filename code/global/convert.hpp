@@ -62,13 +62,28 @@ inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 from)
             );
 }
 
-inline static mat4 btScalar2glmMat4(btScalar *matrix) 
+inline static mat4 btScalar2glmMat4(btScalar *from) 
 {
     return mat4(
-            matrix[0], matrix[1], matrix[2], matrix[3],
-            matrix[4], matrix[5], matrix[6], matrix[7],
-            matrix[8], matrix[9], matrix[10], matrix[11],
-            matrix[12], matrix[13], matrix[14], matrix[15]);
+            from[0], from[1], from[2], from[3],
+            from[4], from[5], from[6], from[7],
+            from[8], from[9], from[10], from[11],
+            from[12], from[13], from[14], from[15]);
+}
+
+inline static btScalar* glmMat42BtScalar(mat4 from) 
+{
+    btScalar* res = new btScalar[16];
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            res[i * 4 + j] = from[i][j];      
+        }
+    }
+
+    return res;
 }
 
 inline static btVector3 toBtVector3(vec3 from)
