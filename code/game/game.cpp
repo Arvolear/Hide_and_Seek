@@ -118,12 +118,6 @@ void Game::checkEvents()
         level->toggleDebug();
     }
     
-    /* swap players */
-    if (window->isKeyPressedOnce(GLFW_KEY_P))
-    {
-        level->swapPlayers();
-    }
-    
     /* PHYSICS EVENTS */
 }
 
@@ -151,7 +145,7 @@ void Game::gameLoop()
     {
         window->pollEvents();
         physicsWorld->pollEvents();
-        checkEvents();         
+        checkEvents();        
 
         if (window->getTime() > 1)
         {

@@ -2,8 +2,10 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
 
@@ -16,23 +18,23 @@ using namespace std;
 class Client
 {
     private:
+        fd_set readfds;
+
         int sock;
         struct sockaddr_in addr;
+        struct timeval timeout;
 
         char* buffer;
-
-        int id;
 
     public:
         Client();
 
-        void connectToServer(string ip, int port);
+        void connectToServer(string ip, int port, int timeoutSec = 5);
 
         void sendMSG(string data);
-        void recvMSG(int size = 2048);
+        void recvMSG(int size = 2048, int timeoutSec = 1);
 
         char* getBuffer() const;
-        int getID() const;
 
         ~Client();
 

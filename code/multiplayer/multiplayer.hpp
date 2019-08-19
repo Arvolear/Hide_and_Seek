@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <string>
-#include <thread>
-#include <mutex>
+#include <tinyxml2/tinyxml2.h>
 
+using namespace tinyxml2;
 using namespace std;
 
 class Multiplayer
@@ -16,6 +16,8 @@ class Multiplayer
 
         Window* window;
         Level* level;
+
+        int playerID;
 
     public:
         Multiplayer(Window* window, Level* level);

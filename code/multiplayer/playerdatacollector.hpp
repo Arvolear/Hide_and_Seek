@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <vector>
 #include <string>
-#include <mutex>
 
 #include <tinyxml2/tinyxml2.h>
 

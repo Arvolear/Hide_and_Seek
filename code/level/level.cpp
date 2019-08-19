@@ -310,16 +310,6 @@ void Level::toggleDebug()
     drawDebug = (drawDebug + 1) % 2;
 }
 
-void Level::swapPlayers()
-{
-    players[playerID]->setActive(false);
-
-    rotate(players.begin(), players.begin() + 1, players.end());
-
-    players[playerID]->setActive(true);
-    players[playerID]->resetPrevCoords();
-}
-
 Level::~Level()
 {
     delete levelLoader;

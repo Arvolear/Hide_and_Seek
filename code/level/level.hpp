@@ -73,7 +73,6 @@ class Level
 
         /* DEBUG */
         void toggleDebug();
-        void swapPlayers();
 
         ~Level();
 };

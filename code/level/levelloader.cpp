@@ -1104,24 +1104,28 @@ void LevelLoader::loadSoldiers()
 
         /* add weapon */
         XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
-        XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
 
-        while (weaponElem)
+        if (armoryElem)
         {
-            const char* name = nullptr;
+            XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
 
-            weaponElem->QueryStringAttribute("name", &name);
-
-            Weapon* weapon = dynamic_cast < Weapon* >(gameObjects.find(name)->second);
-
-            if (!weapon)
+            while (weaponElem)
             {
-                throw runtime_error("ERROR::loadSoldiers() can't find the weapon");
+                const char* name = nullptr;
+
+                weaponElem->QueryStringAttribute("name", &name);
+
+                Weapon* weapon = dynamic_cast < Weapon* >(gameObjects.find(name)->second);
+
+                if (!weapon)
+                {
+                    throw runtime_error("ERROR::loadSoldiers() can't find the weapon");
+                }
+
+                soldier->pick(weapon);
+
+                weaponElem = weaponElem->NextSiblingElement();
             }
-
-            soldier->pick(weapon);
-
-            weaponElem = weaponElem->NextSiblingElement();
         }
 
         players.push_back(soldier);

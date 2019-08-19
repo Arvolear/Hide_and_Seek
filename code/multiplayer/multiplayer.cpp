@@ -57,25 +57,36 @@ Multiplayer::Multiplayer(Window* window, Level* level)
 
     this->window = window;
     this->level = level;
+
+    playerID = 0;
 }
 
 void Multiplayer::connect()
 {
     client->connectToServer("159.224.87.241", 5040);
 
-    if (client->getID() < 0)
+    /* get playerID */
+    if (client->getBuffer())
     {
-        throw(runtime_error("ERROR::Multiplayer::connect() bad playerID"));
-    }
-    else
-    {
-        cout << "\nConnected!\nPlayerID: " << client->getID() << endl << endl;
+        XMLDocument newConnectionDoc;
 
-        level->setPlayerID(client->getID());
-        playerDataCollector->setPlayerID(client->getID());
+        newConnectionDoc.Parse(client->getBuffer());
+
+        /* connected */
+        XMLElement* connectedElem = newConnectionDoc.FirstChildElement("connected");
+
+        if (connectedElem)
+        {
+            connectedElem->QueryIntText(&playerID);
+        }
     }
+
+    level->setPlayerID(playerID);
+    playerDataCollector->setPlayerID(playerID);
+
+    level->getPlayer()->setActive(true);
 }
-        
+
 void Multiplayer::broadcast()
 {
     while (window->isOpen())
@@ -83,7 +94,6 @@ void Multiplayer::broadcast()
         playerDataCollector->collect(level->getPlayer());
 
         client->sendMSG(playerDataCollector->getData());
-        //cout << playerDataCollector->getData() << endl;
     }
 }
 
@@ -95,8 +105,31 @@ void Multiplayer::update()
 
         //cout << client->getBuffer() << endl;
 
-        playerDataUpdater->collect(client->getBuffer());
-        playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+        if (client->getBuffer())
+        {    
+            XMLDocument disConnectionDoc;
+
+            disConnectionDoc.Parse(client->getBuffer());
+
+            /* disconnected */
+            XMLElement* disConnectedElem = disConnectionDoc.FirstChildElement("disconnected");
+
+            /* someone disconnected */
+            if (disConnectedElem)
+            {
+                int disconnectedID;
+
+                disConnectedElem->QueryIntText(&disconnectedID);
+                
+                /* hide disconnected player */
+            }
+            /* update player position */
+            else
+            {
+                playerDataUpdater->collect(client->getBuffer());
+                playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+            }
+        }
     }
 }
 
