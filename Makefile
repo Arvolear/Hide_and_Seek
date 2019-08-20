@@ -1,4 +1,7 @@
+.PHONY: all clean cleanall
+
 FLAGS = -std=c++11 -Wall -O3
+STATIC = -static -static-libgcc -static-libstdc++
 
 LIBS = -lGLEW -lGL -lGLU -lSOIL -lassimp -lglfw3 -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor -lBulletCollision -lBulletDynamics -lBulletSoftBody -lLinearMath -ltinyxml2
 
@@ -22,6 +25,8 @@ GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
 ### ALL ###
+
+all: Hide_and_Seek
 
 Hide_and_Seek: $(OBJECTFILES)
 	g++ -o Hide_and_Seek $(OBJECTFILES) $(LIBS) $(FLAGS) 
@@ -181,5 +186,10 @@ $(OUTPUTDIR)/animation.o: $(INPUTDIR)/game_object/animation.cpp $(INPUTDIR)/game
 ### CLEAN ###
 
 clean:
+	rm -rf $(OUTPUTDIR)/*.o
+
+### CLEANALL ###
+
+cleanall:
 	rm -rf Hide_and_Seek
 	rm -rf $(OUTPUTDIR)/*.o

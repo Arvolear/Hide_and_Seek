@@ -51,9 +51,6 @@ void PlayerDataCollector::collect(Player* player)
     {
         localTransform = player->getGameObject()->getLocalTransform();
         model = player->getGameObject()->getPhysicsObjectTransform();
-
-        bones = player->getGameObject()->getSkeleton()->getBonesMatrices();
-             
         animation = player->getGameObject()->getActiveAnimation();
     }
 }
@@ -80,7 +77,10 @@ string PlayerDataCollector::getData() const
     {
         for (int j = 0; j < 4; j++)
         {
-            XMLElement* cellElem = playerDataCollectorDoc.NewElement((to_string(i) + ";" + to_string(j)).c_str());
+            string str;
+            str += char('a' + (i * 4 + j));
+
+            XMLElement* cellElem = playerDataCollectorDoc.NewElement(str.data());
             cellElem->SetText(localTransform[i][j]);
 
             localTransformElem->InsertEndChild(cellElem);
@@ -96,7 +96,10 @@ string PlayerDataCollector::getData() const
     {
         for (int j = 0; j < 4; j++)
         {
-            XMLElement* cellElem = playerDataCollectorDoc.NewElement((to_string(i) + ";" + to_string(j)).c_str());
+            string str;
+            str += char('a' + (i * 4 + j));
+            
+            XMLElement* cellElem = playerDataCollectorDoc.NewElement(str.data());
             cellElem->SetText(model[i][j]);
 
             modelElem->InsertEndChild(cellElem);
@@ -104,30 +107,6 @@ string PlayerDataCollector::getData() const
     }
 
     root->InsertEndChild(modelElem);
-
-    /* bones */
-    XMLElement* bonesElem = playerDataCollectorDoc.NewElement("bones");
-    bonesElem->SetAttribute("amount", (unsigned int)bones.size());
-
-    for (size_t k = 0; k < bones.size(); k++)
-    {
-        XMLElement* boneElem = playerDataCollectorDoc.NewElement(("bone" + to_string(k)).c_str());
-
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                XMLElement* cellElem = playerDataCollectorDoc.NewElement((to_string(i) + ";" + to_string(j)).c_str());
-                cellElem->SetText(bones[k][i][j]);
-
-                boneElem->InsertEndChild(cellElem);
-            }
-        }
-
-        bonesElem->InsertEndChild(boneElem);
-    }
-
-    root->InsertEndChild(bonesElem);
 
     if (animation)
     {
@@ -178,7 +157,9 @@ string PlayerDataCollector::getData() const
     XMLPrinter playerDataCollectorPrinter;
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
-    string res = playerDataCollectorPrinter.CStr();
+    string res("header\n");
+    res += playerDataCollectorPrinter.CStr();
+    res += "footer\n";
 
     return res;
 }

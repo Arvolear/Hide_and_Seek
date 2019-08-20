@@ -63,14 +63,15 @@ Multiplayer::Multiplayer(Window* window, Level* level)
 
 void Multiplayer::connect()
 {
-    client->connectToServer("159.224.87.241", 5040);
+    //client->connectToServer("159.224.87.241", 5040);
+    client->connectToServer("127.0.0.1", 5040);
 
     /* get playerID */
-    if (client->getBuffer())
+    if (!client->getMessage().empty())
     {
         XMLDocument newConnectionDoc;
 
-        newConnectionDoc.Parse(client->getBuffer());
+        newConnectionDoc.Parse(client->getMessage().data());
 
         /* connected */
         XMLElement* connectedElem = newConnectionDoc.FirstChildElement("connected");
@@ -85,6 +86,8 @@ void Multiplayer::connect()
     playerDataCollector->setPlayerID(playerID);
 
     level->getPlayer()->setActive(true);
+
+    cout << "PlayerID: " << playerID << endl;
 }
 
 void Multiplayer::broadcast()
@@ -105,28 +108,28 @@ void Multiplayer::update()
 
         //cout << client->getBuffer() << endl;
 
-        if (client->getBuffer())
+        if (!client->getMessage().empty())
         {    
             XMLDocument disConnectionDoc;
 
-            disConnectionDoc.Parse(client->getBuffer());
+            disConnectionDoc.Parse(client->getMessage().data());
 
-            /* disconnected */
+            // disconnected
             XMLElement* disConnectedElem = disConnectionDoc.FirstChildElement("disconnected");
 
-            /* someone disconnected */
+            // someone disconnected
             if (disConnectedElem)
             {
                 int disconnectedID;
 
                 disConnectedElem->QueryIntText(&disconnectedID);
                 
-                /* hide disconnected player */
+                // hide disconnected player
             }
-            /* update player position */
+            // update player position 
             else
             {
-                playerDataUpdater->collect(client->getBuffer());
+                playerDataUpdater->collect(client->getMessage());
                 playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
             }
         }

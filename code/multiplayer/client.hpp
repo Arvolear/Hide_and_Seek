@@ -24,7 +24,7 @@ class Client
         struct sockaddr_in addr;
         struct timeval timeout;
 
-        char* buffer;
+        string fineMessage;
 
     public:
         Client();
@@ -32,9 +32,11 @@ class Client
         void connectToServer(string ip, int port, int timeoutSec = 5);
 
         void sendMSG(string data);
+        
+        bool constructFineMessage(char* buffer, int size);
         void recvMSG(int size = 2048, int timeoutSec = 1);
 
-        char* getBuffer() const;
+        string getMessage() const;
 
         ~Client();
 

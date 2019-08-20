@@ -17,8 +17,6 @@ class PlayerDataUpdater
         mat4 localTransform;
         mat4 model;
 
-        vector < mat4 > bones;
-
         Animation* animation;
 
     public:

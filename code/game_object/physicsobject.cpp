@@ -208,6 +208,7 @@ void PhysicsObject::setRotation(btQuaternion rotation, bool add)
 void PhysicsObject::setTransform(btScalar* GLtransform)
 {
     motionState->setGLTransform(GLtransform);
+    body->setWorldTransform(*motionState->getBTTransform());     
 }
 
 void PhysicsObject::clearTransform()

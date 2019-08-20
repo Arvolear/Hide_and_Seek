@@ -18,11 +18,18 @@ Skeleton::Skeleton(map < string, Bone* > &bones)
 
     activeAnimation = nullptr;
 
-    ready = false;
+    ready = true;
 }
 
 void Skeleton::playAnimation(Animation* anim, bool reset)
 {
+    unique_lock < mutex > lck(mtx);
+    
+    while (!ready)
+    {
+        cv.wait(lck);
+    }
+
     activeAnimation = anim;
     
     if (reset)
@@ -65,6 +72,13 @@ void Skeleton::renderBonesMatrices(Shader* shader)
 
 void Skeleton::stopAnimation()
 {
+    unique_lock < mutex > lck(mtx);
+    
+    while (!ready)
+    {
+        cv.wait(lck);
+    }
+
     for (auto& it : bones) 
     {
         it.second->updateKeyframeTransform(activeAnimation->getAnimId(), 0); 
@@ -80,26 +94,12 @@ Animation* Skeleton::getAnimation() const
         
 void Skeleton::setBonesMatrices(vector < mat4 > &bonesMatrices)
 {
-    unique_lock < mutex > lck(mtx);
-    
-    while (!ready)
-    {
-        cv.wait(lck);
-    }
-
     this->bonesMatrices = bonesMatrices;
     meshWithBones = !bonesMatrices.empty();
 }
 
 vector < mat4 > Skeleton::getBonesMatrices() const
 {
-    unique_lock < mutex > lck(mtx);
-    
-    while (!ready)
-    {
-        cv.wait(lck);
-    }
-
     return bonesMatrices;
 }
 
@@ -114,7 +114,7 @@ void Skeleton::update(Shader *shader)
     ready = false;
 
     renderBonesMatrices(shader); 
-
+    
     if (!activeAnimation) 
     {
         ready = true;
@@ -143,15 +143,16 @@ void Skeleton::update(Shader *shader)
     {
         it.second->updateKeyframeTransform(activeAnimation->getAnimId(), activeAnimation->getCurFrame()); 
     }
-   
+    
+    ready = true;
+    lck.unlock();
+    cv.notify_all();
+
     /* next frame */
     if (!activeAnimation->nextFrame())
     {
         stopAnimation();
     }
-
-    ready = true;
-    cv.notify_all();
 }
 
 Skeleton::~Skeleton()

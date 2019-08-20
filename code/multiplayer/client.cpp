@@ -3,7 +3,6 @@
 Client::Client()
 {
     sock = 0;
-    buffer = nullptr;
 }
         
 void Client::connectToServer(string ip, int port, int timeoutSec)
@@ -32,8 +31,6 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
     {
         throw(runtime_error("ERROR::Client::connectToServer() fcntl first set"));
     }
-
-    buffer = nullptr;
 
     if (connect(sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
     {
@@ -92,10 +89,54 @@ void Client::sendMSG(string data)
     send(sock, data.data(), data.size(), 0);
 }
 
+bool Client::constructFineMessage(char* buffer, int size)
+{
+	/* header */
+	if (!buffer || size <= 0)
+	{
+		return false;
+	}
+
+	string tmp(buffer, size);
+
+	if (fineMessage.empty())
+	{
+		size_t head = tmp.find("header");
+		if (head != string::npos)
+		{
+			size_t foot = tmp.find("footer");
+			if (foot != string::npos)
+			{
+                if (foot > head)
+                {
+    				fineMessage = tmp.substr(head + 6, foot - head - 6);	
+	    			return true;
+                }
+            }
+            else
+            {
+                fineMessage = tmp.substr(head + 6);
+                return false;
+            }
+        }	
+    }
+    else
+    {
+        size_t foot = tmp.find("footer");
+        if (foot != string::npos)
+        {
+            fineMessage += tmp.substr(0, foot);		
+            return true;
+        }
+    }
+
+    return true;
+    /* footer */
+}
+
 void Client::recvMSG(int size, int timeoutSec)
 {
-    delete[] buffer;
-    buffer = nullptr;
+    fineMessage.clear();
 
     FD_ZERO(&readfds);
     FD_SET(sock, &readfds);
@@ -105,20 +146,29 @@ void Client::recvMSG(int size, int timeoutSec)
 
     if (select(sock + 1, &readfds, NULL, NULL, &timeout))
     {
-        buffer = new char[size];
-        memset(buffer, 0, size);
+        char* buffer = new char[size + 1];
 
-        recv(sock, buffer, size, 0);
+        while (true)
+        {
+            memset(buffer, 0, size);
+
+            int bytes_read = recv(sock, buffer, size, 0);
+            if (bytes_read <= 0 || constructFineMessage(buffer, bytes_read))
+            {
+                break;
+            }
+        }
+
+        delete[] buffer;
     }
 }
 
-char* Client::getBuffer() const
+string Client::getMessage() const
 {
-    return buffer;
+    return fineMessage;
 }
 
 Client::~Client()
 {
-    delete[] buffer;
     close(sock);
 }

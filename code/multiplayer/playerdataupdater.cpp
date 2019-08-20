@@ -42,9 +42,12 @@ PlayerDataUpdater::PlayerDataUpdater()
 
 void PlayerDataUpdater::collect(string info)
 {
+    //cout << info << endl << endl << endl;
+
     XMLDocument playerDataUpdaterDoc;
     
     playerDataUpdaterDoc.Parse(info.c_str());
+    //playerDataUpdaterDoc.PrintError();
 
     /* root */
     XMLNode* root = playerDataUpdaterDoc.FirstChildElement("PlayerDataFile");
@@ -59,7 +62,7 @@ void PlayerDataUpdater::collect(string info)
     
     if (playerIDElem)
     {
-        playerIDElem->QueryIntText(&playerID);
+        playerIDElem->QueryIntAttribute("playerID", &playerID);
     }
 
     /* localTransform */
@@ -71,7 +74,10 @@ void PlayerDataUpdater::collect(string info)
         {
             for (int j = 0; j < 4; j++)
             {
-                XMLElement* cellElem = localTransformElem->FirstChildElement((to_string(i) + ";" + to_string(j)).c_str());
+                string str;
+                str += char('a' + (i * 4 + j));
+
+                XMLElement* cellElem = localTransformElem->FirstChildElement(str.data());
 
                 cellElem->QueryFloatText(&localTransform[i][j]);
             }
@@ -87,35 +93,12 @@ void PlayerDataUpdater::collect(string info)
         {
             for (int j = 0; j < 4; j++)
             {
-                XMLElement* cellElem = modelElem->FirstChildElement((to_string(i) + ";" + to_string(j)).c_str());
+                string str;
+                str += char('a' + (i * 4 + j));
+
+                XMLElement* cellElem = modelElem->FirstChildElement(str.data());
 
                 cellElem->QueryFloatText(&model[i][j]);
-            }
-        }
-    }      
-
-    /* bones */
-    XMLElement* bonesElem = root->FirstChildElement("bones");
-
-    if (bonesElem)
-    {
-        unsigned int size;
-        bonesElem->QueryUnsignedText(&size);
-
-        bones.resize(size);
-
-        for (unsigned int k = 0; k < size; k++)
-        {
-            XMLElement* boneElem = bonesElem->FirstChildElement(("bone" + to_string(k)).c_str());    
-
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    XMLElement* cellElem = boneElem->FirstChildElement((to_string(i) + ";" + to_string(j)).c_str());
-
-                    cellElem->QueryFloatText(&bones[k][i][j]);
-                }
             }
         }
     }      
@@ -165,11 +148,13 @@ void PlayerDataUpdater::updateData(Player* player)
     player->getGameObject()->setLocalTransform(localTransform);
     player->getGameObject()->setPhysicsObjectTransform(model);
 
-    player->getGameObject()->getSkeleton()->setBonesMatrices(bones);
-
-    player->getGameObject()->removeAnimation(animation->getName());
-    player->getGameObject()->addAnimation(animation);
-    player->getGameObject()->playAnimation(animation->getName());
+    /*if (animation)
+    {
+        player->getGameObject()->stopAnimation();
+        player->getGameObject()->removeAnimation(animation->getName());
+        player->getGameObject()->addAnimation(animation);
+        player->getGameObject()->playAnimation(animation->getName());
+    }*/
 }
 
 int PlayerDataUpdater::getPlayerID() const

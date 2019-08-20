@@ -1148,18 +1148,6 @@ void LevelLoader::loadLevel(string name)
 
     loadSoldiers();
     loadPlayers();
-
-    for (size_t i = 0; i < players.size(); i++)
-    {
-        if (i == 0)
-        {
-            players[i]->setActive(true);
-        }
-        else
-        {
-            players[i]->setActive(false);
-        }
-    }
 }
 
 void LevelLoader::getGameObjectsData(map < string, GameObject* > &gameObjects) const
