@@ -53,6 +53,7 @@ class Player : public Camera
         void setGameObject(GameObject* player);
         void setCameraOffset(vec3 cameraOffset);
         void setModelOffset(vec3 modelOffset);
+        void setModelForward(vec3 modelForward);
 
         void removeGameObject();
         bool isActive() const;
@@ -62,6 +63,7 @@ class Player : public Camera
         GameObject* getGameObject() const;
         vec3 getCameraOffset() const;
         vec3 getModelOffset() const;
+        vec3 getModelForward() const;
 
         virtual ~Player();
 };

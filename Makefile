@@ -1,7 +1,6 @@
 .PHONY: all clean cleanall
 
 FLAGS = -std=c++11 -Wall -O3
-STATIC = -static -static-libgcc -static-libstdc++
 
 LIBS = -lGLEW -lGL -lGLU -lSOIL -lassimp -lglfw3 -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor -lBulletCollision -lBulletDynamics -lBulletSoftBody -lLinearMath -ltinyxml2
 

@@ -96,16 +96,13 @@ void Weapon::drop(vec3 where)
     physicsObject->getRigidBody()->applyCentralImpulse(toBtVector3(where) * power); 
     stopAnimation();
     
+    setVisible(true);
     physicsObject->setCollidable(true);
     setShadow(true);
 }
 
-void Weapon::pick(vec3 forward, vec3 up)
+void Weapon::pick(vec3 forward, vec3 up, bool active)
 {
-     /* 
-      * play proper reload animation
-      * */
-    
     physicsObject->clearTransform();
     
     float angle = 0.0;
@@ -168,6 +165,7 @@ void Weapon::pick(vec3 forward, vec3 up)
 
     playAnimation("pick");
     physicsObject->setCollidable(false);
+    setVisible(active);
     setShadow(false);
 
     //physicsObject->setRotation(toBtQuaternion(twist), false);

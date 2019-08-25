@@ -17,6 +17,11 @@ class PlayerDataUpdater
         mat4 localTransform;
         mat4 model;
 
+        vec3 up;
+        vec3 forward;
+        vec3 moveDirection;
+        vec3 modelForward;
+
         Animation* animation;
 
     public:

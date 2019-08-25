@@ -36,6 +36,21 @@ Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed
         
 Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) {}
 
+void Soldier::setActive(bool active)
+{
+    this->active = active;
+
+    if (player)
+    {
+        player->setVisible(!active);
+    }
+
+    if (!weapons.empty())
+    {
+        weapons[0]->setVisible(active);
+    }
+}
+
 void Soldier::weaponAction()
 {
     if (window->isKeyPressedOnce(GLFW_KEY_G))
@@ -79,14 +94,14 @@ void Soldier::drop()
     {
         return;
     }
-
+    
     weapons[0]->drop(getForward() + getUp());
     weapons.pop_front();
 }
 
 void Soldier::pick(Weapon* weapon)
 {
-    weapon->pick(getForward(), getUp());
+    weapon->pick(getForward(), getUp(), active);
     weapons.push_front(weapon); 
 }
 
@@ -139,7 +154,10 @@ void Soldier::update(bool events)
 
     movePhysics();
 
-    updateWeapon();
+    if (active)
+    {
+        updateWeapon();
+    }
 }
 
 Soldier::~Soldier() {}

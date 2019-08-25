@@ -37,6 +37,8 @@ PlayerDataCollector::PlayerDataCollector()
 
     localTransform = model = mat4(1.0);
 
+    up = moveDirection = forward = modelForward = vec3(1.0);
+
     animation = nullptr;
 }
 
@@ -52,6 +54,10 @@ void PlayerDataCollector::collect(Player* player)
         localTransform = player->getGameObject()->getLocalTransform();
         model = player->getGameObject()->getPhysicsObjectTransform();
         animation = player->getGameObject()->getActiveAnimation();
+        up = player->getUp();
+        forward = player->getForward();
+        moveDirection = player->getPrevMoveDirection();
+        modelForward = player->getModelForward();
     }
 }
 
@@ -107,6 +113,38 @@ string PlayerDataCollector::getData() const
     }
 
     root->InsertEndChild(modelElem);
+    
+    /* up */
+    XMLElement* upElem = playerDataCollectorDoc.NewElement("up");
+    upElem->SetAttribute("x", up.x);
+    upElem->SetAttribute("y", up.y);
+    upElem->SetAttribute("z", up.z);
+    
+    root->InsertEndChild(upElem);
+    
+    /* forward */
+    XMLElement* forwardElem = playerDataCollectorDoc.NewElement("forward");
+    forwardElem->SetAttribute("x", forward.x);
+    forwardElem->SetAttribute("y", forward.y);
+    forwardElem->SetAttribute("z", forward.z);
+    
+    root->InsertEndChild(forwardElem);
+    
+    /* moveDirection */
+    XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("moveDirection");
+    moveDirectionElem->SetAttribute("x", moveDirection.x);
+    moveDirectionElem->SetAttribute("y", moveDirection.y);
+    moveDirectionElem->SetAttribute("z", moveDirection.z);
+    
+    root->InsertEndChild(moveDirectionElem);
+    
+    /* modelForward */
+    XMLElement* modelForwardElem = playerDataCollectorDoc.NewElement("modelForward");
+    modelForwardElem->SetAttribute("x", modelForward.x);
+    modelForwardElem->SetAttribute("y", modelForward.y);
+    modelForwardElem->SetAttribute("z", modelForward.z);
+    
+    root->InsertEndChild(modelForwardElem);
 
     if (animation)
     {

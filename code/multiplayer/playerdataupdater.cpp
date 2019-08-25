@@ -101,8 +101,32 @@ void PlayerDataUpdater::collect(string info)
                 cellElem->QueryFloatText(&model[i][j]);
             }
         }
-    }      
+    }
 
+    /* up */
+    XMLElement* upElem = root->FirstChildElement("up");
+    upElem->QueryFloatAttribute("x", &up.x);
+    upElem->QueryFloatAttribute("y", &up.y);
+    upElem->QueryFloatAttribute("z", &up.z);
+    
+    /* forward */
+    XMLElement* forwardElem = root->FirstChildElement("forward");
+    forwardElem->QueryFloatAttribute("x", &forward.x);
+    forwardElem->QueryFloatAttribute("y", &forward.y);
+    forwardElem->QueryFloatAttribute("z", &forward.z); 
+    
+    /* moveDirection */
+    XMLElement* moveDirectionElem = root->FirstChildElement("moveDirection");
+    moveDirectionElem->QueryFloatAttribute("x", &moveDirection.x);
+    moveDirectionElem->QueryFloatAttribute("y", &moveDirection.y);
+    moveDirectionElem->QueryFloatAttribute("z", &moveDirection.z); 
+    
+    /* modelForward */
+    XMLElement* modelForwardElem = root->FirstChildElement("modelForward");
+    modelForwardElem->QueryFloatAttribute("x", &modelForward.x);
+    modelForwardElem->QueryFloatAttribute("y", &modelForward.y);
+    modelForwardElem->QueryFloatAttribute("z", &modelForward.z);  
+    
     /* animation */
     XMLElement* animationElem = root->FirstChildElement("animation");
 
@@ -148,13 +172,24 @@ void PlayerDataUpdater::updateData(Player* player)
     player->getGameObject()->setLocalTransform(localTransform);
     player->getGameObject()->setPhysicsObjectTransform(model);
 
-    /*if (animation)
+    player->setUp(up);
+    player->setForward(forward);
+    player->setMoveDirection(moveDirection);
+    player->setModelForward(modelForward);
+
+    if (animation)
     {
-        player->getGameObject()->stopAnimation();
-        player->getGameObject()->removeAnimation(animation->getName());
-        player->getGameObject()->addAnimation(animation);
+        if (player->getGameObject()->getActiveAnimation() && \
+            player->getGameObject()->getActiveAnimation()->getName() == animation->getName())
+        {
+            return;
+        }
+
+        //player->getGameObject()->stopAnimation();
+        //player->getGameObject()->removeAnimation(animation->getName());
+        //player->getGameObject()->addAnimation(animation);
         player->getGameObject()->playAnimation(animation->getName());
-    }*/
+    }
 }
 
 int PlayerDataUpdater::getPlayerID() const

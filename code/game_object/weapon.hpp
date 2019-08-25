@@ -46,7 +46,7 @@ class Weapon : public GameObject
 
         void reload();
         void drop(vec3 where);
-        void pick(vec3 forward, vec3 up);
+        void pick(vec3 forward, vec3 up, bool active = true);
         void choose();
         
         virtual bool fire() = 0;

@@ -271,13 +271,13 @@ void Player::speedHackControl()
 
 void Player::updateAnimation()
 {
-    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0)))
-    {
-        player->playAnimation("run");
-    }
-    else if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
+    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
     {
         player->playAnimation("idle");
+    }
+    else if (player->getActiveAnimation() && player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0))
+    {
+        player->playAnimation("run");
     }
 }
 
@@ -372,6 +372,7 @@ void Player::movePhysics()
         Pos += moveDirection * vec3(speed);
     }
 
+    prevMoveDirection = moveDirection;
     moveDirection = vec3(0, 0, 0);
 }
 
@@ -403,6 +404,11 @@ void Player::setCameraOffset(vec3 cameraOffset)
 void Player::setModelOffset(vec3 modelOffset)
 {
     this->modelOffset = modelOffset;
+}
+        
+void Player::setModelForward(vec3 modelForward)
+{
+    this->modelForward = modelForward;
 }
 
 void Player::removeGameObject()
@@ -442,8 +448,12 @@ vec3 Player::getModelOffset() const
     return modelOffset;
 }
 
+vec3 Player::getModelForward() const
+{
+    return modelForward;
+}
+
 Player::~Player()
 {
-    //delete player;
     delete rayTracer;
 }

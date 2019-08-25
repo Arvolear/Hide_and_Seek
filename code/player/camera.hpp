@@ -24,6 +24,7 @@ class Camera
 
         vec3 Pos;
 
+        vec3 prevMoveDirection;
         vec3 moveDirection;
         vec3 Forward;
         vec3 Up;
@@ -38,12 +39,15 @@ class Camera
         void resetPrevCoords();
         void setPosition(float worldX, float worldY, float worldZ);
         void setUp(vec3 Up);
+        void setForward(vec3 forward);
+        void setMoveDirection(vec3 moveDirection);
         void setSpeed(float speed);
         void setSensitivity(vec2 sens);
 
         vec2 getWindowSize() const;
         vec3 getPosition() const;
         vec3 getForward() const;
+        vec3 getPrevMoveDirection() const;
         vec3 getLeft() const;
         vec3 getUp() const;
         

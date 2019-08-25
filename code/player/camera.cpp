@@ -20,7 +20,7 @@ Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
     verticalViewRotation = mat3(1.0);
 
     Pos = cameraPos;
-    moveDirection = vec3(0, 0, 0);
+    prevMoveDirection = moveDirection = vec3(0);
     Forward = normalize(cameraForward);
     Up = vec3(0, 1, 0);
 
@@ -119,6 +119,19 @@ void Camera::setPosition(float worldX, float worldY, float worldZ)
 void Camera::setUp(vec3 Up)
 {
     this->Up = normalize(Up);
+    this->Left = normalize(cross(Up, Forward));
+}
+        
+void Camera::setForward(vec3 forward)
+{
+    this->Forward = normalize(forward);
+    this->Left = normalize(cross(Up, Forward));
+}
+
+void Camera::setMoveDirection(vec3 moveDirection)
+{
+    this->prevMoveDirection = this->moveDirection;
+    this->moveDirection = moveDirection;
 }
         
 void Camera::setSpeed(float speed)
@@ -145,6 +158,11 @@ vec3 Camera::getPosition() const
 vec3 Camera::getForward() const
 {
     return Forward;
+}
+
+vec3 Camera::getPrevMoveDirection() const
+{
+    return prevMoveDirection;
 }
 
 vec3 Camera::getLeft() const
@@ -196,6 +214,7 @@ void Camera::update(bool events)
         Pos += normalize(moveDirection) * vec3(speed);
     }
 
+    prevMoveDirection = moveDirection;
     moveDirection = vec3(0, 0, 0);
 }
 

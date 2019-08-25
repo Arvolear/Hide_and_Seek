@@ -21,23 +21,6 @@ Skeleton::Skeleton(map < string, Bone* > &bones)
     ready = true;
 }
 
-void Skeleton::playAnimation(Animation* anim, bool reset)
-{
-    unique_lock < mutex > lck(mtx);
-    
-    while (!ready)
-    {
-        cv.wait(lck);
-    }
-
-    activeAnimation = anim;
-    
-    if (reset)
-    {
-        activeAnimation->fromStart(); 
-    }
-}
-        
 void Skeleton::renderBonesMatrices(Shader* shader)
 {
     shader->setInt("meshWithBones", meshWithBones); 
@@ -70,6 +53,23 @@ void Skeleton::renderBonesMatrices(Shader* shader)
     }
 }
 
+void Skeleton::playAnimation(Animation* anim, bool reset)
+{
+    unique_lock < mutex > lck(mtx);
+    
+    while (!ready)
+    {
+        cv.wait(lck);
+    }
+
+    activeAnimation = anim;
+    
+    if (reset)
+    {
+        activeAnimation->fromStart(); 
+    }
+}
+        
 void Skeleton::stopAnimation()
 {
     unique_lock < mutex > lck(mtx);
