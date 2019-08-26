@@ -63,8 +63,8 @@ Multiplayer::Multiplayer(Window* window, Level* level)
 
 void Multiplayer::connect()
 {
-    //client->connectToServer("159.224.87.241", 5040);
-    client->connectToServer("127.0.0.1", 5040);
+    client->connectToServer("159.224.87.241", 5040);
+    //client->connectToServer("127.0.0.1", 5040);
 
     /* get playerID */
     if (!client->getMessage().empty())
