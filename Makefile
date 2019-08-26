@@ -1,8 +1,10 @@
-.PHONY: all clean cleanall
+.PHONY: release all clean cleanall
 
 FLAGS = -std=c++11 -Wall -O3
 
-LIBS = -lGLEW -lGL -lGLU -lSOIL -lassimp -lglfw3 -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor -lBulletCollision -lBulletDynamics -lBulletSoftBody -lLinearMath -ltinyxml2
+LIBS = -lGLEW -lGL -lSOIL -lassimp -lglfw3 -lX11 -lpthread -ldl -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
+
+RELEASE = -Wl,-rpath,./lib
 
 INPUTDIR = ./code
 OUTPUTDIR = ./build
@@ -22,6 +24,11 @@ PLAYER = camera.o player.o soldier.o
 GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
+
+### RELEASE ###
+
+release: $(OBJECTFILES)
+	g++ -o Hide_and_Seek $(OBJECTFILES) $(RELEASE) $(LIBS) $(FLAGS)
 
 ### ALL ###
 
