@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<GameObjectFile>
+    <gameobjects>
+
+        <gameobject name="floor">
+            <graphicsobject path="/static_models/Floor/floor.obj">
+                <viewfrustum apply="true"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+
+        <gameobject name="box">
+            <graphicsobject path="/static_models/Box/box.obj">
+                <viewfrustum apply="true"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <!-- <gameobject name="Buddha">
+            <graphicsobject path="/static_models/Buddha/Buddha.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.2" y="0.2" z="0.2"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> -->
+        
+        <gameobject name="Sequoia">
+            <graphicsobject path="/static_models/Sequoia/sequoia.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.2" y="0.2" z="0.2"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+
+        <gameobject name="caterpillar">
+            <graphicsobject path="/animated_models/Caterpillar/caterpillar.fbx">
+                <viewfrustum apply="true"/>
+                <rotation x="1.0" y="0.0" z="0.0" angle="-170.0"/>
+                <animations>
+                    <animation name="crawl" active="true">
+                        <animid id="0"/>
+                        <framesrange start="0.0" end="0.0"/>
+                        <speed speed="1.0"/>
+                        <loop loop="true"/>
+                    </animation>
+                </animations>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+
+    </gameobjects>
+</GameObjectFile>
