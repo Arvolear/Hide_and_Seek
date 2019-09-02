@@ -28,9 +28,6 @@ Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
     this->speed = speed;
 
     prevCoords = window->getSize() / 2.0f;
-
-    move = "";
-    ready = true;
 }
 
 void Camera::lookAction()
@@ -80,9 +77,9 @@ void Camera::resetPrevCoords()
     prevCoords = window->getMousePosition();
 }
 
-void Camera::setPosition(vec3 Pos)
+void Camera::setPosition(float worldX, float worldY, float worldZ)
 {
-    this->Pos = Pos;
+    Pos = vec3(worldX, worldY, worldZ);
 }
         
 void Camera::setUp(vec3 Up)
@@ -91,9 +88,9 @@ void Camera::setUp(vec3 Up)
     this->Left = normalize(cross(Up, Forward));
 }
         
-void Camera::setForward(vec3 Forward)
+void Camera::setForward(vec3 forward)
 {
-    this->Forward = normalize(Forward);
+    this->Forward = normalize(forward);
     this->Left = normalize(cross(Up, Forward));
 }
 
@@ -161,18 +158,6 @@ mat3 Camera::getVerticalViewRotation() const
 mat4 Camera::getView() const
 {
     return lookAt(Pos, Pos + Forward, Up);
-}
-
-string Camera::getMove() const
-{
-    unique_lock < mutex > lk(mtx);
-
-    while (!ready)
-    {
-        cv.wait(lk);
-    }
-
-    return move;
 }
 
 Camera::~Camera(){}

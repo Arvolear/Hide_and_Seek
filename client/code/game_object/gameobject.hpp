@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <memory>
 
+#include <bullet/btBulletCollisionCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -25,6 +28,7 @@ class GameObject
         ModelLoader* modelLoader;
 
         string graphicsObject;
+        PhysicsObject* physicsObject;
 
         vector < Mesh* > meshes;
         Skeleton* skeleton;
@@ -37,8 +41,8 @@ class GameObject
         DebugSphere* debugSphere;
 
         mat4 localTransform;
-        mat4 modelTransform;
         
+        void removePhysicsObject();
         void removeGraphicsObject();
 
     public:
@@ -47,29 +51,34 @@ class GameObject
         void setName(string name);
         void setVisible(bool visible);
         void setShadow(bool shadow);
+        void setCollidable(bool collidable);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
+        void setPhysicsObject(PhysicsObject* object);
 
         void setLocalRotation(vec3 axis, float angle, bool add = true);
         void setLocalScale(vec3 growth, bool add = true);
         void setLocalPosition(vec3 pos, bool add = true);
         void setLocalTransform(mat4 localTransform);
-        void setModelTransform(mat4 modelTransform);
         void clearLocalTransform();
 
+        void setPhysicsObjectTransform(mat4 model);
+        
         void addAnimation(Animation* anim);
         void removeAnimation(string name);
         void playAnimation(string name, bool reset = true);
         void stopAnimation();
 
+        PhysicsObject* getPhysicsObject() const;
         string getGraphicsObject() const;
         Skeleton* getSkeleton() const;
         string getName() const;
         bool isVisible() const;
         bool isShadow() const;
+        bool isCollidable() const;
 
         mat4 getLocalTransform() const;
-        mat4 getModelTransform() const;
+        mat4 getPhysicsObjectTransform() const;
 
         Animation* getActiveAnimation() const;
         Animation* getAnimation(string name) const;

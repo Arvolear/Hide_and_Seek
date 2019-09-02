@@ -29,6 +29,7 @@ class Level
 
         void addPhysicsObject(PhysicsObject* physicsObject);
         PhysicsObject* getPhysicsObject(string name) const;
+        map < string, PhysicsObject* > getPhysicsObjects() const;
 
         void removePhysicsObject(PhysicsObject* physicsObject);
         void removePhysicsObject(string name);

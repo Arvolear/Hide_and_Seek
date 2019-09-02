@@ -3,6 +3,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <mutex>
+#include <condition_variable>
 
 #include <glm/glm.hpp>
 

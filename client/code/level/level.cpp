@@ -17,7 +17,14 @@
 #include "../player/camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
+#include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
 #include "../game_object/bone.hpp"
@@ -25,7 +32,10 @@
 #include "../game_object/viewfrustum.hpp"
 #include "../game_object/boundsphere.hpp"
 #include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/weapon.hpp"
+#include "../game_object/rifle.hpp"
 
 #include "../player/player.hpp"
 
@@ -34,11 +44,12 @@
 #include "levelloader.hpp"
 #include "level.hpp"
 
-Level::Level(Window* window)
+Level::Level(Window* window, World* physicsWorld)
 {
     this->window = window;
+    this->physicsWorld = physicsWorld;
 
-    levelLoader = new LevelLoader(window);
+    levelLoader = new LevelLoader(window, physicsWorld);
 
     levelName = "";
 
@@ -112,6 +123,11 @@ GameObject* Level::getGameObject(string name) const
     }
 
     return nullptr;
+}
+
+map < string, GameObject* > Level::getGameObjects() const
+{
+    return gameObjects;
 }
 
 void Level::removeGameObject(GameObject* gameObject)
@@ -241,11 +257,22 @@ void Level::render()
 
     debugShader->use();
 
+    physicsWorld->getDebugDrawer()->applyViewProjection(debugShader, view, projection);
+    physicsWorld->getDebugDrawer()->updateViewProjection();
+
+    physicsWorld->renderDebug();
+
     if (drawDebug)
     {
         for (auto& i : gameObjects)
         {
             i.second->renderDebugSphere(debugShader); 
+        }
+
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            viewFrustum->updateFrustum(players[i]->getView(), projection);
+            viewFrustum->render(physicsWorld->getDebugDrawer());
         }
     }
 } 
@@ -276,6 +303,11 @@ Player* Level::getPlayer(int id) const
     }
 
     return nullptr;
+}
+
+vector < Player* > Level::getPlayers() const
+{
+    return players;
 }
 
 string Level::getLevelName() const

@@ -12,7 +12,9 @@
 #include "../player/camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
+#include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
 #include "../game_object/bone.hpp"
@@ -20,11 +22,15 @@
 #include "../game_object/viewfrustum.hpp"
 #include "../game_object/boundsphere.hpp"
 #include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/weapon.hpp"
+#include "../game_object/rifle.hpp"
 
 #include "../world/raytracer.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "playerdatacollector.hpp"
         
@@ -32,7 +38,7 @@ PlayerDataCollector::PlayerDataCollector()
 {
     playerID = 0;
 
-    Up = Forward = vec3(0);
+    model = mat4(1.0);
 }
 
 void PlayerDataCollector::setPlayerID(int playerID)
@@ -44,10 +50,7 @@ void PlayerDataCollector::collect(Player* player)
 {
     if (player->getGameObject())
     {
-        Up = player->getUp();
-        Forward = player->getForward();
-
-        move = player->getMove();
+        model = player->getGameObject()->getPhysicsObjectTransform();
     }
 }
 
@@ -65,29 +68,23 @@ string PlayerDataCollector::getData() const
     playerIDElem->SetText(playerID);
 
     root->InsertEndChild(playerIDElem);
+    
+    /* model */
+    XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
 
-    /* up */
-    XMLElement* upElem = playerDataCollectorDoc.NewElement("up");
-    upElem->SetAttribute("x", Up.x);
-    upElem->SetAttribute("y", Up.y);
-    upElem->SetAttribute("z", Up.z);
-    
-    root->InsertEndChild(upElem);
-    
-    /* forward */
-    XMLElement* forwardElem = playerDataCollectorDoc.NewElement("fwd");
-    forwardElem->SetAttribute("x", Forward.x);
-    forwardElem->SetAttribute("y", Forward.y);
-    forwardElem->SetAttribute("z", Forward.z);
-    
-    root->InsertEndChild(forwardElem);
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            string str;
+            str = char('a' + (i * 4 + j));
 
-    /* move */
-    XMLElement* moveElem = playerDataCollectorDoc.NewElement("mv");
-    moveElem->SetText(move.data());
+            modelElem->SetAttribute(str.data(), model[i][j]);
+        }
+    }
 
-    root->InsertEndChild(moveElem);
-    
+    root->InsertEndChild(modelElem);
+
     /* printer */
     XMLPrinter playerDataCollectorPrinter;
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);

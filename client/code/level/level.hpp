@@ -18,6 +18,7 @@ class Level
 {
     private:
         Window* window;
+        World* physicsWorld;
 
         LevelLoader* levelLoader;
         
@@ -51,7 +52,7 @@ class Level
         int drawDebug;
 
     public:
-        Level(Window* window);
+        Level(Window* window, World* physicsWorld);
         
         void loadLevel(string level);
 
@@ -59,6 +60,7 @@ class Level
         
         void addGameObject(GameObject* gameObject);
         GameObject* getGameObject(string name) const;
+        map < string, GameObject* > getGameObjects() const;
 
         void removeGameObject(GameObject* gameObject);
         void removeGameObject(string name);
@@ -68,6 +70,7 @@ class Level
 
         GLuint getRenderTexture(unsigned int num = 0) const;
         Player* getPlayer(int id = -1) const;
+        vector < Player* > getPlayers() const;
         string getLevelName() const;
 
         /* DEBUG */

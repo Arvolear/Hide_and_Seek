@@ -290,7 +290,7 @@ void LevelLoader::loadPlayers()
 
         Player* player = new Player(speed);
 
-        /* game object */
+        /* physics object */
         XMLElement* physicsObjectElem = playerElem->FirstChildElement("physicsobject");
 
         if (physicsObjectElem)
@@ -301,23 +301,6 @@ void LevelLoader::loadPlayers()
             physicsObjects.insert({PO->getName(), PO});
 
             player->setPhysicsObject(PO);
-        }
-
-        /* raytracer */
-        XMLElement* rayTracerElem = playerElem->FirstChildElement("raytracer");
-
-        if (rayTracerElem)
-        {
-            const char* apply = nullptr;
-
-            rayTracerElem->QueryStringAttribute("apply", &apply);
-
-            if (!strcmp("true", apply))
-            {
-                RayTracer* rayTracer = new RayTracer(physicsWorld->getWorld());     
-
-                player->setRayTracer(rayTracer);
-            }
         }
 
         players.push_back(player);

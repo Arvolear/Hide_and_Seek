@@ -14,7 +14,6 @@ class PlayerDataCollector
     private:
         int playerID;
         
-        btVector3 headCenter;
         btScalar* model;
 
     public:

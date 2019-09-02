@@ -1,5 +1,7 @@
 #include "../shader/shader.hpp"
 
+#include "../debug/debugdrawer.hpp"
+
 #include "viewfrustum.hpp"
 
 void Plane::setData(float a, float b, float c, float d)
@@ -73,6 +75,60 @@ bool ViewFrustum::isSphereInFrustum(vec3 center, float radius) const
     }
 
     return true;
+}
+
+void ViewFrustum::render(DebugDrawer* debugDrawer)
+{
+    debugDrawer->updateViewProjection();
+
+    mat4 inv = inverse(projection * view);
+
+    vec4 clipFrustum[8] =
+    {
+        /* near face
+         * x, y, (back/front), w 
+         * */
+        {1, 1, -1, 1},
+        {-1, 1, -1, 1},
+        {1, -1, -1, 1},
+        {-1, -1, -1, 1},
+
+        /* far face
+         * x, y, (back/front), w 
+         * */
+        {1, 1, 1, 1},
+        {-1, 1, 1, 1},
+        {1, -1, 1, 1},
+        {-1, -1, 1, 1}
+    };
+
+    btVector3 globalFrustum[8];
+
+    for (int i = 0; i < 8; i++)
+    {
+        vec4 globalVec = inv * clipFrustum[i];
+
+        globalFrustum[i].setX(globalVec.x / globalVec.w);
+        globalFrustum[i].setY(globalVec.y / globalVec.w);
+        globalFrustum[i].setZ(globalVec.z / globalVec.w);
+    }
+
+    btVector3 color(0.1, 0.1, 1.0);
+
+    debugDrawer->drawLine(globalFrustum[0], globalFrustum[1], color);
+    debugDrawer->drawLine(globalFrustum[0], globalFrustum[2], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[1], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[2], color);
+
+    debugDrawer->drawLine(globalFrustum[4], globalFrustum[5], color);
+    debugDrawer->drawLine(globalFrustum[4], globalFrustum[6], color);
+    debugDrawer->drawLine(globalFrustum[7], globalFrustum[5], color);
+    debugDrawer->drawLine(globalFrustum[7], globalFrustum[6], color);
+
+    debugDrawer->drawLine(globalFrustum[0], globalFrustum[4], color);
+    debugDrawer->drawLine(globalFrustum[1], globalFrustum[5], color);
+    debugDrawer->drawLine(globalFrustum[2], globalFrustum[6], color);
+    debugDrawer->drawLine(globalFrustum[3], globalFrustum[7], color);
 }
 
 mat4 ViewFrustum::getView() const

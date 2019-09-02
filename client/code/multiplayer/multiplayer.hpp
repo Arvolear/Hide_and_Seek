@@ -1,3 +1,5 @@
+//client
+
 #pragma once
 
 #include <iostream>
@@ -13,14 +15,17 @@ class Multiplayer
         Client* client;
         PlayerDataCollector* playerDataCollector;
         PlayerDataUpdater* playerDataUpdater;
+        GameObjectDataCollector* gameObjectDataCollector;
+        GameObjectDataUpdater* gameObjectDataUpdater;
 
         Window* window;
         Level* level;
+        World* world;
 
         int playerID;
 
     public:
-        Multiplayer(Window* window, Level* level);
+        Multiplayer(Window* window, Level* level, World* world);
 
         void connect();
         

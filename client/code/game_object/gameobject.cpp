@@ -3,7 +3,9 @@
 #include "../shader/shader.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
+#include "openglmotionstate.hpp"
 #include "animation.hpp"
 #include "mesh.hpp"
 #include "bone.hpp"
@@ -11,6 +13,7 @@
 #include "viewfrustum.hpp"
 #include "boundsphere.hpp"
 #include "modelloader.hpp"
+#include "physicsobject.hpp"
 #include "gameobject.hpp"
 
 set < string > GameObject::globalNames;
@@ -28,13 +31,21 @@ GameObject::GameObject(string name)
     setShadow(true);
 
     modelLoader = new ModelLoader();
+    physicsObject = nullptr;
 
     skeleton = nullptr;
     viewFrustum = nullptr;
     boundSphere = nullptr;
     debugSphere = nullptr;
+}
 
-    localTransform = modelTransform = mat4(1.0);
+void GameObject::removePhysicsObject()
+{
+    if (physicsObject)
+    {
+        delete physicsObject;
+        physicsObject = nullptr;
+    }
 }
 
 void GameObject::removeGraphicsObject()
@@ -77,6 +88,14 @@ void GameObject::setShadow(bool shadow)
     this->shadow = shadow;
 }
         
+void GameObject::setCollidable(bool collidable)
+{
+    if (physicsObject)
+    {
+        physicsObject->setCollidable(collidable);
+    }
+}
+
 void GameObject::setGraphicsObject(string path)
 {
     removeGraphicsObject();
@@ -92,6 +111,14 @@ void GameObject::setGraphicsObject(string path)
 void GameObject::setViewFrustum(ViewFrustum* viewFrustum)
 {
     this->viewFrustum = viewFrustum;
+}
+
+void GameObject::setPhysicsObject(PhysicsObject* object)
+{
+    removePhysicsObject();
+
+    physicsObject = object;
+    physicsObject->setUserPointer(this);
 }
 
 void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
@@ -164,16 +191,23 @@ void GameObject::setLocalTransform(mat4 localTransform)
     this->localTransform = localTransform;
 }
 
-void GameObject::setModelTransform(mat4 modelTransform)
-{
-    this->modelTransform = modelTransform;
-}
-
 void GameObject::clearLocalTransform()
 {
     localTransform = mat4(1.0);
 }
         
+void GameObject::setPhysicsObjectTransform(mat4 model)
+{
+    if (!physicsObject)
+    {
+        throw(runtime_error("ERROR::GameObject::setPhysicsObjectTrasnform() no physics object"));
+    }
+
+    unique_ptr < btScalar > transform(glmMat42BtScalar(model));
+
+    physicsObject->setTransform(transform.get());
+}
+
 void GameObject::addAnimation(Animation* anim)
 {
     if (animations.find(anim->getName()) == animations.end())
@@ -207,6 +241,11 @@ void GameObject::stopAnimation()
     skeleton->stopAnimation();
 }
 
+PhysicsObject* GameObject::getPhysicsObject() const
+{
+    return physicsObject;
+}
+
 string GameObject::getGraphicsObject() const
 {
     return graphicsObject;
@@ -232,14 +271,34 @@ bool GameObject::isShadow() const
     return shadow;
 }
 
+bool GameObject::isCollidable() const
+{
+    if (physicsObject)
+    {
+        return physicsObject->isCollidable();
+    }
+
+    return true;
+}
+
+mat4 GameObject::getPhysicsObjectTransform() const
+{
+    if (!physicsObject)
+    {
+        return mat4(1.0);
+    }
+
+    /* 16 elements */
+    unique_ptr < btScalar > transform(physicsObject->getTransform());
+
+    mat4 ret = btScalar2glmMat4(transform.get());
+
+    return ret;
+}
+
 mat4 GameObject::getLocalTransform() const
 {
     return localTransform;
-}
-
-mat4 GameObject::getModelTransform() const
-{
-    return modelTransform;
 }
         
 Animation* GameObject::getActiveAnimation() const
@@ -261,7 +320,7 @@ void GameObject::render(Shader* shader, bool cull)
 {
     if (visible && cull && viewFrustum && boundSphere)
     {
-        mat4 transform = getModelTransform() * getLocalTransform();
+        mat4 transform = getPhysicsObjectTransform() * localTransform;
 
         boundSphere->applyTransform(transform);
 
@@ -271,8 +330,8 @@ void GameObject::render(Shader* shader, bool cull)
         }
     }
 
-    shader->setMat4("localTransform", getLocalTransform());
-    shader->setMat4("model", getModelTransform());
+    shader->setMat4("localTransform", localTransform);
+    shader->setMat4("model", getPhysicsObjectTransform());
 
     if (skeleton)
     {
@@ -304,7 +363,7 @@ void GameObject::renderDebugSphere(Shader *shader)
 {
     if (debugSphere && viewFrustum)
     {
-        mat4 transform = viewFrustum->getProjection() * viewFrustum->getView() * getModelTransform() * getLocalTransform();
+        mat4 transform = viewFrustum->getProjection() * viewFrustum->getView() * getPhysicsObjectTransform() * localTransform;
         debugSphere->applyTransform(transform);
 
         debugSphere->render(shader);
@@ -318,6 +377,7 @@ GameObject::~GameObject()
     globalNames.erase(name);
 
     removeGraphicsObject();
+    removePhysicsObject();
 
     delete modelLoader;
 

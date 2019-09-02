@@ -128,6 +128,7 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world)
 
     globalNames.insert(name);
     this->name = name;
+    senderID = -1;
 }
 
 PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -152,6 +153,7 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionSha
 
     globalNames.insert(name);
     this->name = name;
+    senderID = -1;
 }
 
 PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -178,6 +180,7 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, CompoundShape*
 
     globalNames.insert(name);
     this->name = name;
+    senderID = -1;
 }
 
 void PhysicsObject::setName(string name)
@@ -190,6 +193,11 @@ void PhysicsObject::setName(string name)
     globalNames.erase(this->name);
     globalNames.insert(name);
     this->name = name;
+}
+
+void PhysicsObject::setSenderID(int senderID)
+{
+    this->senderID = senderID;
 }
 
 void PhysicsObject::setShape(btCollisionShape* shape)
@@ -247,6 +255,14 @@ void PhysicsObject::setTransform(btTransform* transform)
 {
     motionState->setBTTransform(transform);
     body->setWorldTransform(*motionState->getBTTransform());     
+    body->setActivationState(ACTIVE_TAG);
+}
+
+void PhysicsObject::setTransform(btScalar* transform)
+{
+    motionState->setGLTransform(transform);
+    body->setWorldTransform(*motionState->getBTTransform());     
+    body->setActivationState(ACTIVE_TAG);
 }
 
 void PhysicsObject::clearTransform()
@@ -282,6 +298,11 @@ void PhysicsObject::setUserPointer(void* userPointer)
 string PhysicsObject::getName() const
 {
     return name;
+}
+
+int PhysicsObject::getSenderID() const
+{
+    return senderID;
 }
 
 float PhysicsObject::getMass() const

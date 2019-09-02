@@ -33,6 +33,8 @@ class ViewFrustum
         bool isPointInFrustum(vec3 point) const;
         bool isSphereInFrustum(vec3 center, float radius) const;
 
+        void render(DebugDrawer* debugDrawer); 
+
         mat4 getView() const;
         mat4 getProjection() const;
 

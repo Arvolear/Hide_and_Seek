@@ -229,21 +229,11 @@ void Node::sendMSG(int to, string msg)
         cv.wait(lk);
     }
 
-    if (to == -1)
+    if (to > 0)
     {
-        for (int i = 0; i < max_clients; i++)
+        if (send(to, msg.data(), msg.size(), MSG_NOSIGNAL) < 0)
         {
-            if (client_sockets[i] > 0)
-            {
-                send(client_sockets[i], msg.data(), msg.size(), 0);
-            }
-        }
-    }
-    else
-    {
-        if (to > 0)
-        {
-            send(to, msg.data(), msg.size(), 0);
+            throw(runtime_error("ERROR::Node::sendMSG() send"));
         }
     }
 }

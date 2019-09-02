@@ -12,7 +12,9 @@
 #include "camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
+#include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
 #include "../game_object/bone.hpp"
@@ -20,6 +22,7 @@
 #include "../game_object/viewfrustum.hpp"
 #include "../game_object/boundsphere.hpp"
 #include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
 
 #include "../world/raytracer.hpp"
@@ -28,24 +31,28 @@
 
 Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Camera(window, playerPos, cameraForward, speed)
 {
-    gameObject = nullptr;
+    rayTracer = nullptr;
+    player = nullptr;
+
+    jumpAllowed = true;
+    speedLock = false;
 
     cameraOffset = modelOffset = vec3(0);
     modelForward = normalize(cross(Left, Up));
-
-    headCenter = vec3(0);
 
     setActive(false);
 }
         
-Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, GameObject* player, float speed, bool active) : Camera(window, playerPos, cameraForward, speed)
+Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Camera(window, playerPos, cameraForward, speed)
 {
-    this->gameObject = gameObject;
+    rayTracer = tracer;
+    this->player = player;
+    
+    jumpAllowed = true;
+    speedLock = false;
     
     cameraOffset = modelOffset = vec3(0);
     modelForward = normalize(cross(Left, Up));
-    
-    headCenter = vec3(0);
     
     setActive(active);
 }
@@ -54,20 +61,75 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, GameObject* p
 dist > 2.2
 */
 
+bool Player::isGroundStanding()
+{
+    if (!(player && player->getPhysicsObject() && rayTracer))
+    {
+        return false;
+    }
+
+    btVector3 from = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
+    btVector3 to = btVector3(0, -1, 0);
+
+    unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
+
+    if (!result)
+    {
+        return false;
+    }
+
+    float dist = (from - result->hitPoint).length();
+
+    btVector3 Min;
+    btVector3 Max;
+
+    player->getPhysicsObject()->getRigidBody()->getAabb(Min, Max);
+
+    float bottomDist = (from - btVector3(from.x(), Min.y(), from.z())).length();
+
+    //cout << dist << " " << bottomDist << endl; 
+    
+    if (dist > bottomDist + 0.1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void Player::jump()
+{
+    if (!(player && player->getPhysicsObject() && rayTracer && jumpAllowed))
+    {
+        return;
+    }
+
+    float power = 70;
+    float loss = 0.5;
+
+    //cout << "jump" << endl;
+
+    player->getPhysicsObject()->getRigidBody()->setActivationState(ACTIVE_TAG);
+
+    /* redusing the speed */
+    btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
+    velocity = btVector3(velocity.x() * loss, velocity.y(), velocity.z() * loss);
+    player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
+
+    player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(0, 1, 0) * power);
+
+    jumpAllowed = false;
+}
+
 void Player::moveAction()
 {
-    unique_lock < mutex> lk(mtx);
-    ready = false;
-
-    move = "";
     vec3 playerForward = normalize(cross(Left, Up));
 
     if (window->isKeyPressed(GLFW_KEY_W))
     {
-        if (gameObject)
+        if (player && player->getPhysicsObject() && rayTracer)
         {
             moveDirection += playerForward;
-            move += "W";
         }
         else
         {
@@ -77,10 +139,9 @@ void Player::moveAction()
 
     if (window->isKeyPressed(GLFW_KEY_S))
     {
-        if (gameObject)
+        if (player && player->getPhysicsObject() && rayTracer)
         {
             moveDirection -= playerForward;
-            move += "S";
         }
         else
         {
@@ -91,16 +152,14 @@ void Player::moveAction()
     if (window->isKeyPressed(GLFW_KEY_D))
     {
         moveDirection -= Left;
-        move += "D";
     }
 
     if (window->isKeyPressed(GLFW_KEY_A))
     {
         moveDirection += Left;
-        move += "A";
     }
 
-    if (!gameObject)
+    if (!(player && player->getPhysicsObject() && rayTracer))
     {
         if (window->isKeyPressed(GLFW_KEY_E))
         {
@@ -113,37 +172,114 @@ void Player::moveAction()
         }
     }
 
-    if (gameObject)
+    if (player && player->getPhysicsObject() && rayTracer)
     {
         if (window->isKeyPressedOnce(GLFW_KEY_SPACE))
         {
-            move += "J";
+            jump();
         }
     }
-
-    ready = true;
-    cv.notify_all();
 }
 
 void Player::calcCameraPosition()
 {
-    /* head center */
-    setPosition(headCenter);
+    btTransform globalTransform;
+    btTransform headTransform;
+    btVector3 globalCenter;
+    btVector3 headCenter;
+    btScalar headRadius;
+
+    globalTransform = player->getPhysicsObject()->getRigidBody()->getCenterOfMassTransform();
+    headTransform = player->getPhysicsObject()->getCompoundShape()->getChildTransform(0);
+    player->getPhysicsObject()->getCompoundShape()->getChildShape(0)->getBoundingSphere(headCenter, headRadius);
+
+    globalCenter = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
+    headCenter = globalTransform * headTransform * headCenter;
+    
+    /* camera Position */
+    setPosition(headCenter.x(), headCenter.y(), headCenter.z());
+
+    /* new Up */
+    Up = normalize(toVec3(headCenter) - toVec3(globalCenter));
 
     Pos += normalize(cross(Left, Up)) * cameraOffset.x;
     Pos += Up * cameraOffset.y;
     Pos += Left * cameraOffset.z;
+
+    player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
+}
+
+void Player::moveGround()
+{
+    float speedFactor = 34;
+    float friction = 0.6;
+
+    /* push the body */
+    player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
+
+    btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
+
+    /* disable sliding effect */
+    if (velocity.length() < 0.1)
+    {
+        player->getPhysicsObject()->getRigidBody()->setActivationState(WANTS_DEACTIVATION);
+    }
+
+    /* friction */
+    velocity = btVector3(velocity.x() * friction, velocity.y(), velocity.z() * friction);
+
+    player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
+
+    jumpAllowed = true;
+}
+
+void Player::moveAir()
+{
+    float speedFactor = 2.2;
+
+    jumpAllowed = false;
+
+    /* push the body */
+    player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
+
+    btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
+
+    /* enable sliding effect */
+    if (abs(velocity.y()) < 0.1)
+    {
+        player->getPhysicsObject()->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+    }
+}
+
+void Player::speedHackControl()
+{
+    float maxSpeed = 6;
+
+    /* speed hack control */
+    btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
+    btVector3 XZVelocity = velocity;
+    XZVelocity.setY(0);
+
+    if (XZVelocity.length() > maxSpeed)
+    {
+        btVector3 XZNormVel = XZVelocity;
+        XZNormVel.normalize();
+
+        velocity -= (XZVelocity.length() - maxSpeed) * XZNormVel; 
+
+        player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
+    }
 }
 
 void Player::updateAnimation()
 {
-    if (!gameObject->getActiveAnimation() || (gameObject->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
+    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
     {
-        gameObject->playAnimation("idle");
+        player->playAnimation("idle");
     }
-    else if (gameObject->getActiveAnimation() && gameObject->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0))
+    else if (player->getActiveAnimation() && player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0))
     {
-        gameObject->playAnimation("run");
+        player->playAnimation("run");
     }
 }
 
@@ -181,7 +317,7 @@ void Player::calcModelPosition()
 
     //cout << angle << endl;
 
-    gameObject->setLocalRotation(Up, angle);
+    player->setLocalRotation(Up, angle);
 
     vec3 localPos = vec3(0);
 
@@ -189,10 +325,10 @@ void Player::calcModelPosition()
     localPos += Up * modelOffset.y;
     localPos += Left * modelOffset.z;
 
-    gameObject->setLocalPosition(localPos, false);
+    player->setLocalPosition(localPos, false);
 }
 
-void Player::moveGraphics()
+void Player::movePhysics()
 {
     if (moveDirection != vec3(0))
     {
@@ -200,8 +336,30 @@ void Player::moveGraphics()
     }
 
     /* if physics object is applied */
-    if (gameObject)
+    if (player && player->getPhysicsObject() && rayTracer)
     {
+        if (!player->getPhysicsObject()->getCompoundShape())
+        {
+            throw runtime_error("ERROR::player no compound shape"); 
+        }
+
+        if (player->getPhysicsObject()->getCompoundShape()->getShape()->getNumChildShapes() < 1)
+        {
+            throw runtime_error("ERROR::player compound shape < 1 children"); 
+        }
+
+        if (isGroundStanding()) // ground movement
+        { 
+            moveGround();
+        }
+        else // air movement
+        {
+            moveAir();
+        }
+
+        /* speed hack control */
+        speedHackControl();
+
         /* calc camera position */
         calcCameraPosition();
 
@@ -216,27 +374,27 @@ void Player::moveGraphics()
         Pos += moveDirection * vec3(speed);
     }
 
-    moveDirection = vec3(0);
+    moveDirection = vec3(0, 0, 0);
 }
 
 void Player::setActive(bool active)
 {
     this->active = active;
 
-    if (gameObject)
+    if (player)
     {
-        gameObject->setVisible(!active);
+        player->setVisible(!active);
     }
 }
 
-void Player::setGameObject(GameObject* gameObject)
+void Player::setRayTracer(RayTracer* tracer)
 {
-    this->gameObject = gameObject;
+    this->rayTracer = tracer;
 }
 
-void Player::setHeadCenter(vec3 headCenter)
+void Player::setGameObject(GameObject* player)
 {
-    this->headCenter = headCenter;
+    this->player = player;
 }
 
 void Player::setCameraOffset(vec3 cameraOffset)
@@ -256,7 +414,8 @@ void Player::setModelForward(vec3 modelForward)
 
 void Player::removeGameObject()
 {
-    gameObject = nullptr;
+    delete player;
+    player = nullptr;
 }
 
 bool Player::isActive() const
@@ -272,12 +431,30 @@ void Player::update(bool events)
         moveAction();
     }
 
-    moveGraphics();
+    movePhysics();
 }
 
 GameObject* Player::getGameObject() const
 {
-    return gameObject;
+    return player;
 }
 
-Player::~Player() {}
+vec3 Player::getCameraOffset() const
+{
+    return cameraOffset;
+}
+
+vec3 Player::getModelOffset() const
+{
+    return modelOffset;
+}
+
+vec3 Player::getModelForward() const
+{
+    return modelForward;
+}
+
+Player::~Player()
+{
+    delete rayTracer;
+}

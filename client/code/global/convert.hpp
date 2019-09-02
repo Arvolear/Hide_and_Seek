@@ -3,6 +3,10 @@
 //native
 #include <climits>
 
+//bullet
+#include <bullet/btBulletCollisionCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
+
 //opengl
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -56,6 +60,50 @@ inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 from)
             from[0][2], from[1][2], from[2][2], from[3][2],
             from[0][3], from[1][3], from[2][3], from[3][3]
             );
+}
+
+inline static mat4 btScalar2glmMat4(btScalar *from) 
+{
+    return mat4(
+            from[0], from[1], from[2], from[3],
+            from[4], from[5], from[6], from[7],
+            from[8], from[9], from[10], from[11],
+            from[12], from[13], from[14], from[15]);
+}
+
+inline static btScalar* glmMat42BtScalar(mat4 from) 
+{
+    btScalar* res = new btScalar[16];
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            res[i * 4 + j] = from[i][j];      
+        }
+    }
+
+    return res;
+}
+
+inline static btVector3 toBtVector3(vec3 from)
+{
+    return btVector3(from.x, from.y, from.z);
+}
+
+inline static vec3 toVec3(btVector3 from)
+{
+    return vec3(from.x(), from.y(), from.z());
+}
+
+inline static btQuaternion toBtQuaternion(quat from)
+{
+    return btQuaternion(toBtVector3(axis(from)), angle(from));
+}
+
+inline static quat toQuat(btQuaternion from)
+{
+    return quat(from.getAngle(), toVec3(from.getAxis()));
 }
 
 inline static double toRads(double angle)

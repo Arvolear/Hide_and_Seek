@@ -15,7 +15,6 @@
                 <position x="10.0" y="3.0" z="10.0"/>
                 <angularfactor x="0.0" y="0.0" z="0.0"/>
             </physicsobject>
-            <raytracer apply="true"/>
         </player>
 
         <player>
@@ -31,7 +30,6 @@
                 <position x="7.0" y="3.0" z="5.0"/>
                 <angularfactor x="0.0" y="0.0" z="0.0"/>
             </physicsobject>
-            <raytracer apply="true"/>
         </player>
 
     </players>

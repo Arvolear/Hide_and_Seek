@@ -12,7 +12,9 @@
 #include "../player/camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
+#include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
 #include "../game_object/bone.hpp"
@@ -20,11 +22,15 @@
 #include "../game_object/viewfrustum.hpp"
 #include "../game_object/boundsphere.hpp"
 #include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/weapon.hpp"
+#include "../game_object/rifle.hpp"
 
 #include "../world/raytracer.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "playerdataupdater.hpp"
         
@@ -33,7 +39,6 @@ PlayerDataUpdater::PlayerDataUpdater()
     playerID = 0;
 
     model = mat4(1.0);
-    headCenter = vec3(0);
 }
 
 void PlayerDataUpdater::collect(string info)
@@ -49,8 +54,7 @@ void PlayerDataUpdater::collect(string info)
     {
         playerDataUpdaterDoc.PrintError();
         cout << info << endl << endl;
-        return;
-        //throw runtime_error("ERROR::PlayerDataUpdater::collect() failed to load XML");
+        throw runtime_error("ERROR::PlayerDataUpdater::collect() failed to load XML");
     }
 
     /* playerID */
@@ -77,22 +81,11 @@ void PlayerDataUpdater::collect(string info)
             }
         }
     }
-
-    /* headCenter */
-    XMLElement* headCenterElem = root->FirstChildElement("hd");
-
-    if (headCenterElem)
-    {
-        headCenterElem->QueryFloatAttribute("x", &headCenter.x);
-        headCenterElem->QueryFloatAttribute("y", &headCenter.y);
-        headCenterElem->QueryFloatAttribute("z", &headCenter.z);
-    }
 }
 
 void PlayerDataUpdater::updateData(Player* player)
 {
-    player->getGameObject()->setModelTransform(model);
-    player->setHeadCenter(headCenter);
+    player->getGameObject()->setPhysicsObjectTransform(model);
 }
 
 int PlayerDataUpdater::getPlayerID() const

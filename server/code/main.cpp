@@ -15,6 +15,8 @@
 #include "multiplayer/node.hpp"
 #include "multiplayer/playerdatacollector.hpp"
 #include "multiplayer/playerdataupdater.hpp"
+#include "multiplayer/physicsobjectdatacollector.hpp"
+#include "multiplayer/physicsobjectdataupdater.hpp"
 #include "multiplayer/multiplayer.hpp"
 
 #include "game/game.hpp"

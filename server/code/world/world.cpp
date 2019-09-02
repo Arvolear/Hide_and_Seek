@@ -17,7 +17,7 @@ void World::collisionEvent(btRigidBody* body0, btRigidBody* body1)
 {
     collidedBodies.insert({body0, body1});
 
-    if (touchingBodies.find({body0, body1}) == touchingBodies.end())
+    if (touchingBodies.find({body0, body1}) == touchingBodies.end() && touchingBodies.find({body1, body0}) == touchingBodies.end())
     {
         touchingBodies.insert({body0, body1});
     }
@@ -30,6 +30,11 @@ void World::separationEvent(btRigidBody* body0, btRigidBody* body1)
     if (touchingBodies.find({body0, body1}) != touchingBodies.end())
     {
         touchingBodies.erase({body0, body1});
+    }
+    
+    if (touchingBodies.find({body1, body0}) != touchingBodies.end())
+    {
+        touchingBodies.erase({body1, body0});
     }
 }
 
@@ -46,7 +51,7 @@ void World::pollEvents()
 
 bool World::isTouching(btRigidBody* body0, btRigidBody* body1) const
 {
-    if (touchingBodies.find({body0, body1}) == touchingBodies.end()) 
+    if (touchingBodies.find({body0, body1}) == touchingBodies.end() && touchingBodies.find({body1, body0}) == touchingBodies.end()) 
     {
         return false;
     }
@@ -56,7 +61,7 @@ bool World::isTouching(btRigidBody* body0, btRigidBody* body1) const
 
 bool World::isCollided(btRigidBody* body0, btRigidBody* body1) const
 {
-    if (collidedBodies.find({body0, body1}) == collidedBodies.end()) 
+    if (collidedBodies.find({body0, body1}) == collidedBodies.end() && collidedBodies.find({body1, body0}) == collidedBodies.end()) 
     {
         return false;
     }
@@ -66,7 +71,7 @@ bool World::isCollided(btRigidBody* body0, btRigidBody* body1) const
 
 bool World::isSeparated(btRigidBody* body0, btRigidBody* body1) const
 {
-    if (separatedBodies.find({body0, body1}) == separatedBodies.end()) 
+    if (separatedBodies.find({body0, body1}) == separatedBodies.end() && separatedBodies.find({body1, body0}) == separatedBodies.end()) 
     {
         return false;
     }

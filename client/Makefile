@@ -2,7 +2,7 @@
 
 FLAGS = -std=c++11 -Wall -O3
 
-LIBS = -lGLEW -lGL -lSOIL -lassimp -lglfw3 -lX11 -lpthread -ldl -ltinyxml2
+LIBS = -lGLEW -lGL -lSOIL -lassimp -lglfw3 -lX11 -lpthread -ldl -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
 
 RELEASE = -Wl,-rpath,./lib
 
@@ -11,17 +11,17 @@ OUTPUTDIR = ./build
 
 MAIN = main.o 
 GLOBAL = gaussianblur.o
-DEBUG = debugsphere.o
+DEBUG = debugsphere.o debugdrawer.o
 SHADER = shader.o 
 FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o gbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o
+MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
-WORLD = raytracer.o
-PLAYER = camera.o player.o
-GAME_OBJECT = gameobject.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
+WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
+PLAYER = camera.o player.o soldier.o
+GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
@@ -51,6 +51,9 @@ $(OUTPUTDIR)/gaussianblur.o: $(INPUTDIR)/global/gaussianblur.cpp $(INPUTDIR)/glo
 
 $(OUTPUTDIR)/debugsphere.o: $(INPUTDIR)/debug/debugsphere.cpp $(INPUTDIR)/debug/debugsphere.hpp
 	g++ -c $(INPUTDIR)/debug/debugsphere.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/debugdrawer.o: $(INPUTDIR)/debug/debugdrawer.cpp $(INPUTDIR)/debug/debugdrawer.hpp
+	g++ -c $(INPUTDIR)/debug/debugdrawer.cpp -o $@ $(FLAGS)
 
 ### SHADER ###
 
@@ -109,6 +112,12 @@ $(OUTPUTDIR)/playerdatacollector.o: $(INPUTDIR)/multiplayer/playerdatacollector.
 $(OUTPUTDIR)/playerdataupdater.o: $(INPUTDIR)/multiplayer/playerdataupdater.cpp $(INPUTDIR)/multiplayer/playerdataupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/playerdataupdater.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/gameobjectdatacollector.o: $(INPUTDIR)/multiplayer/gameobjectdatacollector.cpp $(INPUTDIR)/multiplayer/gameobjectdatacollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/gameobjectdatacollector.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/gameobjectdataupdater.o: $(INPUTDIR)/multiplayer/gameobjectdataupdater.cpp $(INPUTDIR)/multiplayer/gameobjectdataupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/gameobjectdataupdater.cpp -o $@ $(FLAGS)
+
 ### LEVEL ###
 
 $(OUTPUTDIR)/level.o: $(INPUTDIR)/level/level.cpp $(INPUTDIR)/level/level.hpp
@@ -125,6 +134,15 @@ $(OUTPUTDIR)/levelloader.o: $(INPUTDIR)/level/levelloader.cpp $(INPUTDIR)/level/
 
 ### WORLD ###
 
+$(OUTPUTDIR)/world.o: $(INPUTDIR)/world/world.cpp $(INPUTDIR)/world/world.hpp
+	g++ -c $(INPUTDIR)/world/world.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/bulletevents.o: $(INPUTDIR)/world/bulletevents.cpp $(INPUTDIR)/world/bulletevents.hpp
+	g++ -c $(INPUTDIR)/world/bulletevents.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/constrainthandler.o: $(INPUTDIR)/world/constrainthandler.cpp $(INPUTDIR)/world/constrainthandler.hpp
+	g++ -c $(INPUTDIR)/world/constrainthandler.cpp -o $@ $(FLAGS)
+
 $(OUTPUTDIR)/raytracer.o: $(INPUTDIR)/world/raytracer.cpp $(INPUTDIR)/world/raytracer.hpp
 	g++ -c $(INPUTDIR)/world/raytracer.cpp -o $@ $(FLAGS)
 
@@ -136,10 +154,25 @@ $(OUTPUTDIR)/camera.o: $(INPUTDIR)/player/camera.cpp $(INPUTDIR)/player/camera.h
 $(OUTPUTDIR)/player.o: $(INPUTDIR)/player/player.cpp $(INPUTDIR)/player/player.hpp
 	g++ -c $(INPUTDIR)/player/player.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/soldier.o: $(INPUTDIR)/player/soldier.cpp $(INPUTDIR)/player/soldier.hpp
+	g++ -c $(INPUTDIR)/player/soldier.cpp -o $@ $(FLAGS)
+
 ### GAME_OBJECT ###
+
+$(OUTPUTDIR)/rifle.o: $(INPUTDIR)/game_object/rifle.cpp $(INPUTDIR)/game_object/rifle.hpp
+	g++ -c $(INPUTDIR)/game_object/rifle.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/weapon.o: $(INPUTDIR)/game_object/weapon.cpp $(INPUTDIR)/game_object/weapon.hpp
+	g++ -c $(INPUTDIR)/game_object/weapon.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/gameobject.o: $(INPUTDIR)/game_object/gameobject.cpp $(INPUTDIR)/game_object/gameobject.hpp
 	g++ -c $(INPUTDIR)/game_object/gameobject.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/physicsobject.o: $(INPUTDIR)/game_object/physicsobject.cpp $(INPUTDIR)/game_object/physicsobject.hpp
+	g++ -c $(INPUTDIR)/game_object/physicsobject.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/openglmotionstate.o: $(INPUTDIR)/game_object/openglmotionstate.cpp $(INPUTDIR)/game_object/openglmotionstate.hpp
+	g++ -c $(INPUTDIR)/game_object/openglmotionstate.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/modelloader.o: $(INPUTDIR)/game_object/modelloader.cpp $(INPUTDIR)/game_object/modelloader.hpp
 	g++ -c $(INPUTDIR)/game_object/modelloader.cpp -o $@ $(FLAGS)

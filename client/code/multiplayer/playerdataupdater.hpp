@@ -15,7 +15,6 @@ class PlayerDataUpdater
         int playerID;
 
         mat4 model;
-        vec3 headCenter;
 
     public:
         PlayerDataUpdater();

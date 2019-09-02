@@ -1,3 +1,5 @@
+//server
+
 #pragma once
 
 #include <iostream>
@@ -14,6 +16,8 @@ class Multiplayer
         Node* node;
         PlayerDataCollector* playerDataCollector;
         PlayerDataUpdater* playerDataUpdater;
+        PhysicsObjectDataCollector* physicsObjectDataCollector;
+        PhysicsObjectDataUpdater* physicsObjectDataUpdater;
 
         Level* level;
 

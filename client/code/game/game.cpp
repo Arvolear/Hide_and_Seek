@@ -18,7 +18,14 @@
 #include "../player/camera.hpp"
 
 #include "../debug/debugsphere.hpp"
+#include "../debug/debugdrawer.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
+#include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
 #include "../game_object/bone.hpp"
@@ -26,7 +33,10 @@
 #include "../game_object/viewfrustum.hpp"
 #include "../game_object/boundsphere.hpp"
 #include "../game_object/modelloader.hpp"
+#include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/weapon.hpp"
+#include "../game_object/rifle.hpp"
 
 #include "../player/player.hpp"
 
@@ -38,6 +48,8 @@
 #include "../multiplayer/client.hpp"
 #include "../multiplayer/playerdatacollector.hpp"
 #include "../multiplayer/playerdataupdater.hpp"
+#include "../multiplayer/gameobjectdatacollector.hpp"
+#include "../multiplayer/gameobjectdataupdater.hpp"
 #include "../multiplayer/multiplayer.hpp"
 
 #include "game.hpp"
@@ -49,7 +61,9 @@ Game::Game(Window* window, string levelName)
 
     window->hideCursor();
 
-    level = new Level(window);
+    physicsWorld = new World();
+
+    level = new Level(window, physicsWorld);
     level->loadLevel(levelName);
 
     gameShader = new Shader();
@@ -60,7 +74,7 @@ Game::Game(Window* window, string levelName)
     gaussianBlur = new GaussianBlur < ColorBuffer >();
     gaussianBlur->genBuffer(window->getRenderSize(), 4);
 
-    multiplayer = new Multiplayer(window, level);
+    multiplayer = new Multiplayer(window, level, physicsWorld);
 }
 
 void Game::checkEvents()
@@ -83,15 +97,36 @@ void Game::checkEvents()
         }
     }
     
+    /* Xray (physics) */
+    if (window->isKeyPressedOnce(GLFW_KEY_X))
+    {
+        if (physicsWorld->getDebugDrawer()->getDebugMode() == 0)
+        {
+            physicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+        }
+        else if (physicsWorld->getDebugDrawer()->getDebugMode() == btIDebugDraw::DBG_DrawWireframe)
+        {
+            physicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawAabb);
+        }
+        else
+        {
+            physicsWorld->getDebugDrawer()->setDebugMode(0);
+        }
+    }
+    
     /* draw debug spheres */
     if (window->isKeyPressedOnce(GLFW_KEY_C))
     {
         level->toggleDebug();
     }
+    
+    /* PHYSICS EVENTS */
 }
 
 void Game::init()
 {
+    physicsWorld->createDebugDrawer();
+
     gameShader->loadShaders(path("code/shader/gameShader.vert"), path("code/shader/gameShader.frag"));
     gameBuffer->genBuffer(window->getRenderSize());
 
@@ -111,7 +146,13 @@ void Game::gameLoop()
     while (window->isOpen())
     {
         window->pollEvents();
+        physicsWorld->pollEvents();
         checkEvents();        
+
+        if (window->getTime() > 1)
+        {
+            physicsWorld->updateSimulation(window->getTime());
+        }
 
         level->updatePlayers(mode);
         level->render();
@@ -151,6 +192,7 @@ void Game::gameLoop()
 Game::~Game()
 {
     delete level;
+    delete physicsWorld;
 
     delete gameShader;
     delete gameBuffer;

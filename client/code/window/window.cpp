@@ -10,8 +10,8 @@ Window::Window() : GLFWEvents()
 {
     cursor = true;
 
-    width = 1920;
-    height = 1080;
+    width = 1366;
+    height = 768;
     resized = false;
 
     renderWidth = 1600;

@@ -37,6 +37,8 @@ class PhysicsObject
         static set < string > globalNames;
         string name;
 
+        int senderID;
+
         btDynamicsWorld* world;
 
         bool collidable;
@@ -58,18 +60,21 @@ class PhysicsObject
         PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation);
 
         void setName(string name);
+        void setSenderID(int senderID);
         void setShape(btCollisionShape* shape);
         void setShape(CompoundShape* shape);
         void setMass(float mass, bool add = true);
         void setPosition(btVector3 position, bool add = true);
         void setRotation(btQuaternion rotation, bool add = true);
         void setTransform(btTransform* transform);
+        void setTransform(btScalar* transform);
         void clearTransform();
         void setCollidable(bool collidable);
 
         void setUserPointer(void* userPointer);
 
         string getName() const;
+        int getSenderID() const;
         float getMass() const;
         btCollisionShape* getShape() const;
         CompoundShape* getCompoundShape() const;

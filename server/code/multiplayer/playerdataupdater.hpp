@@ -14,10 +14,8 @@ class PlayerDataUpdater
     private:
         int playerID;
 
-        btVector3 Forward;
-        btVector3 Up;
-        string move;
-
+        btScalar* model;
+        
     public:
         PlayerDataUpdater();
 

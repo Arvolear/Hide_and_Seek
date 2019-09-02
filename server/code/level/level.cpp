@@ -50,6 +50,11 @@ PhysicsObject* Level::getPhysicsObject(string name) const
     return nullptr;
 }
 
+map < string, PhysicsObject* > Level::getPhysicsObjects() const
+{
+    return physicsObjects;
+}
+
 void Level::removePhysicsObject(PhysicsObject* physicsObject)
 {
     if (physicsObjects.find(physicsObject->getName()) != physicsObjects.end())

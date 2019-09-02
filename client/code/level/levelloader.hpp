@@ -18,6 +18,7 @@ class LevelLoader
 {
     private:
         Window* window;
+        World* physicsWorld;
 
         string levelName;
 
@@ -41,17 +42,22 @@ class LevelLoader
 
         void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);
 
+        void loadRifle(XMLElement* rifleElem, Rifle*& rifle);
+
         /* main */
         void loadGameObjects();
+        void loadRifles();
+        void loadPistols();
         void loadDirLight();
         void loadSkyBox();
 
         void loadProjection();
 
         void loadPlayers();
+        void loadSoldiers();
 
     public:
-        LevelLoader(Window* window);
+        LevelLoader(Window* window, World* physicsWorld);
 
         void loadLevel(string name);
 

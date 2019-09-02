@@ -10,8 +10,8 @@
 PlayerDataUpdater::PlayerDataUpdater()
 {
     playerID = 0;
-    Up = Forward = btVector3(0, 0, 0);
-    move = "";
+    model = new btScalar[16];
+    memset(model, 0, sizeof(btScalar) * 16);
 }
 
 void PlayerDataUpdater::collect(string info)
@@ -40,54 +40,22 @@ void PlayerDataUpdater::collect(string info)
         playerIDElem->QueryIntText(&playerID);
     }
 
-    /* up */
-    XMLElement* upElem = root->FirstChildElement("up");
+    /* model */
+    XMLElement* modelElem = root->FirstChildElement("mdl");
 
-    if (upElem)
+    for (int i = 0; i < 16; i++)
     {
-        float x, y, z;
+        string str;
+        str = char('a' + i);
 
-        upElem->QueryFloatAttribute("x", &x);
-        upElem->QueryFloatAttribute("y", &y);
-        upElem->QueryFloatAttribute("z", &z);
-
-        Up = btVector3(x, y, z);
-    }
-
-    /* forward */
-    XMLElement* forwardElem = root->FirstChildElement("fwd");
-
-    if (forwardElem)
-    {
-        float x, y, z;
-
-        forwardElem->QueryFloatAttribute("x", &x);
-        forwardElem->QueryFloatAttribute("y", &y);
-        forwardElem->QueryFloatAttribute("z", &z);
-
-        Forward = btVector3(x, y, z);
-    }
-    
-    /* move */
-    XMLElement* moveElem = root->FirstChildElement("mv");
-
-    if (moveElem && moveElem->GetText())
-    {
-        move = moveElem->GetText();
-    }
-    else
-    {
-        move = "";
+        modelElem->QueryFloatAttribute(str.data(), &model[i]);
     }
 }
 
 void PlayerDataUpdater::updateData(Player* player)
 {
-    player->setUp(Up);
-    player->setForward(Forward);
-    player->setLeft(Up.cross(Forward));
-
-    player->setMovement(move);
+    player->getPhysicsObject()->setSenderID(playerID);
+    player->getPhysicsObject()->setTransform(model);
 }
 
 int PlayerDataUpdater::getPlayerID() const
@@ -98,8 +66,10 @@ int PlayerDataUpdater::getPlayerID() const
 void PlayerDataUpdater::clear()
 {
     playerID = 0;
-    Up = Forward = btVector3(0, 0, 0);
-    move = "";
+    memset(model, 0, sizeof(btScalar) * 16);
 }
 
-PlayerDataUpdater::~PlayerDataUpdater() {}
+PlayerDataUpdater::~PlayerDataUpdater() 
+{
+    delete model;
+}

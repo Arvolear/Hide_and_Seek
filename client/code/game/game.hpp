@@ -18,6 +18,7 @@ class Game
         Window* window;
 
         Level* level;
+        World* physicsWorld;
 
         Shader* gameShader;
         ColorBuffer* gameBuffer;

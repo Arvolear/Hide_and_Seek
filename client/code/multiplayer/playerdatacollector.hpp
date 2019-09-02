@@ -14,11 +14,8 @@ class PlayerDataCollector
     private:
         int playerID;
 
-        vec3 Up;
-        vec3 Forward;
-
-        string move;
-
+        mat4 model;
+        
     public:
         PlayerDataCollector();
 

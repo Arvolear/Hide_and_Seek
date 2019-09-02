@@ -24,7 +24,6 @@ void PlayerDataCollector::collect(Player* player)
     if (player->getPhysicsObject())
     {
         model = player->getPhysicsObject()->getTransform();
-        headCenter = player->getHeadCenter();
     }
 }
 
@@ -55,14 +54,6 @@ string PlayerDataCollector::getData() const
     }
 
     root->InsertEndChild(modelElem);
-
-    /* head center */
-    XMLElement* headCenterElem = playerDataCollectorDoc.NewElement("hd");
-    headCenterElem->SetAttribute("x", headCenter.x());
-    headCenterElem->SetAttribute("y", headCenter.y());
-    headCenterElem->SetAttribute("z", headCenter.z());
-    
-    root->InsertEndChild(headCenterElem);
 
     /* printer */
     XMLPrinter playerDataCollectorPrinter;

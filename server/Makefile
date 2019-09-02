@@ -11,7 +11,7 @@ OUTPUTDIR = ./build
 
 MAIN = main.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o
+MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o
 LEVEL = level.o levelloader.o
 WORLD = world.o bulletevents.o raytracer.o
 PLAYER = player.o
@@ -54,6 +54,12 @@ $(OUTPUTDIR)/playerdatacollector.o: $(INPUTDIR)/multiplayer/playerdatacollector.
 
 $(OUTPUTDIR)/playerdataupdater.o: $(INPUTDIR)/multiplayer/playerdataupdater.cpp $(INPUTDIR)/multiplayer/playerdataupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/playerdataupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/physicsobjectdatacollector.o: $(INPUTDIR)/multiplayer/physicsobjectdatacollector.cpp $(INPUTDIR)/multiplayer/physicsobjectdatacollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/physicsobjectdatacollector.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/physicsobjectdataupdater.o: $(INPUTDIR)/multiplayer/physicsobjectdataupdater.cpp $(INPUTDIR)/multiplayer/physicsobjectdataupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/physicsobjectdataupdater.cpp -o $@ $(FLAGS)
 
 ### LEVEL ###
 
