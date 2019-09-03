@@ -147,7 +147,7 @@ void Multiplayer::update()
 {
     while (window->isOpen())
     {
-        client->recvMSG(256);
+        client->recvMSG(300);
 
         string msg = client->getMessage();
 

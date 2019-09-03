@@ -39,6 +39,7 @@ PlayerDataCollector::PlayerDataCollector()
     playerID = 0;
 
     model = mat4(1.0);
+    moveDirection = vec3(0);
 }
 
 void PlayerDataCollector::setPlayerID(int playerID)
@@ -51,6 +52,7 @@ void PlayerDataCollector::collect(Player* player)
     if (player->getGameObject())
     {
         model = player->getGameObject()->getPhysicsObjectTransform();
+        moveDirection = player->getMoveDirection();
     }
 }
 
@@ -84,6 +86,14 @@ string PlayerDataCollector::getData() const
     }
 
     root->InsertEndChild(modelElem);
+
+    /* moveDirection */
+    XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+    moveDirectionElem->SetAttribute("x", moveDirection.x);
+    moveDirectionElem->SetAttribute("y", moveDirection.y);
+    moveDirectionElem->SetAttribute("z", moveDirection.z);
+
+    root->InsertEndChild(moveDirectionElem);
 
     /* printer */
     XMLPrinter playerDataCollectorPrinter;

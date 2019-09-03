@@ -15,6 +15,7 @@ class PlayerDataCollector
         int playerID;
         
         btScalar* model;
+        btVector3 moveDirection;
 
     public:
         PlayerDataCollector();

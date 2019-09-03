@@ -31,7 +31,28 @@ Multiplayer::Multiplayer(Level* level)
 void Multiplayer::broadcast()
 {
     while (true)
-    {
+    { 
+
+        /* construct all physics object class and send 
+         * whole map data 
+         * */
+
+        if (node->isNewClients())
+        {
+            cout << 1 << endl;
+            vector < int > new_sockets = node->getNewClientSockets();
+
+            for (size_t i = 0; i < new_sockets.size(); i++)
+            {
+                if (new_sockets[i] > 0)
+                {
+                    string message = "BEG\n<join>" + to_string(i) + "</join>\nEND";
+                    /* send here */
+                    node->sendMSG(new_sockets[i], message);
+                }
+            }
+        }
+
         /* player data */
         vector < Player* > players = level->getPlayers();
         /* physicsobject data */
@@ -96,7 +117,7 @@ void Multiplayer::update()
 {
     while (true)
     {
-        node->checkActivity(256);
+        node->checkActivity(300);
 
         vector < string > messages = node->getMessages();
 

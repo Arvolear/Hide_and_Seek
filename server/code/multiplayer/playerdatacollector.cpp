@@ -24,6 +24,7 @@ void PlayerDataCollector::collect(Player* player)
     if (player->getPhysicsObject())
     {
         model = player->getPhysicsObject()->getTransform();
+        moveDirection = player->getMoveDirection();
     }
 }
 
@@ -54,6 +55,14 @@ string PlayerDataCollector::getData() const
     }
 
     root->InsertEndChild(modelElem);
+    
+    /* moveDirection */
+    XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+    moveDirectionElem->SetAttribute("x", moveDirection.x());
+    moveDirectionElem->SetAttribute("y", moveDirection.y());
+    moveDirectionElem->SetAttribute("z", moveDirection.z());
+
+    root->InsertEndChild(moveDirectionElem);
 
     /* printer */
     XMLPrinter playerDataCollectorPrinter;

@@ -4,6 +4,7 @@ Node::Node(int max_clients, int max_queue, int port)
 {
     this->max_clients = max_clients;
     client_sockets.resize(max_clients);
+    new_client_sockets.resize(max_clients);
     messages.resize(max_clients);
 
     ready = true;
@@ -62,11 +63,9 @@ void Node::checkNewConnections()
         
         if (newSock && emptyInd >= 0)
         {
-            string message = "BEG\n<join>" + to_string(emptyInd) + "</join>\nEND";
-
             client_sockets[emptyInd] = client_socket;
-            sendMSG(client_socket, message);
-
+            new_client_sockets[emptyInd] = client_socket;
+            
             cout << "Join playerID: " << emptyInd << endl;
         }
     }
@@ -121,17 +120,20 @@ bool Node::constructFineMessage(char* buffer, int size, int index)
 
 void Node::checkOldConnections(int size)
 {
-    unique_lock < mutex > lck(mtx);
-    ready = false;
-
     for (int i = 0; i < max_clients; i++)
     {
         int inputsd = client_sockets[i];
 
         if (FD_ISSET(inputsd, &readfds))
         {
+            /* socket is active = received msg = not new */
+            new_client_sockets[i] = 0;
+
             char* buffer = new char[size + 1];
             int bytes_read = 0;
+    
+            unique_lock < mutex > lck(mtx);
+            ready = false;
 
             messages[i].clear();
 
@@ -163,6 +165,9 @@ void Node::checkOldConnections(int size)
                 }
             }
 
+            ready = true;
+            cv.notify_all();
+
             delete[] buffer;
 
             /* client has disconnected */
@@ -179,9 +184,6 @@ void Node::checkOldConnections(int size)
             }
         }
     }
-
-    ready = true;
-    cv.notify_all();
 }
 
 void Node::checkActivity(int size, float timeoutSec)
@@ -241,6 +243,24 @@ void Node::sendMSG(int to, string msg)
 vector < int > Node::getClientSockets() const
 {
     return client_sockets;
+}
+
+vector < int > Node::getNewClientSockets() const
+{
+    return new_client_sockets;
+}
+
+bool Node::isNewClients() const
+{
+    for (size_t i = 0; i < new_client_sockets.size(); i++)
+    {
+        if (new_client_sockets[i] > 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int Node::getClientSocket(size_t index) const

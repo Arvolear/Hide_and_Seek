@@ -15,6 +15,7 @@ class PlayerDataUpdater
         int playerID;
 
         btScalar* model;
+        btVector3 moveDirection;
         
     public:
         PlayerDataUpdater();

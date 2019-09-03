@@ -1,5 +1,8 @@
 #pragma once
 
+#include <mutex>
+#include <condition_variable>
+
 #define GLEW_STATIC
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -28,6 +31,11 @@ class Camera
         vec3 Forward;
         vec3 Up;
         vec3 Left;
+
+        /* multiplayer */
+        bool ready;
+        mutable mutex mtx;
+        mutable condition_variable cv;
         
         virtual void lookAction();
         virtual void moveAction() = 0;
@@ -48,6 +56,7 @@ class Camera
         vec3 getForward() const;
         vec3 getLeft() const;
         vec3 getUp() const;
+        vec3 getMoveDirection() const;
         
         float getSpeed() const;
         vec2 getSensitivity() const;

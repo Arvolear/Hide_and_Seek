@@ -33,14 +33,9 @@ class Player : public Camera
         
         void moveAction() override;
 
-        void calcCameraPosition();
-
         void moveGround();
         void moveAir();
         void speedHackControl();
-
-        virtual void updateAnimation();
-        void calcModelPosition();
 
         void movePhysics();
 
@@ -57,6 +52,10 @@ class Player : public Camera
 
         void removeGameObject();
         bool isActive() const;
+        
+        void updateCamera();
+        void updateModel(vec3 newForward);
+        virtual void updateAnimation(vec3 moveDirection);
 
         virtual void update(bool events = true) override;
 

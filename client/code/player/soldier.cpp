@@ -145,17 +145,37 @@ void Soldier::pick()
 
 void Soldier::update(bool events)
 {
+    unique_lock < mutex > lk(mtx);
+    ready = false;
+
+    moveDirection = vec3(0, 0, 0);
+
     if (events && active)
     {
         lookAction();
         moveAction();
         weaponAction();
     }
+    
+    if (moveDirection != vec3(0))
+    {
+        moveDirection = normalize(moveDirection);
+    }
+    
+    ready = true;
+    cv.notify_all();
 
     movePhysics();
 
     if (active)
     {
+        if (player && player->getPhysicsObject())
+        {
+            updateCamera();
+            updateModel(moveDirection);
+            updateAnimation(moveDirection);
+        }
+        
         updateWeapon();
     }
 }

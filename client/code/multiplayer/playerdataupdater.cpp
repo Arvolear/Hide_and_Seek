@@ -39,6 +39,8 @@ PlayerDataUpdater::PlayerDataUpdater()
     playerID = 0;
 
     model = mat4(1.0);
+
+    moveDirection = vec3(0.0);
 }
 
 void PlayerDataUpdater::collect(string info)
@@ -81,11 +83,24 @@ void PlayerDataUpdater::collect(string info)
             }
         }
     }
+    
+    /* moveDirection */
+    XMLElement* moveDirectionElem = root->FirstChildElement("dir");
+    
+    if (moveDirectionElem)
+    {
+        moveDirectionElem->QueryFloatAttribute("x", &moveDirection.x);
+        moveDirectionElem->QueryFloatAttribute("y", &moveDirection.y);
+        moveDirectionElem->QueryFloatAttribute("z", &moveDirection.z);
+    }
 }
 
 void PlayerDataUpdater::updateData(Player* player)
 {
     player->getGameObject()->setPhysicsObjectTransform(model);
+
+    player->updateModel(moveDirection);
+    player->updateAnimation(moveDirection);
 }
 
 int PlayerDataUpdater::getPlayerID() const

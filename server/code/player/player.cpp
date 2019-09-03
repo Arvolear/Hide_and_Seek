@@ -8,6 +8,7 @@ Player::Player(float speed)
     this->speed = speed;
 
     physicsObject = nullptr;
+    moveDirection = btVector3(0, 0, 0);
 }
         
 Player::Player(PhysicsObject* physicsObject, float speed)
@@ -26,12 +27,22 @@ void Player::removePhysicsObject()
 {
     physicsObject = nullptr;
 }
+        
+void Player::setMoveDirection(btVector3 moveDirection)
+{
+    this->moveDirection = moveDirection;
+}
 
 void Player::update() {}
 
 PhysicsObject* Player::getPhysicsObject() const
 {
     return physicsObject;
+}
+        
+btVector3 Player::getMoveDirection() const
+{
+    return moveDirection;
 }
 
 float Player::getSpeed() const

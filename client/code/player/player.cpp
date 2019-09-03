@@ -181,34 +181,6 @@ void Player::moveAction()
     }
 }
 
-void Player::calcCameraPosition()
-{
-    btTransform globalTransform;
-    btTransform headTransform;
-    btVector3 globalCenter;
-    btVector3 headCenter;
-    btScalar headRadius;
-
-    globalTransform = player->getPhysicsObject()->getRigidBody()->getCenterOfMassTransform();
-    headTransform = player->getPhysicsObject()->getCompoundShape()->getChildTransform(0);
-    player->getPhysicsObject()->getCompoundShape()->getChildShape(0)->getBoundingSphere(headCenter, headRadius);
-
-    globalCenter = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
-    headCenter = globalTransform * headTransform * headCenter;
-    
-    /* camera Position */
-    setPosition(headCenter.x(), headCenter.y(), headCenter.z());
-
-    /* new Up */
-    Up = normalize(toVec3(headCenter) - toVec3(globalCenter));
-
-    Pos += normalize(cross(Left, Up)) * cameraOffset.x;
-    Pos += Up * cameraOffset.y;
-    Pos += Left * cameraOffset.z;
-
-    player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
-}
-
 void Player::moveGround()
 {
     float speedFactor = 34;
@@ -271,70 +243,8 @@ void Player::speedHackControl()
     }
 }
 
-void Player::updateAnimation()
-{
-    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
-    {
-        player->playAnimation("idle");
-    }
-    else if (player->getActiveAnimation() && player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0))
-    {
-        player->playAnimation("run");
-    }
-}
-
-void Player::calcModelPosition()
-{
-    float angle = 0.0;
-    
-    if (moveDirection != vec3(0))
-    {
-        modelForward = normalize(modelForward);
-        moveDirection = normalize(moveDirection);
-
-        float cosRotAngle = dot(modelForward, moveDirection);
-
-        if (cosRotAngle < -1)
-        {
-            cosRotAngle = -1;
-        }
-        else if (cosRotAngle > 1)
-        {
-            cosRotAngle = 1;
-        }
-
-        angle = toDegs(acos(cosRotAngle)); 
-
-        vec3 diff = moveDirection - modelForward;
-
-        if (dot(cross(Up, modelForward), diff) < 0)
-        {
-            angle *= -1;
-        }
-    
-        modelForward = moveDirection;
-    }
-
-    //cout << angle << endl;
-
-    player->setLocalRotation(Up, angle);
-
-    vec3 localPos = vec3(0);
-
-    localPos += modelForward * modelOffset.x;
-    localPos += Up * modelOffset.y;
-    localPos += Left * modelOffset.z;
-
-    player->setLocalPosition(localPos, false);
-}
-
 void Player::movePhysics()
 {
-    if (moveDirection != vec3(0))
-    {
-        moveDirection = normalize(moveDirection); // normalizing move direction for equal speeds
-    }
-
     /* if physics object is applied */
     if (player && player->getPhysicsObject() && rayTracer)
     {
@@ -359,22 +269,11 @@ void Player::movePhysics()
 
         /* speed hack control */
         speedHackControl();
-
-        /* calc camera position */
-        calcCameraPosition();
-
-        /* rotate model */
-        calcModelPosition();
-
-        /* update animation */
-        updateAnimation();
     }
     else
     {
         Pos += moveDirection * vec3(speed);
     }
-
-    moveDirection = vec3(0, 0, 0);
 }
 
 void Player::setActive(bool active)
@@ -423,15 +322,120 @@ bool Player::isActive() const
     return active;
 }
 
+void Player::updateCamera()
+{
+    btTransform globalTransform;
+    btTransform headTransform;
+    btVector3 globalCenter;
+    btVector3 headCenter;
+    btScalar headRadius;
+
+    globalTransform = player->getPhysicsObject()->getRigidBody()->getCenterOfMassTransform();
+    headTransform = player->getPhysicsObject()->getCompoundShape()->getChildTransform(0);
+    player->getPhysicsObject()->getCompoundShape()->getChildShape(0)->getBoundingSphere(headCenter, headRadius);
+
+    globalCenter = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
+    headCenter = globalTransform * headTransform * headCenter;
+    
+    /* camera Position */
+    setPosition(headCenter.x(), headCenter.y(), headCenter.z());
+
+    /* new Up */
+    Up = normalize(toVec3(headCenter) - toVec3(globalCenter));
+
+    Pos += normalize(cross(Left, Up)) * cameraOffset.x;
+    Pos += Up * cameraOffset.y;
+    Pos += Left * cameraOffset.z;
+
+    player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
+}
+
+void Player::updateModel(vec3 newForward)
+{
+    float angle = 0.0;
+    
+    if (newForward != vec3(0))
+    {
+        modelForward = normalize(modelForward);
+        newForward = normalize(newForward);
+
+        float cosRotAngle = dot(modelForward, newForward);
+
+        if (cosRotAngle < -1)
+        {
+            cosRotAngle = -1;
+        }
+        else if (cosRotAngle > 1)
+        {
+            cosRotAngle = 1;
+        }
+
+        angle = toDegs(acos(cosRotAngle)); 
+
+        vec3 diff = newForward - modelForward;
+
+        if (dot(cross(Up, modelForward), diff) < 0)
+        {
+            angle *= -1;
+        }
+    
+        modelForward = newForward;
+    }
+
+    //cout << angle << endl;
+
+    player->setLocalRotation(Up, angle);
+
+    vec3 localPos = vec3(0);
+
+    localPos += modelForward * modelOffset.x;
+    localPos += Up * modelOffset.y;
+    localPos += Left * modelOffset.z;
+
+    player->setLocalPosition(localPos, false);
+}
+
+void Player::updateAnimation(vec3 moveDirection)
+{
+    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
+    {
+        player->playAnimation("idle");
+    }
+    else if (player->getActiveAnimation() && player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0))
+    {
+        player->playAnimation("run");
+    }
+}
+
 void Player::update(bool events)
 {
+    unique_lock < mutex > lk(mtx);
+    ready = false;
+
+    moveDirection = vec3(0, 0, 0);
+
     if (events && active)
     {
         lookAction();
         moveAction();
     }
 
+    if (moveDirection != vec3(0))
+    {
+        moveDirection = normalize(moveDirection);
+    }
+    
+    ready = true;
+    cv.notify_all();
+
     movePhysics();
+    
+    if (active && player && player->getPhysicsObject())
+    {
+        updateCamera();
+        updateModel(moveDirection);
+        updateAnimation(moveDirection);
+    }
 }
 
 GameObject* Player::getGameObject() const

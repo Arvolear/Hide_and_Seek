@@ -12,12 +12,11 @@ PlayerDataUpdater::PlayerDataUpdater()
     playerID = 0;
     model = new btScalar[16];
     memset(model, 0, sizeof(btScalar) * 16);
+    moveDirection = btVector3(0, 0, 0);
 }
 
 void PlayerDataUpdater::collect(string info)
 {
-    //cout << info << endl << endl << endl;
-
     XMLDocument playerDataUpdaterDoc;
     
     playerDataUpdaterDoc.Parse(info.c_str());
@@ -50,12 +49,28 @@ void PlayerDataUpdater::collect(string info)
 
         modelElem->QueryFloatAttribute(str.data(), &model[i]);
     }
+    
+    /* moveDirection */
+    XMLElement* moveDirectionElem = root->FirstChildElement("dir");
+    
+    if (moveDirectionElem)
+    {
+        float x, y, z;
+
+        moveDirectionElem->QueryFloatAttribute("x", &x);
+        moveDirectionElem->QueryFloatAttribute("y", &y);
+        moveDirectionElem->QueryFloatAttribute("z", &z);
+
+        moveDirection = btVector3(x, y, z);
+    }
 }
 
 void PlayerDataUpdater::updateData(Player* player)
 {
     player->getPhysicsObject()->setSenderID(playerID);
     player->getPhysicsObject()->setTransform(model);
+
+    player->setMoveDirection(moveDirection);
 }
 
 int PlayerDataUpdater::getPlayerID() const

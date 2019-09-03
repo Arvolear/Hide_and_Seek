@@ -1,3 +1,5 @@
+//client
+
 #pragma once
 
 #include <stdexcept>
@@ -15,7 +17,8 @@ class PlayerDataCollector
         int playerID;
 
         mat4 model;
-        
+        vec3 moveDirection;
+
     public:
         PlayerDataCollector();
 

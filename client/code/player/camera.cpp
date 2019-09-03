@@ -28,6 +28,8 @@ Camera::Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed)
     this->speed = speed;
 
     prevCoords = window->getSize() / 2.0f;
+
+    ready = true;
 }
 
 void Camera::lookAction()
@@ -133,6 +135,18 @@ vec3 Camera::getLeft() const
 vec3 Camera::getUp() const
 {
     return Up;
+}
+
+vec3 Camera::getMoveDirection() const
+{
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
+    return moveDirection;
 }
 
 float Camera::getSpeed() const

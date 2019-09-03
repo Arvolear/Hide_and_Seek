@@ -19,6 +19,8 @@ class Player
         float speed;
 
         PhysicsObject* physicsObject;
+
+        btVector3 moveDirection;
         
     public:
         Player(float speed = 1);
@@ -26,10 +28,13 @@ class Player
 
         void setPhysicsObject(PhysicsObject* player);
         void removePhysicsObject();
+
+        void setMoveDirection(btVector3 moveDirection);
         
         virtual void update();
 
         PhysicsObject* getPhysicsObject() const;
+        btVector3 getMoveDirection() const;
         float getSpeed() const;
 
         virtual ~Player();

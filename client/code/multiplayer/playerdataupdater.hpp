@@ -15,6 +15,7 @@ class PlayerDataUpdater
         int playerID;
 
         mat4 model;
+        vec3 moveDirection;
 
     public:
         PlayerDataUpdater();

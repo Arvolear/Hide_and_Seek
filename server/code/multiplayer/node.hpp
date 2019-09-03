@@ -24,6 +24,7 @@ class Node
 
         int max_clients;
         vector < int > client_sockets;
+        vector < int > new_client_sockets;
 
         fd_set readfds;
 
@@ -45,6 +46,8 @@ class Node
         void sendMSG(int to, string msg);
 
         vector < int > getClientSockets() const;
+        vector < int > getNewClientSockets() const;
+        bool isNewClients() const;
         int getClientSocket(size_t index) const;
         vector < string > getMessages() const;
 
