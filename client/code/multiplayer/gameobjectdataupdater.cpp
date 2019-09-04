@@ -27,11 +27,7 @@
 
 #include "gameobjectdataupdater.hpp"
 
-GameObjectDataUpdater::GameObjectDataUpdater()
-{
-    name = "";
-    model = mat4(1.0);
-}
+GameObjectDataUpdater::GameObjectDataUpdater() {}
 
 void GameObjectDataUpdater::collect(string info)
 {
@@ -40,8 +36,8 @@ void GameObjectDataUpdater::collect(string info)
     gameObjectDataUpdaterDoc.Parse(info.data());
 
     /* root */
-    XMLNode* root = gameObjectDataUpdaterDoc.FirstChildElement("Obj");
-
+    XMLNode* root = gameObjectDataUpdaterDoc.FirstChildElement("Objs");
+    
     if (!root)
     {
         gameObjectDataUpdaterDoc.PrintError();
@@ -49,40 +45,75 @@ void GameObjectDataUpdater::collect(string info)
         throw runtime_error("ERROR::GameObjectDataUpdater::collect() failed to load XML");
     }
 
-    /* name */
-    XMLElement* nameElem = root->FirstChildElement("name");
-    
-    if (nameElem)
-    {
-        name = nameElem->GetText();
-    }
+    XMLElement* objElem = root->FirstChildElement("obj");
 
-    /* model */
-    XMLElement* modelElem = root->FirstChildElement("mdl");
-
-    if (modelElem)
+    while (objElem)
     {
-        for (int i = 0; i < 4; i++)
+        string name = "";
+        mat4 model = mat4(1.0);
+
+        /* name */
+        XMLElement* nameElem = objElem->FirstChildElement("name");
+
+        if (nameElem)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                string str;
-                str = char('a' + (i * 4 + j));
+            name = nameElem->GetText();
+        }
 
-                modelElem->QueryFloatAttribute(str.data(), &model[i][j]);
+        /* model */
+        XMLElement* modelElem = objElem->FirstChildElement("mdl");
+
+        if (modelElem)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    string str;
+                    str = char('a' + (i * 4 + j));
+
+                    modelElem->QueryFloatAttribute(str.data(), &model[i][j]);
+                }
             }
+        }
+
+        names.push_back(name);
+        models.push_back(model);
+        
+        objElem = objElem->NextSiblingElement();
+    }
+}
+
+void GameObjectDataUpdater::updateData(GameObject* gameObject, bool interpolation)
+{
+    gameObject->setPhysicsObjectTransform(models[0], interpolation);
+}
+
+void GameObjectDataUpdater::updateData(map < string, GameObject* > gameObjects, bool interpolation)
+{
+    for (size_t i = 0; i < names.size(); i++)
+    {
+        if (gameObjects.find(names[i]) != gameObjects.end())
+        {
+            gameObjects.find(names[i])->second->setPhysicsObjectTransform(models[i], interpolation); 
         }
     }
 }
 
-void GameObjectDataUpdater::updateData(GameObject* gameObject)
+string GameObjectDataUpdater::getName(int index) const
 {
-    gameObject->setPhysicsObjectTransform(model);
+    return names[index];
 }
 
-string GameObjectDataUpdater::getName() const
+vector < string > GameObjectDataUpdater::getNames() const
 {
-    return name;
+    return names;
+}
+
+void GameObjectDataUpdater::clear()
+{
+    names.clear();
+    models.clear();
 }
 
 GameObjectDataUpdater::~GameObjectDataUpdater() {}

@@ -79,7 +79,7 @@ string GameObjectDataCollector::getData() const
             string str;
             str = char('a' + (i * 4 + j));
 
-            modelElem->SetAttribute(str.data(), model[i][j]);
+            modelElem->SetAttribute(str.data(), cutFloat(model[i][j], 4));
         }
     }
 

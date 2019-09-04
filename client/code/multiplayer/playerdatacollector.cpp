@@ -81,7 +81,7 @@ string PlayerDataCollector::getData() const
             string str;
             str = char('a' + (i * 4 + j));
 
-            modelElem->SetAttribute(str.data(), model[i][j]);
+            modelElem->SetAttribute(str.data(), cutFloat(model[i][j], 4));
         }
     }
 
@@ -89,9 +89,9 @@ string PlayerDataCollector::getData() const
 
     /* moveDirection */
     XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-    moveDirectionElem->SetAttribute("x", moveDirection.x);
-    moveDirectionElem->SetAttribute("y", moveDirection.y);
-    moveDirectionElem->SetAttribute("z", moveDirection.z);
+    moveDirectionElem->SetAttribute("x", cutFloat(moveDirection.x, 4));
+    moveDirectionElem->SetAttribute("y", cutFloat(moveDirection.y, 4));
+    moveDirectionElem->SetAttribute("z", cutFloat(moveDirection.z, 4));
 
     root->InsertEndChild(moveDirectionElem);
 

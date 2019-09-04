@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <map>
 #include <string>
 
 #include <tinyxml2/tinyxml2.h>
@@ -14,15 +15,16 @@ using namespace tinyxml2;
 class PhysicsObjectDataCollector
 {
     private:
-        string name;
-        btScalar* model;        
+        vector < string > names;
+        vector < btScalar* > models;        
 
     public:
         PhysicsObjectDataCollector();
 
         void collect(PhysicsObject* physicsObject);
+        void collect(map < string, PhysicsObject* > physicsObjects);
 
-        string getData() const;
+        string getData(bool raw = false) const;
 
         void clear(); 
 

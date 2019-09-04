@@ -97,7 +97,7 @@ void PlayerDataUpdater::collect(string info)
 
 void PlayerDataUpdater::updateData(Player* player)
 {
-    player->getGameObject()->setPhysicsObjectTransform(model);
+    player->getGameObject()->setPhysicsObjectTransform(model, true);
 
     player->updateModel(moveDirection);
     player->updateAnimation(moveDirection);

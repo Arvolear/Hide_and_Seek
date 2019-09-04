@@ -5,6 +5,8 @@
 #include <set>
 #include <algorithm>
 #include <memory>
+#include <mutex>
+#include <condition_variable>
 
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/btBulletDynamicsCommon.h>
@@ -12,6 +14,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
 
 using namespace std;
 using namespace glm;
@@ -41,6 +44,16 @@ class GameObject
         DebugSphere* debugSphere;
 
         mat4 localTransform;
+
+        float interpolationCoeff;
+        bool interpolation;
+        mat4 nextTransform;
+        mat4 prevTransform;
+
+        /* multiplayer */
+        bool ready;
+        mutex mtx;
+        condition_variable cv;
         
         void removePhysicsObject();
         void removeGraphicsObject();
@@ -62,7 +75,7 @@ class GameObject
         void setLocalTransform(mat4 localTransform);
         void clearLocalTransform();
 
-        void setPhysicsObjectTransform(mat4 model);
+        void setPhysicsObjectTransform(mat4 model, bool interpolation = false);
         
         void addAnimation(Animation* anim);
         void removeAnimation(string name);

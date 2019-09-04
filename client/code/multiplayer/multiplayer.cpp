@@ -69,15 +69,19 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
-    client->connectToServer("192.168.0.184", 5040);
+    //client->connectToServer("192.168.0.145", 5040);
+    client->connectToServer("127.0.0.1", 5040);
+
+    client->recvMSG(1150);
 
     /* get playerID */
     string msg = client->getMessage();
 
+    //cout << msg << endl << msg.size() << endl;
+
     if (msg != "")
     {
         XMLDocument newConnectionDoc;
-
         newConnectionDoc.Parse(msg.data());
 
         /* connected */
@@ -87,6 +91,12 @@ void Multiplayer::connect()
         {
             joinElem->QueryIntText(&playerID);
         }
+            
+        gameObjectDataUpdater->collect(msg);
+
+        gameObjectDataUpdater->updateData(level->getGameObjects());
+
+        gameObjectDataUpdater->clear();
     }
     else
     {
@@ -108,7 +118,7 @@ void Multiplayer::broadcast()
     {
         playerDataCollector->collect(level->getPlayer());
         client->sendMSG(playerDataCollector->getData());
-        
+
         map < string, GameObject* > gameObjects = level->getGameObjects();
         vector < Player* > players = level->getPlayers();
 
@@ -117,7 +127,7 @@ void Multiplayer::broadcast()
         {
             gameObjects.erase(players[i]->getGameObject()->getName());
         }
-        
+
         // physics object 
         for (auto& i: gameObjects)
         {
@@ -129,7 +139,7 @@ void Multiplayer::broadcast()
                 {
                     btRigidBody* RB = PO->getRigidBody();
                     btRigidBody* PRB = level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody();
-                    
+
                     btVector3 linearVel = RB->getLinearVelocity();
 
                     if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && world->isTouching(PRB, RB) && linearVel.length() > 0.1)
@@ -158,13 +168,13 @@ void Multiplayer::update()
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
         }
-        else if (msg.find("Obj") != string::npos)
+        else if (msg.find("Objs") != string::npos)
         {
             gameObjectDataUpdater->collect(msg);
-            
-            GameObject* gameObject = level->getGameObject(gameObjectDataUpdater->getName());
 
-            gameObjectDataUpdater->updateData(gameObject);
+            gameObjectDataUpdater->updateData(level->getGameObjects());
+
+            gameObjectDataUpdater->clear();
         }
     }
 }

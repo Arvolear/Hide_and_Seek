@@ -1,3 +1,5 @@
+#include "../global/convert.hpp"
+
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
 
@@ -10,8 +12,7 @@
 PlayerDataCollector::PlayerDataCollector()
 {
     playerID = 0;
-    model = new btScalar[16];
-    memset(model, 0, 16 * sizeof(btScalar));
+    model = nullptr;
 }
 
 void PlayerDataCollector::setPlayerID(int playerID)
@@ -51,16 +52,16 @@ string PlayerDataCollector::getData() const
         string str;
         str = char('a' + i);
 
-        modelElem->SetAttribute(str.data(), model[i]);
+        modelElem->SetAttribute(str.data(), cutFloat(model[i], 4));
     }
 
     root->InsertEndChild(modelElem);
     
     /* moveDirection */
     XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-    moveDirectionElem->SetAttribute("x", moveDirection.x());
-    moveDirectionElem->SetAttribute("y", moveDirection.y());
-    moveDirectionElem->SetAttribute("z", moveDirection.z());
+    moveDirectionElem->SetAttribute("x", cutFloat(moveDirection.x(), 4));
+    moveDirectionElem->SetAttribute("y", cutFloat(moveDirection.y(), 4));
+    moveDirectionElem->SetAttribute("z", cutFloat(moveDirection.z(), 4));
 
     root->InsertEndChild(moveDirectionElem);
 
@@ -77,8 +78,10 @@ string PlayerDataCollector::getData() const
         
 void PlayerDataCollector::clear()
 {
-    playerID = 0;    
-    memset(model, 0, 16 * sizeof(btScalar));
+    playerID = 0;  
+
+    delete[] model;
+    model = nullptr;
 }
 
 PlayerDataCollector::~PlayerDataCollector() 

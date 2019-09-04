@@ -382,8 +382,6 @@ void Player::updateModel(vec3 newForward)
         modelForward = newForward;
     }
 
-    //cout << angle << endl;
-
     player->setLocalRotation(Up, angle);
 
     vec3 localPos = vec3(0);
@@ -428,10 +426,10 @@ void Player::update(bool events)
     ready = true;
     cv.notify_all();
 
-    movePhysics();
-    
     if (active && player && player->getPhysicsObject())
     {
+        movePhysics();
+    
         updateCamera();
         updateModel(moveDirection);
         updateAnimation(moveDirection);

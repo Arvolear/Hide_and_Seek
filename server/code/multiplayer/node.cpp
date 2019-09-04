@@ -49,7 +49,7 @@ void Node::checkNewConnections()
         for (int i = 0; i < max_clients; i++)
         {
             /* empty socket cell */
-            if (!client_sockets[i] && emptyInd == -1)
+            if (!client_sockets[i] && !new_client_sockets[i] && emptyInd == -1)
             {
                 emptyInd = i;
             }
@@ -63,7 +63,7 @@ void Node::checkNewConnections()
         
         if (newSock && emptyInd >= 0)
         {
-            client_sockets[emptyInd] = client_socket;
+            //client_sockets[emptyInd] = client_socket;
             new_client_sockets[emptyInd] = client_socket;
             
             cout << "Join playerID: " << emptyInd << endl;
@@ -126,9 +126,6 @@ void Node::checkOldConnections(int size)
 
         if (FD_ISSET(inputsd, &readfds))
         {
-            /* socket is active = received msg = not new */
-            new_client_sockets[i] = 0;
-
             char* buffer = new char[size + 1];
             int bytes_read = 0;
     
@@ -177,6 +174,9 @@ void Node::checkOldConnections(int size)
 
                 close(inputsd);
                 client_sockets[i] = 0;
+                new_client_sockets[i] = 0;
+
+                messages[i] = "";
 
                 //sendMSG(-1, message);
 
@@ -283,6 +283,12 @@ vector < string > Node::getMessages() const
     }
 
     return messages;
+}
+        
+void Node::newToOldClient(int index)
+{
+    client_sockets[index] = new_client_sockets[index];
+    new_client_sockets[index] = 0;
 }
 
 Node::~Node() {}

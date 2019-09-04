@@ -14,18 +14,22 @@ using namespace tinyxml2;
 class GameObjectDataUpdater
 {
     private:
-        string name;
+        vector < string > names;
 
-        mat4 model;
+        vector < mat4 > models;
     
     public:
         GameObjectDataUpdater();
 
         void collect(string info);
 
-        void updateData(GameObject* gameObject);
+        void updateData(GameObject* gameObject, bool interpolation = true);
+        void updateData(map < string, GameObject* > gameObjects, bool interpolation = true);
 
-        string getName() const;
+        string getName(int index) const;
+        vector < string > getNames() const;
+
+        void clear();
 
         ~GameObjectDataUpdater();
 };

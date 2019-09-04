@@ -82,8 +82,6 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
     {
         throw(runtime_error("ERROR::Client::connectToServer() fcntl second set"));
     }
-
-    recvMSG(64);
 }
 
 void Client::sendMSG(string data)

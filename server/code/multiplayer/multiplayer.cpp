@@ -32,25 +32,27 @@ void Multiplayer::broadcast()
 {
     while (true)
     { 
-
-        /* construct all physics object class and send 
-         * whole map data 
-         * */
-
         if (node->isNewClients())
         {
-            cout << 1 << endl;
+            physicsObjectDataCollector->collect(level->getPhysicsObjects());
             vector < int > new_sockets = node->getNewClientSockets();
 
             for (size_t i = 0; i < new_sockets.size(); i++)
             {
                 if (new_sockets[i] > 0)
                 {
-                    string message = "BEG\n<join>" + to_string(i) + "</join>\nEND";
+                    string message = "BEG\n<join>" + to_string(i) + "</join>\n";
+                    message += physicsObjectDataCollector->getData(true);
+                    message += "END";
+
                     /* send here */
                     node->sendMSG(new_sockets[i], message);
+
+                    node->newToOldClient(i);
                 }
             }
+
+            physicsObjectDataCollector->clear();
         }
 
         /* player data */

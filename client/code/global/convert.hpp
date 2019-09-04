@@ -2,6 +2,9 @@
 
 //native
 #include <climits>
+#include <cmath>
+#include <sstream>
+#include <iomanip>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -38,6 +41,17 @@ inline static string path(string p)
     }
 
     return {realPath};
+}
+
+inline static float cutFloat(float from, int precision)
+{
+    stringstream ss;
+
+    ss << fixed << setprecision(precision);
+
+    ss << from;
+
+    return stof(ss.str());
 }
 
 inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 from)

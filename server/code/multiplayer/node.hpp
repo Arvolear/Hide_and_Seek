@@ -50,6 +50,7 @@ class Node
         bool isNewClients() const;
         int getClientSocket(size_t index) const;
         vector < string > getMessages() const;
+        void newToOldClient(int index);
 
         ~Node();
 };
