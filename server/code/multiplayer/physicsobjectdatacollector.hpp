@@ -1,5 +1,3 @@
-//server
-
 #pragma once
 
 #include <stdexcept>

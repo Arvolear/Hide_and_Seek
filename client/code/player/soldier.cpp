@@ -32,9 +32,15 @@
 #include "player.hpp"
 #include "soldier.hpp"
 
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) {}
+Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) 
+{
+    pickFrom = pickTo = vec3(0);
+}
         
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) {}
+Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) 
+{
+    pickFrom = pickTo = vec3(0);
+}
 
 void Soldier::setActive(bool active)
 {
@@ -53,6 +59,8 @@ void Soldier::setActive(bool active)
 
 void Soldier::weaponAction()
 {
+    pickFrom = pickTo = vec3(0);
+
     if (window->isKeyPressedOnce(GLFW_KEY_G))
     {
         drop();
@@ -112,35 +120,20 @@ void Soldier::pick()
         return;
     }
 
-    btVector3 from = toBtVector3(getPosition());
-    btVector3 to = toBtVector3(getForward());
+    pickFrom = getPosition();
+    pickTo = getForward();
+}
 
-    unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
+pair < vec3, vec3 > Soldier::getPickRay() const
+{
+    unique_lock < mutex > lk(mtx);
 
-    if (!result.get())
+    while (!ready)
     {
-        return;
+        cv.wait(lk);
     }
 
-    float dist = (from - result->hitPoint).length();
-
-    //cout << dist << " " << bottomDist << endl; 
-
-    int optimalDistance = 20;
-
-    if (dist > optimalDistance)
-    {
-        return;
-    }
-
-    Weapon* hitOne = dynamic_cast < Weapon* >(static_cast < GameObject* >(static_cast < PhysicsObject* >(result->body->getUserPointer())->getUserPointer()));
-
-    if (!hitOne)
-    {
-        return;
-    }
-
-    pick(hitOne);
+    return {pickFrom, pickTo};
 }
 
 void Soldier::update(bool events)
@@ -163,6 +156,7 @@ void Soldier::update(bool events)
     }
     
     ready = true;
+    lk.unlock();
     cv.notify_all();
 
     movePhysics();

@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 #include <vector>
+#include <deque>
+#include <map>
 #include <string>
 
 #include <tinyxml2/tinyxml2.h>
@@ -9,24 +11,23 @@
 using namespace std;
 using namespace tinyxml2;
 
-class PlayerDataCollector
+class WeaponPickerCollector
 {
     private:
         int playerID;
 
-        mat4 model;
-        vec3 moveDirection;
+        vector < string > names;
 
     public:
-        PlayerDataCollector();
+        WeaponPickerCollector();
 
         void setPlayerID(int playerID);
-        
+
         void collect(Player* player);
 
         string getData() const;
 
         void clear();
-        
-        ~PlayerDataCollector();
+
+        ~WeaponPickerCollector();
 };

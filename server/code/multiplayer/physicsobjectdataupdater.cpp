@@ -72,6 +72,14 @@ string PhysicsObjectDataUpdater::getName() const
     return name;
 }
 
+void PhysicsObjectDataUpdater::clear()
+{
+    name = "";
+    senderID = -1;
+
+    memset(model, 0, sizeof(btScalar) * 16);
+}
+
 PhysicsObjectDataUpdater::~PhysicsObjectDataUpdater() 
 {
     delete[] model;

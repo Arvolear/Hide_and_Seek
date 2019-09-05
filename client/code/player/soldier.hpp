@@ -15,6 +15,9 @@ class Soldier : public Player
 {
     private:
         deque < Weapon* > weapons;
+
+        vec3 pickFrom;
+        vec3 pickTo;
         
         void weaponAction();
 
@@ -31,6 +34,8 @@ class Soldier : public Player
         void drop();
         void pick(Weapon* weapon);
         void pick();
+
+        pair < vec3, vec3 > getPickRay() const;
 
         void update(bool events = true) override;
         

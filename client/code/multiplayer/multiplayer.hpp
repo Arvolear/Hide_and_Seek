@@ -17,6 +17,8 @@ class Multiplayer
         PlayerDataUpdater* playerDataUpdater;
         GameObjectDataCollector* gameObjectDataCollector;
         GameObjectDataUpdater* gameObjectDataUpdater;
+        WeaponPickerCollector* weaponPickerCollector;
+        WeaponPickerUpdater* weaponPickerUpdater;
 
         Window* window;
         Level* level;

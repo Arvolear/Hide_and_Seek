@@ -86,6 +86,11 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
 
 void Client::sendMSG(string data)
 {
+    if (data == "")
+    {
+        return;
+    }
+
     send(sock, data.data(), data.size(), 0);
 }
 

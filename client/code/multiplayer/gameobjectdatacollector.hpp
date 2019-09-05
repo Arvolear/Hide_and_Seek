@@ -26,5 +26,7 @@ class GameObjectDataCollector
 
         string getData() const;
 
+        void clear();
+
         ~GameObjectDataCollector();
 };

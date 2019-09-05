@@ -424,6 +424,7 @@ void Player::update(bool events)
     }
     
     ready = true;
+    lk.unlock();
     cv.notify_all();
 
     if (active && player && player->getPhysicsObject())

@@ -39,7 +39,7 @@ PlayerDataCollector::PlayerDataCollector()
     playerID = 0;
 
     model = mat4(1.0);
-    moveDirection = vec3(0);
+    moveDirection = vec3(0.0);
 }
 
 void PlayerDataCollector::setPlayerID(int playerID)
@@ -104,6 +104,12 @@ string PlayerDataCollector::getData() const
     res += "END\n";
 
     return res;
+}
+
+void PlayerDataCollector::clear()
+{
+    model = mat4(1.0);
+    moveDirection = vec3(0.0);
 }
 
 PlayerDataCollector::~PlayerDataCollector() {}

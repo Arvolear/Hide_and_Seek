@@ -9,24 +9,24 @@
 using namespace std;
 using namespace tinyxml2;
 
-class PlayerDataUpdater
+class WeaponPickerUpdater
 {
     private:
         int playerID;
 
-        mat4 model;
-        vec3 moveDirection;
-
+        vector < string > names;
+        
     public:
-        PlayerDataUpdater();
+        WeaponPickerUpdater();
 
         void collect(string info);
 
-        void updateData(Player* player);
-
+        void updateData(Player* player, GameObject* gameObject);
+        
         int getPlayerID() const;
+        vector < string > getNames() const;
 
         void clear();
-        
-        ~PlayerDataUpdater();
+
+        ~WeaponPickerUpdater();
 };

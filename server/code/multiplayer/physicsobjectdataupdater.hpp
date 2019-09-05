@@ -26,5 +26,7 @@ class PhysicsObjectDataUpdater
 
         string getName() const;
 
+        void clear();
+
         ~PhysicsObjectDataUpdater();
 };

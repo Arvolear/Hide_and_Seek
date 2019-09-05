@@ -4,8 +4,10 @@
 
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
+#include "../physics_object/weapon.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"
@@ -15,23 +17,29 @@
 #include "playerdataupdater.hpp"
 #include "physicsobjectdatacollector.hpp"
 #include "physicsobjectdataupdater.hpp"
+#include "weaponpickercollector.hpp"
+#include "weaponpickerupdater.hpp"
 #include "multiplayer.hpp"
 
-Multiplayer::Multiplayer(Level* level)
+Multiplayer::Multiplayer(Level* level, World* world)
 {
     node = new Node(5, 2, 5040);
     playerDataCollector = new PlayerDataCollector();
     playerDataUpdater = new PlayerDataUpdater();
     physicsObjectDataCollector = new PhysicsObjectDataCollector();
     physicsObjectDataUpdater = new PhysicsObjectDataUpdater();
+    weaponPickerCollector = new WeaponPickerCollector();
+    weaponPickerUpdater = new WeaponPickerUpdater(world);
 
     this->level = level;
+    this->world = world;
 }
 
 void Multiplayer::broadcast()
 {
     while (true)
-    { 
+    {
+        /* new clients */
         if (node->isNewClients())
         {
             physicsObjectDataCollector->collect(level->getPhysicsObjects());
@@ -112,6 +120,26 @@ void Multiplayer::broadcast()
                 physicsObjectDataCollector->clear();
             }
         }
+
+        /* pickWeapons */
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            weaponPickerCollector->collect(players[i]);
+            weaponPickerCollector->setPlayerID(i);
+
+            vector < int > sockets = node->getClientSockets();
+            
+            for (size_t j = 0; j < sockets.size(); j++)
+            {
+                try
+                {
+                    node->sendMSG(sockets[j], weaponPickerCollector->getData());
+                }
+                catch(exception& ex) {}
+            }
+
+            weaponPickerCollector->clear();
+        }
     }
 }
 
@@ -129,16 +157,23 @@ void Multiplayer::update()
             if (messages[i].find("Player") != string::npos)
             {
                 playerDataUpdater->collect(messages[i]);
-                playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+                Player* player = level->getPlayer(playerDataUpdater->getPlayerID());
+                playerDataUpdater->updateData(player);
                 playerDataUpdater->clear();
             }
-            else if (messages[i].find("Obj") != string::npos)
+            else if (messages[i].find("Objs") != string::npos)
             {
                 physicsObjectDataUpdater->collect(messages[i]);
-
                 PhysicsObject* physicsObject = level->getPhysicsObject(physicsObjectDataUpdater->getName());
-
                 physicsObjectDataUpdater->updateData(physicsObject);
+                physicsObjectDataUpdater->clear();
+            }
+            else if (messages[i].find("Pick") != string::npos)
+            {
+                weaponPickerUpdater->collect(messages[i]);
+                Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
+                weaponPickerUpdater->updateData(player);
+                weaponPickerUpdater->clear();
             }
         }
     }
@@ -151,4 +186,6 @@ Multiplayer::~Multiplayer()
     delete playerDataUpdater;
     delete physicsObjectDataCollector;
     delete physicsObjectDataUpdater;
+    delete weaponPickerCollector;
+    delete weaponPickerUpdater;
 }

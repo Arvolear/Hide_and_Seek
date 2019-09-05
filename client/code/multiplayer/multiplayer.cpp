@@ -49,6 +49,8 @@
 #include "playerdataupdater.hpp"
 #include "gameobjectdatacollector.hpp"
 #include "gameobjectdataupdater.hpp"
+#include "weaponpickercollector.hpp"
+#include "weaponpickerupdater.hpp"
 #include "multiplayer.hpp"
 
 Multiplayer::Multiplayer(Window* window, Level* level, World* world)
@@ -58,6 +60,8 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
     playerDataUpdater = new PlayerDataUpdater();
     gameObjectDataCollector = new GameObjectDataCollector();
     gameObjectDataUpdater = new GameObjectDataUpdater();
+    weaponPickerCollector = new WeaponPickerCollector();
+    weaponPickerUpdater = new WeaponPickerUpdater();
 
     this->window = window;
     this->level = level;
@@ -93,9 +97,7 @@ void Multiplayer::connect()
         }
             
         gameObjectDataUpdater->collect(msg);
-
         gameObjectDataUpdater->updateData(level->getGameObjects());
-
         gameObjectDataUpdater->clear();
     }
     else
@@ -106,6 +108,7 @@ void Multiplayer::connect()
     level->setPlayerID(playerID);
     playerDataCollector->setPlayerID(playerID);
     gameObjectDataCollector->setSenderID(playerID);
+    weaponPickerCollector->setPlayerID(playerID);
 
     level->getPlayer()->setActive(true);
 
@@ -116,8 +119,10 @@ void Multiplayer::broadcast()
 {
     while (window->isOpen())
     {
+        /* player */
         playerDataCollector->collect(level->getPlayer());
         client->sendMSG(playerDataCollector->getData());
+        playerDataCollector->clear();
 
         map < string, GameObject* > gameObjects = level->getGameObjects();
         vector < Player* > players = level->getPlayers();
@@ -128,7 +133,7 @@ void Multiplayer::broadcast()
             gameObjects.erase(players[i]->getGameObject()->getName());
         }
 
-        // physics object 
+        // game objects
         for (auto& i: gameObjects)
         {
             if (i.second->getPhysicsObject())
@@ -145,11 +150,17 @@ void Multiplayer::broadcast()
                     if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && world->isTouching(PRB, RB) && linearVel.length() > 0.1)
                     {
                         gameObjectDataCollector->collect(i.second); 
-                        client->sendMSG(gameObjectDataCollector->getData()); 
+                        client->sendMSG(gameObjectDataCollector->getData());
+                        gameObjectDataCollector->clear();
                     }
                 }
             }
         }
+
+        /* pick */
+        weaponPickerCollector->collect(level->getPlayer());
+        client->sendMSG(weaponPickerCollector->getData());
+        weaponPickerCollector->clear();
     }
 }
 
@@ -167,14 +178,28 @@ void Multiplayer::update()
         {    
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+            playerDataUpdater->clear();
         }
         else if (msg.find("Objs") != string::npos)
         {
             gameObjectDataUpdater->collect(msg);
-
             gameObjectDataUpdater->updateData(level->getGameObjects());
-
             gameObjectDataUpdater->clear();
+        }
+        else if (msg.find("Pick") != string::npos)
+        {
+            weaponPickerUpdater->collect(msg);
+            Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
+            vector < string > names = weaponPickerUpdater->getNames();
+
+            for (size_t i = 0; i < names.size(); i++)
+            {
+                GameObject* gameObject = level->getGameObject(names[i]);
+
+                weaponPickerUpdater->updateData(player, gameObject);
+            }
+
+            weaponPickerUpdater->clear();
         }
     }
 }
@@ -186,4 +211,6 @@ Multiplayer::~Multiplayer()
     delete playerDataUpdater;
     delete gameObjectDataCollector;
     delete gameObjectDataUpdater;
+    delete weaponPickerCollector;
+    delete weaponPickerUpdater;
 }

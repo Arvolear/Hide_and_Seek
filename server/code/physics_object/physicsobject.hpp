@@ -33,7 +33,7 @@ class CompoundShape
 
 class PhysicsObject
 {
-    private:
+    protected:
         static set < string > globalNames;
         string name;
 
@@ -57,7 +57,7 @@ class PhysicsObject
     public:
         PhysicsObject(string name, btDynamicsWorld* world);
         PhysicsObject(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
-        PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation);
+        PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
 
         void setName(string name);
         void setSenderID(int senderID);
@@ -85,5 +85,5 @@ class PhysicsObject
 
         btScalar* getTransform() const;
 
-        ~PhysicsObject();
+        virtual ~PhysicsObject();
 };
