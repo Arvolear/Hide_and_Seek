@@ -85,21 +85,14 @@ void WeaponPickerUpdater::collect(string info)
 
     float dist = (pickFrom - result->hitPoint).length();
 
-    int optimalDistance = 10;
+    int optimalDistance = 200;
 
     if (dist > optimalDistance)
     {
         return;
     }
 
-    Weapon* hitOne = dynamic_cast < Weapon* >(static_cast < PhysicsObject* >(result->body->getUserPointer()));
-
-    if (!hitOne)
-    {
-        return;
-    }
-
-    weapon = hitOne;
+    weapon = dynamic_cast < Weapon* >(static_cast < PhysicsObject* >(result->body->getUserPointer()));
 }
 
 void WeaponPickerUpdater::updateData(Player* player)

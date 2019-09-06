@@ -11,11 +11,11 @@ OUTPUTDIR = ./build
 
 MAIN = main.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o
+MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o
 LEVEL = level.o levelloader.o
 WORLD = world.o bulletevents.o raytracer.o
-PLAYER = player.o
-PHYSICS_OBJECT = physicsobject.o openglmotionstate.o
+PLAYER = player.o soldier.o
+PHYSICS_OBJECT = physicsobject.o openglmotionstate.o weapon.o
 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(PHYSICS_OBJECT)) 
 
@@ -61,6 +61,12 @@ $(OUTPUTDIR)/physicsobjectdatacollector.o: $(INPUTDIR)/multiplayer/physicsobject
 $(OUTPUTDIR)/physicsobjectdataupdater.o: $(INPUTDIR)/multiplayer/physicsobjectdataupdater.cpp $(INPUTDIR)/multiplayer/physicsobjectdataupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/physicsobjectdataupdater.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/weaponpickercollector.o: $(INPUTDIR)/multiplayer/weaponpickercollector.cpp $(INPUTDIR)/multiplayer/weaponpickercollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/weaponpickercollector.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/weaponpickerupdater.o: $(INPUTDIR)/multiplayer/weaponpickerupdater.cpp $(INPUTDIR)/multiplayer/weaponpickerupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/weaponpickerupdater.cpp -o $@ $(FLAGS)
+
 ### LEVEL ###
 
 $(OUTPUTDIR)/level.o: $(INPUTDIR)/level/level.cpp $(INPUTDIR)/level/level.hpp
@@ -85,6 +91,9 @@ $(OUTPUTDIR)/raytracer.o: $(INPUTDIR)/world/raytracer.cpp $(INPUTDIR)/world/rayt
 $(OUTPUTDIR)/player.o: $(INPUTDIR)/player/player.cpp $(INPUTDIR)/player/player.hpp
 	g++ -c $(INPUTDIR)/player/player.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/soldier.o: $(INPUTDIR)/player/soldier.cpp $(INPUTDIR)/player/soldier.hpp
+	g++ -c $(INPUTDIR)/player/soldier.cpp -o $@ $(FLAGS)
+
 ### PHYSICS_OBJECT ###
 
 $(OUTPUTDIR)/physicsobject.o: $(INPUTDIR)/physics_object/physicsobject.cpp $(INPUTDIR)/physics_object/physicsobject.hpp
@@ -92,6 +101,9 @@ $(OUTPUTDIR)/physicsobject.o: $(INPUTDIR)/physics_object/physicsobject.cpp $(INP
 
 $(OUTPUTDIR)/openglmotionstate.o: $(INPUTDIR)/physics_object/openglmotionstate.cpp $(INPUTDIR)/physics_object/openglmotionstate.hpp
 	g++ -c $(INPUTDIR)/physics_object/openglmotionstate.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/weapon.o: $(INPUTDIR)/physics_object/weapon.cpp $(INPUTDIR)/physics_object/weapon.hpp
+	g++ -c $(INPUTDIR)/physics_object/weapon.cpp -o $@ $(FLAGS)
 
 ### CLEAN ###
 

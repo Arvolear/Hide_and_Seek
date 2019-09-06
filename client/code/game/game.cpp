@@ -50,6 +50,8 @@
 #include "../multiplayer/playerdataupdater.hpp"
 #include "../multiplayer/gameobjectdatacollector.hpp"
 #include "../multiplayer/gameobjectdataupdater.hpp"
+#include "../multiplayer/weaponpickercollector.hpp"
+#include "../multiplayer/weaponpickerupdater.hpp"
 #include "../multiplayer/multiplayer.hpp"
 
 #include "game.hpp"

@@ -57,6 +57,7 @@ void Multiplayer::broadcast()
                     node->sendMSG(new_sockets[i], message);
 
                     node->newToOldClient(i);
+                    level->getPlayer(i)->getPhysicsObject()->setOwnerID(i);
                 }
             }
 
@@ -74,15 +75,15 @@ void Multiplayer::broadcast()
             /* erase PO */
             physicsObjects.erase(players[i]->getPhysicsObject()->getName());
 
-            playerDataCollector->collect(players[i]);
             playerDataCollector->setPlayerID(i);
+            playerDataCollector->collect(players[i]);
 
             /* send position info */
             vector < int > sockets = node->getClientSockets();
             
             for (size_t j = 0; j < sockets.size(); j++)
             {
-                if ((int)j != players[i]->getPhysicsObject()->getSenderID())
+                if ((int)j != players[i]->getPhysicsObject()->getOwnerID())
                 {
                     try
                     {
@@ -107,7 +108,7 @@ void Multiplayer::broadcast()
 
                 for (size_t j = 0; j < sockets.size(); j++)
                 {
-                    if ((int)j != i.second->getSenderID())
+                    if ((int)j != i.second->getOwnerID())
                     {
                         try
                         {
@@ -124,8 +125,8 @@ void Multiplayer::broadcast()
         /* pickWeapons */
         for (size_t i = 0; i < players.size(); i++)
         {
-            weaponPickerCollector->collect(players[i]);
             weaponPickerCollector->setPlayerID(i);
+            weaponPickerCollector->collect(players[i]);
 
             vector < int > sockets = node->getClientSockets();
             
@@ -158,21 +159,33 @@ void Multiplayer::update()
             {
                 playerDataUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(playerDataUpdater->getPlayerID());
-                playerDataUpdater->updateData(player);
+                
+                if (playerDataUpdater->getPlayerID() == player->getPhysicsObject()->getOwnerID())
+                {
+                    playerDataUpdater->updateData(player);
+                }
+
                 playerDataUpdater->clear();
             }
-            else if (messages[i].find("Objs") != string::npos)
+            else if (messages[i].find("Obj") != string::npos)
             {
                 physicsObjectDataUpdater->collect(messages[i]);
                 PhysicsObject* physicsObject = level->getPhysicsObject(physicsObjectDataUpdater->getName());
-                physicsObjectDataUpdater->updateData(physicsObject);
+
+                if (physicsObjectDataUpdater->getSenderID() == physicsObject->getOwnerID())
+                {
+                    physicsObjectDataUpdater->updateData(physicsObject);
+                }
+
                 physicsObjectDataUpdater->clear();
             }
             else if (messages[i].find("Pick") != string::npos)
             {
                 weaponPickerUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
+
                 weaponPickerUpdater->updateData(player);
+                
                 weaponPickerUpdater->clear();
             }
         }

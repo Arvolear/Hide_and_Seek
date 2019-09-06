@@ -18,6 +18,8 @@ class Soldier : public Player
 
         vec3 pickFrom;
         vec3 pickTo;
+
+        bool dropTo = true;
         
         void weaponAction();
 
@@ -38,6 +40,9 @@ class Soldier : public Player
         pair < vec3, vec3 > getPickRay() const;
 
         void update(bool events = true) override;
+
+        void clearPickData();
+        void clearDropData();
         
         ~Soldier();
 };

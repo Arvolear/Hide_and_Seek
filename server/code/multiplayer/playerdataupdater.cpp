@@ -67,7 +67,6 @@ void PlayerDataUpdater::collect(string info)
 
 void PlayerDataUpdater::updateData(Player* player)
 {
-    player->getPhysicsObject()->setSenderID(playerID);
     player->getPhysicsObject()->setTransform(model);
 
     player->setMoveDirection(moveDirection);

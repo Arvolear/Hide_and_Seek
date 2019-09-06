@@ -63,7 +63,6 @@ void Node::checkNewConnections()
         
         if (newSock && emptyInd >= 0)
         {
-            //client_sockets[emptyInd] = client_socket;
             new_client_sockets[emptyInd] = client_socket;
             
             cout << "Join playerID: " << emptyInd << endl;

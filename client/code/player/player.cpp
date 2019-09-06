@@ -217,7 +217,7 @@ void Player::moveAir()
     btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
 
     /* enable sliding effect */
-    if (abs(velocity.y()) < 0.1)
+    if (abs(velocity.y()) < 0.05)
     {
         player->getPhysicsObject()->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
     }

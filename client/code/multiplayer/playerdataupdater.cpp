@@ -107,7 +107,7 @@ int PlayerDataUpdater::getPlayerID() const
     return playerID;
 }
 
-void PlayerdataUpdater::clear()
+void PlayerDataUpdater::clear()
 {
     model = mat4(1.0);
     moveDirection = vec3(0.0);

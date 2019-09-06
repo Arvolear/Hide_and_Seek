@@ -95,7 +95,7 @@ void Client::sendMSG(string data)
 }
 
 bool Client::constructFineMessage(char* buffer, int size)
-{
+{ 
 	/* BEG */
 	if (!buffer || size <= 0)
 	{
@@ -120,7 +120,7 @@ bool Client::constructFineMessage(char* buffer, int size)
                 message = tmp.substr(beg + 3);
                 return false;
             }
-        }	
+        }
     }
     else
     {
@@ -132,7 +132,7 @@ bool Client::constructFineMessage(char* buffer, int size)
         }
         else
         {
-            message += tmp.substr(0);		
+            message += tmp;
             return false;
         }
     }

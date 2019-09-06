@@ -102,7 +102,9 @@ void Soldier::drop()
     {
         return;
     }
-    
+   
+    dropTo = true;
+
     weapons[0]->drop(getForward() + getUp());
     weapons.pop_front();
 }
@@ -172,6 +174,16 @@ void Soldier::update(bool events)
         
         updateWeapon();
     }
+}
+        
+void Soldier::clearPickData()
+{
+    pickFrom = pickTo = vec3(0.0);
+}
+
+void Soldier::clearDropData()
+{   
+    dropTo = false;
 }
 
 Soldier::~Soldier() {}

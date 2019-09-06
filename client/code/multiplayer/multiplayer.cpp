@@ -73,15 +73,13 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
-    //client->connectToServer("192.168.0.145", 5040);
-    client->connectToServer("127.0.0.1", 5040);
+    client->connectToServer("192.168.0.145", 5040);
+    //client->connectToServer("127.0.0.1", 5040);
 
     client->recvMSG(1150);
 
     /* get playerID */
     string msg = client->getMessage();
-
-    //cout << msg << endl << msg.size() << endl;
 
     if (msg != "")
     {
@@ -97,7 +95,7 @@ void Multiplayer::connect()
         }
             
         gameObjectDataUpdater->collect(msg);
-        gameObjectDataUpdater->updateData(level->getGameObjects());
+        gameObjectDataUpdater->updateData(level->getGameObjects(), false);
         gameObjectDataUpdater->clear();
     }
     else
@@ -143,11 +141,10 @@ void Multiplayer::broadcast()
                 if (PO->getRigidBody())
                 {
                     btRigidBody* RB = PO->getRigidBody();
-                    btRigidBody* PRB = level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody();
 
                     btVector3 linearVel = RB->getLinearVelocity();
 
-                    if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && world->isTouching(PRB, RB) && linearVel.length() > 0.1)
+                    if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && linearVel.length() > 0.05)
                     {
                         gameObjectDataCollector->collect(i.second); 
                         client->sendMSG(gameObjectDataCollector->getData());
@@ -159,6 +156,7 @@ void Multiplayer::broadcast()
 
         /* pick */
         weaponPickerCollector->collect(level->getPlayer());
+
         client->sendMSG(weaponPickerCollector->getData());
         weaponPickerCollector->clear();
     }
@@ -175,7 +173,7 @@ void Multiplayer::update()
         //cout << msg << endl << msg.size() << endl;
 
         if (msg.find("Player") != string::npos)
-        {    
+        { 
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
             playerDataUpdater->clear();
@@ -183,11 +181,13 @@ void Multiplayer::update()
         else if (msg.find("Objs") != string::npos)
         {
             gameObjectDataUpdater->collect(msg);
-            gameObjectDataUpdater->updateData(level->getGameObjects());
+            gameObjectDataUpdater->updateData(level->getGameObjects(), false);
             gameObjectDataUpdater->clear();
         }
         else if (msg.find("Pick") != string::npos)
         {
+            cout << msg << endl;
+
             weaponPickerUpdater->collect(msg);
             Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
             vector < string > names = weaponPickerUpdater->getNames();
