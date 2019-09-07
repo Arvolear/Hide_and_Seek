@@ -61,7 +61,7 @@ void Game::gameLoop()
 
     while (true)
     { 
-        this_thread::sleep_for(chrono::milliseconds(25));
+        this_thread::sleep_for(chrono::milliseconds(10));
 
         physicsWorld->pollEvents();
         checkEvents();        

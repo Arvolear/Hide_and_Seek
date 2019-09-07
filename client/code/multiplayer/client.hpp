@@ -32,7 +32,7 @@ class Client
         mutable mutex mtx;
         mutable condition_variable cv;
 
-        string message;
+        vector < pair < string, bool > > messages;
 
     public:
         Client();
@@ -41,7 +41,7 @@ class Client
 
         void sendMSG(string data);
         
-        bool constructFineMessage(char* buffer, int size);
+        void constructFineMessage(char* buffer, int size);
         void recvMSG(int size = 2048, int timeoutSec = 1);
 
         string getMessage() const;

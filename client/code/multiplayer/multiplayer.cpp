@@ -73,8 +73,8 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
-    client->connectToServer("192.168.0.145", 5040);
-    //client->connectToServer("127.0.0.1", 5040);
+    //client->connectToServer("192.168.0.145", 5040);
+    client->connectToServer("127.0.0.1", 5040);
 
     client->recvMSG(1150);
 
@@ -186,8 +186,6 @@ void Multiplayer::update()
         }
         else if (msg.find("Pick") != string::npos)
         {
-            cout << msg << endl;
-
             weaponPickerUpdater->collect(msg);
             Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
             vector < string > names = weaponPickerUpdater->getNames();

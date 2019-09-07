@@ -91,7 +91,26 @@ void Level::update()
         {
             PhysicsObject* physicsObject = static_cast < PhysicsObject* >(j->getUserPointer());
 
-            physicsObject->setOwnerID(i);
+            bool isPlayer = false;
+            for (size_t i = 0; i < players.size(); i++)
+            {
+                if (players[i]->getPhysicsObject() == physicsObject)
+                {
+                    isPlayer = true;
+                    break;
+                }
+            }
+
+            if (isPlayer)
+            {
+                continue;
+            }
+
+            /* if not picked */
+            if (!physicsObject->getUserPointer())
+            {
+                physicsObject->setOwnerID(i);
+            }
         }
     }
 }

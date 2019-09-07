@@ -85,7 +85,7 @@ void WeaponPickerUpdater::collect(string info)
 
     float dist = (pickFrom - result->hitPoint).length();
 
-    int optimalDistance = 200;
+    int optimalDistance = 20;
 
     if (dist > optimalDistance)
     {
@@ -106,7 +106,12 @@ void WeaponPickerUpdater::updateData(Player* player)
 
     if (weapon)
     {
-        soldier->pick(weapon);
+        if (!weapon->getUserPointer())
+        {
+            soldier->pick(weapon);
+            weapon->setOwnerID(playerID);
+            weapon->setUserPointer(soldier);
+        }
     }
 }
 

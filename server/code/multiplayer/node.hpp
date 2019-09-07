@@ -28,7 +28,7 @@ class Node
 
         fd_set readfds;
 
-		vector < string > messages;
+		vector < vector < pair < string, bool > > > messages;
         
         bool ready;
         mutable mutex mtx;
@@ -37,7 +37,7 @@ class Node
     public:
         Node(int max_clients, int max_queue, int port);
 
-		bool constructFineMessage(char* buffer, int size, int index);     
+		void constructFineMessage(char* buffer, int size, int index);     
  
         void checkNewConnections();
         void checkOldConnections(int size);
