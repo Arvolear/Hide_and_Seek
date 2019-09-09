@@ -80,7 +80,7 @@ void Multiplayer::broadcast()
 
             /* send position info */
             vector < int > sockets = node->getClientSockets();
-            
+
             for (size_t j = 0; j < sockets.size(); j++)
             {
                 if ((int)j != players[i]->getPhysicsObject()->getOwnerID())
@@ -102,7 +102,7 @@ void Multiplayer::broadcast()
             if (i.second->isCollidable() && i.second->getRigidBody()->isActive() && !i.second->getRigidBody()->isStaticOrKinematicObject())
             {
                 physicsObjectDataCollector->collect(i.second); 
-            
+
                 /* send position info */
                 vector < int > sockets = node->getClientSockets();
 
@@ -129,12 +129,16 @@ void Multiplayer::broadcast()
             weaponPickerCollector->collect(players[i]);
 
             vector < int > sockets = node->getClientSockets();
-            
+
             for (size_t j = 0; j < sockets.size(); j++)
             {
                 try
                 {
                     node->sendMSG(sockets[j], weaponPickerCollector->getData());
+                    if (weaponPickerCollector->getData() != "")
+                    {
+                        cout << "PICK SEND" << weaponPickerCollector->getData() << endl;
+                    }
                 }
                 catch(exception& ex) {}
             }
@@ -159,7 +163,7 @@ void Multiplayer::update()
             {
                 playerDataUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(playerDataUpdater->getPlayerID());
-                
+
                 if (playerDataUpdater->getPlayerID() == player->getPhysicsObject()->getOwnerID())
                 {
                     playerDataUpdater->updateData(player);
@@ -181,11 +185,12 @@ void Multiplayer::update()
             }
             else if (messages[i].find("Pick") != string::npos)
             {
+                cout << "PICK UPDATE" << endl;
                 weaponPickerUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
 
                 weaponPickerUpdater->updateData(player);
-                
+
                 weaponPickerUpdater->clear();
             }
         }

@@ -29,6 +29,7 @@ class Node
         fd_set readfds;
 
 		vector < vector < pair < string, bool > > > messages;
+        vector < string > lastMsgs; 
         
         bool ready;
         mutable mutex mtx;
@@ -43,7 +44,7 @@ class Node
         void checkOldConnections(int size);
 
         void checkActivity(int size = 2048, float timeoutSec = 1);
-        void sendMSG(int to, string msg);
+        void sendMSG(int to, string msg, bool force = false);
 
         vector < int > getClientSockets() const;
         vector < int > getNewClientSockets() const;

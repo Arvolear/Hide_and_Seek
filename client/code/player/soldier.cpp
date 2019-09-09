@@ -105,6 +105,7 @@ void Soldier::drop()
    
     dropTo = true;
 
+    weapons[0]->setUserPointer(nullptr);
     weapons[0]->drop(getForward() + getUp());
     weapons.pop_front();
 }
@@ -113,6 +114,7 @@ void Soldier::pick(Weapon* weapon)
 {
     weapon->pick(getForward(), getUp(), active);
     weapons.push_front(weapon); 
+    weapon->setUserPointer(this);
 }
 
 void Soldier::pick()

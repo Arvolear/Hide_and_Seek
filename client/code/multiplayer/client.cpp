@@ -5,6 +5,7 @@ Client::Client()
     sock = 0;
     messages.resize(2, {"", false});
     ready = true;
+    lastMsg = "";
 }
         
 void Client::connectToServer(string ip, int port, int timeoutSec)
@@ -23,29 +24,22 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
     int arg;
 
     /* set nonblocking mode */
-    if ((arg = fcntl(sock, F_GETFL, NULL)) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl first get"));
-    }
-    
+    arg = fcntl(sock, F_GETFL, NULL); 
     arg |= O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, arg) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl first set"));
-    }
+    fcntl(sock, F_SETFL, arg);
 
     if (connect(sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
     {
         if (errno == EINPROGRESS)
         {
-            FD_ZERO(&readfds);
-            FD_SET(sock, &readfds);
+            FD_ZERO(&fds);
+            FD_SET(sock, &fds);
 
             timeout.tv_sec = timeoutSec;
             timeout.tv_usec = 0;
 
             /* timeout check */
-            if (select(sock + 1, &readfds, NULL, NULL, &timeout))
+            if (select(sock + 1, &fds, NULL, NULL, &timeout))
             {
                 int so_error;
                 socklen_t len = sizeof(so_error);
@@ -72,48 +66,42 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
     }
 
     /* set blocking mode */
-    if ((arg = fcntl(sock, F_GETFL, NULL)) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl second get"));
-    }
-
+    arg = fcntl(sock, F_GETFL, NULL);
     arg &= ~O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, arg) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl second set"));
-    }
+    fcntl(sock, F_SETFL, arg);
 }
 
-void Client::sendMSG(string data)
+void Client::sendMSG(string data, bool force)
 {
-    if (data == "")
+    if (data.empty() || data == "" || (data == lastMsg && !force))
     {
         return;
     }
 
+    lastMsg = data;
     send(sock, data.data(), data.size(), 0);
 }
 
 void Client::constructFineMessage(char* buffer, int size)
 { 
-	/* BEG */
-	if (!buffer || size <= 0)
-	{
-		messages[0].second = false;
+    /* BEG */
+    if (!buffer || size <= 0)
+    {
+        messages[0].second = false;
         messages[1].second = false;
 
         return;
-	}
+    }
 
-	string tmp(buffer, size);
+    string tmp(buffer, size);
 
-	if (messages[0].first.empty())
-	{
-		size_t beg = tmp.find("BEG");
-		if (beg != string::npos)
-		{
-			size_t end = tmp.find("END", beg + 3);
-			if (end != string::npos)
+    if (messages[0].first.empty())
+    {
+        size_t beg = tmp.find("BEG");
+        if (beg != string::npos)
+        {
+            size_t end = tmp.find("END", beg + 3);
+            if (end != string::npos)
             {
                 messages[0].first = tmp.substr(beg + 3, end - beg - 3);
 
@@ -143,7 +131,7 @@ void Client::constructFineMessage(char* buffer, int size)
             else
             {
                 messages[0].first = tmp.substr(beg + 3);
-                
+
                 messages[0].second = false;
                 messages[1].second = false;
 
@@ -201,13 +189,13 @@ void Client::constructFineMessage(char* buffer, int size)
 
 void Client::recvMSG(int size, int timeoutSec)
 {
-    FD_ZERO(&readfds);
-    FD_SET(sock, &readfds);
+    FD_ZERO(&fds);
+    FD_SET(sock, &fds);
 
     timeout.tv_sec = timeoutSec;
     timeout.tv_usec = 0;
 
-    if (select(sock + 1, &readfds, NULL, NULL, &timeout))
+    if (select(sock + 1, &fds, NULL, NULL, &timeout))
     {
         char* buffer = new char[size + 1];
 
@@ -219,9 +207,9 @@ void Client::recvMSG(int size, int timeoutSec)
 
         while (!messages[0].second)
         {
-            memset(buffer, 0, size);
+            memset(buffer, 0, size + 1);
 
-            int bytes_read = recv(sock, buffer, size, 0);
+            int bytes_read = recv(sock, buffer, size, MSG_DONTWAIT);
 
             if (bytes_read <= 0)
             {
@@ -261,7 +249,7 @@ string Client::getMessage() const
         cv.wait(lk);
     }
 
-    return messages[0].first;
+    return messages[0].second ? messages[0].first : "";
 }
 
 Client::~Client()

@@ -12,6 +12,8 @@ Node::Node(int max_clients, int max_queue, int port)
     {
         messages[i].resize(2, {"", false});
     }
+    
+    lastMsgs.resize(max_clients, "");
 
     ready = true;
 
@@ -106,6 +108,7 @@ void Node::constructFineMessage(char* buffer, int size, int index)
                     if (end2 != string::npos)
                     {
                         messages[index][1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
+                        
                         messages[index][0].second = true;
                         messages[index][1].second = true;
 
@@ -166,7 +169,8 @@ void Node::constructFineMessage(char* buffer, int size, int index)
         }
         else
         {
-            messages[index][0].first += tmp.substr(0);		
+            messages[index][0].first += tmp;
+
             messages[index][0].second = false;
             messages[index][1].second = false;
 
@@ -190,7 +194,7 @@ void Node::checkOldConnections(int size)
         if (FD_ISSET(inputsd, &readfds))
         {
             char* buffer = new char[size + 1];
-            int bytes_read = 0;
+            int bytes_read = 1;
 
             unique_lock < mutex > lck(mtx);
             ready = false;
@@ -200,15 +204,20 @@ void Node::checkOldConnections(int size)
 
             while (!messages[i][0].second)
             {	
-                memset(buffer, 0, size);
+                memset(buffer, 0, size + 1);
 
-                bytes_read = recv(inputsd, buffer, size, 0);
-
+                bytes_read = recv(inputsd, buffer, size, MSG_DONTWAIT);
+                
                 if (bytes_read <= 0)
                 {
+                    if (errno == EAGAIN || errno == EWOULDBLOCK)
+                    {
+                        bytes_read = 1;
+                    }
+
                     break;
                 }
-                
+
                 constructFineMessage(buffer, bytes_read, i);
 
                 if (messages[i][0].second)
@@ -232,7 +241,7 @@ void Node::checkOldConnections(int size)
             delete[] buffer;
 
             /* client has disconnected */
-            if (bytes_read <= 0 && !messages[i][0].second)
+            if (bytes_read <= 0)
             {
                 string message = "BEG\n<quit>" + to_string(i) + "</quit>\nEND";
 
@@ -254,8 +263,8 @@ void Node::checkOldConnections(int size)
 void Node::checkActivity(int size, float timeoutSec)
 {
     FD_ZERO(&readfds);
-
     FD_SET(master_sock, &readfds);
+
     int max_sd = master_sock;
 
     for (int i = 0; i < max_clients; i++)
@@ -287,8 +296,27 @@ void Node::checkActivity(int size, float timeoutSec)
     checkOldConnections(size);
 }
 
-void Node::sendMSG(int to, string msg)
+void Node::sendMSG(int to, string msg, bool force)
 {
+    if (msg.empty() || msg == "" || to <= 0)
+    {
+        return;
+    }
+    
+    /* check the same message */
+    for (size_t i = 0; i < client_sockets.size(); i++)
+    {
+        if (client_sockets[i] == to || new_client_sockets[i] == to)
+        {
+            if (lastMsgs[i] == msg)
+            {
+                return;
+            }
+
+            break;
+        }
+    }
+
     unique_lock < mutex > lk(mtx);
 
     while (!ready)
@@ -296,11 +324,18 @@ void Node::sendMSG(int to, string msg)
         cv.wait(lk);
     }
 
-    if (to > 0)
+    if (send(to, msg.data(), msg.size(), MSG_NOSIGNAL) < 0)
     {
-        if (send(to, msg.data(), msg.size(), MSG_NOSIGNAL) < 0)
+        throw(runtime_error("ERROR::Node::sendMSG() send"));
+    }
+
+    /* save the message */
+    for (size_t i = 0; i < client_sockets.size(); i++)
+    {
+        if (client_sockets[i] == to || new_client_sockets[i] == to)
         {
-            throw(runtime_error("ERROR::Node::sendMSG() send"));
+            lastMsgs[i] = msg;
+            break;
         }
     }
 }
@@ -351,7 +386,14 @@ vector < string > Node::getMessages() const
 
     for (size_t i = 0; i < messages.size(); i++)
     {
-        res.push_back(messages[i][0].first);
+        if (messages[i][0].second)
+        {
+            res.push_back(messages[i][0].first);
+        }
+        else
+        {
+            res.push_back("");
+        }
     }
 
     return move(res);
