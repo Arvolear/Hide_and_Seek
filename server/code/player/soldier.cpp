@@ -22,27 +22,40 @@ void Soldier::pick(Weapon* weapon)
     }
 
     new_weapons.push_front(weapon);
+    
+    weapon->setOwnerID(physicsObject->getOwnerID());
+    weapon->setUserPointer(this);
     weapon->setCollidable(false);
 }
 
-void Soldier::drop(btVector3 direction)
+void Soldier::drop(btScalar* model)
 {
-    int power = 3;
-
     if (!weapons.empty())
     {
+        old_weapons.push_back(weapons[0]);
+        
+        weapons[0]->setTransform(model);
+        weapons[0]->setUserPointer(nullptr);
         weapons[0]->setCollidable(true);
-        weapons[0]->getRigidBody()->applyCentralImpulse(direction * power);
+
         weapons.pop_front();
     }
 }
 
-void Soldier::newToOldWeapons()
+void Soldier::newToWeapons()
 {
     while (!new_weapons.empty())
     {
         weapons.push_front(new_weapons[new_weapons.size() - 1]);
         new_weapons.pop_back();
+    }
+}
+
+void Soldier::oldToNothing()
+{
+    while (!old_weapons.empty())
+    {
+        old_weapons.pop_front();
     }
 }
         
@@ -54,6 +67,11 @@ deque < Weapon* > Soldier::getWeapons() const
 deque < Weapon* > Soldier::getNewWeapons() const
 {
     return new_weapons;
+}
+
+deque < Weapon* > Soldier::getOldWeapons() const
+{
+    return old_weapons;
 }
 
 Soldier::~Soldier() {}

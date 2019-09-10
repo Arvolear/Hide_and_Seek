@@ -39,7 +39,7 @@ void WeaponPickerCollector::collect(Player* player)
         names.push_back(new_weapons[i]->getName());
     }
 
-    soldier->newToOldWeapons();
+    soldier->newToWeapons();
 }
 
 string WeaponPickerCollector::getData() const

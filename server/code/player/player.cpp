@@ -5,6 +5,7 @@
 
 Player::Player(float speed)
 {
+    active = false;
     this->speed = speed;
 
     physicsObject = nullptr;
@@ -13,18 +14,27 @@ Player::Player(float speed)
         
 Player::Player(PhysicsObject* physicsObject, float speed)
 {
+    active = false;
     this->speed = speed;
 
     this->physicsObject = physicsObject;
+    physicsObject->setUserPointer(this);
+}
+
+void Player::setActive(bool active)
+{
+    this->active = active;
 }
 
 void Player::setPhysicsObject(PhysicsObject* physicsObject)
 {
     this->physicsObject = physicsObject;
+    physicsObject->setUserPointer(this);
 }
 
 void Player::removePhysicsObject()
 {
+    physicsObject->setUserPointer(nullptr);
     physicsObject = nullptr;
 }
         
@@ -34,6 +44,11 @@ void Player::setMoveDirection(btVector3 moveDirection)
 }
 
 void Player::update() {}
+
+bool Player::isActive() const
+{
+    return active;
+}
 
 PhysicsObject* Player::getPhysicsObject() const
 {

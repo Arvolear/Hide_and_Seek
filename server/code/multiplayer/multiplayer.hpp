@@ -20,6 +20,8 @@ class Multiplayer
         PhysicsObjectDataUpdater* physicsObjectDataUpdater;
         WeaponPickerCollector* weaponPickerCollector;
         WeaponPickerUpdater* weaponPickerUpdater;
+        WeaponDropperCollector* weaponDropperCollector;
+        WeaponDropperUpdater* weaponDropperUpdater;
 
         Level* level;
         World* world;

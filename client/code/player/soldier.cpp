@@ -35,11 +35,13 @@
 Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) 
 {
     pickFrom = pickTo = vec3(0);
+    dropTo = false;
 }
         
 Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) 
 {
     pickFrom = pickTo = vec3(0);
+    dropTo = false;
 }
 
 void Soldier::setActive(bool active)
@@ -60,6 +62,7 @@ void Soldier::setActive(bool active)
 void Soldier::weaponAction()
 {
     pickFrom = pickTo = vec3(0);
+    dropTo = false;
 
     if (window->isKeyPressedOnce(GLFW_KEY_G))
     {
@@ -96,6 +99,18 @@ void Soldier::updateWeapon()
     }
 }
 
+void Soldier::drop(Weapon* weapon)
+{
+    if (weapons.empty() || weapons[0] != weapon)
+    {
+        return;
+    }
+
+    weapons[0]->setUserPointer(nullptr);
+    weapons[0]->drop(getForward() + getUp());
+    weapons.pop_front();
+}
+
 void Soldier::drop()
 {
     if (weapons.empty())
@@ -104,10 +119,6 @@ void Soldier::drop()
     }
    
     dropTo = true;
-
-    weapons[0]->setUserPointer(nullptr);
-    weapons[0]->drop(getForward() + getUp());
-    weapons.pop_front();
 }
 
 void Soldier::pick(Weapon* weapon)
@@ -127,6 +138,21 @@ void Soldier::pick()
     pickFrom = getPosition();
     pickTo = getForward();
 }
+        
+deque < Weapon* > Soldier::getWeapons() const
+{
+    return weapons;
+}
+
+Weapon* Soldier::getWeapon(int index) const
+{
+    if (index < 0 || index >= (int)weapons.size())
+    {
+        throw(runtime_error("ERROR::Soldier::getWeapon() index is out of range"));
+    }
+
+    return weapons[index];
+}
 
 pair < vec3, vec3 > Soldier::getPickRay() const
 {
@@ -138,6 +164,18 @@ pair < vec3, vec3 > Soldier::getPickRay() const
     }
 
     return {pickFrom, pickTo};
+}
+
+bool Soldier::isDrop() const
+{   
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
+    return dropTo;
 }
 
 void Soldier::update(bool events)

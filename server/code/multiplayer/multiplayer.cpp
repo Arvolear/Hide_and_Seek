@@ -19,6 +19,8 @@
 #include "physicsobjectdataupdater.hpp"
 #include "weaponpickercollector.hpp"
 #include "weaponpickerupdater.hpp"
+#include "weapondroppercollector.hpp"
+#include "weapondropperupdater.hpp"
 #include "multiplayer.hpp"
 
 Multiplayer::Multiplayer(Level* level, World* world)
@@ -30,6 +32,8 @@ Multiplayer::Multiplayer(Level* level, World* world)
     physicsObjectDataUpdater = new PhysicsObjectDataUpdater();
     weaponPickerCollector = new WeaponPickerCollector();
     weaponPickerUpdater = new WeaponPickerUpdater(world);
+    weaponDropperCollector = new WeaponDropperCollector();
+    weaponDropperUpdater = new WeaponDropperUpdater();
 
     this->level = level;
     this->world = world;
@@ -49,6 +53,11 @@ void Multiplayer::broadcast()
             {
                 if (new_sockets[i] > 0)
                 {
+                    cout << "Join playerID: " << i << endl;
+                    
+                    /* connected */
+                    level->getPlayer(i)->setActive(true);
+
                     string message = "BEG\n<join>" + to_string(i) + "</join>\n";
                     message += physicsObjectDataCollector->getData(true);
                     message += "END";
@@ -56,7 +65,7 @@ void Multiplayer::broadcast()
                     /* send here */
                     node->sendMSG(new_sockets[i], message);
 
-                    node->newToOldClient(i);
+                    node->newToClient(i);
                     level->getPlayer(i)->getPhysicsObject()->setOwnerID(i);
                 }
             }
@@ -135,15 +144,51 @@ void Multiplayer::broadcast()
                 try
                 {
                     node->sendMSG(sockets[j], weaponPickerCollector->getData());
-                    if (weaponPickerCollector->getData() != "")
-                    {
-                        cout << "PICK SEND" << weaponPickerCollector->getData() << endl;
-                    }
                 }
                 catch(exception& ex) {}
             }
 
             weaponPickerCollector->clear();
+        }
+        
+        /* dropWeapons */
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            weaponDropperCollector->setPlayerID(i);
+            weaponDropperCollector->collect(players[i]);
+
+            vector < int > sockets = node->getClientSockets();
+
+            for (size_t j = 0; j < sockets.size(); j++)
+            {
+                try
+                {
+                    node->sendMSG(sockets[j], weaponDropperCollector->getData());
+                }
+                catch(exception& ex) {}
+            }
+
+            weaponDropperCollector->clear();
+        }
+        
+        /* old clients */
+        if (node->isOldClients())
+        {
+            vector < int > old_sockets = node->getOldClientSockets();
+
+            for (size_t i = 0; i < old_sockets.size(); i++)
+            {
+                if (old_sockets[i] > 0)
+                {
+                    cout << "Quit playerID: " << i << endl;
+                    
+                    /* disconnected */
+                    level->getPlayer(i)->setActive(false);
+
+                    /* send here */
+                    node->oldToNothing(i);
+                }
+            }
         }
     }
 }
@@ -185,13 +230,21 @@ void Multiplayer::update()
             }
             else if (messages[i].find("Pick") != string::npos)
             {
-                cout << "PICK UPDATE" << endl;
                 weaponPickerUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
 
                 weaponPickerUpdater->updateData(player);
 
                 weaponPickerUpdater->clear();
+            }
+            else if (messages[i].find("Drop") != string::npos)
+            {
+                weaponDropperUpdater->collect(messages[i]);
+                Player* player = level->getPlayer(weaponDropperUpdater->getPlayerID());
+
+                weaponDropperUpdater->updateData(player);
+
+                weaponDropperUpdater->clear();
             }
         }
     }
@@ -206,4 +259,6 @@ Multiplayer::~Multiplayer()
     delete physicsObjectDataUpdater;
     delete weaponPickerCollector;
     delete weaponPickerUpdater;
+    delete weaponDropperCollector;
+    delete weaponDropperUpdater;
 }

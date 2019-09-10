@@ -211,7 +211,12 @@ void Client::recvMSG(int size, int timeoutSec)
 
             int bytes_read = recv(sock, buffer, size, MSG_DONTWAIT);
 
-            if (bytes_read <= 0)
+            if (bytes_read == 0)
+            {
+                cout << "Disconnected from the server\n";
+                break;
+            }
+            else if (bytes_read < 0)
             {
                 break;
             }

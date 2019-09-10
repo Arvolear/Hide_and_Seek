@@ -57,6 +57,8 @@ void WeaponPickerCollector::collect(Player* player)
     pair < vec3, vec3 > ray = soldier->getPickRay();
     pickFrom = ray.first;
     pickTo = ray.second;
+
+    soldier->clearPickData();
 }
 
 string WeaponPickerCollector::getData() const

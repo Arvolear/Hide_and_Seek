@@ -5,6 +5,7 @@ Node::Node(int max_clients, int max_queue, int port)
     this->max_clients = max_clients;
     client_sockets.resize(max_clients);
     new_client_sockets.resize(max_clients);
+    old_client_sockets.resize(max_clients);
 
     messages.resize(max_clients);
 
@@ -72,8 +73,6 @@ void Node::checkNewConnections()
         if (newSock && emptyInd >= 0)
         {
             new_client_sockets[emptyInd] = client_socket;
-            
-            cout << "Join playerID: " << emptyInd << endl;
         }
     }
 }
@@ -185,7 +184,7 @@ void Node::constructFineMessage(char* buffer, int size, int index)
     /* END */
 }
 
-void Node::checkOldConnections(int size)
+void Node::checkConnections(int size)
 {
     for (int i = 0; i < max_clients; i++)
     {
@@ -196,9 +195,6 @@ void Node::checkOldConnections(int size)
             char* buffer = new char[size + 1];
             int bytes_read = 1;
 
-            unique_lock < mutex > lck(mtx);
-            ready = false;
-
             messages[i][0] = messages[i][1];
             messages[i][1] = {"", false};
 
@@ -207,14 +203,14 @@ void Node::checkOldConnections(int size)
                 memset(buffer, 0, size + 1);
 
                 bytes_read = recv(inputsd, buffer, size, MSG_DONTWAIT);
-                
-                if (bytes_read <= 0)
+               
+                /* disconnected */
+                if (bytes_read == 0)
                 {
-                    if (errno == EAGAIN || errno == EWOULDBLOCK)
-                    {
-                        bytes_read = 1;
-                    }
-
+                    break;
+                }
+                else if (bytes_read < 0)
+                {
                     break;
                 }
 
@@ -235,26 +231,19 @@ void Node::checkOldConnections(int size)
                 }
             }
 
-            ready = true;
-            cv.notify_all();
-
             delete[] buffer;
 
             /* client has disconnected */
-            if (bytes_read <= 0)
+            if (bytes_read == 0)
             {
-                string message = "BEG\n<quit>" + to_string(i) + "</quit>\nEND";
-
-                close(inputsd);
+                old_client_sockets[i] = client_sockets[i];
                 client_sockets[i] = 0;
                 new_client_sockets[i] = 0;
 
                 messages[i][0] = {"", false};
                 messages[i][1] = {"", false};
 
-                //sendMSG(-1, message);
-
-                cout << "Quit playerID: " << i << endl;
+                close(inputsd);
             }
         }
     }
@@ -292,8 +281,14 @@ void Node::checkActivity(int size, float timeoutSec)
         throw(runtime_error("ERROR::Node::checkActivity() select"));
     }
 
+    unique_lock < mutex > lck(mtx);
+    ready = false;
+
     checkNewConnections();
-    checkOldConnections(size);
+    checkConnections(size);
+    
+    ready = true;
+    cv.notify_all();
 }
 
 void Node::sendMSG(int to, string msg, bool force)
@@ -302,7 +297,7 @@ void Node::sendMSG(int to, string msg, bool force)
     {
         return;
     }
-    
+
     /* check the same message */
     for (size_t i = 0; i < client_sockets.size(); i++)
     {
@@ -315,13 +310,6 @@ void Node::sendMSG(int to, string msg, bool force)
 
             break;
         }
-    }
-
-    unique_lock < mutex > lk(mtx);
-
-    while (!ready)
-    {
-        cv.wait(lk);
     }
 
     if (send(to, msg.data(), msg.size(), MSG_NOSIGNAL) < 0)
@@ -347,14 +335,60 @@ vector < int > Node::getClientSockets() const
 
 vector < int > Node::getNewClientSockets() const
 {
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
     return new_client_sockets;
+}
+
+vector < int > Node::getOldClientSockets() const
+{
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
+    return old_client_sockets;
 }
 
 bool Node::isNewClients() const
 {
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
     for (size_t i = 0; i < new_client_sockets.size(); i++)
     {
         if (new_client_sockets[i] > 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Node::isOldClients() const
+{
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
+    for (size_t i = 0; i < old_client_sockets.size(); i++)
+    {
+        if (old_client_sockets[i] > 0)
         {
             return true;
         }
@@ -399,10 +433,15 @@ vector < string > Node::getMessages() const
     return move(res);
 }
 
-void Node::newToOldClient(int index)
+void Node::newToClient(int index)
 {
     client_sockets[index] = new_client_sockets[index];
     new_client_sockets[index] = 0;
+}
+
+void Node::oldToNothing(int index)
+{
+    old_client_sockets[index] = 0; 
 }
 
 Node::~Node() {}

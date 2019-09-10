@@ -33,11 +33,15 @@ class Soldier : public Player
 
         void setActive(bool active) override;
 
+        void drop(Weapon* weapon);
         void drop();
         void pick(Weapon* weapon);
         void pick();
 
+        deque < Weapon* > getWeapons() const;
+        Weapon* getWeapon(int index) const;
         pair < vec3, vec3 > getPickRay() const;
+        bool isDrop() const;
 
         void update(bool events = true) override;
 

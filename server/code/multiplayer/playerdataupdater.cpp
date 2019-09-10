@@ -85,5 +85,5 @@ void PlayerDataUpdater::clear()
 
 PlayerDataUpdater::~PlayerDataUpdater() 
 {
-    delete model;
+    delete[] model;
 }

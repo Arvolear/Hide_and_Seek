@@ -15,6 +15,7 @@
 
 WeaponPickerUpdater::WeaponPickerUpdater(World* world)
 {
+    playerID = 0;
     this->world = world;
     rayTracer = new RayTracer(world->getWorld());
 
@@ -109,8 +110,6 @@ void WeaponPickerUpdater::updateData(Player* player)
         if (!weapon->getUserPointer())
         {
             soldier->pick(weapon);
-            weapon->setOwnerID(playerID);
-            weapon->setUserPointer(soldier);
         }
     }
 }
@@ -122,6 +121,7 @@ int WeaponPickerUpdater::getPlayerID() const
 
 void WeaponPickerUpdater::clear()
 {
+    playerID = 0;
     pickFrom = pickTo = btVector3(0, 0, 0);
 
     weapon = nullptr;

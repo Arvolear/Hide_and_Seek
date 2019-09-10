@@ -17,21 +17,24 @@ class Soldier : public Player
     private:
         deque < Weapon* > weapons;
         deque < Weapon* > new_weapons;
+        deque < Weapon* > old_weapons;
 
     public:
         Soldier(float speed = 1);
         Soldier(PhysicsObject* physicsObject, float speed = 1);
 
         void pick(Weapon* weapon);
-        void drop(btVector3 direction);
+        void drop(btScalar* model);
         
         void next();
         void prev();
 
-        void newToOldWeapons();
+        void newToWeapons();
+        void oldToNothing();
 
         deque < Weapon* > getWeapons() const;
         deque < Weapon* > getNewWeapons() const;
+        deque < Weapon* > getOldWeapons() const;
         
         ~Soldier();
 };

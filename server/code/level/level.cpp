@@ -83,6 +83,11 @@ void Level::update()
     /* update owners */
     for (size_t i = 0; i < players.size(); i++)
     {
+        if (!players[i]->isActive())
+        {
+            continue;
+        }
+
         set < btRigidBody* > touching;
 
         touching = physicsWorld->getTouchingWith(players[i]->getPhysicsObject()->getRigidBody());
@@ -91,22 +96,7 @@ void Level::update()
         {
             PhysicsObject* physicsObject = static_cast < PhysicsObject* >(j->getUserPointer());
 
-            bool isPlayer = false;
-            for (size_t i = 0; i < players.size(); i++)
-            {
-                if (players[i]->getPhysicsObject() == physicsObject)
-                {
-                    isPlayer = true;
-                    break;
-                }
-            }
-
-            if (isPlayer)
-            {
-                continue;
-            }
-
-            /* if not picked */
+            /* if not picked || player object */
             if (!physicsObject->getUserPointer())
             {
                 physicsObject->setOwnerID(i);
