@@ -18,11 +18,16 @@ class Multiplayer
         PlayerDataUpdater* playerDataUpdater;
         PhysicsObjectDataCollector* physicsObjectDataCollector;
         PhysicsObjectDataUpdater* physicsObjectDataUpdater;
+        WeaponPickerCollector* weaponPickerCollector;
+        WeaponPickerUpdater* weaponPickerUpdater;
+        WeaponDropperCollector* weaponDropperCollector;
+        WeaponDropperUpdater* weaponDropperUpdater;
 
         Level* level;
+        World* world;
 
     public:
-        Multiplayer(Level* level);
+        Multiplayer(Level* level, World* world);
 
         void broadcast();
         void update();

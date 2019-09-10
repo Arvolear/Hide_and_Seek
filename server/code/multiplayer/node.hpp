@@ -25,32 +25,39 @@ class Node
         int max_clients;
         vector < int > client_sockets;
         vector < int > new_client_sockets;
+        vector < int > old_client_sockets;
 
         fd_set readfds;
 
-		vector < string > messages;
+		vector < vector < pair < string, bool > > > messages;
+        vector < string > lastMsgs; 
         
         bool ready;
         mutable mutex mtx;
         mutable condition_variable cv;
+		
+        void constructFineMessage(char* buffer, int size, int index);     
+ 
+        void checkNewConnections();
+        void checkConnections(int size);
 
     public:
         Node(int max_clients, int max_queue, int port);
 
-		bool constructFineMessage(char* buffer, int size, int index);     
- 
-        void checkNewConnections();
-        void checkOldConnections(int size);
-
         void checkActivity(int size = 2048, float timeoutSec = 1);
-        void sendMSG(int to, string msg);
+        void sendMSG(int to, string msg, bool force = false);
+
+        bool isNewClients() const;
+        bool isOldClients() const;
 
         vector < int > getClientSockets() const;
         vector < int > getNewClientSockets() const;
-        bool isNewClients() const;
+        vector < int > getOldClientSockets() const;
         int getClientSocket(size_t index) const;
         vector < string > getMessages() const;
-        void newToOldClient(int index);
+
+        void newToClient(int index);
+        void oldToNothing(int index);
 
         ~Node();
 };

@@ -22,11 +22,14 @@ class LevelLoader
 
         /* helpers */
         void loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject*& PO);
+        void loadWeapon(XMLElement* weaponElem, Weapon*& WE);
 
         /* main */
         void loadPhysicsObjects();
+        void loadWeapons();
 
         void loadPlayers();
+        void loadSoldiers();
 
     public:
         LevelLoader(World* physicsWorld);

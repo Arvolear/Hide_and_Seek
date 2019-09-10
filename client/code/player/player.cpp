@@ -217,7 +217,7 @@ void Player::moveAir()
     btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
 
     /* enable sliding effect */
-    if (abs(velocity.y()) < 0.1)
+    if (abs(velocity.y()) < 0.05)
     {
         player->getPhysicsObject()->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
     }
@@ -293,6 +293,7 @@ void Player::setRayTracer(RayTracer* tracer)
 
 void Player::setGameObject(GameObject* player)
 {
+    player->setUserPointer(this);
     this->player = player;
 }
 
@@ -381,14 +382,25 @@ void Player::updateModel(vec3 newForward)
     
         modelForward = newForward;
     }
+    
+    if (!active)
+    {
+        Forward = modelForward;
+        Left = normalize(cross(Up, Forward));
+    }
 
     player->setLocalRotation(Up, angle);
 
     vec3 localPos = vec3(0);
 
-    localPos += modelForward * modelOffset.x;
+    /*if (player->getName() == "soldier0")
+    {
+        cout << player->getName() << endl << modelForward.x << ' ' << modelForward.y << modelForward.z << endl;
+    }*/
+
+    //localPos += modelForward * modelOffset.x;
     localPos += Up * modelOffset.y;
-    localPos += Left * modelOffset.z;
+    //localPos += Left * modelOffset.z;
 
     player->setLocalPosition(localPos, false);
 }
@@ -399,7 +411,7 @@ void Player::updateAnimation(vec3 moveDirection)
     {
         player->playAnimation("idle");
     }
-    else if (player->getActiveAnimation() && player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0))
+    else if (player->getActiveAnimation() && player->getActiveAnimation()->getName() != "run" && moveDirection != vec3(0) && isGroundStanding())
     {
         player->playAnimation("run");
     }
@@ -424,6 +436,7 @@ void Player::update(bool events)
     }
     
     ready = true;
+    lk.unlock();
     cv.notify_all();
 
     if (active && player && player->getPhysicsObject())

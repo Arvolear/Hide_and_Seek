@@ -6,6 +6,7 @@
 
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
+#include "../physics_object/weapon.hpp"
 
 #include "../player/player.hpp"
 
@@ -79,9 +80,28 @@ void Level::removePhysicsObject(string name)
 
 void Level::update()
 {
+    /* update owners */
     for (size_t i = 0; i < players.size(); i++)
     {
-        players[i]->update();
+        if (!players[i]->isActive())
+        {
+            continue;
+        }
+
+        set < btRigidBody* > touching;
+
+        touching = physicsWorld->getTouchingWith(players[i]->getPhysicsObject()->getRigidBody());
+
+        for (auto& j: touching)
+        {
+            PhysicsObject* physicsObject = static_cast < PhysicsObject* >(j->getUserPointer());
+
+            /* if not picked || player object */
+            if (!physicsObject->getUserPointer())
+            {
+                physicsObject->setOwnerID(i);
+            }
+        }
     }
 }
 

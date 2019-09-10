@@ -3,8 +3,9 @@
 Client::Client()
 {
     sock = 0;
-    message = "";
+    messages.resize(2, {"", false});
     ready = true;
+    lastMsg = "";
 }
         
 void Client::connectToServer(string ip, int port, int timeoutSec)
@@ -23,29 +24,22 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
     int arg;
 
     /* set nonblocking mode */
-    if ((arg = fcntl(sock, F_GETFL, NULL)) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl first get"));
-    }
-    
+    arg = fcntl(sock, F_GETFL, NULL); 
     arg |= O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, arg) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl first set"));
-    }
+    fcntl(sock, F_SETFL, arg);
 
     if (connect(sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
     {
         if (errno == EINPROGRESS)
         {
-            FD_ZERO(&readfds);
-            FD_SET(sock, &readfds);
+            FD_ZERO(&fds);
+            FD_SET(sock, &fds);
 
             timeout.tv_sec = timeoutSec;
             timeout.tv_usec = 0;
 
             /* timeout check */
-            if (select(sock + 1, &readfds, NULL, NULL, &timeout))
+            if (select(sock + 1, &fds, NULL, NULL, &timeout))
             {
                 int so_error;
                 socklen_t len = sizeof(so_error);
@@ -72,112 +66,175 @@ void Client::connectToServer(string ip, int port, int timeoutSec)
     }
 
     /* set blocking mode */
-    if ((arg = fcntl(sock, F_GETFL, NULL)) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl second get"));
-    }
-
+    arg = fcntl(sock, F_GETFL, NULL);
     arg &= ~O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, arg) < 0)
-    {
-        throw(runtime_error("ERROR::Client::connectToServer() fcntl second set"));
-    }
+    fcntl(sock, F_SETFL, arg);
 }
 
-void Client::sendMSG(string data)
+void Client::sendMSG(string data, bool force)
 {
+    if (data.empty() || data == "" || (data == lastMsg && !force))
+    {
+        return;
+    }
+
+    lastMsg = data;
     send(sock, data.data(), data.size(), 0);
 }
 
-bool Client::constructFineMessage(char* buffer, int size)
-{
-	/* BEG */
-	if (!buffer || size <= 0)
-	{
-		return false;
-	}
+void Client::constructFineMessage(char* buffer, int size)
+{ 
+    /* BEG */
+    if (!buffer || size <= 0)
+    {
+        messages[0].second = false;
+        messages[1].second = false;
 
-	string tmp(buffer, size);
+        return;
+    }
 
-	if (message.empty())
-	{
-		size_t beg = tmp.find("BEG");
-		if (beg != string::npos)
-		{
-			size_t end = tmp.find("END", beg + 3);
-			if (end != string::npos)
+    string tmp(buffer, size);
+
+    if (messages[0].first.empty())
+    {
+        size_t beg = tmp.find("BEG");
+        if (beg != string::npos)
+        {
+            size_t end = tmp.find("END", beg + 3);
+            if (end != string::npos)
             {
-                message = tmp.substr(beg + 3, end - beg - 3);		
-                return true;
+                messages[0].first = tmp.substr(beg + 3, end - beg - 3);
+
+                size_t beg2 = tmp.find("BEG", end + 3);
+                if (beg2 != string::npos)
+                {
+                    size_t end2 = tmp.find("END", beg2 + 3);
+                    if (end2 != string::npos)
+                    {
+                        messages[1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
+                        messages[0].second = true;
+                        messages[1].second = true;
+
+                        return;
+                    }
+                    else
+                    {
+                        messages[1].first = tmp.substr(beg2 + 3);
+                    }
+                }
+
+                messages[0].second = true;
+                messages[1].second = false;
+
+                return;
             }
             else
             {
-                message = tmp.substr(beg + 3);
-                return false;
+                messages[0].first = tmp.substr(beg + 3);
+
+                messages[0].second = false;
+                messages[1].second = false;
+
+                return;
             }
-        }	
+        }
     }
     else
     {
         size_t end = tmp.find("END");
         if (end != string::npos)
         {
-            message += tmp.substr(0, end);		
-            return true;
+            messages[0].first += tmp.substr(0, end);
+
+            size_t beg2 = tmp.find("BEG", end + 3);
+            if (beg2 != string::npos)
+            {
+                size_t end2 = tmp.find("END", beg2 + 3);
+                if (end2 != string::npos)
+                {
+                    messages[1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
+                    messages[0].second = true;
+                    messages[1].second = true;
+
+                    return;
+                }
+                else
+                {
+                    messages[1].first = tmp.substr(beg2 + 3);
+                }
+            }
+
+            messages[0].second = true;
+            messages[1].second = false;
+
+            return;
         }
         else
         {
-            message += tmp.substr(0);		
-            return false;
+            messages[0].first += tmp;
+
+            messages[0].second = false;
+            messages[1].second = false;
+
+            return;
         }
     }
 
-    return false;
+    messages[0].second = false;
+    messages[1].second = false;
+
+    return;
     /* END */
 }
 
 void Client::recvMSG(int size, int timeoutSec)
 {
-    FD_ZERO(&readfds);
-    FD_SET(sock, &readfds);
+    FD_ZERO(&fds);
+    FD_SET(sock, &fds);
 
     timeout.tv_sec = timeoutSec;
     timeout.tv_usec = 0;
 
-    if (select(sock + 1, &readfds, NULL, NULL, &timeout))
+    if (select(sock + 1, &fds, NULL, NULL, &timeout))
     {
         char* buffer = new char[size + 1];
-        
+
         unique_lock < mutex > lk(mtx);
         ready = false;
 
-        message = "";
+        messages[0] = messages[1];
+        messages[1] = {"", false};
 
-        while (true)
+        while (!messages[0].second)
         {
-            memset(buffer, 0, size);
+            memset(buffer, 0, size + 1);
 
-            int bytes_read = recv(sock, buffer, size, 0);
+            int bytes_read = recv(sock, buffer, size, MSG_DONTWAIT);
 
-            if (bytes_read <= 0)
+            if (bytes_read == 0)
+            {
+                cout << "Disconnected from the server\n";
+                break;
+            }
+            else if (bytes_read < 0)
             {
                 break;
             }
 
-            if (constructFineMessage(buffer, bytes_read))
+            constructFineMessage(buffer, bytes_read);
+
+            if (messages[0].second)
             {
                 /* END fix */
-                if (!message.empty())
+                if (!messages[0].first.empty())
                 {
-                    int s = message.size() - 1;
-                    while (s >= 0 && message[s] != '>')
+                    int s = messages[0].first.size() - 1;
+                    while (s >= 0 && messages[0].first[s] != '>')
                     {
-                        message[s] = ' ';
+                        messages[0].first[s] = ' ';
                         s--;
                     }
                 }
-
-                break;
             }
         }
 
@@ -197,7 +254,7 @@ string Client::getMessage() const
         cv.wait(lk);
     }
 
-    return message;
+    return messages[0].second ? messages[0].first : "";
 }
 
 Client::~Client()

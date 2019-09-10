@@ -42,6 +42,8 @@ GameObject::GameObject(string name)
     interpolationCoeff = 1.0;
     localTransform = nextTransform = prevTransform = mat4(1.0);
     ready = true;
+
+    userPointer = nullptr;
 }
 
 void GameObject::removePhysicsObject()
@@ -124,6 +126,11 @@ void GameObject::setPhysicsObject(PhysicsObject* object)
 
     physicsObject = object;
     physicsObject->setUserPointer(this);
+}
+
+void GameObject::setUserPointer(void* userPointer)
+{
+    this->userPointer = userPointer;
 }
 
 void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
@@ -338,6 +345,11 @@ mat4 GameObject::getLocalTransform() const
 {
     return localTransform;
 }
+
+void* GameObject::getUserPointer() const
+{
+    return userPointer;
+}
         
 Animation* GameObject::getActiveAnimation() const
 {
@@ -360,8 +372,8 @@ void GameObject::render(Shader* shader, bool cull)
     {
         mat4 model = interpolate(prevTransform, nextTransform, interpolationCoeff);
 
-        setPhysicsObjectTransform(model);
-        interpolation = true;
+        unique_ptr < btScalar > transform(glmMat42BtScalar(model));
+        physicsObject->setTransform(transform.get());
 
         interpolationCoeff += 0.4;
     }

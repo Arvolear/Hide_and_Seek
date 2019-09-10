@@ -32,47 +32,68 @@
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
-#include "playerdatacollector.hpp"
-        
-PlayerDataCollector::PlayerDataCollector()
+#include "weapondroppercollector.hpp"
+
+WeaponDropperCollector::WeaponDropperCollector() 
 {
     playerID = 0;
-
+    dropTo = false;
     model = mat4(1.0);
-    moveDirection = vec3(0.0);
 }
 
-void PlayerDataCollector::setPlayerID(int playerID)
+void WeaponDropperCollector::setPlayerID(int playerID)
 {
     this->playerID = playerID;
 }
 
-void PlayerDataCollector::collect(Player* player)
+void WeaponDropperCollector::collect(Player* player)
 {
-    if (player->getGameObject())
+    Soldier* soldier = dynamic_cast < Soldier* >(player);
+
+    if (!soldier)
     {
-        model = player->getGameObject()->getPhysicsObjectTransform();
-        moveDirection = player->getMoveDirection();
+        throw(runtime_error("ERROR::WeaponDropperCollector::collect() player is not a soldier"));
     }
+
+    dropTo = soldier->isDrop();
+    
+    if (!dropTo)
+    {
+        return;
+    }
+
+    deque < Weapon* > weapons = soldier->getWeapons();
+
+    if (!weapons.empty() && weapons[0])
+    {
+        model = weapons[0]->getPhysicsObjectTransform();
+    }
+
+    soldier->clearDropData();
 }
 
-string PlayerDataCollector::getData() const
+string WeaponDropperCollector::getData() const
 {
-    XMLDocument playerDataCollectorDoc;
+    if (!dropTo)
+    {
+        return "";
+    }
+
+    XMLDocument weaponDropperDoc;
 
     /* root */
-    XMLNode* root = playerDataCollectorDoc.NewElement("Player");
+    XMLNode* root = weaponDropperDoc.NewElement("Drop");
 
-    playerDataCollectorDoc.InsertFirstChild(root);
+    weaponDropperDoc.InsertFirstChild(root);
 
     /* playerID */
-    XMLElement* playerIDElem = playerDataCollectorDoc.NewElement("id");
+    XMLElement* playerIDElem = weaponDropperDoc.NewElement("id");
     playerIDElem->SetText(playerID);
 
     root->InsertEndChild(playerIDElem);
-    
+
     /* model */
-    XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
+    XMLElement* modelElem = weaponDropperDoc.NewElement("mdl");
 
     for (int i = 0; i < 4; i++)
     {
@@ -86,30 +107,22 @@ string PlayerDataCollector::getData() const
     }
 
     root->InsertEndChild(modelElem);
-
-    /* moveDirection */
-    XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-    moveDirectionElem->SetAttribute("x", cutFloat(moveDirection.x, 4));
-    moveDirectionElem->SetAttribute("y", cutFloat(moveDirection.y, 4));
-    moveDirectionElem->SetAttribute("z", cutFloat(moveDirection.z, 4));
-
-    root->InsertEndChild(moveDirectionElem);
-
+    
     /* printer */
-    XMLPrinter playerDataCollectorPrinter;
-    playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
+    XMLPrinter weaponDropperPrinter;
+    weaponDropperDoc.Print(&weaponDropperPrinter);
 
     string res("BEG\n");
-    res += playerDataCollectorPrinter.CStr();
+    res += weaponDropperPrinter.CStr();
     res += "END\n";
 
-    return res;
+    return res;    
 }
 
-void PlayerDataCollector::clear()
+void WeaponDropperCollector::clear()
 {
+    dropTo = false;
     model = mat4(1.0);
-    moveDirection = vec3(0.0);
 }
 
-PlayerDataCollector::~PlayerDataCollector() {}
+WeaponDropperCollector::~WeaponDropperCollector() {}

@@ -22,7 +22,7 @@ using namespace std;
 class Client
 {
     private:
-        fd_set readfds;
+        fd_set fds;
 
         int sock;
         struct sockaddr_in addr;
@@ -32,16 +32,18 @@ class Client
         mutable mutex mtx;
         mutable condition_variable cv;
 
-        string message;
+        vector < pair < string, bool > > messages;
+
+        string lastMsg;
 
     public:
         Client();
 
         void connectToServer(string ip, int port, int timeoutSec = 5);
 
-        void sendMSG(string data);
+        void sendMSG(string data, bool force = false);
         
-        bool constructFineMessage(char* buffer, int size);
+        void constructFineMessage(char* buffer, int size);
         void recvMSG(int size = 2048, int timeoutSec = 1);
 
         string getMessage() const;

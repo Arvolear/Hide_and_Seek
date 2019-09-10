@@ -32,9 +32,17 @@
 #include "player.hpp"
 #include "soldier.hpp"
 
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) {}
+Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) 
+{
+    pickFrom = pickTo = vec3(0);
+    dropTo = false;
+}
         
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) {}
+Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) 
+{
+    pickFrom = pickTo = vec3(0);
+    dropTo = false;
+}
 
 void Soldier::setActive(bool active)
 {
@@ -53,6 +61,9 @@ void Soldier::setActive(bool active)
 
 void Soldier::weaponAction()
 {
+    pickFrom = pickTo = vec3(0);
+    dropTo = false;
+
     if (window->isKeyPressedOnce(GLFW_KEY_G))
     {
         drop();
@@ -88,21 +99,33 @@ void Soldier::updateWeapon()
     }
 }
 
+void Soldier::drop(Weapon* weapon)
+{
+    if (weapons.empty() || weapons[0] != weapon)
+    {
+        return;
+    }
+
+    weapons[0]->setUserPointer(nullptr);
+    weapons[0]->drop(getForward() + getUp());
+    weapons.pop_front();
+}
+
 void Soldier::drop()
 {
     if (weapons.empty())
     {
         return;
     }
-    
-    weapons[0]->drop(getForward() + getUp());
-    weapons.pop_front();
+   
+    dropTo = true;
 }
 
 void Soldier::pick(Weapon* weapon)
 {
     weapon->pick(getForward(), getUp(), active);
     weapons.push_front(weapon); 
+    weapon->setUserPointer(this);
 }
 
 void Soldier::pick()
@@ -112,35 +135,47 @@ void Soldier::pick()
         return;
     }
 
-    btVector3 from = toBtVector3(getPosition());
-    btVector3 to = toBtVector3(getForward());
+    pickFrom = getPosition();
+    pickTo = getForward();
+}
+        
+deque < Weapon* > Soldier::getWeapons() const
+{
+    return weapons;
+}
 
-    unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
-
-    if (!result.get())
+Weapon* Soldier::getWeapon(int index) const
+{
+    if (index < 0 || index >= (int)weapons.size())
     {
-        return;
+        throw(runtime_error("ERROR::Soldier::getWeapon() index is out of range"));
     }
 
-    float dist = (from - result->hitPoint).length();
+    return weapons[index];
+}
 
-    //cout << dist << " " << bottomDist << endl; 
+pair < vec3, vec3 > Soldier::getPickRay() const
+{
+    unique_lock < mutex > lk(mtx);
 
-    int optimalDistance = 20;
-
-    if (dist > optimalDistance)
+    while (!ready)
     {
-        return;
+        cv.wait(lk);
     }
 
-    Weapon* hitOne = dynamic_cast < Weapon* >(static_cast < GameObject* >(static_cast < PhysicsObject* >(result->body->getUserPointer())->getUserPointer()));
+    return {pickFrom, pickTo};
+}
 
-    if (!hitOne)
+bool Soldier::isDrop() const
+{   
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
     {
-        return;
+        cv.wait(lk);
     }
 
-    pick(hitOne);
+    return dropTo;
 }
 
 void Soldier::update(bool events)
@@ -163,6 +198,7 @@ void Soldier::update(bool events)
     }
     
     ready = true;
+    lk.unlock();
     cv.notify_all();
 
     movePhysics();
@@ -178,6 +214,16 @@ void Soldier::update(bool events)
         
         updateWeapon();
     }
+}
+        
+void Soldier::clearPickData()
+{
+    pickFrom = pickTo = vec3(0.0);
+}
+
+void Soldier::clearDropData()
+{   
+    dropTo = false;
 }
 
 Soldier::~Soldier() {}

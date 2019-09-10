@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <map>
 #include <string>
 
 #include <tinyxml2/tinyxml2.h>
@@ -9,16 +10,15 @@
 using namespace std;
 using namespace tinyxml2;
 
-class PlayerDataUpdater
+class WeaponDropperUpdater
 {
     private:
         int playerID;
 
-        mat4 model;
-        vec3 moveDirection;
+        btScalar* model;
 
     public:
-        PlayerDataUpdater();
+        WeaponDropperUpdater();
 
         void collect(string info);
 
@@ -27,6 +27,6 @@ class PlayerDataUpdater
         int getPlayerID() const;
 
         void clear();
-        
-        ~PlayerDataUpdater();
+
+        ~WeaponDropperUpdater();
 };

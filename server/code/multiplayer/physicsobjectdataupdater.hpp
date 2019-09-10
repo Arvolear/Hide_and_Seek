@@ -25,6 +25,9 @@ class PhysicsObjectDataUpdater
         void updateData(PhysicsObject* physicsObject);
 
         string getName() const;
+        int getSenderID() const;
+
+        void clear();
 
         ~PhysicsObjectDataUpdater();
 };

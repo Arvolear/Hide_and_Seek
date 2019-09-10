@@ -38,7 +38,7 @@
                         <speed speed="0.8"/>
                         <loop loop="false"/>
                     </animation>
-                    <animation name="idle" active="true">
+                    <animation name="idle" active="false">
                         <animid id="13"/>
                         <framesrange start="0.0" end="0.0"/>
                         <speed speed="0.0"/>

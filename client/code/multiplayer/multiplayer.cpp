@@ -49,6 +49,10 @@
 #include "playerdataupdater.hpp"
 #include "gameobjectdatacollector.hpp"
 #include "gameobjectdataupdater.hpp"
+#include "weaponpickercollector.hpp"
+#include "weaponpickerupdater.hpp"
+#include "weapondroppercollector.hpp"
+#include "weapondropperupdater.hpp"
 #include "multiplayer.hpp"
 
 Multiplayer::Multiplayer(Window* window, Level* level, World* world)
@@ -58,6 +62,10 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
     playerDataUpdater = new PlayerDataUpdater();
     gameObjectDataCollector = new GameObjectDataCollector();
     gameObjectDataUpdater = new GameObjectDataUpdater();
+    weaponPickerCollector = new WeaponPickerCollector();
+    weaponPickerUpdater = new WeaponPickerUpdater();
+    weaponDropperCollector = new WeaponDropperCollector();
+    weaponDropperUpdater = new WeaponDropperUpdater();
 
     this->window = window;
     this->level = level;
@@ -70,14 +78,13 @@ void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
     //client->connectToServer("192.168.0.145", 5040);
+    //client->connectToServer("192.168.0.184", 5040);
     client->connectToServer("127.0.0.1", 5040);
 
     client->recvMSG(1150);
 
     /* get playerID */
     string msg = client->getMessage();
-
-    //cout << msg << endl << msg.size() << endl;
 
     if (msg != "")
     {
@@ -93,9 +100,7 @@ void Multiplayer::connect()
         }
             
         gameObjectDataUpdater->collect(msg);
-
-        gameObjectDataUpdater->updateData(level->getGameObjects());
-
+        gameObjectDataUpdater->updateData(level->getGameObjects(), false);
         gameObjectDataUpdater->clear();
     }
     else
@@ -106,18 +111,30 @@ void Multiplayer::connect()
     level->setPlayerID(playerID);
     playerDataCollector->setPlayerID(playerID);
     gameObjectDataCollector->setSenderID(playerID);
+    weaponPickerCollector->setPlayerID(playerID);
+    weaponDropperCollector->setPlayerID(playerID);
 
     level->getPlayer()->setActive(true);
 
     cout << "PlayerID: " << playerID << endl;
+   
+    /* send player info */
+    playerDataCollector->collect(level->getPlayer());
+    client->sendMSG(playerDataCollector->getData());
+    playerDataCollector->clear();
 }
 
 void Multiplayer::broadcast()
 {
     while (window->isOpen())
     {
-        playerDataCollector->collect(level->getPlayer());
-        client->sendMSG(playerDataCollector->getData());
+        /* player */
+        if (level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody()->getLinearVelocity().length() > 0.05)
+        {
+            playerDataCollector->collect(level->getPlayer());
+            client->sendMSG(playerDataCollector->getData());
+            playerDataCollector->clear();
+        }
 
         map < string, GameObject* > gameObjects = level->getGameObjects();
         vector < Player* > players = level->getPlayers();
@@ -128,7 +145,7 @@ void Multiplayer::broadcast()
             gameObjects.erase(players[i]->getGameObject()->getName());
         }
 
-        // physics object 
+        // game objects
         for (auto& i: gameObjects)
         {
             if (i.second->getPhysicsObject())
@@ -138,18 +155,28 @@ void Multiplayer::broadcast()
                 if (PO->getRigidBody())
                 {
                     btRigidBody* RB = PO->getRigidBody();
-                    btRigidBody* PRB = level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody();
 
                     btVector3 linearVel = RB->getLinearVelocity();
 
-                    if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && world->isTouching(PRB, RB) && linearVel.length() > 0.1)
+                    if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && linearVel.length() > 0.05)
                     {
                         gameObjectDataCollector->collect(i.second); 
-                        client->sendMSG(gameObjectDataCollector->getData()); 
+                        client->sendMSG(gameObjectDataCollector->getData());
+                        gameObjectDataCollector->clear();
                     }
                 }
             }
         }
+
+        /* pick */
+        weaponPickerCollector->collect(level->getPlayer());
+        client->sendMSG(weaponPickerCollector->getData());
+        weaponPickerCollector->clear();
+        
+        /* drop */
+        weaponDropperCollector->collect(level->getPlayer());
+        client->sendMSG(weaponDropperCollector->getData());
+        weaponDropperCollector->clear();
     }
 }
 
@@ -164,17 +191,46 @@ void Multiplayer::update()
         //cout << msg << endl << msg.size() << endl;
 
         if (msg.find("Player") != string::npos)
-        {    
+        { 
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+            playerDataUpdater->clear();
         }
         else if (msg.find("Objs") != string::npos)
         {
             gameObjectDataUpdater->collect(msg);
-
-            gameObjectDataUpdater->updateData(level->getGameObjects());
-
+            gameObjectDataUpdater->updateData(level->getGameObjects(), false);
             gameObjectDataUpdater->clear();
+        }
+        else if (msg.find("Pick") != string::npos)
+        {
+            weaponPickerUpdater->collect(msg);
+            Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
+            vector < string > names = weaponPickerUpdater->getNames();
+
+            for (size_t i = 0; i < names.size(); i++)
+            {
+                GameObject* gameObject = level->getGameObject(names[i]);
+
+                weaponPickerUpdater->updateData(player, gameObject);
+            }
+
+            weaponPickerUpdater->clear();
+        }
+        else if (msg.find("Drop") != string::npos)
+        {
+            weaponDropperUpdater->collect(msg);
+            Player* player = level->getPlayer(weaponDropperUpdater->getPlayerID());
+            vector < string > names = weaponDropperUpdater->getNames();
+
+            for (size_t i = 0; i < names.size(); i++)
+            {
+                GameObject* gameObject = level->getGameObject(names[i]);
+
+                weaponDropperUpdater->updateData(player, gameObject);
+            }
+
+            weaponDropperUpdater->clear();
         }
     }
 }
@@ -186,4 +242,8 @@ Multiplayer::~Multiplayer()
     delete playerDataUpdater;
     delete gameObjectDataCollector;
     delete gameObjectDataUpdater;
+    delete weaponPickerCollector;
+    delete weaponPickerUpdater;
+    delete weaponDropperCollector;
+    delete weaponDropperUpdater;
 }

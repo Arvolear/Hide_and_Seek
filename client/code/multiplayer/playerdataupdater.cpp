@@ -39,7 +39,6 @@ PlayerDataUpdater::PlayerDataUpdater()
     playerID = 0;
 
     model = mat4(1.0);
-
     moveDirection = vec3(0.0);
 }
 
@@ -106,6 +105,12 @@ void PlayerDataUpdater::updateData(Player* player)
 int PlayerDataUpdater::getPlayerID() const
 {
     return playerID;
+}
+
+void PlayerDataUpdater::clear()
+{
+    model = mat4(1.0);
+    moveDirection = vec3(0.0);
 }
 
 PlayerDataUpdater::~PlayerDataUpdater() {}

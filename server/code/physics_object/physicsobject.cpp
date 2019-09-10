@@ -128,7 +128,7 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world)
 
     globalNames.insert(name);
     this->name = name;
-    senderID = -1;
+    ownerID = -1;
 }
 
 PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -153,7 +153,7 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionSha
 
     globalNames.insert(name);
     this->name = name;
-    senderID = -1;
+    ownerID = -1;
 }
 
 PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -180,7 +180,7 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, CompoundShape*
 
     globalNames.insert(name);
     this->name = name;
-    senderID = -1;
+    ownerID = -1;
 }
 
 void PhysicsObject::setName(string name)
@@ -195,9 +195,9 @@ void PhysicsObject::setName(string name)
     this->name = name;
 }
 
-void PhysicsObject::setSenderID(int senderID)
+void PhysicsObject::setOwnerID(int ownerID)
 {
-    this->senderID = senderID;
+    this->ownerID = ownerID;
 }
 
 void PhysicsObject::setShape(btCollisionShape* shape)
@@ -300,9 +300,9 @@ string PhysicsObject::getName() const
     return name;
 }
 
-int PhysicsObject::getSenderID() const
+int PhysicsObject::getOwnerID() const
 {
-    return senderID;
+    return ownerID;
 }
 
 float PhysicsObject::getMass() const

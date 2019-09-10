@@ -63,13 +63,25 @@ void PhysicsObjectDataUpdater::collect(string info)
 
 void PhysicsObjectDataUpdater::updateData(PhysicsObject* physicsObject)
 {
-    physicsObject->setSenderID(senderID);
     physicsObject->setTransform(model);
 }
 
 string PhysicsObjectDataUpdater::getName() const
 {
     return name;
+}
+        
+int PhysicsObjectDataUpdater::getSenderID() const
+{
+    return senderID;
+}
+
+void PhysicsObjectDataUpdater::clear()
+{
+    name = "";
+    senderID = -1;
+
+    memset(model, 0, sizeof(btScalar) * 16);
 }
 
 PhysicsObjectDataUpdater::~PhysicsObjectDataUpdater() 

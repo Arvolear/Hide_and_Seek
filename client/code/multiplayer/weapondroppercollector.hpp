@@ -9,24 +9,24 @@
 using namespace std;
 using namespace tinyxml2;
 
-class PlayerDataCollector
+class WeaponDropperCollector
 {
     private:
         int playerID;
 
+        bool dropTo;
         mat4 model;
-        vec3 moveDirection;
 
     public:
-        PlayerDataCollector();
+        WeaponDropperCollector();
 
         void setPlayerID(int playerID);
-        
+
         void collect(Player* player);
 
         string getData() const;
 
         void clear();
-        
-        ~PlayerDataCollector();
+
+        ~WeaponDropperCollector();
 };

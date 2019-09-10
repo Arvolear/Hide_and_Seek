@@ -30,8 +30,8 @@
 GameObjectDataCollector::GameObjectDataCollector()
 {
     name = "";
-    model = mat4(1.0);
     senderID = -1;
+    model = mat4(1.0);
 }
 
 void GameObjectDataCollector::setSenderID(int senderID)
@@ -94,6 +94,12 @@ string GameObjectDataCollector::getData() const
     res += "END";
 
     return res;
+}
+
+void GameObjectDataCollector::clear()
+{
+    name = "";
+    model = mat4(1.0);
 }
 
 GameObjectDataCollector::~GameObjectDataCollector() {}

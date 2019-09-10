@@ -138,14 +138,11 @@ void LevelLoader::loadAnimation(XMLElement* animationElem, Animation*& anim)
 
     if (loopElem)
     {
-        const char* loop = nullptr;
+        bool loop = false;
 
-        loopElem->QueryStringAttribute("loop", &loop);
+        loopElem->QueryBoolAttribute("loop", &loop);
 
-        if (!strcmp("true", loop))
-        {
-            anim->setLoop(true);
-        }
+        anim->setLoop(loop);
     }
 }
 
@@ -162,10 +159,10 @@ void LevelLoader::loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*
 
     if (viewFrustumElem)
     {
-        const char* apply = nullptr;
-        viewFrustumElem->QueryStringAttribute("apply", &apply);
+        bool apply = false;
+        viewFrustumElem->QueryBoolAttribute("apply", &apply);
 
-        if (!strcmp(apply, "true"))
+        if (apply)
         {
             GO->setViewFrustum(viewFrustum);
         }
@@ -229,10 +226,10 @@ void LevelLoader::loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*
             GO->addAnimation(anim);
 
             /* active */
-            const char* active = nullptr;
-            animationElem->QueryStringAttribute("active", &active);
+            bool active = false;
+            animationElem->QueryBoolAttribute("active", &active);
 
-            if (!strcmp("true", active))
+            if (active)
             {
                 GO->playAnimation(anim->getName(), true); 
             }
@@ -904,14 +901,11 @@ void LevelLoader::loadPlayers()
 
         if (activeElem)
         {
-            const char* active = nullptr;
+            bool active = false;
 
-            activeElem->QueryStringAttribute("active", &active);
+            activeElem->QueryBoolAttribute("active", &active);
 
-            if (!strcmp("true", active))
-            {
-                player->setActive(true);
-            }
+            player->setActive(active);
         }
 
         /* raytracer */
@@ -919,11 +913,11 @@ void LevelLoader::loadPlayers()
 
         if (rayTracerElem)
         {
-            const char* apply = nullptr;
+            bool apply = false;
 
-            rayTracerElem->QueryStringAttribute("apply", &apply);
+            rayTracerElem->QueryBoolAttribute("apply", &apply);
 
-            if (!strcmp("true", apply))
+            if (apply)
             {
                 RayTracer* rayTracer = new RayTracer(physicsWorld->getWorld(), nullptr, projection);     
 
@@ -1046,14 +1040,11 @@ void LevelLoader::loadSoldiers()
 
         if (activeElem)
         {
-            const char* active = nullptr;
+            bool active = false;
 
-            activeElem->QueryStringAttribute("active", &active);
+            activeElem->QueryBoolAttribute("active", &active);
 
-            if (!strcmp("true", active))
-            {
-                soldier->setActive(true);
-            }
+            soldier->setActive(active);
         }
 
         /* raytracer */
@@ -1061,11 +1052,11 @@ void LevelLoader::loadSoldiers()
 
         if (rayTracerElem)
         {
-            const char* apply = nullptr;
+            bool apply = false;
 
-            rayTracerElem->QueryStringAttribute("apply", &apply);
+            rayTracerElem->QueryBoolAttribute("apply", &apply);
 
-            if (!strcmp("true", apply))
+            if (apply)
             {
                 RayTracer* rayTracer = new RayTracer(physicsWorld->getWorld(), nullptr, projection);     
 

@@ -50,6 +50,8 @@ class GameObject
         mat4 nextTransform;
         mat4 prevTransform;
 
+        void* userPointer;
+
         /* multiplayer */
         bool ready;
         mutex mtx;
@@ -76,6 +78,8 @@ class GameObject
         void clearLocalTransform();
 
         void setPhysicsObjectTransform(mat4 model, bool interpolation = false);
+
+        void setUserPointer(void* userPointer);
         
         void addAnimation(Animation* anim);
         void removeAnimation(string name);
@@ -92,6 +96,8 @@ class GameObject
 
         mat4 getLocalTransform() const;
         mat4 getPhysicsObjectTransform() const;
+
+        void* getUserPointer() const;
 
         Animation* getActiveAnimation() const;
         Animation* getAnimation(string name) const;

@@ -6,8 +6,10 @@
 
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
+#include "../physics_object/weapon.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"
@@ -17,6 +19,10 @@
 #include "../multiplayer/playerdataupdater.hpp"
 #include "../multiplayer/physicsobjectdatacollector.hpp"
 #include "../multiplayer/physicsobjectdataupdater.hpp"
+#include "../multiplayer/weaponpickercollector.hpp"
+#include "../multiplayer/weaponpickerupdater.hpp"
+#include "../multiplayer/weapondroppercollector.hpp"
+#include "../multiplayer/weapondropperupdater.hpp"
 #include "../multiplayer/multiplayer.hpp"
 
 #include "game.hpp"
@@ -28,7 +34,7 @@ Game::Game(string levelName)
     level = new Level(physicsWorld);
     level->loadLevel(levelName);
         
-    multiplayer = new Multiplayer(level);
+    multiplayer = new Multiplayer(level, physicsWorld);
 }
 
 void Game::checkEvents() {}
@@ -57,7 +63,7 @@ void Game::gameLoop()
 
     while (true)
     { 
-        this_thread::sleep_for(chrono::milliseconds(25));
+        this_thread::sleep_for(chrono::milliseconds(10));
 
         physicsWorld->pollEvents();
         checkEvents();        

@@ -6,7 +6,7 @@
             <position x="0.0" y="0.0" z="0.0"/>
             <forward x="0.0" y="0.0" z="-1.0"/>
             <speed speed="1.0"/>
-            <gameobject name="player0">
+            <gameobject name="soldier0">
                 <graphicsobject path="/animated_models/Humaniod/humaniod.fbx">
                     <scale x="0.36" y="0.36" z="0.36"/>
                     <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
@@ -41,7 +41,6 @@
             <modeloffset x="0.38" y="6.55" z="0.0"/>
 
             <armory>
-                <weapon name="m4"/>
             </armory>
         </soldier>
         
@@ -49,7 +48,7 @@
             <position x="0.0" y="0.0" z="0.0"/>
             <forward x="0.0" y="0.0" z="-1.0"/>
             <speed speed="1.0"/>
-            <gameobject name="player1">
+            <gameobject name="soldier1">
                 <graphicsobject path="/animated_models/Humaniod/humaniod.fbx">
                     <scale x="0.36" y="0.36" z="0.36"/>
                     <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
