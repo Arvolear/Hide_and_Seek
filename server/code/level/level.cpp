@@ -83,7 +83,7 @@ void Level::update()
     /* update owners */
     for (size_t i = 0; i < players.size(); i++)
     {
-        if (!players[i]->isActive())
+        if (!players[i]->isConnected())
         {
             continue;
         }

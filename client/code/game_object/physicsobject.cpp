@@ -84,6 +84,11 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
     if (mass)
     {
         this->phShape->calculateLocalInertia(mass, localInertia);
+        this->stat = false;
+    }
+    else
+    {
+        this->stat = true;
     }
 
     btTransform* transform = motionState->getBTTransform();
@@ -112,6 +117,7 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world)
     this->comShape = nullptr;
     this->body = nullptr;
     this->collidable = true;
+    this->stat = true;
     this->userPointer = nullptr;
 
     btTransform* transform = new btTransform();
@@ -123,10 +129,12 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world)
 PhysicsObject::PhysicsObject(btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
 {
     this->world = world;
-    this->mass = 0;
+    this->mass = mass;
     this->body = nullptr;
     this->comShape = nullptr;
     this->collidable = true;
+    this->stat = mass ? false : true;
+    this->userPointer = nullptr;
 
     btTransform* transform = new btTransform();
     transform->setIdentity();
@@ -139,10 +147,12 @@ PhysicsObject::PhysicsObject(btDynamicsWorld* world, btCollisionShape* shape, fl
 PhysicsObject::PhysicsObject(btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
 {
     this->world = world;
-    this->mass = 0;
+    this->mass = mass;
     this->body = nullptr;
     this->comShape = nullptr;
     this->collidable = true;
+    this->stat = mass ? false : true;
+    this->userPointer = nullptr;
 
     btTransform* transform = new btTransform();
     transform->setIdentity();
@@ -232,11 +242,31 @@ void PhysicsObject::setCollidable(bool collidable)
         {
             if (collidable)
             {
-                body->setCollisionFlags(0);
+                body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
             }
             else
             {
-                body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
+                body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
+            }
+        }
+    }
+}
+
+void PhysicsObject::setStatic(bool stat)
+{
+    if (this->stat != stat)
+    {
+        this->stat = stat;
+
+        if (body)
+        {
+            if (stat)
+            {
+                body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
+            }
+            else
+            {
+                body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CollisionFlags::CF_STATIC_OBJECT);
             }
         }
     }
@@ -270,6 +300,11 @@ CompoundShape* PhysicsObject::getCompoundShape() const
 bool PhysicsObject::isCollidable() const
 {
     return collidable;
+}
+
+bool PhysicsObject::isStatic() const
+{
+    return stat;
 }
 
 void* PhysicsObject::getUserPointer() const

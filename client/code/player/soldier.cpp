@@ -47,15 +47,40 @@ Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* 
 void Soldier::setActive(bool active)
 {
     this->active = active;
+    setConnected(connected);
+}
 
-    if (player)
+void Soldier::setConnected(bool connected)
+{
+    this->connected = connected;
+
+    if (connected)
     {
-        player->setVisible(!active);
+        if (player)
+        {
+            player->setVisible(!active);
+            player->setCollidable(true);
+            player->setStatic(false);
+        }
+
+        if (!weapons.empty())
+        {
+            weapons[0]->setVisible(active);
+        }
     }
-
-    if (!weapons.empty())
+    else
     {
-        weapons[0]->setVisible(active);
+        if (player)
+        {
+            player->setVisible(false);
+            player->setCollidable(false);
+            player->setStatic(true);
+        }
+
+        if (!weapons.empty())
+        {
+            weapons[0]->setVisible(false); 
+        }
     }
 }
 
@@ -117,7 +142,7 @@ void Soldier::drop()
     {
         return;
     }
-   
+
     dropTo = true;
 }
 
@@ -138,7 +163,7 @@ void Soldier::pick()
     pickFrom = getPosition();
     pickTo = getForward();
 }
-        
+
 deque < Weapon* > Soldier::getWeapons() const
 {
     return weapons;
@@ -191,12 +216,12 @@ void Soldier::update(bool events)
         moveAction();
         weaponAction();
     }
-    
+
     if (moveDirection != vec3(0))
     {
         moveDirection = normalize(moveDirection);
     }
-    
+
     ready = true;
     lk.unlock();
     cv.notify_all();
@@ -211,11 +236,11 @@ void Soldier::update(bool events)
             updateModel(moveDirection);
             updateAnimation(moveDirection);
         }
-        
+
         updateWeapon();
     }
 }
-        
+
 void Soldier::clearPickData()
 {
     pickFrom = pickTo = vec3(0.0);

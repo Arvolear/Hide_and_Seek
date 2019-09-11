@@ -32,6 +32,7 @@ class Soldier : public Player
         Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
 
         void setActive(bool active) override;
+        void setConnected(bool connected) override;
 
         void drop(Weapon* weapon);
         void drop();

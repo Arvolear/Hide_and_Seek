@@ -16,7 +16,7 @@ using namespace std;
 class Player
 {
     protected:
-        bool active;
+        bool connected;
         
         float speed;
 
@@ -28,7 +28,7 @@ class Player
         Player(float speed = 1);
         Player(PhysicsObject* physicsObject, float speed = 1);
 
-        void setActive(bool active);
+        void setConnected(bool connected);
         void setPhysicsObject(PhysicsObject* player);
         void removePhysicsObject();
 
@@ -36,7 +36,7 @@ class Player
         
         virtual void update();
 
-        bool isActive() const;
+        bool isConnected() const;
         PhysicsObject* getPhysicsObject() const;
         btVector3 getMoveDirection() const;
         float getSpeed() const;

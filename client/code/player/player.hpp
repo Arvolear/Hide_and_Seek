@@ -16,6 +16,7 @@ using namespace std;
 class Player : public Camera
 {
     protected:
+        bool connected;
         bool active;
         bool jumpAllowed;
         bool speedLock;
@@ -43,6 +44,7 @@ class Player : public Camera
         Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
         Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
         
+        virtual void setConnected(bool connected);
         virtual void setActive(bool active);
         void setRayTracer(RayTracer* tracer);
         void setGameObject(GameObject* player);
@@ -52,6 +54,7 @@ class Player : public Camera
 
         void removeGameObject();
         bool isActive() const;
+        bool isConnected() const;
         
         void updateCamera();
         void updateModel(vec3 newForward);

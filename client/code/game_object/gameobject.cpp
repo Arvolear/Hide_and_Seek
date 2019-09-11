@@ -103,6 +103,14 @@ void GameObject::setCollidable(bool collidable)
     }
 }
 
+void GameObject::setStatic(bool stat)
+{
+    if (physicsObject)
+    {
+        physicsObject->setStatic(stat);
+    }
+}
+
 void GameObject::setGraphicsObject(string path)
 {
     removeGraphicsObject();
@@ -326,6 +334,16 @@ bool GameObject::isCollidable() const
     return true;
 }
 
+bool GameObject::isStatic() const
+{
+    if (physicsObject)
+    {
+        return physicsObject->isStatic();
+    }
+
+    return false;
+}
+
 mat4 GameObject::getPhysicsObjectTransform() const
 {
     if (!physicsObject)
@@ -436,7 +454,7 @@ void GameObject::createDebugSphere(int depth)
 
 void GameObject::renderDebugSphere(Shader *shader)
 {
-    if (debugSphere && viewFrustum)
+    if (visible && debugSphere && viewFrustum)
     {
         mat4 transform = viewFrustum->getProjection() * viewFrustum->getView() * getPhysicsObjectTransform() * localTransform;
         debugSphere->applyTransform(transform);

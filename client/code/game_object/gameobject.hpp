@@ -67,6 +67,7 @@ class GameObject
         void setVisible(bool visible);
         void setShadow(bool shadow);
         void setCollidable(bool collidable);
+        void setStatic(bool stat);
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
@@ -93,6 +94,7 @@ class GameObject
         bool isVisible() const;
         bool isShadow() const;
         bool isCollidable() const;
+        bool isStatic() const;
 
         mat4 getLocalTransform() const;
         mat4 getPhysicsObjectTransform() const;

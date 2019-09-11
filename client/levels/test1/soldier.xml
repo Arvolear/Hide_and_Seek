@@ -8,6 +8,7 @@
             <speed speed="1.0"/>
             <gameobject name="soldier0">
                 <graphicsobject path="/animated_models/Humaniod/humaniod.fbx">
+                    <viewfrustum apply="true"/>
                     <scale x="0.36" y="0.36" z="0.36"/>
                     <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
                     <animations>
@@ -34,6 +35,9 @@
                     <position x="10.0" y="3.0" z="10.0"/>
                     <angularfactor x="0.0" y="0.0" z="0.0"/>
                 </physicsobject>
+                <debugobject>
+                    <debugsphere detail="3"/>
+                </debugobject>
             </gameobject>
             <active active="false"/>
             <raytracer apply="true"/>
@@ -50,6 +54,7 @@
             <speed speed="1.0"/>
             <gameobject name="soldier1">
                 <graphicsobject path="/animated_models/Humaniod/humaniod.fbx">
+                    <viewfrustum apply="true"/>
                     <scale x="0.36" y="0.36" z="0.36"/>
                     <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
                     <animations>
@@ -76,6 +81,9 @@
                     <position x="7.0" y="3.0" z="5.0"/>
                     <angularfactor x="0.0" y="0.0" z="0.0"/>
                 </physicsobject>
+                <debugobject>
+                    <debugsphere detail="3"/>
+                </debugobject>
             </gameobject>
             <active active="false"/>
             <raytracer apply="true"/>

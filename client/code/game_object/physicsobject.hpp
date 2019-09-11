@@ -36,6 +36,7 @@ class PhysicsObject
         btDynamicsWorld* world;
 
         bool collidable;
+        bool stat;
 
         float mass;
         btCollisionShape* phShape;
@@ -62,6 +63,7 @@ class PhysicsObject
         void setTransform(btTransform* transform);
         void clearTransform();
         void setCollidable(bool collidable);
+        void setStatic(bool stat);
 
         void setUserPointer(void* userPointer);
 
@@ -70,6 +72,7 @@ class PhysicsObject
         CompoundShape* getCompoundShape() const;
         btRigidBody* getRigidBody() const;
         bool isCollidable() const;
+        bool isStatic() const; 
 
         void* getUserPointer() const;
 

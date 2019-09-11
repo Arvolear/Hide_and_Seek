@@ -11,7 +11,7 @@ OUTPUTDIR = ./build
 
 MAIN = main.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o
+MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectioncollector.o playerdisconnectioncollector.o
 LEVEL = level.o levelloader.o
 WORLD = world.o bulletevents.o raytracer.o
 PLAYER = player.o soldier.o
@@ -72,6 +72,12 @@ $(OUTPUTDIR)/weapondroppercollector.o: $(INPUTDIR)/multiplayer/weapondroppercoll
 
 $(OUTPUTDIR)/weapondropperupdater.o: $(INPUTDIR)/multiplayer/weapondropperupdater.cpp $(INPUTDIR)/multiplayer/weapondropperupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/weapondropperupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/playerconnectioncollector.o: $(INPUTDIR)/multiplayer/playerconnectioncollector.cpp $(INPUTDIR)/multiplayer/playerconnectioncollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/playerconnectioncollector.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/playerdisconnectioncollector.o: $(INPUTDIR)/multiplayer/playerdisconnectioncollector.cpp $(INPUTDIR)/multiplayer/playerdisconnectioncollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/playerdisconnectioncollector.cpp -o $@ $(FLAGS)
 
 ### LEVEL ###
 

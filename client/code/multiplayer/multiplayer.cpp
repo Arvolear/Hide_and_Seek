@@ -53,6 +53,8 @@
 #include "weaponpickerupdater.hpp"
 #include "weapondroppercollector.hpp"
 #include "weapondropperupdater.hpp"
+#include "playerconnectionupdater.hpp"
+#include "playerdisconnectionupdater.hpp"
 #include "multiplayer.hpp"
 
 Multiplayer::Multiplayer(Window* window, Level* level, World* world)
@@ -66,6 +68,8 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
     weaponPickerUpdater = new WeaponPickerUpdater();
     weaponDropperCollector = new WeaponDropperCollector();
     weaponDropperUpdater = new WeaponDropperUpdater();
+    playerConnectionUpdater = new PlayerConnectionUpdater();
+    playerDisconnectionUpdater = new PlayerDisconnectionUpdater();
 
     this->window = window;
     this->level = level;
@@ -114,6 +118,7 @@ void Multiplayer::connect()
     weaponPickerCollector->setPlayerID(playerID);
     weaponDropperCollector->setPlayerID(playerID);
 
+    level->getPlayer()->setConnected(true);
     level->getPlayer()->setActive(true);
 
     cout << "PlayerID: " << playerID << endl;
@@ -190,7 +195,20 @@ void Multiplayer::update()
 
         //cout << msg << endl << msg.size() << endl;
 
-        if (msg.find("Player") != string::npos)
+        if (msg.find("Con") != string::npos)
+        { 
+            playerConnectionUpdater->collect(msg);
+
+            vector < int > playerIDs = playerConnectionUpdater->getPlayerIDs();
+
+            for (size_t i = 0; i < playerIDs.size(); i++)
+            {
+                playerConnectionUpdater->updateData(level->getPlayer(i));
+            }
+
+            playerConnectionUpdater->clear();
+        }
+        else if (msg.find("Player") != string::npos)
         { 
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
@@ -232,6 +250,19 @@ void Multiplayer::update()
 
             weaponDropperUpdater->clear();
         }
+        else if (msg.find("Dis") != string::npos)
+        { 
+            playerDisconnectionUpdater->collect(msg);
+
+            vector < int > playerIDs = playerDisconnectionUpdater->getPlayerIDs();
+
+            for (size_t i = 0; i < playerIDs.size(); i++)
+            {
+                playerDisconnectionUpdater->updateData(level->getPlayer(i));
+            }
+
+            playerDisconnectionUpdater->clear();
+        }
     }
 }
 
@@ -246,4 +277,6 @@ Multiplayer::~Multiplayer()
     delete weaponPickerUpdater;
     delete weaponDropperCollector;
     delete weaponDropperUpdater;
+    delete playerConnectionUpdater;
+    delete playerDisconnectionUpdater;
 }

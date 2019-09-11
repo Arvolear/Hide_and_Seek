@@ -21,6 +21,8 @@
 #include "weaponpickerupdater.hpp"
 #include "weapondroppercollector.hpp"
 #include "weapondropperupdater.hpp"
+#include "playerconnectioncollector.hpp"
+#include "playerdisconnectioncollector.hpp"
 #include "multiplayer.hpp"
 
 Multiplayer::Multiplayer(Level* level, World* world)
@@ -34,6 +36,8 @@ Multiplayer::Multiplayer(Level* level, World* world)
     weaponPickerUpdater = new WeaponPickerUpdater(world);
     weaponDropperCollector = new WeaponDropperCollector();
     weaponDropperUpdater = new WeaponDropperUpdater();
+    playerConnectionCollector = new PlayerConnectionCollector();
+    playerDisconnectionCollector = new PlayerDisconnectionCollector();
 
     this->level = level;
     this->world = world;
@@ -56,7 +60,7 @@ void Multiplayer::broadcast()
                     cout << "Join playerID: " << i << endl;
                     
                     /* connected */
-                    level->getPlayer(i)->setActive(true);
+                    level->getPlayer(i)->setConnected(true);
 
                     string message = "BEG\n<join>" + to_string(i) + "</join>\n";
                     message += physicsObjectDataCollector->getData(true);
@@ -66,11 +70,32 @@ void Multiplayer::broadcast()
                     node->sendMSG(new_sockets[i], message);
 
                     node->newToClient(i);
+                    
                     level->getPlayer(i)->getPhysicsObject()->setOwnerID(i);
+                    level->getPlayer(i)->setConnected(true);
                 }
             }
 
             physicsObjectDataCollector->clear();
+            
+            /* show connected */
+            vector < int > sockets = node->getClientSockets();
+
+            for (size_t i = 0; i < sockets.size(); i++)
+            {
+                if (sockets[i] > 0)
+                {
+                    playerConnectionCollector->collect(sockets, i); 
+
+                    try
+                    {
+                        node->sendMSG(sockets[i], playerConnectionCollector->getData());
+                    }
+                    catch(exception& ex) {}
+
+                    playerConnectionCollector->clear();
+                }
+            }
         }
 
         /* player data */
@@ -174,7 +199,21 @@ void Multiplayer::broadcast()
         /* old clients */
         if (node->isOldClients())
         {
+            /* hide old clients */
             vector < int > old_sockets = node->getOldClientSockets();
+
+            playerDisconnectionCollector->collect(old_sockets);  
+
+            for (size_t i = 0; i < old_sockets.size(); i++)
+            {
+                try
+                {
+                    node->sendMSG(old_sockets[i], playerDisconnectionCollector->getData());
+                }
+                catch(exception& ex) {}
+            }
+
+            playerDisconnectionCollector->clear();
 
             for (size_t i = 0; i < old_sockets.size(); i++)
             {
@@ -183,7 +222,7 @@ void Multiplayer::broadcast()
                     cout << "Quit playerID: " << i << endl;
                     
                     /* disconnected */
-                    level->getPlayer(i)->setActive(false);
+                    level->getPlayer(i)->setConnected(false);
 
                     /* send here */
                     node->oldToNothing(i);
@@ -261,4 +300,6 @@ Multiplayer::~Multiplayer()
     delete weaponPickerUpdater;
     delete weaponDropperCollector;
     delete weaponDropperUpdater;
+    delete playerConnectionCollector;
+    delete playerDisconnectionCollector;
 }

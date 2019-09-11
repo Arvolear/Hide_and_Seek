@@ -17,7 +17,7 @@ FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o gbuff
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o
+MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
 LEVEL = level.o dirlight.o skybox.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
@@ -129,6 +129,12 @@ $(OUTPUTDIR)/weapondroppercollector.o: $(INPUTDIR)/multiplayer/weapondroppercoll
 
 $(OUTPUTDIR)/weapondropperupdater.o: $(INPUTDIR)/multiplayer/weapondropperupdater.cpp $(INPUTDIR)/multiplayer/weapondropperupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/weapondropperupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/playerconnectionupdater.o: $(INPUTDIR)/multiplayer/playerconnectionupdater.cpp $(INPUTDIR)/multiplayer/playerconnectionupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/playerconnectionupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/playerdisconnectionupdater.o: $(INPUTDIR)/multiplayer/playerdisconnectionupdater.cpp $(INPUTDIR)/multiplayer/playerdisconnectionupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/playerdisconnectionupdater.cpp -o $@ $(FLAGS)
 
 ### LEVEL ###
 

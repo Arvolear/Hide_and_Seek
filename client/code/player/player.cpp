@@ -40,7 +40,8 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) 
     cameraOffset = modelOffset = vec3(0);
     modelForward = normalize(cross(Left, Up));
 
-    setActive(false);
+    this->connected = false;
+    this->active = false;
 }
         
 Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Camera(window, playerPos, cameraForward, speed)
@@ -54,7 +55,8 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tr
     cameraOffset = modelOffset = vec3(0);
     modelForward = normalize(cross(Left, Up));
     
-    setActive(active);
+    setConnected(false);
+    this->active = active;
 }
 
 /*
@@ -276,14 +278,34 @@ void Player::movePhysics()
     }
 }
 
+void Player::setConnected(bool connected)
+{
+    this->connected = connected;
+
+    if (connected)
+    {
+        if (player)
+        {
+            player->setVisible(!active);
+            player->setCollidable(true);
+            player->setStatic(false);
+        }
+    }
+    else
+    {
+        if (player)
+        {
+            player->setVisible(false);
+            player->setCollidable(false);
+            player->setStatic(true);
+        }
+    }
+}
+
 void Player::setActive(bool active)
 {
     this->active = active;
-
-    if (player)
-    {
-        player->setVisible(!active);
-    }
+    setConnected(connected);
 }
 
 void Player::setRayTracer(RayTracer* tracer)
@@ -295,6 +317,7 @@ void Player::setGameObject(GameObject* player)
 {
     player->setUserPointer(this);
     this->player = player;
+    setConnected(connected);
 }
 
 void Player::setCameraOffset(vec3 cameraOffset)
@@ -314,13 +337,20 @@ void Player::setModelForward(vec3 modelForward)
 
 void Player::removeGameObject()
 {
-    delete player;
+    player->setVisible(!active);
+    player->setCollidable(true);
+    player->setStatic(false);
     player = nullptr;
 }
 
 bool Player::isActive() const
 {
     return active;
+}
+
+bool Player::isConnected() const
+{
+    return connected;
 }
 
 void Player::updateCamera()
@@ -337,7 +367,7 @@ void Player::updateCamera()
 
     globalCenter = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
     headCenter = globalTransform * headTransform * headCenter;
-    
+
     /* camera Position */
     setPosition(headCenter.x(), headCenter.y(), headCenter.z());
 
@@ -354,7 +384,7 @@ void Player::updateCamera()
 void Player::updateModel(vec3 newForward)
 {
     float angle = 0.0;
-    
+
     if (newForward != vec3(0))
     {
         modelForward = normalize(modelForward);
@@ -379,10 +409,10 @@ void Player::updateModel(vec3 newForward)
         {
             angle *= -1;
         }
-    
+
         modelForward = newForward;
     }
-    
+
     if (!active)
     {
         Forward = modelForward;
@@ -394,9 +424,9 @@ void Player::updateModel(vec3 newForward)
     vec3 localPos = vec3(0);
 
     /*if (player->getName() == "soldier0")
-    {
-        cout << player->getName() << endl << modelForward.x << ' ' << modelForward.y << modelForward.z << endl;
-    }*/
+      {
+      cout << player->getName() << endl << modelForward.x << ' ' << modelForward.y << modelForward.z << endl;
+      }*/
 
     //localPos += modelForward * modelOffset.x;
     localPos += Up * modelOffset.y;
@@ -434,7 +464,7 @@ void Player::update(bool events)
     {
         moveDirection = normalize(moveDirection);
     }
-    
+
     ready = true;
     lk.unlock();
     cv.notify_all();
@@ -442,7 +472,7 @@ void Player::update(bool events)
     if (active && player && player->getPhysicsObject())
     {
         movePhysics();
-    
+
         updateCamera();
         updateModel(moveDirection);
         updateAnimation(moveDirection);
