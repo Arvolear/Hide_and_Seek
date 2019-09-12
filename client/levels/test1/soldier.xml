@@ -42,7 +42,7 @@
             <active active="false"/>
             <raytracer apply="true"/>
             <cameraoffset x="0.43" y="0.0" z="0.0"/> 
-            <modeloffset x="0.38" y="6.55" z="0.0"/>
+            <modeloffset x="-0.38" y="6.55" z="0.0"/>
 
             <armory>
             </armory>
@@ -88,7 +88,7 @@
             <active active="false"/>
             <raytracer apply="true"/>
             <cameraoffset x="0.43" y="0.0" z="0.0"/> 
-            <modeloffset x="0.38" y="6.55" z="0.0"/>
+            <modeloffset x="-0.38" y="6.55" z="0.0"/>
         </soldier>
 
     </soldiers>

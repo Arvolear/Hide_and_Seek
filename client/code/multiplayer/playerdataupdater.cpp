@@ -94,9 +94,9 @@ void PlayerDataUpdater::collect(string info)
     }
 }
 
-void PlayerDataUpdater::updateData(Player* player)
+void PlayerDataUpdater::updateData(Player* player, bool interpolation)
 {
-    player->getGameObject()->setPhysicsObjectTransform(model, true);
+    player->getGameObject()->setPhysicsObjectTransform(model, interpolation);
 
     player->updateModel(moveDirection);
     player->updateAnimation(moveDirection);

@@ -81,9 +81,9 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
-    //client->connectToServer("192.168.0.145", 5040);
+    client->connectToServer("192.168.0.145", 5040);
     //client->connectToServer("192.168.0.184", 5040);
-    client->connectToServer("127.0.0.1", 5040);
+    //client->connectToServer("127.0.0.1", 5040);
 
     client->recvMSG(1150);
 
@@ -203,7 +203,7 @@ void Multiplayer::update()
 
             for (size_t i = 0; i < playerIDs.size(); i++)
             {
-                playerConnectionUpdater->updateData(level->getPlayer(i));
+                playerConnectionUpdater->updateData(level->getPlayer(playerIDs[i]));
             }
 
             playerConnectionUpdater->clear();
@@ -211,13 +211,13 @@ void Multiplayer::update()
         else if (msg.find("Player") != string::npos)
         { 
             playerDataUpdater->collect(msg);
-            playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()));
+            playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()), true);
             playerDataUpdater->clear();
         }
         else if (msg.find("Objs") != string::npos)
         {
             gameObjectDataUpdater->collect(msg);
-            gameObjectDataUpdater->updateData(level->getGameObjects(), false);
+            gameObjectDataUpdater->updateData(level->getGameObjects(), true);
             gameObjectDataUpdater->clear();
         }
         else if (msg.find("Pick") != string::npos)
@@ -258,7 +258,7 @@ void Multiplayer::update()
 
             for (size_t i = 0; i < playerIDs.size(); i++)
             {
-                playerDisconnectionUpdater->updateData(level->getPlayer(i));
+                playerDisconnectionUpdater->updateData(level->getPlayer(playerIDs[i]));
             }
 
             playerDisconnectionUpdater->clear();

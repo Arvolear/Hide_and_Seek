@@ -62,9 +62,16 @@ void PlayerDisconnectionUpdater::collect(string info)
         id = -1;
 
         dynamic_cast < XMLElement* >(root)->QueryIntAttribute(str.data(), &id);
+        
+        if (id == -1)
+        {
+            break;
+        }
+
+        playerIDs.push_back(id);
         i++;
     } 
-    while (id != -1);
+    while (true);
 }
 
 void PlayerDisconnectionUpdater::updateData(Player* player)

@@ -23,15 +23,22 @@ string PlayerDisconnectionCollector::getData() const
     /* root */
     XMLNode* root = playerDisconnectionCollectorDoc.NewElement("Dis");
 
+    int j = 0;
     for (size_t i = 0; i < old_clients.size(); i++)
     {
         if (old_clients[i] > 0)
         {
             string str;
-            str = char('a' + i);
+            str = char('a' + j);
 
             dynamic_cast < XMLElement* >(root)->SetAttribute(str.data(), (int)i);
+            j++;
         }
+    }
+
+    if (!j)
+    {
+        return "";
     }
 
     playerDisconnectionCollectorDoc.InsertFirstChild(root);

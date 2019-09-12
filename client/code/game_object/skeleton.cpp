@@ -63,6 +63,11 @@ void Skeleton::playAnimation(Animation* anim, bool reset)
         
 void Skeleton::stopAnimation()
 {
+    if (!activeAnimation)
+    {
+        return;
+    }
+
     for (auto& it : bones) 
     {
         it.second->updateKeyframeTransform(activeAnimation->getAnimId(), 0); 

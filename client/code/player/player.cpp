@@ -289,6 +289,7 @@ void Player::setConnected(bool connected)
             player->setVisible(!active);
             player->setCollidable(true);
             player->setStatic(false);
+            updateModel(vec3(0));
         }
     }
     else
@@ -423,21 +424,16 @@ void Player::updateModel(vec3 newForward)
 
     vec3 localPos = vec3(0);
 
-    /*if (player->getName() == "soldier0")
-      {
-      cout << player->getName() << endl << modelForward.x << ' ' << modelForward.y << modelForward.z << endl;
-      }*/
-
-    //localPos += modelForward * modelOffset.x;
+    localPos += modelForward * modelOffset.x;
     localPos += Up * modelOffset.y;
-    //localPos += Left * modelOffset.z;
+    localPos += Left * modelOffset.z;
 
     player->setLocalPosition(localPos, false);
 }
 
 void Player::updateAnimation(vec3 moveDirection)
 {
-    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && moveDirection == vec3(0)))
+    if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && (moveDirection == vec3(0) || !isGroundStanding())))
     {
         player->playAnimation("idle");
     }

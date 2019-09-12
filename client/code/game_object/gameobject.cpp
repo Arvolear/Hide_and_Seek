@@ -159,15 +159,14 @@ void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
     decompose(localTransform, sc, rot, tran, skew, perspective);
 
     localTransform = mat4(1.0);
-    localTransform *= scale(sc);
+    localTransform *= scale(sc); 
+    localTransform *= translate(tran);
     localTransform *= rotate(radians(angle), axis);
 
     if (add)
     {
         localTransform *= toMat4(conjugate(rot));
     }
-    
-    localTransform *= translate(tran);
 }
 
 void GameObject::setLocalScale(vec3 growth, bool add)
@@ -195,8 +194,8 @@ void GameObject::setLocalScale(vec3 growth, bool add)
         localTransform *= scale(sc);
     }
     
-    localTransform *= toMat4(conjugate(rot));
     localTransform *= translate(tran);
+    localTransform *= toMat4(conjugate(rot));
 }
 
 void GameObject::setLocalPosition(vec3 translation, bool add)
@@ -218,13 +217,14 @@ void GameObject::setLocalPosition(vec3 translation, bool add)
 
     localTransform = mat4(1.0);
     localTransform *= scale(sc);
-    localTransform *= toMat4(conjugate(rot));
     localTransform *= translate(translation);
 
     if (add)
     {
         localTransform *= translate(tran);
     }
+    
+    localTransform *= toMat4(conjugate(rot));
 }
         
 void GameObject::setLocalTransform(mat4 localTransform)
@@ -386,14 +386,15 @@ Animation* GameObject::getAnimation(string name) const
 
 void GameObject::render(Shader* shader, bool cull)
 {
-    if (interpolation && interpolationCoeff <= 1.0)
+    if (interpolation && interpolationCoeff < 1.0)
     {
-        mat4 model = interpolate(prevTransform, nextTransform, interpolationCoeff);
+        mat4 model = (1 - interpolationCoeff) * prevTransform + interpolationCoeff * nextTransform;
 
-        unique_ptr < btScalar > transform(glmMat42BtScalar(model));
-        physicsObject->setTransform(transform.get());
+        unique_ptr < btScalar > scalarModel(glmMat42BtScalar(model));
 
-        interpolationCoeff += 0.4;
+        physicsObject->setTransform(scalarModel.get());
+
+        interpolationCoeff += 0.05;
     }
 
     if (visible && cull && viewFrustum && boundSphere)

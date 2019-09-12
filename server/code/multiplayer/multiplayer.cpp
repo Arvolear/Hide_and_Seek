@@ -201,14 +201,15 @@ void Multiplayer::broadcast()
         {
             /* hide old clients */
             vector < int > old_sockets = node->getOldClientSockets();
+            vector < int > sockets = node->getClientSockets();
 
             playerDisconnectionCollector->collect(old_sockets);  
 
-            for (size_t i = 0; i < old_sockets.size(); i++)
+            for (size_t i = 0; i < sockets.size(); i++)
             {
                 try
                 {
-                    node->sendMSG(old_sockets[i], playerDisconnectionCollector->getData());
+                    node->sendMSG(sockets[i], playerDisconnectionCollector->getData());
                 }
                 catch(exception& ex) {}
             }

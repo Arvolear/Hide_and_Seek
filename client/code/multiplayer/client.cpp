@@ -214,7 +214,8 @@ void Client::recvMSG(int size, int timeoutSec)
             if (bytes_read == 0)
             {
                 cout << "Disconnected from the server\n";
-                break;
+                //break;
+                exit(0);
             }
             else if (bytes_read < 0)
             {
@@ -242,6 +243,17 @@ void Client::recvMSG(int size, int timeoutSec)
         cv.notify_all();
 
         delete[] buffer;
+    }
+    else
+    {
+        unique_lock < mutex > lk(mtx);
+        ready = false;
+
+        messages[0] = {"", false};
+        messages[1] = {"", false};
+        
+        ready = true;
+        cv.notify_all();
     }
 }
 

@@ -98,6 +98,7 @@ void Weapon::drop(vec3 where)
     
     setVisible(true);
     physicsObject->setCollidable(true);
+    physicsObject->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
     setShadow(true);
 }
 
@@ -167,6 +168,7 @@ void Weapon::pick(vec3 forward, vec3 up, bool active)
     physicsObject->setCollidable(false);
     setVisible(active);
     setShadow(false);
+    physicsObject->getRigidBody()->setActivationState(WANTS_DEACTIVATION);
 
     //physicsObject->setRotation(toBtQuaternion(twist), false);
 }

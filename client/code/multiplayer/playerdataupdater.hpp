@@ -22,7 +22,7 @@ class PlayerDataUpdater
 
         void collect(string info);
 
-        void updateData(Player* player);
+        void updateData(Player* player, bool interpolation = false);
 
         int getPlayerID() const;
 

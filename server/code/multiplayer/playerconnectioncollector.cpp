@@ -24,15 +24,22 @@ string PlayerConnectionCollector::getData() const
     /* root */
     XMLNode* root = playerConnectionCollectorDoc.NewElement("Con");
 
+    int j = 0;
     for (size_t i = 0; i < clients.size(); i++)
     {
         if (clients[i])
         {
             string str;
-            str = char('a' + i);
+            str = char('a' + j);
 
             dynamic_cast < XMLElement* >(root)->SetAttribute(str.data(), (int)i);
+            j++;
         }
+    }
+
+    if (!j)
+    {
+        return "";
     }
 
     playerConnectionCollectorDoc.InsertFirstChild(root);

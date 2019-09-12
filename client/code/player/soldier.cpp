@@ -61,6 +61,7 @@ void Soldier::setConnected(bool connected)
             player->setVisible(!active);
             player->setCollidable(true);
             player->setStatic(false);
+            updateModel(vec3(0));
         }
 
         if (!weapons.empty())
