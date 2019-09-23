@@ -133,6 +133,8 @@ void Multiplayer::broadcast()
 {
     while (window->isOpen())
     {
+        this_thread::sleep_for(chrono::milliseconds(50));
+
         /* player */
         if (level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody()->getLinearVelocity().length() > 0.05)
         {
@@ -189,9 +191,20 @@ void Multiplayer::update()
 {
     while (window->isOpen())
     {
-        client->recvMSG(300);
+        string msg = "";
+       
+        while (window->isOpen())
+        {
+            client->recvMSG(300);    
+            msg = client->getMessage();
 
-        string msg = client->getMessage();
+            if (msg != "")
+            {
+                break;
+            }
+
+            this_thread::sleep_for(chrono::milliseconds(10));
+        }
 
         //cout << msg << endl << msg.size() << endl;
 

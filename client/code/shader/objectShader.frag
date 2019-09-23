@@ -39,6 +39,8 @@ uniform vec3 viewPos;
 float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
     /* ESM shadows */
+    float bias = 0.006;
+
     vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
@@ -46,7 +48,7 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
 
     vec2 moments = texture(light.texture_shadow1, projCoords.xy).rg;
 
-    if (currentDepth < moments.x)
+    if ((currentDepth + bias) < moments.x)
     {
         return 1.0;    
     }
@@ -56,11 +58,11 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
         return 1.0;    
     }
 
-    float esmFactor = 80.0;
+    float esmFactor = 85.0;
 
     float occluder = moments.y;
-    float receiver = esmFactor * currentDepth;
-    float shadow = smoothstep(0.4, 1.0, exp(occluder - receiver));
+    float receiver = esmFactor * (currentDepth + bias);
+    float shadow = smoothstep(0.45, 1.0, exp(occluder - receiver));
 
     return shadow;
 }
@@ -96,7 +98,12 @@ vec4 calcDirLight(DirLight light)
         shadow = calcDirShadow(light, dirShadowCoords);
     }
 
-    return ambient + shadow * (diffuse + specular);
+    if (shadow != 1.0)
+    {
+        return ambient + shadow * diffuse;
+    }
+        
+    return ambient + diffuse + specular;
 }
 
 void main()

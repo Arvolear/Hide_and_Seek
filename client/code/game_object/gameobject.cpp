@@ -258,6 +258,11 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
         prevTransform = nextTransform;
         nextTransform = model;
         interpolationCoeff = 0.0;
+    
+        if (name == "soldier0")
+        {
+            //cout << "NEW" << endl;
+        }
     }
 }
 
@@ -394,7 +399,12 @@ void GameObject::render(Shader* shader, bool cull)
 
         physicsObject->setTransform(scalarModel.get());
 
-        interpolationCoeff += 0.05;
+        interpolationCoeff += 0.2;
+    }
+    
+    if (name == "soldier0")
+    {
+        //cout << interpolationCoeff << endl;
     }
 
     if (visible && cull && viewFrustum && boundSphere)

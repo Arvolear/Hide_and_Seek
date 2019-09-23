@@ -47,6 +47,8 @@ void Multiplayer::broadcast()
 {
     while (true)
     {
+        this_thread::sleep_for(chrono::milliseconds(50));
+
         /* new clients */
         if (node->isNewClients())
         {
@@ -237,9 +239,21 @@ void Multiplayer::update()
 {
     while (true)
     {
-        node->checkActivity(300);
+        vector < string > messages;
+        
+        while (true)
+        {
+            node->checkActivity(300);
 
-        vector < string > messages = node->getMessages();
+            messages = node->getMessages();
+
+            if (!messages.empty())
+            {
+                break;
+            }
+
+            this_thread::sleep_for(chrono::milliseconds(10));
+        }
 
         /* player data */
         for (size_t i = 0; i < messages.size(); i++)
