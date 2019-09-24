@@ -40,7 +40,7 @@ void GBuffer::genBuffer(double width, double height, unsigned int layouts)
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texturesID[1], 0);
 
-    /* diffuse (albedo) */
+    /* albedo */
     glGenTextures(1, &texturesID[2]);
     glBindTexture(GL_TEXTURE_2D, texturesID[2]);
 
@@ -51,18 +51,18 @@ void GBuffer::genBuffer(double width, double height, unsigned int layouts)
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, texturesID[2], 0);
 
-    /* specular */
+    /* metallic */
     glGenTextures(1, &texturesID[3]);
     glBindTexture(GL_TEXTURE_2D, texturesID[3]);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, texturesID[3], 0);
     
-    /* shininess */
+    /* roughness */
     glGenTextures(1, &texturesID[4]);
     glBindTexture(GL_TEXTURE_2D, texturesID[4]);
 
@@ -72,6 +72,17 @@ void GBuffer::genBuffer(double width, double height, unsigned int layouts)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, texturesID[4], 0);
+    
+    /* AO */
+    glGenTextures(1, &texturesID[5]);
+    glBindTexture(GL_TEXTURE_2D, texturesID[5]);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, texturesID[5], 0);
     
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -131,15 +142,20 @@ void GBuffer::render(Shader* shader)
     glBindTexture(GL_TEXTURE_2D, texturesID[2]);
     shader->setInt("gBuffer.texture_albedo", texturesID[2]);
     
-    /* specular */
+    /* metallic */
     glActiveTexture(GL_TEXTURE0 + texturesID[3]);
     glBindTexture(GL_TEXTURE_2D, texturesID[3]);
-    shader->setInt("gBuffer.texture_specular", texturesID[3]);
+    shader->setInt("gBuffer.texture_metallic", texturesID[3]);
     
-    /* shininess */
+    /* roughness */
     glActiveTexture(GL_TEXTURE0 + texturesID[4]);
     glBindTexture(GL_TEXTURE_2D, texturesID[4]);
-    shader->setInt("gBuffer.texture_shininess", texturesID[4]);
+    shader->setInt("gBuffer.texture_roughness", texturesID[4]);
+    
+    /* AO */
+    glActiveTexture(GL_TEXTURE0 + texturesID[5]);
+    glBindTexture(GL_TEXTURE_2D, texturesID[5]);
+    shader->setInt("gBuffer.texture_ao", texturesID[5]);
 }
 
 GBuffer::~GBuffer() 

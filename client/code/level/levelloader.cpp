@@ -702,40 +702,16 @@ void LevelLoader::loadDirLight()
             DL->setDirection(vec3(x, y, z));
         }
 
-        XMLElement* ambientElem = dirLightElem->FirstChildElement("ambient");
+        XMLElement* colorElem = dirLightElem->FirstChildElement("color");
 
-        if (ambientElem)
+        if (colorElem)
         {
             float r = 0, g = 0, b = 0;
-            ambientElem->QueryFloatAttribute("r", &r);
-            ambientElem->QueryFloatAttribute("g", &g);
-            ambientElem->QueryFloatAttribute("b", &b);
+            colorElem->QueryFloatAttribute("r", &r);
+            colorElem->QueryFloatAttribute("g", &g);
+            colorElem->QueryFloatAttribute("b", &b);
 
-            DL->setAmbient(vec3(r, g, b));
-        }
-
-        XMLElement* diffuseElem = dirLightElem->FirstChildElement("diffuse");
-
-        if (diffuseElem)
-        {
-            float r = 0, g = 0, b = 0;
-            diffuseElem->QueryFloatAttribute("r", &r);
-            diffuseElem->QueryFloatAttribute("g", &g);
-            diffuseElem->QueryFloatAttribute("b", &b);
-
-            DL->setDiffuse(vec3(r, g, b));
-        }
-
-        XMLElement* specularElem = dirLightElem->FirstChildElement("specular");
-
-        if (specularElem)
-        {
-            float r = 0, g = 0, b = 0;
-            specularElem->QueryFloatAttribute("r", &r);
-            specularElem->QueryFloatAttribute("g", &g);
-            specularElem->QueryFloatAttribute("b", &b);
-
-            DL->setSpecular(vec3(r, g, b));
+            DL->setColor(vec3(r, g, b));
         }
 
         /* shadow */

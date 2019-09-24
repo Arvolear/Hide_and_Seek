@@ -183,7 +183,7 @@ void Game::gameLoop()
         glBindTexture(GL_TEXTURE_2D, blured);
         gameShader->setInt("blurBloom", blured);
 
-        gameShader->setFloat("exposure", 1.5);
+        gameShader->setFloat("exposure", 1.0);
 
         quad->render(gameShader);
  

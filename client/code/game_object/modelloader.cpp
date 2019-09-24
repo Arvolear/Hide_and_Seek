@@ -236,13 +236,16 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
     }
 
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; 
-
+    
     vector < Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
 
-    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); 
+    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_metallic"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
+    
+    vector < Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SHININESS, "texture_roughness");
+    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    
     /* .obj */
     vector < Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
 
@@ -288,6 +291,8 @@ vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureT
             //cout << "Texture type: " << typeName << endl;
 
             texture.path = helpStr.C_Str(); 
+
+            cout << texture.path << " " << typeName << endl;
 
             textures.push_back(texture); 
             textures_loaded.insert({helpStr.C_Str(), texture}); 

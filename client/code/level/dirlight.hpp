@@ -11,10 +11,7 @@ class DirLight
 {
     private:
         vec3 direction;
-
-        vec3 ambient;
-        vec3 diffuse;
-        vec3 specular;
+        vec3 color;
 
         mat4 view;
         mat4 projection;
@@ -24,15 +21,13 @@ class DirLight
         
     public:
         DirLight();
-        DirLight(vec3 dir, vec3 amb, vec3 diff, vec3 spec);
+        DirLight(vec3 direction, vec3 color);
        
         void genShadowBuffer(int width, int height, float blurScale = 1.0);
         void genShadowBuffer(vec2 size, float blurScale = 1.0);
 
-        void setDirection(vec3 dir);
-        void setAmbient(vec3 amb);
-        void setDiffuse(vec3 diff);
-        void setSpecular(vec3 spec);
+        void setDirection(vec3 direction);
+        void setColor(vec3 color);
 
         void setView(mat4 view);
         void setProjection(mat4 projection);

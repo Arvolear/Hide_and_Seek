@@ -15,9 +15,7 @@
 DirLight::DirLight()
 {
     direction = vec3(0.0);
-    ambient = vec3(0.0);
-    diffuse = vec3(0.0);
-    specular = vec3(0.0);
+    color = vec3(0.0);
 
     view = mat4(1.0);
     projection = mat4(1.0);
@@ -26,13 +24,10 @@ DirLight::DirLight()
     gaussianBlur = new GaussianBlur < DepthColorBuffer >();
 }
 
-DirLight::DirLight(vec3 dir, vec3 amb, vec3 diff, vec3 spec)
+DirLight::DirLight(vec3 direction, vec3 color)
 {
-    direction = dir;
-
-    ambient = amb;
-    diffuse = diff;
-    specular = spec;
+    this->direction = direction;
+    this->color = color;
 
     shadowBuffer = new DepthColorBuffer();
     gaussianBlur = new GaussianBlur < DepthColorBuffer >();
@@ -54,19 +49,9 @@ void DirLight::setDirection(vec3 dir)
     direction = dir;
 }
 
-void DirLight::setAmbient(vec3 amb)
+void DirLight::setColor(vec3 color)
 {
-    ambient = amb;
-}
-
-void DirLight::setDiffuse(vec3 diff)
-{
-    diffuse = diff;
-}
-
-void DirLight::setSpecular(vec3 spec)
-{
-    specular = spec;
+    this->color = color;
 }
 
 vec3 DirLight::getDirection() const
@@ -95,9 +80,7 @@ void DirLight::blur(float intensity, float radius)
 void DirLight::render(Shader* shader, GLuint index)
 {
     shader->setVec3("dirLights[" + to_string(index) + "].direction", direction);
-    shader->setVec3("dirLights[" + to_string(index) + "].ambient", ambient);
-    shader->setVec3("dirLights[" + to_string(index) + "].diffuse", diffuse);
-    shader->setVec3("dirLights[" + to_string(index) + "].specular", specular);
+    shader->setVec3("dirLights[" + to_string(index) + "].color", color);
 
     GLuint shadowTexture = 0;
 

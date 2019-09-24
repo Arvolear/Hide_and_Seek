@@ -57,29 +57,37 @@ void Mesh::setupMesh()
 
 void Mesh::render(Shader *shader) const
 {
-    unsigned int diffuseNR = 1; // amount of diffuse textures
-    unsigned int specularNR = 1; // amount of specular textures
-    unsigned int normalNR = 1; // amount of normal textures
+    unsigned int normalNR = 1;
+    unsigned int diffuseNR = 1;
+    unsigned int metallicNR = 1;
+    unsigned int roughnessNR = 1;
+    unsigned int aoNR = 1; 
         
-    shader->setFloat("material.shininess", 0.06f);
-
-    for (size_t i = 0; i < textures.size(); i++) // loop through textures
+    for (size_t i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + textures[i].id); // set the texture active
+        glActiveTexture(GL_TEXTURE0 + textures[i].id);
 
-        string number; // this one is needed if we use more than one texture of the same type
+        string number;
         
-        if (textures[i].type == "texture_diffuse") // if it is a diffuse texture
+        if (textures[i].type == "texture_normal")
         {
-            number = to_string(diffuseNR++); // this is the diffuseNR`s texture
+            number = to_string(normalNR++);
         }
-        else if (textures[i].type == "texture_specular")
+        else if (textures[i].type == "texture_diffuse")
         {
-            number = to_string(specularNR++); // this is the specularNR`s texture
+            number = to_string(diffuseNR++);
         }
-        else if (textures[i].type == "texture_normal")
+        else if (textures[i].type == "texture_metallic")
         {
-            number = to_string(normalNR++); // this is the normalNR`s texture
+            number = to_string(metallicNR++);
+        }
+        else if (textures[i].type == "texture_roughness")
+        {
+            number = to_string(roughnessNR++);
+        }
+        else if (textures[i].type == "texture_ao")
+        {
+            number = to_string(aoNR++);
         }
 
         //cout << "material." + textures[i].type + number << endl;
