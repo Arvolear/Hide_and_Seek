@@ -10,8 +10,8 @@ INPUTDIR = ./code
 OUTPUTDIR = ./build
 
 MAIN = main.o 
-GLOBAL = gaussianblur.o
-DEBUG = debugsphere.o debugdrawer.o
+GLOBAL = gaussianblur.o radialblur.o
+DEBUG = debugdrawer.o
 SHADER = shader.o 
 FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o gbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
@@ -21,7 +21,7 @@ MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o g
 LEVEL = level.o dirlight.o skybox.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
-GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o
+GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
@@ -47,10 +47,10 @@ $(OUTPUTDIR)/main.o: $(INPUTDIR)/main.cpp
 $(OUTPUTDIR)/gaussianblur.o: $(INPUTDIR)/global/gaussianblur.cpp $(INPUTDIR)/global/gaussianblur.hpp
 	g++ -c $(INPUTDIR)/global/gaussianblur.cpp -o $@ $(FLAGS)
 
-### DEBUG ###
+$(OUTPUTDIR)/radialblur.o: $(INPUTDIR)/global/radialblur.cpp $(INPUTDIR)/global/radialblur.hpp
+	g++ -c $(INPUTDIR)/global/radialblur.cpp -o $@ $(FLAGS)
 
-$(OUTPUTDIR)/debugsphere.o: $(INPUTDIR)/debug/debugsphere.cpp $(INPUTDIR)/debug/debugsphere.hpp
-	g++ -c $(INPUTDIR)/debug/debugsphere.cpp -o $@ $(FLAGS)
+### DEBUG ###
 
 $(OUTPUTDIR)/debugdrawer.o: $(INPUTDIR)/debug/debugdrawer.cpp $(INPUTDIR)/debug/debugdrawer.hpp
 	g++ -c $(INPUTDIR)/debug/debugdrawer.cpp -o $@ $(FLAGS)
@@ -212,6 +212,9 @@ $(OUTPUTDIR)/mesh.o: $(INPUTDIR)/game_object/mesh.cpp $(INPUTDIR)/game_object/me
 
 $(OUTPUTDIR)/animation.o: $(INPUTDIR)/game_object/animation.cpp $(INPUTDIR)/game_object/animation.hpp
 	g++ -c $(INPUTDIR)/game_object/animation.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/sphere.o: $(INPUTDIR)/game_object/sphere.cpp $(INPUTDIR)/game_object/sphere.hpp
+	g++ -c $(INPUTDIR)/game_object/sphere.cpp -o $@ $(FLAGS)
 
 ### CLEAN ###
 

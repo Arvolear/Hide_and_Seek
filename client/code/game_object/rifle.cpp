@@ -6,9 +6,9 @@
 #include "../window/renderquad.hpp"
 #include "../window/window.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
+#include "sphere.hpp"
 #include "openglmotionstate.hpp"
 #include "animation.hpp"
 #include "mesh.hpp"

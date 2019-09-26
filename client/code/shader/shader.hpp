@@ -39,6 +39,7 @@ class Shader
         
         void setVec4(string key, vec4 value);
         void setVec3(string key, vec3 value);
+        void setVec2(string key, vec2 value);
 
         void setFloat(string key, float value);
         void setInt(string key, int value);

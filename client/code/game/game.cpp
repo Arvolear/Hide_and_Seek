@@ -12,12 +12,12 @@
 #include "../window/renderquad.hpp"
 #include "../window/window.hpp"
 
+#include "../global/radialblur.hpp"
 #include "../global/gaussianblur.hpp"
 #include "../global/gaussianblur.cpp"
 
 #include "../player/camera.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
 #include "../world/raytracer.hpp"
@@ -25,6 +25,7 @@
 #include "../world/bulletevents.hpp"
 #include "../world/world.hpp"
 
+#include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
@@ -188,7 +189,8 @@ void Game::gameLoop()
         quad->render(gameShader);
  
         //window->render(blured);
-        window->render(gameBuffer->getTexture());
+        //window->render(gameBuffer->getTexture());
+        window->render(level->getRenderTexture());
     }
         
     sender.join();

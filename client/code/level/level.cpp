@@ -13,10 +13,10 @@
 #include "../window/window.hpp"
 
 #include "../global/gaussianblur.hpp"
+#include "../global/radialblur.hpp"
 
 #include "../player/camera.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
 #include "../world/raytracer.hpp"
@@ -24,6 +24,7 @@
 #include "../world/bulletevents.hpp"
 #include "../world/world.hpp"
 
+#include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
@@ -60,6 +61,7 @@ Level::Level(Window* window, World* physicsWorld)
     gameObjectShader = new Shader();
     dirShadowShader = new Shader();
     skyBoxShader = new Shader();
+    dirSphereShader = new Shader();
 
     debugShader = new Shader();
 
@@ -86,6 +88,7 @@ void Level::loadLevel(string level)
     gameObjectShader->loadShaders(path("code/shader/objectShader.vert"), path("code/shader/objectShader.frag"));
     dirShadowShader->loadShaders(path("code/shader/dirShadowShader.vert"), path("code/shader/dirShadowShader.frag"));
     skyBoxShader->loadShaders(path("code/shader/skyBoxShader.vert"), path("code/shader/skyBoxShader.frag"));
+    dirSphereShader->loadShaders(path("code/shader/dirSphereShader.vert"), path("code/shader/dirSphereShader.frag"));
     
     debugShader->loadShaders(path("code/shader/debugShader.vert"), path("code/shader/debugShader.frag"));
 
@@ -100,6 +103,11 @@ void Level::loadLevel(string level)
     levelLoader->getViewFrustumData(viewFrustum);
     
     quad->init();
+
+
+    //////////////////////
+    //////////////////////
+    dirLights[0]->genScatterBuffer(window->getRenderSize());
 }
         
 void Level::setPlayerID(int playerID)
@@ -173,12 +181,12 @@ void Level::render()
             dirLights[i]->getShadowBuffer()->use();
             dirLights[i]->getShadowBuffer()->clear();
 
-            dirLights[i]->updateView(players[playerID]->getPosition());
+            dirLights[i]->updateShadowView(players[playerID]->getPosition());
 
             dirShadowShader->use();
 
-            dirShadowShader->setMat4("view", dirLights[i]->getView());
-            dirShadowShader->setMat4("projection", dirLights[i]->getProjection());
+            dirShadowShader->setMat4("view", dirLights[i]->getShadowView());
+            dirShadowShader->setMat4("projection", dirLights[i]->getShadowProjection());
 
             for (auto& i : gameObjects)
             {
@@ -224,16 +232,38 @@ void Level::render()
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        dirLights[i]->blur(1, 1);
+        dirLights[i]->blurShadow(1, 1);
 
         levelColorBuffer->use();
         gameObjectShader->use();
-
-        dirLights[i]->render(gameObjectShader, i);
+            
+        dirLights[i]->renderShadow(gameObjectShader, i);
     }
 
     gBuffer->render(gameObjectShader);
     quad->render(gameObjectShader);
+    
+    /************************************
+     * LIGHT SCATTERER
+     * */
+    
+    for (size_t i = 0; i < dirLights.size(); i++)
+    {
+        if (dirLights[i]->getScatterBuffer())
+        {
+            /*** scatter buffer ***/
+            dirLights[i]->getScatterBuffer()->copyDepthBuffer(gBuffer);
+            dirLights[i]->getScatterBuffer()->copyColorBuffer(0, gBuffer, 6);
+            dirLights[i]->getScatterBuffer()->use();
+
+            dirSphereShader->use();
+
+            dirSphereShader->setMat4("view", mat4(mat3(view)));
+            dirSphereShader->setMat4("projection", projection);
+
+            dirLights[i]->renderSphere(dirSphereShader);
+        }
+    }
 
     /************************************
      * SKYBOX 
@@ -248,6 +278,20 @@ void Level::render()
     skyBoxShader->setMat4("projection", projection);
 
     skyBox->render(skyBoxShader);
+    
+    /************************************
+     * DIRLIGHT SPHERES
+     * */
+    
+    dirSphereShader->use();
+
+    dirSphereShader->setMat4("view", mat4(mat3(view)));
+    dirSphereShader->setMat4("projection", projection);
+
+    for (size_t i = 0; i < dirLights.size(); i++)
+    {
+        //dirLights[i]->renderSphere(dirSphereShader);
+    }
 
     /************************************
      * DEBUG
@@ -287,8 +331,9 @@ void Level::updatePlayers(int mode)
 
 GLuint Level::getRenderTexture(unsigned int num) const
 {
-    return levelColorBuffer->getTexture(num);
-    //return gBuffer->getTexture(3);
+    //return levelColorBuffer->getTexture(num);
+    return dirLights[0]->getScatterBuffer()->getTexture();
+    //return gBuffer->getTexture(6);
 }
 
 Player* Level::getPlayer(int id) const
@@ -331,6 +376,7 @@ Level::~Level()
     delete gameObjectShader;
     delete dirShadowShader;
     delete skyBoxShader;
+    delete dirSphereShader;
 
     delete debugShader;
 

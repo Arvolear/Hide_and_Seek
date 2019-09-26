@@ -10,35 +10,35 @@
 using namespace std;
 using namespace glm;
         
-struct DebugVertex
-{
-    vec3 position;
-    vec3 color;
-};
-
-class DebugSphere
+class Sphere
 {
     private:
-        vector < DebugVertex > vertices;
+        struct Vertex
+        {
+            vec3 position;
+            vec3 color;
+        };
+
+        vector < Vertex > vertices;
 
         GLuint VAO;
         GLuint VBO;
 
-        mat4 transform;
+        vec3 color;
 
         void setUpSphere();
         void constructOcta(vec3 center, double radius);
-        void constructSphere(vector < DebugVertex > localVertices, int curDepth, int maxDepth);
+        void constructSphere(vector < Vertex > localVertices, int curDepth, int maxDepth);
         void roundComputedSphere(vec3 center, double radius);
 
     public:
-        DebugSphere();
+        Sphere();
 
         void construct(vec3 center, double radius, int depth);
 
-        void applyTransform(mat4 transform);
+        void setColor(vec3 color);
 
         void render(Shader* shader) const;
 
-        ~DebugSphere();
+        ~Sphere();
 };

@@ -9,9 +9,9 @@
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
+#include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"

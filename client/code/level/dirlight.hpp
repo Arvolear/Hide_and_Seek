@@ -13,11 +13,15 @@ class DirLight
         vec3 direction;
         vec3 color;
 
-        mat4 view;
-        mat4 projection;
+        mat4 shadowView, shadowProjection;
+
+        Sphere* sphere;
 
         DepthColorBuffer* shadowBuffer;
         GaussianBlur < DepthColorBuffer >* gaussianBlur;
+
+        ColorBuffer* scatterBuffer;
+        RadialBlur* radialBlur;
         
     public:
         DirLight();
@@ -25,22 +29,29 @@ class DirLight
        
         void genShadowBuffer(int width, int height, float blurScale = 1.0);
         void genShadowBuffer(vec2 size, float blurScale = 1.0);
+        void genScatterBuffer(int width, int height, float blurScale = 1.0);
+        void genScatterBuffer(vec2 size, float blurScale = 1.0);
+
+        void genSphere(vec3 center, double radius, int depth);
 
         void setDirection(vec3 direction);
         void setColor(vec3 color);
 
-        void setView(mat4 view);
-        void setProjection(mat4 projection);
+        void setShadowProjection(mat4 projection);
 
         vec3 getDirection() const;
         DepthColorBuffer* getShadowBuffer() const;
+        ColorBuffer* getScatterBuffer() const;
        
-        void blur(float intensity, float radius = 1.0);
-        void render(Shader* shader, GLuint index);
-        void updateView(vec3 playerPosition);
+        void blurShadow(float intensity, float radius = 1.0);
+        void blurScatter(vec2 center);
 
-        mat4 getView() const;
-        mat4 getProjection() const;
+        void renderShadow(Shader* shader, GLuint index);
+        void renderSphere(Shader* shader);
+        void updateShadowView(vec3 playerPosition);
+
+        mat4 getShadowView() const;
+        mat4 getShadowProjection() const;
 
         ~DirLight();
 };

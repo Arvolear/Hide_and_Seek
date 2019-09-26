@@ -6,6 +6,7 @@ layout (location = 2) out vec4 gAlbedo;
 layout (location = 3) out float gMetallic;
 layout (location = 4) out float gRoughness;
 layout (location = 5) out float gAO;
+layout (location = 6) out vec4 gLightScattering;
 
 struct Material
 {
@@ -41,6 +42,7 @@ void main()
     gMetallic = texture(material.texture_metallic1, textureCoords).r;
     gRoughness = texture(material.texture_roughness1, textureCoords).r;
     gAO = texture(material.texture_ao1, textureCoords).r;
+    gLightScattering = vec4(0, 0, 0, texture(material.texture_diffuse1, textureCoords).a);
 
     /* alpha */
     if (gAlbedo.a < 0.1)
