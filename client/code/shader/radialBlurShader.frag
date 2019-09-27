@@ -16,8 +16,12 @@ out vec4 fragColor;
 void main()
 {
     vec2 texCoord = UV;
+    vec2 cent = center;
 
-    vec2 deltaTexCoord = UV - center;
+    cent.x = clamp(cent.x, 0.0, 1.0);
+    cent.y = clamp(cent.y, 0.0, 1.0);
+
+    vec2 deltaTexCoord = UV - cent;
     deltaTexCoord *= 1.0 / (NUM_SAMPLES * density);
 
     vec4 color = texture(blurTexture, texCoord);
@@ -26,7 +30,7 @@ void main()
     for (int i = 0; i < NUM_SAMPLES; i++)
     {
         texCoord -= deltaTexCoord;
-        
+
         vec4 sampleColor = texture(blurTexture, texCoord);
         sampleColor *= illuminationDecay * weight;
 

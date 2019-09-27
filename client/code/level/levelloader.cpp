@@ -715,41 +715,114 @@ void LevelLoader::loadDirLight()
             DL->setColor(vec3(r, g, b));
         }
 
-        /* sphere */
-        XMLElement* sphereElem = dirLightElem->FirstChildElement("sphere");
+        /* scatter */
+        XMLElement* scatterElem = dirLightElem->FirstChildElement("scatter");
 
-        if (sphereElem)
+        if (scatterElem)
         {
-            XMLElement* centerElem = sphereElem->FirstChildElement("center");
+            /* sphere */
+            XMLElement* sphereElem = scatterElem->FirstChildElement("sphere");
 
-            vec3 center(0);
-
-            if (centerElem)
+            if (sphereElem)
             {
-                centerElem->QueryFloatAttribute("x", &center.x);
-                centerElem->QueryFloatAttribute("y", &center.y);
-                centerElem->QueryFloatAttribute("z", &center.z);
+                XMLElement* colorElem = sphereElem->FirstChildElement("color");
+
+                if (colorElem)
+                {
+                    float r = 0, g = 0, b = 0;
+                    colorElem->QueryFloatAttribute("r", &r);
+                    colorElem->QueryFloatAttribute("g", &g);
+                    colorElem->QueryFloatAttribute("b", &b);
+
+                    DL->setSphereColor(vec3(r, g, b));
+                }
+
+                XMLElement* centerElem = sphereElem->FirstChildElement("center");
+
+                vec3 center(0);
+
+                if (centerElem)
+                {
+                    centerElem->QueryFloatAttribute("x", &center.x);
+                    centerElem->QueryFloatAttribute("y", &center.y);
+                    centerElem->QueryFloatAttribute("z", &center.z);
+                }
+
+                XMLElement* radiusElem = sphereElem->FirstChildElement("radius");
+
+                float radius = 0;
+
+                if (radiusElem)
+                {
+                    radiusElem->QueryFloatAttribute("radius", &radius);
+                }
+
+                XMLElement* qualityElem = sphereElem->FirstChildElement("quality");
+
+                int quality = 0;
+
+                if (qualityElem)
+                {
+                    qualityElem->QueryIntAttribute("quality", &quality);
+                }
+
+                DL->genSphere(center, radius, quality);
             }
 
-            XMLElement* radiusElem = sphereElem->FirstChildElement("radius");
+            XMLElement* blurScaleElem = scatterElem->FirstChildElement("blurscale");
 
-            float radius = 0;
+            float scale = 1.0;
 
-            if (radiusElem)
+            if (blurScaleElem)
             {
-                radiusElem->QueryFloatAttribute("radius", &radius);
+                blurScaleElem->QueryFloatAttribute("scale", &scale);
             }
 
-            XMLElement* qualityElem = sphereElem->FirstChildElement("quality");
+            DL->genScatterBuffer(window->getRenderSize(), scale);
 
-            int quality = 0;
+            XMLElement* exposureElem = scatterElem->FirstChildElement("exposure");
 
-            if (qualityElem)
+            float exposure = 1.0;
+
+            if (exposureElem)
             {
-                qualityElem->QueryIntAttribute("quality", &quality);
+                exposureElem->QueryFloatAttribute("exposure", &exposure);
             }
 
-            DL->genSphere(center, radius, quality);
+            DL->setExposure(exposure);
+
+            XMLElement* decayElem = scatterElem->FirstChildElement("decay");
+
+            float decay = 1.0;
+
+            if (decayElem)
+            {
+                decayElem->QueryFloatAttribute("decay", &decay);
+            }
+
+            DL->setDecay(decay);
+
+            XMLElement* densityElem = scatterElem->FirstChildElement("density");
+
+            float density = 1.0;
+
+            if (densityElem)
+            {
+                densityElem->QueryFloatAttribute("density", &density);
+            }
+
+            DL->setDensity(density);
+
+            XMLElement* weightElem = scatterElem->FirstChildElement("weight");
+
+            float weight = 1.0;
+
+            if (weightElem)
+            {
+                weightElem->QueryFloatAttribute("weight", &weight);
+            }
+
+            DL->setWeight(weight);
         }
 
         /* shadow */
@@ -768,14 +841,15 @@ void LevelLoader::loadDirLight()
 
             XMLElement* shadowBufferElem = shadowElem->FirstChildElement("shadowbuffer");
 
+            float x = 500, y = 500;
+
             if (shadowBufferElem)
             {
-                float x = 0, y = 0;
                 shadowBufferElem->QueryFloatAttribute("x", &x);
                 shadowBufferElem->QueryFloatAttribute("y", &y);
-
-                DL->genShadowBuffer(x, y, scale);
             }
+
+            DL->genShadowBuffer(x, y, scale);
 
             XMLElement* projElem = shadowElem->FirstChildElement("projection");
 

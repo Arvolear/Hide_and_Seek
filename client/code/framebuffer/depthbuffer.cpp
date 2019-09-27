@@ -51,8 +51,9 @@ void DepthBuffer::genBuffer(vec2 size, unsigned int layouts)
     genBuffer(size.x, size.y, layouts);
 }
 
-void DepthBuffer::clear()
+void DepthBuffer::clear(vec3 depth)
 {
+    glClearDepth(depth.x);
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 

@@ -189,8 +189,7 @@ void Game::gameLoop()
         quad->render(gameShader);
  
         //window->render(blured);
-        //window->render(gameBuffer->getTexture());
-        window->render(level->getRenderTexture());
+        window->render(gameBuffer->getTexture());
     }
         
     sender.join();

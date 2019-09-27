@@ -36,6 +36,12 @@ class DirLight
 
         void setDirection(vec3 direction);
         void setColor(vec3 color);
+        void setSphereColor(vec3 color);
+
+        void setExposure(float exposure);
+        void setDecay(float decay);
+        void setDensity(float density);
+        void setWeight(float weight);
 
         void setShadowProjection(mat4 projection);
 
@@ -48,7 +54,13 @@ class DirLight
 
         void renderShadow(Shader* shader, GLuint index);
         void renderSphere(Shader* shader);
+        void renderLight(Shader* shader);
         void updateShadowView(vec3 playerPosition);
+
+        Sphere* getSphere() const;
+
+        GLuint getShadowTexture() const;
+        GLuint getScatterTexture() const;
 
         mat4 getShadowView() const;
         mat4 getShadowProjection() const;

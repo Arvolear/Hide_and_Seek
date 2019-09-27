@@ -32,6 +32,7 @@ class Level
         Shader* dirShadowShader;
         Shader* skyBoxShader;
         Shader* dirSphereShader;
+        Shader* lightBlenderShader;
         
         Shader* debugShader;
 

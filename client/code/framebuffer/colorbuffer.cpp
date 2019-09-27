@@ -65,9 +65,9 @@ void ColorBuffer::genBuffer(vec2 size, unsigned int layouts)
     genBuffer(size.x, size.y, layouts);
 }
 
-void ColorBuffer::clear()
+void ColorBuffer::clear(vec3 color)
 {
-    glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
+    glClearColor(color.x, color.y, color.z, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

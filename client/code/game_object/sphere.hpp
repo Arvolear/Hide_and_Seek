@@ -25,6 +25,8 @@ class Sphere
         GLuint VBO;
 
         vec3 color;
+        vec3 center;
+        double radius;
 
         void setUpSphere();
         void constructOcta(vec3 center, double radius);
@@ -39,6 +41,9 @@ class Sphere
         void setColor(vec3 color);
 
         void render(Shader* shader) const;
+
+        vec3 getCenter() const;
+        double getRadius() const;
 
         ~Sphere();
 };

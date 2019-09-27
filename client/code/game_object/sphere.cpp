@@ -185,6 +185,9 @@ void Sphere::roundComputedSphere(vec3 center, double radius)
 
 void Sphere::construct(vec3 center, double radius, int depth)
 {
+    this->center = center;
+    this->radius = radius;
+
     constructOcta(center, radius);
     constructSphere(vertices, 0, depth);
     roundComputedSphere(center, radius);
@@ -208,6 +211,16 @@ void Sphere::render(Shader* shader) const
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
     glBindVertexArray(0); //unbind VAO
+}
+
+vec3 Sphere::getCenter() const
+{
+    return center;
+}
+
+double Sphere::getRadius() const
+{
+    return radius;
 }
 
 Sphere::~Sphere()
