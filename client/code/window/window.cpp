@@ -215,7 +215,7 @@ void Window::render(GLuint finalTexture)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, width, height); // set visible
 
-    glClearColor(0.0f, 0.2f, 0.0f, 1.0f); // black
+    glClearColor(0.0f, 0.2f, 0.0f, 1.0f); // green
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderShader->use();

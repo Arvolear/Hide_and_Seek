@@ -31,17 +31,19 @@ vec3 hsv2rgb(vec3 c)
 
 void main()
 {
-    float gamma = 1.0;
+    float gamma = 2.2;
 
     vec3 hdrColor = texture(scene, UV).rgb;
     vec3 bloomColor = texture(blurBloom, UV).rgb;
 
+    /*
     hdrColor = rgb2hsv(hdrColor); 
 
     hdrColor.g *= 1.3;
     hdrColor.g = clamp(hdrColor.g, 0.0, 1.0);
 
     hdrColor = hsv2rgb(hdrColor);
+    */
 
     hdrColor += bloomColor;
 

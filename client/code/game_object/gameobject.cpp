@@ -2,9 +2,9 @@
 
 #include "../shader/shader.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
+#include "sphere.hpp"
 #include "openglmotionstate.hpp"
 #include "animation.hpp"
 #include "mesh.hpp"
@@ -36,7 +36,7 @@ GameObject::GameObject(string name)
     skeleton = nullptr;
     viewFrustum = nullptr;
     boundSphere = nullptr;
-    debugSphere = nullptr;
+    sphere = nullptr;
 
     interpolation = false;
     interpolationCoeff = 1.0;
@@ -455,22 +455,26 @@ void GameObject::render(Shader* shader, bool cull)
 
 void GameObject::createDebugSphere(int depth)
 {
-    debugSphere = new DebugSphere();
+    sphere = new Sphere();
 
     if (boundSphere)
     {
-        debugSphere->construct(boundSphere->getCenter(), boundSphere->getRadius(), depth);
+        sphere->setColor(getRandomVec3());
+        sphere->construct(boundSphere->getCenter(), boundSphere->getRadius(), depth);
     }
 }
 
 void GameObject::renderDebugSphere(Shader *shader)
 {
-    if (visible && debugSphere && viewFrustum)
+    if (visible && sphere && viewFrustum)
     {
-        mat4 transform = viewFrustum->getProjection() * viewFrustum->getView() * getPhysicsObjectTransform() * localTransform;
-        debugSphere->applyTransform(transform);
-
-        debugSphere->render(shader);
+        mat4 transform = getPhysicsObjectTransform() * localTransform;
+       
+        shader->setMat4("transform", transform);
+        shader->setMat4("projection", viewFrustum->getProjection());
+        shader->setMat4("view", viewFrustum->getView());
+        
+        sphere->render(shader);
     }
 }
 
@@ -485,7 +489,7 @@ GameObject::~GameObject()
 
     delete modelLoader;
 
-    delete debugSphere;
+    delete sphere;
 
     for (auto& i: animations)
     {

@@ -41,7 +41,7 @@ class GameObject
         ViewFrustum* viewFrustum;
 
         BoundSphere* boundSphere;
-        DebugSphere* debugSphere;
+        Sphere* sphere;
 
         mat4 localTransform;
 

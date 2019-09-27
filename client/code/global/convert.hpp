@@ -5,6 +5,7 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <random>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -52,6 +53,20 @@ inline static float cutFloat(float from, int precision)
     ss << from;
 
     return stof(ss.str());
+}
+
+static random_device rd;
+static mt19937 gen(rd());
+static uniform_real_distribution<> dis(0, 1);
+
+inline static float getRandomNumber()
+{
+    return dis(gen);
+}
+
+inline static vec3 getRandomVec3()
+{
+    return vec3(dis(gen), dis(gen), dis(gen));
 }
 
 inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 from)

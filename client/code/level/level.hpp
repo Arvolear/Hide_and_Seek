@@ -31,6 +31,8 @@ class Level
         Shader* gameObjectShader;
         Shader* dirShadowShader;
         Shader* skyBoxShader;
+        Shader* dirSphereShader;
+        Shader* lightBlenderShader;
         
         Shader* debugShader;
 

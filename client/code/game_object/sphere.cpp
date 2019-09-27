@@ -1,12 +1,13 @@
 #include "../shader/shader.hpp"
-#include "debugsphere.hpp"
+#include "sphere.hpp"
 
-DebugSphere::DebugSphere()
+Sphere::Sphere()
 {
-    transform = mat4(1);
+    VAO = VBO = 0;
+    color = vec3(0.0);
 }
 
-void DebugSphere::setUpSphere()
+void Sphere::setUpSphere()
 {
     glGenVertexArrays(1, &VAO); //generate VAO
     glGenBuffers(1, &VBO); //generate VBO
@@ -14,23 +15,22 @@ void DebugSphere::setUpSphere()
     glBindVertexArray(VAO); //bind VAO
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO); //bind VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(DebugVertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW); //insert vertex data into VBO
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW); //insert vertex data into VBO
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glEnableVertexAttribArray(0); //0 layout for position
     
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, color));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
     glEnableVertexAttribArray(1); //1 layout for color
 
     glBindVertexArray(0); //unbind 
 }
 
-void DebugSphere::constructOcta(vec3 center, double radius)
+void Sphere::constructOcta(vec3 center, double radius)
 {
     double dist = sqrt(radius * radius / 2.0);
 
     vec3 pos;
-    vec3 color = vec3(0.1, 0.1, 0.1);
     
     //first up right
     pos = vec3(center.x + dist, center.y, center.z + dist);
@@ -52,7 +52,7 @@ void DebugSphere::constructOcta(vec3 center, double radius)
     pos = vec3(center.x, center.y + radius, center.z);
     vertices.push_back({pos, color});
     
-    //thrird up left
+    //third up left
     pos = vec3(center.x - dist, center.y, center.z - dist);
     vertices.push_back({pos, color});
     
@@ -113,9 +113,9 @@ void DebugSphere::constructOcta(vec3 center, double radius)
     vertices.push_back({pos, color});
 }
         
-void DebugSphere::constructSphere(vector < DebugVertex > curVertices, int curDepth, int maxDepth)
+void Sphere::constructSphere(vector < Vertex > curVertices, int curDepth, int maxDepth)
 {
-    vector < DebugVertex > localVertices;
+    vector < Vertex > localVertices;
 
     if (curDepth == maxDepth)
     {
@@ -126,19 +126,16 @@ void DebugSphere::constructSphere(vector < DebugVertex > curVertices, int curDep
     for (size_t i = 0; i < curVertices.size(); i += 3)
     {
         vec3 pos;
-        vec3 color;
 
         //first vertex
         localVertices.push_back(curVertices[i]);
 
         //second vertex
         pos = (curVertices[i].position + curVertices[i + 1].position) / float(2.0);
-        color = vec3(0.3, 0.0, 0.0);
         localVertices.push_back({pos, color});
 
         //third vertex
         pos = (curVertices[i].position + curVertices[i + 2].position) / float(2.0);
-        color = vec3(0.5, 0.3, 0.0);
         localVertices.push_back({pos, color});
 
         //fourth vertex
@@ -149,7 +146,6 @@ void DebugSphere::constructSphere(vector < DebugVertex > curVertices, int curDep
 
         //sixth vertex
         pos = (curVertices[i + 1].position + curVertices[i + 2].position) / float(2.0);
-        color = vec3(0.0, 0.5, 0.3);
         localVertices.push_back({pos, color});
 
         //seventh vertex
@@ -174,7 +170,7 @@ void DebugSphere::constructSphere(vector < DebugVertex > curVertices, int curDep
     constructSphere(localVertices, ++curDepth, maxDepth);
 }
 
-void DebugSphere::roundComputedSphere(vec3 center, double radius)
+void Sphere::roundComputedSphere(vec3 center, double radius)
 {
     //calculate points that are the given distance (radius) away from the center
     for (size_t i = 0; i < vertices.size(); i++)
@@ -187,8 +183,11 @@ void DebugSphere::roundComputedSphere(vec3 center, double radius)
     }
 }
 
-void DebugSphere::construct(vec3 center, double radius, int depth)
+void Sphere::construct(vec3 center, double radius, int depth)
 {
+    this->center = center;
+    this->radius = radius;
+
     constructOcta(center, radius);
     constructSphere(vertices, 0, depth);
     roundComputedSphere(center, radius);
@@ -196,24 +195,35 @@ void DebugSphere::construct(vec3 center, double radius, int depth)
     setUpSphere();
 }
 
-void DebugSphere::applyTransform(mat4 transform)
+void Sphere::setColor(vec3 color)
 {
-    this->transform = transform;
+    this->color = color;
+
+    for (size_t i = 0; i < vertices.size(); i++)
+    {
+        vertices[i].color = color;
+    }
 }
 
-void DebugSphere::render(Shader* shader) const
+void Sphere::render(Shader* shader) const
 {
-    shader->setMat4("transform", transform);
-    shader->setMat4("view", mat4(1.0));
-    shader->setMat4("projection", mat4(1.0));
-
     glBindVertexArray(VAO); //bind VAO
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
     glBindVertexArray(0); //unbind VAO
 }
 
-DebugSphere::~DebugSphere()
+vec3 Sphere::getCenter() const
+{
+    return center;
+}
+
+double Sphere::getRadius() const
+{
+    return radius;
+}
+
+Sphere::~Sphere()
 {
     if (VAO)
     {

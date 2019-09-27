@@ -12,11 +12,11 @@
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
 
+#include "../global/radialblur.hpp"
 #include "../global/gaussianblur.hpp"
 
 #include "../player/camera.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
 #include "../world/raytracer.hpp"
@@ -24,6 +24,7 @@
 #include "../world/bulletevents.hpp"
 #include "../world/world.hpp"
 
+#include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
@@ -80,8 +81,8 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 
 void Multiplayer::connect()
 {
-    //client->connectToServer("159.224.87.241", 5040);
-    client->connectToServer("192.168.0.145", 5040);
+    client->connectToServer("159.224.87.241", 5040);
+    //client->connectToServer("192.168.0.145", 5040);
     //client->connectToServer("192.168.0.184", 5040);
     //client->connectToServer("127.0.0.1", 5040);
 

@@ -11,9 +11,9 @@
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
 
+#include "../global/radialblur.hpp"
 #include "../global/gaussianblur.hpp"
 
-#include "../debug/debugsphere.hpp"
 #include "../debug/debugdrawer.hpp"
 
 #include "../player/camera.hpp"
@@ -23,6 +23,7 @@
 #include "../world/bulletevents.hpp"
 #include "../world/world.hpp"
 
+#include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
 #include "../game_object/mesh.hpp"
@@ -702,40 +703,126 @@ void LevelLoader::loadDirLight()
             DL->setDirection(vec3(x, y, z));
         }
 
-        XMLElement* ambientElem = dirLightElem->FirstChildElement("ambient");
+        XMLElement* colorElem = dirLightElem->FirstChildElement("color");
 
-        if (ambientElem)
+        if (colorElem)
         {
             float r = 0, g = 0, b = 0;
-            ambientElem->QueryFloatAttribute("r", &r);
-            ambientElem->QueryFloatAttribute("g", &g);
-            ambientElem->QueryFloatAttribute("b", &b);
+            colorElem->QueryFloatAttribute("r", &r);
+            colorElem->QueryFloatAttribute("g", &g);
+            colorElem->QueryFloatAttribute("b", &b);
 
-            DL->setAmbient(vec3(r, g, b));
+            DL->setColor(vec3(r, g, b));
         }
 
-        XMLElement* diffuseElem = dirLightElem->FirstChildElement("diffuse");
+        /* scatter */
+        XMLElement* scatterElem = dirLightElem->FirstChildElement("scatter");
 
-        if (diffuseElem)
+        if (scatterElem)
         {
-            float r = 0, g = 0, b = 0;
-            diffuseElem->QueryFloatAttribute("r", &r);
-            diffuseElem->QueryFloatAttribute("g", &g);
-            diffuseElem->QueryFloatAttribute("b", &b);
+            /* sphere */
+            XMLElement* sphereElem = scatterElem->FirstChildElement("sphere");
 
-            DL->setDiffuse(vec3(r, g, b));
-        }
+            if (sphereElem)
+            {
+                XMLElement* colorElem = sphereElem->FirstChildElement("color");
 
-        XMLElement* specularElem = dirLightElem->FirstChildElement("specular");
+                if (colorElem)
+                {
+                    float r = 0, g = 0, b = 0;
+                    colorElem->QueryFloatAttribute("r", &r);
+                    colorElem->QueryFloatAttribute("g", &g);
+                    colorElem->QueryFloatAttribute("b", &b);
 
-        if (specularElem)
-        {
-            float r = 0, g = 0, b = 0;
-            specularElem->QueryFloatAttribute("r", &r);
-            specularElem->QueryFloatAttribute("g", &g);
-            specularElem->QueryFloatAttribute("b", &b);
+                    DL->setSphereColor(vec3(r, g, b));
+                }
 
-            DL->setSpecular(vec3(r, g, b));
+                XMLElement* centerElem = sphereElem->FirstChildElement("center");
+
+                vec3 center(0);
+
+                if (centerElem)
+                {
+                    centerElem->QueryFloatAttribute("x", &center.x);
+                    centerElem->QueryFloatAttribute("y", &center.y);
+                    centerElem->QueryFloatAttribute("z", &center.z);
+                }
+
+                XMLElement* radiusElem = sphereElem->FirstChildElement("radius");
+
+                float radius = 0;
+
+                if (radiusElem)
+                {
+                    radiusElem->QueryFloatAttribute("radius", &radius);
+                }
+
+                XMLElement* qualityElem = sphereElem->FirstChildElement("quality");
+
+                int quality = 0;
+
+                if (qualityElem)
+                {
+                    qualityElem->QueryIntAttribute("quality", &quality);
+                }
+
+                DL->genSphere(center, radius, quality);
+            }
+
+            XMLElement* blurScaleElem = scatterElem->FirstChildElement("blurscale");
+
+            float scale = 1.0;
+
+            if (blurScaleElem)
+            {
+                blurScaleElem->QueryFloatAttribute("scale", &scale);
+            }
+
+            DL->genScatterBuffer(window->getRenderSize(), scale);
+
+            XMLElement* exposureElem = scatterElem->FirstChildElement("exposure");
+
+            float exposure = 1.0;
+
+            if (exposureElem)
+            {
+                exposureElem->QueryFloatAttribute("exposure", &exposure);
+            }
+
+            DL->setExposure(exposure);
+
+            XMLElement* decayElem = scatterElem->FirstChildElement("decay");
+
+            float decay = 1.0;
+
+            if (decayElem)
+            {
+                decayElem->QueryFloatAttribute("decay", &decay);
+            }
+
+            DL->setDecay(decay);
+
+            XMLElement* densityElem = scatterElem->FirstChildElement("density");
+
+            float density = 1.0;
+
+            if (densityElem)
+            {
+                densityElem->QueryFloatAttribute("density", &density);
+            }
+
+            DL->setDensity(density);
+
+            XMLElement* weightElem = scatterElem->FirstChildElement("weight");
+
+            float weight = 1.0;
+
+            if (weightElem)
+            {
+                weightElem->QueryFloatAttribute("weight", &weight);
+            }
+
+            DL->setWeight(weight);
         }
 
         /* shadow */
@@ -754,21 +841,22 @@ void LevelLoader::loadDirLight()
 
             XMLElement* shadowBufferElem = shadowElem->FirstChildElement("shadowbuffer");
 
+            float x = 500, y = 500;
+
             if (shadowBufferElem)
             {
-                float x = 0, y = 0;
                 shadowBufferElem->QueryFloatAttribute("x", &x);
                 shadowBufferElem->QueryFloatAttribute("y", &y);
-
-                DL->genShadowBuffer(x, y, scale);
             }
+
+            DL->genShadowBuffer(x, y, scale);
 
             XMLElement* projElem = shadowElem->FirstChildElement("projection");
 
             mat4 shadowProj = mat4(1.0);
             loadProjection(projElem, shadowProj);
 
-            DL->setProjection(shadowProj);
+            DL->setShadowProjection(shadowProj);
         }
 
         if (find(dirLights.begin(), dirLights.end(), DL) == dirLights.end())

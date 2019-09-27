@@ -8,17 +8,15 @@ struct GBuffer
     sampler2D texture_position;
     sampler2D texture_normal;
     sampler2D texture_albedo;
-    sampler2D texture_specular;
-    sampler2D texture_shininess;
+    sampler2D texture_metallic;
+    sampler2D texture_roughness;
+    sampler2D texture_ao;
 };
 
 struct DirLight
 {
     vec3 direction;
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 color;
 
     int isShadow; 
     sampler2D texture_shadow1;
@@ -35,6 +33,8 @@ uniform GBuffer gBuffer;
 uniform DirLight dirLights[MAX_DIR_LIGHTS];
 
 uniform vec3 viewPos;
+
+const float PI = 3.1415926535;
 
 float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
@@ -67,43 +67,107 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
     return shadow;
 }
 
-vec4 calcDirLight(DirLight light)
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-    vec3 fragmentPos = texture(gBuffer.texture_position, UV).rgb;
-    vec3 normal = texture(gBuffer.texture_normal, UV).rgb;
-    vec4 diffuseFrag = texture(gBuffer.texture_albedo, UV);
-    vec4 specularFrag = texture(gBuffer.texture_specular, UV);
-    float shininessFrag = texture(gBuffer.texture_shininess, UV).r * 255;
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}  
 
-    vec3 viewDir = normalize(viewPos - fragmentPos);
-    vec3 lightDir = normalize(-light.direction);
+float distributionGGX(vec3 N, vec3 H, float roughness)
+{
+    float a = roughness * roughness;
+    float a2 = a * a;
+    float nDotH = max(dot(N, H), 0.0);
+    float nDotH2 = nDotH * nDotH;
 
-    float diff = max(dot(normal, lightDir), 0.0);
+    float num = a2;
+    float denom = (nDotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
 
-    /* Blinn-Phong */
-    vec3 halfwayRay = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayRay), 0.0), shininessFrag); 
+    return num / denom;
+}
 
-    vec4 ambient = vec4(light.ambient, 1.0) * diffuseFrag;
-    vec4 diffuse = vec4(light.diffuse, 1.0) * diff * diffuseFrag;
-    vec4 specular = vec4(light.specular, 1.0) * spec * specularFrag;
+float geometrySchlickGGX(float nDotV, float roughness)
+{
+    float r = roughness + 1.0;
+    float k = (r * r) / 8.0;
 
-    float shadow = 1.0;
+    float num = nDotV;
+    float denom = nDotV * (1.0 - k) + k;
+
+    return num / denom;
+}
+
+float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float nDotV = max(dot(N, V), 0.0);
+    float nDotL = max(dot(N, L), 0.0);
+    float ggx2 = geometrySchlickGGX(nDotV, roughness);
+    float ggx1 = geometrySchlickGGX(nDotL, roughness);
+
+    return ggx1 * ggx2;
+}
+
+vec4 calcDirLights()
+{
+    float gamma = 2.2;
+
+    vec3 fragPos = texture(gBuffer.texture_position, UV).rgb;
+    vec3 fragNorm = texture(gBuffer.texture_normal, UV).rgb;
+    vec3 fragAlbedo = pow(texture(gBuffer.texture_albedo, UV).rgb, vec3(gamma));
+    float fragMetal = texture(gBuffer.texture_metallic, UV).r;
+    float fragRough = texture(gBuffer.texture_roughness, UV).r;
+    float fragAO =  texture(gBuffer.texture_ao, UV).r;
+
+    //fragMetal = 0.0;
+    //fragRough = 0.0;
+
+    vec3 viewDir = normalize(viewPos - fragPos);
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, fragAlbedo, fragMetal);
     
-    if (light.isShadow == 1)
-    {
-        /* calc shadow coords */
-        vec4 dirShadowCoords = light.shadowProjection * light.shadowView * vec4(fragmentPos, 1.0);
+    vec3 L0 = vec3(0.0);
 
-        shadow = calcDirShadow(light, dirShadowCoords);
+    for (int i = 0; i < MAX_DIR_LIGHTS; i++)
+    {
+        vec3 lightDir = normalize(-dirLights[i].direction);
+
+        /* PBR */
+        vec3 halfDir = normalize(viewDir + lightDir);
+        vec3 radiance = dirLights[i].color;
+
+        // cook-torrance brdf
+        float NDF = distributionGGX(fragNorm, halfDir, fragRough);
+        float geom = geometrySmith(fragNorm, viewDir, lightDir, fragRough);
+        vec3 fresnel = fresnelSchlick(max(dot(halfDir, viewDir), 0.0), F0);
+
+        vec3 kS = fresnel;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - fragMetal;
+
+        vec3 numerator = NDF * geom * fresnel;
+        float denominator = 4.0 * max(dot(fragNorm, viewDir), 0.0) * max(dot(fragNorm, lightDir), 0.0);
+        vec3 specular = numerator / max(denominator, 0.001);
+
+        float nDotL = max(dot(fragNorm, lightDir), 0.0);
+
+        vec3 L00 = (kD * fragAlbedo / PI + specular) * radiance * nDotL;
+
+        if (dirLights[i].isShadow == 1)
+        {
+            // calc shadow coords
+            vec4 dirShadowCoords = dirLights[i].shadowProjection * dirLights[i].shadowView * vec4(fragPos, 1.0);
+
+            float shadow = calcDirShadow(dirLights[i], dirShadowCoords);
+            L00 *= shadow;
+        }
+
+        L0 += L00;
     }
 
-    if (shadow != 1.0)
-    {
-        return ambient + shadow * diffuse;
-    }
-        
-    return ambient + diffuse + specular;
+    vec3 ambient = vec3(0.03) * fragAlbedo; // * fragAO;
+    vec3 res = ambient + L0;
+    
+    return vec4(res, 1.0);
 }
 
 void main()
@@ -111,10 +175,7 @@ void main()
     vec4 result = vec4(0.0f);
 
     /* dir light */
-    for (int i = 0; i < MAX_DIR_LIGHTS; i++)
-    {
-        result += calcDirLight(dirLights[i]);
-    }
+    result = calcDirLights();
 
     /* bloom */
     fragColor = result;

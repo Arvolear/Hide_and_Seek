@@ -32,6 +32,22 @@ void FrameBuffer::use()
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
     glViewport(0, 0, width, height);
 }
+        
+void FrameBuffer::copyColorBuffer(int to, FrameBuffer* frameBuffer, int from)
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer->getBuffer());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getBuffer());
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + from);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0 + to);
+
+    int width = getSize().x;
+    int height = getSize().y;
+
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 void FrameBuffer::copyDepthBuffer(FrameBuffer* frameBuffer)
 {
