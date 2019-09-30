@@ -41,6 +41,7 @@
 #include "../player/player.hpp"
 
 #include "../level/dirlight.hpp"
+#include "../level/atmosphere.hpp"
 #include "../level/skybox.hpp"
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"

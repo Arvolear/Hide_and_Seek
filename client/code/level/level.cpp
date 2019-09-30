@@ -41,6 +41,7 @@
 #include "../player/player.hpp"
 
 #include "dirlight.hpp"
+#include "atmosphere.hpp"
 #include "skybox.hpp"
 #include "levelloader.hpp"
 #include "level.hpp"
@@ -63,9 +64,11 @@ Level::Level(Window* window, World* physicsWorld)
     skyBoxShader = new Shader();
     dirSphereShader = new Shader();
     lightBlenderShader = new Shader();
+    atmosphereShader = new Shader();
 
     debugShader = new Shader();
 
+    atmosphere = nullptr;
     skyBox = nullptr;
 
     playerID = 0;
@@ -91,6 +94,7 @@ void Level::loadLevel(string level)
     skyBoxShader->loadShaders(path("code/shader/skyBoxShader.vert"), path("code/shader/skyBoxShader.frag"));
     dirSphereShader->loadShaders(path("code/shader/dirSphereShader.vert"), path("code/shader/dirSphereShader.frag"));
     lightBlenderShader->loadShaders(path("code/shader/lightBlenderShader.vert"), path("code/shader/lightBlenderShader.frag"));
+    atmosphereShader->loadShaders(path("code/shader/atmosphereShader.vert"), path("code/shader/atmosphereShader.frag"));
     
     debugShader->loadShaders(path("code/shader/debugShader.vert"), path("code/shader/debugShader.frag"));
 
@@ -105,6 +109,12 @@ void Level::loadLevel(string level)
     levelLoader->getViewFrustumData(viewFrustum);
     
     quad->init();
+
+
+    ////////////////////////////
+    ////////////////////////////
+    atmosphere = new Atmosphere();
+    atmosphere->genBuffer(window->getRenderSize());
 }
         
 void Level::setPlayerID(int playerID)
@@ -300,6 +310,18 @@ void Level::render()
     }
     
     glDisable(GL_BLEND);
+    
+    /************************************
+     * ATMOSPHERE
+     * */
+    
+    atmosphere->getBuffer()->use();
+    atmosphere->getBuffer()->clear();
+    
+    atmosphereShader->use();
+
+    atmosphere->setSunPos(vec3(0.0, sunH + 10 * sin(window->getTime()), -10));
+    atmosphere->render(atmosphereShader);
 
     /************************************
      * DEBUG
@@ -339,8 +361,8 @@ void Level::updatePlayers(int mode)
 
 GLuint Level::getRenderTexture(unsigned int num) const
 {
-    return levelColorBuffer->getTexture(num);
-    //return dirLights[0]->getScatterTexture();
+    //return levelColorBuffer->getTexture(num);
+    return atmosphere->getTexture();
 }
 
 Player* Level::getPlayer(int id) const
@@ -385,6 +407,7 @@ Level::~Level()
     delete skyBoxShader;
     delete dirSphereShader;
     delete lightBlenderShader;
+    delete atmosphereShader;
 
     delete debugShader;
 
@@ -398,6 +421,7 @@ Level::~Level()
         delete dirLights[i];
     }
 
+    delete atmosphere;
     delete skyBox;
 
     for (size_t i = 0; i < players.size(); i++)

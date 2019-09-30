@@ -33,6 +33,7 @@ class Level
         Shader* skyBoxShader;
         Shader* dirSphereShader;
         Shader* lightBlenderShader;
+        Shader* atmosphereShader;
         
         Shader* debugShader;
 
@@ -40,6 +41,7 @@ class Level
         map < string, GameObject* > gameObjects;
         vector < DirLight* > dirLights;
 
+        Atmosphere* atmosphere;
         SkyBox* skyBox;
         
         int playerID;
@@ -52,6 +54,8 @@ class Level
 
         /* DEBUG */
         int drawDebug;
+
+        float sunH = 9.9;
 
     public:
         Level(Window* window, World* physicsWorld);

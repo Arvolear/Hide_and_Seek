@@ -42,6 +42,7 @@
 #include "../player/player.hpp"
 
 #include "../level/dirlight.hpp"
+#include "../level/atmosphere.hpp"
 #include "../level/skybox.hpp"
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"
@@ -189,7 +190,8 @@ void Game::gameLoop()
         quad->render(gameShader);
  
         //window->render(blured);
-        window->render(gameBuffer->getTexture());
+        //window->render(gameBuffer->getTexture());
+        window->render(level->getRenderTexture());
     }
         
     sender.join();
