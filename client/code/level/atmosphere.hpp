@@ -1,8 +1,10 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 using namespace std;
 using namespace glm;
@@ -11,6 +13,7 @@ class Atmosphere
 {
     private:
         RenderQuad* quad;
+        Sphere* sphere;
         ColorBuffer* colorBuffer;
 
         vec3 rayOrigin;
@@ -23,6 +26,8 @@ class Atmosphere
         float rayleighHeight;
         float mieHeight;
         float mieDir;
+
+        vec3 axis;
 
     public:
         Atmosphere();
@@ -42,7 +47,12 @@ class Atmosphere
         void setMieHeight(float mieHeight);
         void setMieDir(float mieDir);
 
-        void render(Shader* shader);
+        void renderAtmosphere(Shader* shader);
+        void renderDome(Shader* shader);
+
+        void updateSunPos();
+
+        vec3 getSunPos() const;
 
         ColorBuffer* getBuffer() const;
         GLuint getTexture(int index = 0) const;

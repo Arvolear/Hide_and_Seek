@@ -34,6 +34,7 @@ class Level
         Shader* dirSphereShader;
         Shader* lightBlenderShader;
         Shader* atmosphereShader;
+        Shader* domeShader;
         
         Shader* debugShader;
 
@@ -55,15 +56,13 @@ class Level
         /* DEBUG */
         int drawDebug;
 
-        float sunH = 9.9;
-
     public:
         Level(Window* window, World* physicsWorld);
         
         void loadLevel(string level);
 
         void setPlayerID(int playerID);
-        
+
         void addGameObject(GameObject* gameObject);
         GameObject* getGameObject(string name) const;
         map < string, GameObject* > getGameObjects() const;
@@ -73,10 +72,13 @@ class Level
         
         void render();
         void updatePlayers(int mode);
+        void updateSunPos();
 
         GLuint getRenderTexture(unsigned int num = 0) const;
         Player* getPlayer(int id = -1) const;
         vector < Player* > getPlayers() const;
+        vec3 getSunPosition() const;
+
         string getLevelName() const;
 
         /* DEBUG */

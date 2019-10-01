@@ -162,6 +162,7 @@ void Game::gameLoop()
             physicsWorld->updateSimulation(window->getTime());
         }
 
+        level->updateSunPos();
         level->updatePlayers(mode);
         level->render();
 
@@ -190,8 +191,8 @@ void Game::gameLoop()
         quad->render(gameShader);
  
         //window->render(blured);
-        //window->render(gameBuffer->getTexture());
-        window->render(level->getRenderTexture());
+        window->render(gameBuffer->getTexture());
+        //window->render(level->getRenderTexture());
     }
         
     sender.join();

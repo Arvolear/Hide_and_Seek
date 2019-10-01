@@ -65,6 +65,7 @@ Level::Level(Window* window, World* physicsWorld)
     dirSphereShader = new Shader();
     lightBlenderShader = new Shader();
     atmosphereShader = new Shader();
+    domeShader = new Shader();
 
     debugShader = new Shader();
 
@@ -95,6 +96,7 @@ void Level::loadLevel(string level)
     dirSphereShader->loadShaders(path("code/shader/dirSphereShader.vert"), path("code/shader/dirSphereShader.frag"));
     lightBlenderShader->loadShaders(path("code/shader/lightBlenderShader.vert"), path("code/shader/lightBlenderShader.frag"));
     atmosphereShader->loadShaders(path("code/shader/atmosphereShader.vert"), path("code/shader/atmosphereShader.frag"));
+    domeShader->loadShaders(path("code/shader/domeShader.vert"), path("code/shader/domeShader.frag"));
     
     debugShader->loadShaders(path("code/shader/debugShader.vert"), path("code/shader/debugShader.frag"));
 
@@ -168,19 +170,34 @@ void Level::render()
     /***********************************/
 
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
 
     mat4 view = players[playerID]->getView();
     mat4 staticView = mat4(mat3(view));
     
     viewFrustum->updateFrustum(view, projection);
+    
+    /************************************
+     * ATMOSPHERE
+     * */
+    
+    glCullFace(GL_FRONT);
+    
+    atmosphere->getBuffer()->use();
+    atmosphere->getBuffer()->clear();
+    
+    atmosphereShader->use();
+
+    atmosphereShader->setMat4("view", staticView);
+    atmosphereShader->setMat4("projection", projection);
+
+    atmosphere->renderAtmosphere(atmosphereShader);
 
     /************************************
      * DIR SHADOWS
      * */ 
     
     glCullFace(GL_FRONT);
-
+    
     for (size_t i = 0; i < dirLights.size(); i++)
     {
         if (dirLights[i]->getShadowBuffer())
@@ -229,6 +246,8 @@ void Level::render()
     /************************************
      * GAMEOBJECT
      * */ 
+    
+    glCullFace(GL_BACK);
 
     /*** color buffer ***/
     levelColorBuffer->use();
@@ -255,6 +274,8 @@ void Level::render()
      * LIGHT SCATTERER
      * */
     
+    glCullFace(GL_BACK);
+    
     for (size_t i = 0; i < dirLights.size(); i++)
     {
         if (dirLights[i]->getScatterBuffer())
@@ -279,24 +300,38 @@ void Level::render()
             dirLights[i]->blurScatter(vec2(center));
         }
     }
+    
+    levelColorBuffer->copyDepthBuffer(gBuffer);
+    levelColorBuffer->use();
 
+    /************************************
+     * DOME (atmosphere)
+     * */
+
+    glCullFace(GL_BACK);
+
+    domeShader->use();
+    
+    atmosphere->renderDome(domeShader);
+    
     /************************************
      * SKYBOX 
      * */
-
-    levelColorBuffer->copyDepthBuffer(gBuffer);
-    levelColorBuffer->use();
+    
+    glCullFace(GL_BACK);
 
     skyBoxShader->use();
             
     skyBoxShader->setMat4("view", staticView);
     skyBoxShader->setMat4("projection", projection);
 
-    skyBox->render(skyBoxShader);
+    //skyBox->render(skyBoxShader);
     
     /************************************
      * SCATTERED LIGHT BLENDING
      * */
+    
+    glCullFace(GL_BACK);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
@@ -311,18 +346,6 @@ void Level::render()
     
     glDisable(GL_BLEND);
     
-    /************************************
-     * ATMOSPHERE
-     * */
-    
-    atmosphere->getBuffer()->use();
-    atmosphere->getBuffer()->clear();
-    
-    atmosphereShader->use();
-
-    atmosphere->setSunPos(vec3(0.0, sunH + 10 * sin(window->getTime()), -10));
-    atmosphere->render(atmosphereShader);
-
     /************************************
      * DEBUG
      * */
@@ -359,10 +382,19 @@ void Level::updatePlayers(int mode)
     }
 }
 
+void Level::updateSunPos()
+{
+    atmosphere->updateSunPos();
+    vec3 sunPos = atmosphere->getSunPos();
+
+    dirLights[0]->setDirection(-normalize(sunPos));
+    dirLights[0]->getSphere()->setCenter(sunPos);
+}
+
 GLuint Level::getRenderTexture(unsigned int num) const
 {
-    //return levelColorBuffer->getTexture(num);
-    return atmosphere->getTexture();
+    return levelColorBuffer->getTexture(num);
+    //return atmosphere->getTexture();
 }
 
 Player* Level::getPlayer(int id) const
@@ -408,6 +440,7 @@ Level::~Level()
     delete dirSphereShader;
     delete lightBlenderShader;
     delete atmosphereShader;
+    delete domeShader;
 
     delete debugShader;
 
