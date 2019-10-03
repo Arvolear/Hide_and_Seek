@@ -15,7 +15,7 @@
                 <blurscale scale="2.0"/>
                 <exposure exposure="2.0"/>
                 <decay decay="0.85"/>
-                <density density="0.7"/>
+                <density density="1.17"/>
                 <weight weight="0.3"/>
             </scatter>
             <shadow>

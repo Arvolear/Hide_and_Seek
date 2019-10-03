@@ -183,7 +183,7 @@ void Level::render()
     glCullFace(GL_FRONT);
     
     atmosphere->getBuffer()->use();
-    atmosphere->getBuffer()->clear();
+    //atmosphere->getBuffer()->clear(); // on purpose
     
     atmosphereShader->use();
 
@@ -237,12 +237,12 @@ void Level::render()
 
     gBufferShader->setMat4("view", view);
     gBufferShader->setMat4("projection", projection);
-
+    
     for (auto& i : gameObjects)
     {
         i.second->render(gBufferShader); 
     }
-
+    
     /************************************
      * GAMEOBJECT
      * */ 
@@ -251,7 +251,9 @@ void Level::render()
 
     /*** color buffer ***/
     levelColorBuffer->use();
-    levelColorBuffer->clear();
+    //levelColorBuffer->clear(); // on purpose
+    
+    glDisable(GL_DEPTH_TEST);
 
     gameObjectShader->use();
 
@@ -269,6 +271,8 @@ void Level::render()
 
     gBuffer->render(gameObjectShader);
     quad->render(gameObjectShader);
+    
+    glEnable(GL_DEPTH_TEST);
     
     /************************************
      * LIGHT SCATTERER
@@ -333,6 +337,7 @@ void Level::render()
     
     glCullFace(GL_BACK);
 
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
 
@@ -344,6 +349,7 @@ void Level::render()
         quad->render(lightBlenderShader);
     }
     
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     
     /************************************

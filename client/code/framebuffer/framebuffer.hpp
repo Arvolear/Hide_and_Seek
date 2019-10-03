@@ -16,8 +16,10 @@ class FrameBuffer
 {
     protected:
         GLuint bufferID;
+        unsigned int layouts;
         
         vector < GLuint > texturesID;
+        vector < unsigned int > attachments;
         
         int width, height;
 
@@ -33,6 +35,7 @@ class FrameBuffer
         vec2 getSize() const;
 
         void use();
+        void useDepth();
         void copyColorBuffer(int to, FrameBuffer* frameBuffer, int from);
         void copyDepthBuffer(FrameBuffer* frameBuffer);
 

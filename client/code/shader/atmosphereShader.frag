@@ -16,8 +16,8 @@ uniform float mieHeight;
 uniform float mieDir;
 
 const float PI = 3.1415926535;
-const int iSteps = 8;
-const int jSteps = 4;
+const int iSteps = 4;
+const int jSteps = 1;
 
 vec2 rsi(vec3 r0, vec3 rd, float sr) 
 {
@@ -41,7 +41,6 @@ vec3 atmosphere(vec3 r, vec3 r0, vec3 pSun, float iSun, float rPlanet, float rAt
 {
     // Normalize the sun and view directions.
     pSun = normalize(pSun);
-    r = normalize(r);
 
     // Calculate the step size of the primary ray.
     vec2 p = rsi(r0, r, rAtmos);

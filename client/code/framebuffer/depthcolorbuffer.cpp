@@ -10,6 +10,7 @@ void DepthColorBuffer::genBuffer(double width, double height, unsigned int layou
 {
     this->width = width;
     this->height = height;
+    this->layouts = layouts;
 
     texturesID.resize(layouts, 0);
 
@@ -42,8 +43,6 @@ void DepthColorBuffer::genBuffer(double width, double height, unsigned int layou
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
-
-    vector < unsigned int > attachments;
 
     for (size_t i = 0; i < layouts; i++)
     {

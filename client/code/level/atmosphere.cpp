@@ -127,7 +127,11 @@ void Atmosphere::renderAtmosphere(Shader* shader)
     shader->setFloat("mieHeight", mieHeight);
     shader->setFloat("mieDir", mieDir);
 
+    glDisable(GL_DEPTH_TEST);
+
     sphere->render(shader);
+    
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Atmosphere::renderDome(Shader* shader)

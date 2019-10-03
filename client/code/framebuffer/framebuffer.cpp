@@ -27,10 +27,18 @@ vec2 FrameBuffer::getSize() const
     return vec2(width, height);
 }
 
+void FrameBuffer::useDepth()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
+    glViewport(0, 0, width, height);
+    glDrawBuffer(GL_NONE);
+}
+
 void FrameBuffer::use()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
     glViewport(0, 0, width, height);
+    glDrawBuffers(layouts, attachments.data());
 }
         
 void FrameBuffer::copyColorBuffer(int to, FrameBuffer* frameBuffer, int from)

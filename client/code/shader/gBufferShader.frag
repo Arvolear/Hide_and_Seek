@@ -28,10 +28,11 @@ void main()
 {
     gPosition = fragmentPos;
 
-    gNormal = normalize(fragmentNorm); 
-
-    /* normal mapping */
-    if (TBN != mat3(0))
+    if (TBN == mat3(0))
+    {
+        gNormal = normalize(fragmentNorm); 
+    }
+    else /* normal mapping */
     {
         gNormal = texture(material.texture_normal1, textureCoords).rgb;
         gNormal = normalize(gNormal * 2.0 - 1.0);
