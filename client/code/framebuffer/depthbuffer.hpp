@@ -16,10 +16,10 @@ class DepthBuffer : public FrameBuffer
     public:
         DepthBuffer();
        
-        void genBuffer(double width, double height, unsigned int layouts = 1) override;
-        void genBuffer(vec2 size, unsigned int layouts = 1) override;
+        void genBuffer(int width, int height, vector < FrameBufferData > data = {}) override;
+        void genBuffer(vec2 size, vector < FrameBufferData > data = {}) override;
 
-        void clear(vec3 depth = vec3(1)) override;
+        void clear(vec4 depth = vec4(1.0)) override;
 
         ~DepthBuffer();
 };

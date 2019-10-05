@@ -1,11 +1,11 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
-#include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
@@ -40,6 +40,7 @@
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
+#include "dirlightsoftshadow.hpp"
 #include "dirlight.hpp"
 #include "skybox.hpp"
 #include "levelloader.hpp"
@@ -382,7 +383,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& 
                     childRotationElem->QueryFloatAttribute("z", &z);
                     childRotationElem->QueryFloatAttribute("angle", &angle);
 
-                    childRotation = btQuaternion(btVector3(x, y, z), toRads(angle));
+                    childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
                 }
 
                 CS->add(childShape, childPosition, childRotation);
@@ -433,7 +434,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& 
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)));
+                GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), global.toRads(angle)));
             }
 
             /* angular factor */
@@ -564,7 +565,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             twistElem->QueryFloatAttribute("z", &z);
             twistElem->QueryFloatAttribute("angle", &angle);
 
-            rifle->setTwist(vec3(x, y, z), toRads(angle));
+            rifle->setTwist(vec3(x, y, z), global.toRads(angle));
         }
 
         /* storage bullets */
@@ -789,7 +790,7 @@ void LevelLoader::loadDirLight()
                 exposureElem->QueryFloatAttribute("exposure", &exposure);
             }
 
-            DL->setExposure(exposure);
+            DL->setRadialExposure(exposure);
 
             XMLElement* decayElem = scatterElem->FirstChildElement("decay");
 
@@ -800,7 +801,7 @@ void LevelLoader::loadDirLight()
                 decayElem->QueryFloatAttribute("decay", &decay);
             }
 
-            DL->setDecay(decay);
+            DL->setRadialDecay(decay);
 
             XMLElement* densityElem = scatterElem->FirstChildElement("density");
 
@@ -811,7 +812,7 @@ void LevelLoader::loadDirLight()
                 densityElem->QueryFloatAttribute("density", &density);
             }
 
-            DL->setDensity(density);
+            DL->setRadialDensity(density);
 
             XMLElement* weightElem = scatterElem->FirstChildElement("weight");
 
@@ -822,7 +823,7 @@ void LevelLoader::loadDirLight()
                 weightElem->QueryFloatAttribute("weight", &weight);
             }
 
-            DL->setWeight(weight);
+            DL->setRadialWeight(weight);
         }
 
         /* shadow */
@@ -830,15 +831,6 @@ void LevelLoader::loadDirLight()
 
         if (shadowElem)
         {
-            XMLElement* blurScaleElem = shadowElem->FirstChildElement("blurscale");
-
-            float scale = 1.0;
-
-            if (blurScaleElem)
-            {
-                blurScaleElem->QueryFloatAttribute("scale", &scale);
-            }
-
             XMLElement* shadowBufferElem = shadowElem->FirstChildElement("shadowbuffer");
 
             float x = 500, y = 500;
@@ -849,7 +841,18 @@ void LevelLoader::loadDirLight()
                 shadowBufferElem->QueryFloatAttribute("y", &y);
             }
 
-            DL->genShadowBuffer(x, y, scale);
+            DL->genShadowBuffer(x, y);
+            
+            XMLElement* blurScaleElem = shadowElem->FirstChildElement("blurscale");
+
+            float scale = 1.0;
+
+            if (blurScaleElem)
+            {
+                blurScaleElem->QueryFloatAttribute("scale", &scale);
+            }
+            
+            DL->setShadowSoftness(scale);
 
             XMLElement* projElem = shadowElem->FirstChildElement("projection");
 

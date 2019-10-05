@@ -13,16 +13,16 @@ using namespace glm;
 
 class ColorBuffer : public FrameBuffer
 {
-    private:
+    protected:
         GLuint depthBufferID;
 
     public:
         ColorBuffer();
        
-        void genBuffer(double width, double height, unsigned int layouts = 1) override;
-        void genBuffer(vec2 size, unsigned int layouts = 1) override;
+        virtual void genBuffer(int width, int height, vector < FrameBufferData > data) override;
+        virtual void genBuffer(vec2 size, vector < FrameBufferData > data) override;
 
-        void clear(vec3 color = vec3(0)) override;
+        void clear(vec4 color = vec4(0.0, 0.0, 0.0, 1.0)) override;
 
-        ~ColorBuffer();
+        virtual ~ColorBuffer();
 };

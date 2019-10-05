@@ -3,7 +3,7 @@
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
-#include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 
@@ -13,6 +13,7 @@
 
 #include "../game_object/sphere.hpp"
 
+#include "dirlightsoftshadow.hpp"
 #include "dirlight.hpp"
 
 DirLight::DirLight()
@@ -23,9 +24,8 @@ DirLight::DirLight()
 
     sphere = new Sphere();
 
-    shadowBuffer = new DepthColorBuffer();
-    gaussianBlur = new GaussianBlur < DepthColorBuffer >();
-
+    shadow = new DirLightSoftShadow();
+    
     scatterBuffer = new ColorBuffer();
     radialBlur = new RadialBlur();
 }
@@ -37,28 +37,26 @@ DirLight::DirLight(vec3 direction, vec3 color)
 
     sphere = new Sphere();
 
-    shadowBuffer = new DepthColorBuffer();
-    gaussianBlur = new GaussianBlur < DepthColorBuffer >();
+    shadow = new DirLightSoftShadow();
     
     scatterBuffer = new ColorBuffer();
     radialBlur = new RadialBlur();
 }
 
-void DirLight::genShadowBuffer(int width, int height, float blurScale)
+void DirLight::genShadowBuffer(int width, int height)
 {
-    shadowBuffer->genBuffer(width, height);
-    gaussianBlur->genBuffer(width, height, blurScale);
+    shadow->genBuffer(width, height);
 }
 
-void DirLight::genShadowBuffer(vec2 size, float blurScale)
+void DirLight::genShadowBuffer(vec2 size)
 {
-    genShadowBuffer(size.x, size.y, blurScale);
+    genShadowBuffer(size.x, size.y);
 }
 
 void DirLight::genScatterBuffer(int width, int height, float blurScale)
 {
-    scatterBuffer->genBuffer(width, height);
-    radialBlur->genBuffer(width, height, blurScale);
+    scatterBuffer->genBuffer(width, height, {{GL_RGBA16F, GL_RGBA, GL_FLOAT}});
+    radialBlur->genBuffer(width, height, {GL_RGBA16F, GL_RGBA, GL_FLOAT}, blurScale);
 }
 
 void DirLight::genScatterBuffer(vec2 size, float blurScale)
@@ -86,25 +84,30 @@ void DirLight::setSphereColor(vec3 color)
     sphere->setColor(color);
 }
 
-void DirLight::setExposure(float exposure)
+void DirLight::setRadialExposure(float exposure)
 {
     radialBlur->setExposure(exposure);
 }
 
-void DirLight::setDecay(float decay)
+void DirLight::setRadialDecay(float decay)
 {
     radialBlur->setDecay(decay);
 }
 
-void DirLight::setDensity(float density)
+void DirLight::setRadialDensity(float density)
 {
     radialBlur->setDensity(density);
 }
 
-void DirLight::setWeight(float weight)
+void DirLight::setRadialWeight(float weight)
 {
     radialBlur->setWeight(weight);
 } 
+
+void DirLight::setShadowSoftness(float softness)
+{
+    shadow->setSoftness(softness);
+}
 
 vec3 DirLight::getDirection() const
 {
@@ -116,12 +119,9 @@ void DirLight::setShadowProjection(mat4 projection)
     this->shadowProjection = projection;
 }
         
-void DirLight::blurShadow(float intensity, float radius)
+void DirLight::blurShadow(int intensity, float radius)
 {
-    if (shadowBuffer->getBuffer())
-    {
-        gaussianBlur->blur(shadowBuffer->getTexture(), intensity, radius);
-    }
+    shadow->blurShadow(intensity, radius);
 }
 
 void DirLight::blurScatter(vec2 center)
@@ -146,10 +146,8 @@ void DirLight::renderShadow(Shader* shader, GLuint index)
     {
         shader->setInt("dirLights[" + to_string(index) + "].isShadow", 1);
 
-        glActiveTexture(GL_TEXTURE0 + shadowTexture);
-        glBindTexture(GL_TEXTURE_2D, shadowTexture);
-        shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", shadowTexture);
-    
+        shadow->render(shader, index);
+
         shader->setMat4("dirLights[" + to_string(index) + "].shadowView", getShadowView());
         shader->setMat4("dirLights[" + to_string(index) + "].shadowProjection", getShadowProjection());
     }
@@ -158,16 +156,16 @@ void DirLight::renderShadow(Shader* shader, GLuint index)
         shader->setInt("dirLights[" + to_string(index) + "].isShadow", 0);
     }
 }
-        
+
 void DirLight::renderSphere(Shader* shader)
 {
     glDepthFunc(GL_LEQUAL);
 
     sphere->render(shader); 
-    
+
     glDepthFunc(GL_LESS);
 }
-        
+
 void DirLight::renderLight(Shader* shader)
 {
     shader->setInt("scatterTexture", getScatterTexture());
@@ -177,16 +175,7 @@ void DirLight::renderLight(Shader* shader)
 
 GLuint DirLight::getShadowTexture() const
 {
-    if (gaussianBlur->getBuffers().first && gaussianBlur->getTexture())
-    {
-        return gaussianBlur->getTexture();
-    }
-    else if (shadowBuffer->getBuffer())
-    {
-        return shadowBuffer->getTexture();
-    }
-
-    return 0;
+    return shadow->getTexture();
 }
 
 GLuint DirLight::getScatterTexture() const
@@ -203,9 +192,9 @@ GLuint DirLight::getScatterTexture() const
     return 0;
 }
 
-DepthColorBuffer* DirLight::getShadowBuffer() const
+ShadowBuffer* DirLight::getShadowBuffer() const
 {
-    return shadowBuffer;
+    return shadow->getBuffer();
 }
 
 ColorBuffer* DirLight::getScatterBuffer() const
@@ -235,8 +224,7 @@ mat4 DirLight::getShadowProjection() const
 
 DirLight::~DirLight()
 {
-    delete shadowBuffer;
-    delete gaussianBlur;
+    delete shadow;
 
     delete scatterBuffer;
     delete radialBlur;

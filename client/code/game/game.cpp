@@ -1,11 +1,11 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
-#include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 #include "../framebuffer/gbuffer.hpp"
 
 #include "../window/glfwevents.hpp"
@@ -41,6 +41,7 @@
 
 #include "../player/player.hpp"
 
+#include "../level/dirlightsoftshadow.hpp"
 #include "../level/dirlight.hpp"
 #include "../level/atmosphere.hpp"
 #include "../level/skybox.hpp"
@@ -80,9 +81,11 @@ Game::Game(Window* window, string levelName)
     quad = new RenderQuad();
 
     gaussianBlur = new GaussianBlur < ColorBuffer >();
-    gaussianBlur->genBuffer(window->getRenderSize(), 4);
+    gaussianBlur->genBuffer(window->getRenderSize(), {GL_RGBA16F, GL_RGBA, GL_FLOAT}, 4);
 
     multiplayer = new Multiplayer(window, level, physicsWorld);
+
+    global.fpsCounter->reset(window->getTime());
 }
 
 void Game::checkEvents()
@@ -135,8 +138,8 @@ void Game::init()
 {
     physicsWorld->createDebugDrawer();
 
-    gameShader->loadShaders(path("code/shader/gameShader.vert"), path("code/shader/gameShader.frag"));
-    gameBuffer->genBuffer(window->getRenderSize());
+    gameShader->loadShaders(global.path("code/shader/gameShader.vert"), global.path("code/shader/gameShader.frag"));
+    gameBuffer->genBuffer(window->getRenderSize(), {{GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}});
 
     quad->init();
 
@@ -193,6 +196,9 @@ void Game::gameLoop()
         //window->render(blured);
         window->render(gameBuffer->getTexture());
         //window->render(level->getRenderTexture());
+    
+        global.fpsCounter->update(window->getTime());
+        //cout << global.fpsCounter->getFramesTime() << endl;
     }
         
     sender.join();

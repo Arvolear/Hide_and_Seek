@@ -38,7 +38,11 @@ void FrameBuffer::use()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
     glViewport(0, 0, width, height);
-    glDrawBuffers(layouts, attachments.data());
+    
+    if (!attachments.empty())
+    {
+        glDrawBuffers(texturesID.size(), attachments.data());
+    }
 }
         
 void FrameBuffer::copyColorBuffer(int to, FrameBuffer* frameBuffer, int from)

@@ -17,8 +17,7 @@ class DirLight
 
         Sphere* sphere;
 
-        DepthColorBuffer* shadowBuffer;
-        GaussianBlur < DepthColorBuffer >* gaussianBlur;
+        DirLightSoftShadow* shadow;
 
         ColorBuffer* scatterBuffer;
         RadialBlur* radialBlur;
@@ -27,8 +26,8 @@ class DirLight
         DirLight();
         DirLight(vec3 direction, vec3 color);
        
-        void genShadowBuffer(int width, int height, float blurScale = 1.0);
-        void genShadowBuffer(vec2 size, float blurScale = 1.0);
+        void genShadowBuffer(int width, int height);
+        void genShadowBuffer(vec2 size);
         void genScatterBuffer(int width, int height, float blurScale = 1.0);
         void genScatterBuffer(vec2 size, float blurScale = 1.0);
 
@@ -38,18 +37,20 @@ class DirLight
         void setColor(vec3 color);
         void setSphereColor(vec3 color);
 
-        void setExposure(float exposure);
-        void setDecay(float decay);
-        void setDensity(float density);
-        void setWeight(float weight);
+        void setRadialExposure(float exposure);
+        void setRadialDecay(float decay);
+        void setRadialDensity(float density);
+        void setRadialWeight(float weight);
+       
+        void setShadowSoftness(float softness);
 
         void setShadowProjection(mat4 projection);
 
         vec3 getDirection() const;
-        DepthColorBuffer* getShadowBuffer() const;
+        ShadowBuffer* getShadowBuffer() const;
         ColorBuffer* getScatterBuffer() const;
        
-        void blurShadow(float intensity, float radius = 1.0);
+        void blurShadow(int intensity, float radius);
         void blurScatter(vec2 center);
 
         void renderShadow(Shader* shader, GLuint index);

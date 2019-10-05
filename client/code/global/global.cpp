@@ -1,34 +1,15 @@
-#pragma once
+#include "fpscounter.hpp"
+#include "global.hpp"
 
-//native
-#include <climits>
-#include <cmath>
-#include <sstream>
-#include <iomanip>
-#include <random>
+Global::Global() 
+{
+    gen = new mt19937(rd());
+    dis = new uniform_real_distribution < float >(0.0, 1.0);
 
-//bullet
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/btBulletDynamicsCommon.h>
+    fpsCounter = new FPSCounter();
+}
 
-//opengl
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-//assimp
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-using namespace glm;
-using namespace Assimp;
-using namespace std;
-
-inline static string path(string p)
+string Global::path(string p)
 {
     char realPath[PATH_MAX];
     char* ptr;
@@ -44,7 +25,7 @@ inline static string path(string p)
     return {realPath};
 }
 
-inline static float cutFloat(float from, int precision)
+float Global::cutFloat(float from, int precision)
 {
     stringstream ss;
 
@@ -55,21 +36,18 @@ inline static float cutFloat(float from, int precision)
     return stof(ss.str());
 }
 
-static random_device rd;
-static mt19937 gen(rd());
-static uniform_real_distribution<> dis(0, 1);
 
-inline static float getRandomNumber()
+float Global::getRandomNumber()
 {
-    return dis(gen);
+    return (*dis)(*gen);
 }
 
-inline static vec3 getRandomVec3()
+vec3 Global::getRandomVec3()
 {
-    return vec3(dis(gen), dis(gen), dis(gen));
+    return vec3((*dis)(*gen), (*dis)(*gen), (*dis)(*gen));
 }
 
-inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 from)
+mat4 Global::aiMatrix4x4ToGlm(const aiMatrix4x4 from)
 {
     mat4 to;
 
@@ -81,7 +59,7 @@ inline static mat4 aiMatrix4x4ToGlm(const aiMatrix4x4 from)
     return to;
 }
 
-inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 from)
+aiMatrix4x4 Global::glmToAiMatrix4x4(mat4 from)
 {
     return aiMatrix4x4(
             from[0][0], from[1][0], from[2][0], from[3][0],
@@ -91,7 +69,7 @@ inline static aiMatrix4x4 glmToAiMatrix4x4(mat4 from)
             );
 }
 
-inline static mat4 btScalar2glmMat4(btScalar *from) 
+mat4 Global::btScalar2glmMat4(btScalar *from) 
 {
     return mat4(
             from[0], from[1], from[2], from[3],
@@ -100,7 +78,7 @@ inline static mat4 btScalar2glmMat4(btScalar *from)
             from[12], from[13], from[14], from[15]);
 }
 
-inline static btScalar* glmMat42BtScalar(mat4 from) 
+btScalar* Global::glmMat42BtScalar(mat4 from) 
 {
     btScalar* res = new btScalar[16];
 
@@ -115,32 +93,34 @@ inline static btScalar* glmMat42BtScalar(mat4 from)
     return res;
 }
 
-inline static btVector3 toBtVector3(vec3 from)
+btVector3 Global::toBtVector3(vec3 from)
 {
     return btVector3(from.x, from.y, from.z);
 }
 
-inline static vec3 toVec3(btVector3 from)
+vec3 Global::toVec3(btVector3 from)
 {
     return vec3(from.x(), from.y(), from.z());
 }
 
-inline static btQuaternion toBtQuaternion(quat from)
+btQuaternion Global::toBtQuaternion(quat from)
 {
     return btQuaternion(toBtVector3(axis(from)), angle(from));
 }
 
-inline static quat toQuat(btQuaternion from)
+quat Global::toQuat(btQuaternion from)
 {
     return quat(from.getAngle(), toVec3(from.getAxis()));
 }
 
-inline static double toRads(double angle)
+double Global::toRads(double angle)
 {
     return angle / 180.0 * 3.14159265;
-};
+}
 
-inline static double toDegs(double rads)
+double Global::toDegs(double rads)
 {
     return rads * 180.0 / 3.14159265;
-};
+}
+
+Global::~Global() {}

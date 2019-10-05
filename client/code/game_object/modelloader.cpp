@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
@@ -106,7 +106,7 @@ void ModelLoader::processBone()
         for (size_t j = 0; j < scene->mMeshes[i]->mNumBones; j++) 
         {
             string boneName = scene->mMeshes[i]->mBones[j]->mName.data; 
-            mat4 boneOffset = aiMatrix4x4ToGlm(scene->mMeshes[i]->mBones[j]->mOffsetMatrix); 
+            mat4 boneOffset = global.aiMatrix4x4ToGlm(scene->mMeshes[i]->mBones[j]->mOffsetMatrix); 
 
             Bone* bone = new Bone(); 
 
@@ -292,7 +292,7 @@ vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureT
 
             texture.path = helpStr.C_Str(); 
 
-            cout << texture.path << " " << typeName << endl;
+            //cout << texture.path << " " << typeName << endl;
 
             textures.push_back(texture); 
             textures_loaded.insert({helpStr.C_Str(), texture}); 

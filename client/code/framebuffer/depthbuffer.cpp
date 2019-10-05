@@ -3,11 +3,10 @@
 
 DepthBuffer::DepthBuffer() : FrameBuffer() {}
 
-void DepthBuffer::genBuffer(double width, double height, unsigned int layouts)
+void DepthBuffer::genBuffer(int width, int height, vector < FrameBufferData > data)
 {
     this->width = width;
     this->height = height;
-    this->layouts = layouts;
 
     texturesID.resize(1, 0);
 
@@ -19,8 +18,8 @@ void DepthBuffer::genBuffer(double width, double height, unsigned int layouts)
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
@@ -47,14 +46,14 @@ void DepthBuffer::genBuffer(double width, double height, unsigned int layouts)
     glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
-void DepthBuffer::genBuffer(vec2 size, unsigned int layouts)
+void DepthBuffer::genBuffer(vec2 size, vector < FrameBufferData > data)
 {
-    genBuffer(size.x, size.y, layouts);
+    genBuffer(size.x, size.y, data);
 }
 
-void DepthBuffer::clear(vec3 depth)
+void DepthBuffer::clear(vec4 depth)
 {
-    glClearDepth(depth.x);
+    glClearDepth(depth.w);
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 

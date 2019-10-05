@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
@@ -248,7 +248,7 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
 
     if (!interpolation)
     {
-        unique_ptr < btScalar > transform(glmMat42BtScalar(model));
+        unique_ptr < btScalar > transform(global.glmMat42BtScalar(model));
         physicsObject->setTransform(transform.get());
 
         prevTransform = model;
@@ -359,7 +359,7 @@ mat4 GameObject::getPhysicsObjectTransform() const
     /* 16 elements */
     unique_ptr < btScalar > transform(physicsObject->getTransform());
 
-    mat4 ret = btScalar2glmMat4(transform.get());
+    mat4 ret = global.btScalar2glmMat4(transform.get());
 
     return ret;
 }
@@ -395,7 +395,7 @@ void GameObject::render(Shader* shader, bool cull)
     {
         mat4 model = (1 - interpolationCoeff) * prevTransform + interpolationCoeff * nextTransform;
 
-        unique_ptr < btScalar > scalarModel(glmMat42BtScalar(model));
+        unique_ptr < btScalar > scalarModel(global.glmMat42BtScalar(model));
 
         physicsObject->setTransform(scalarModel.get());
 
@@ -459,7 +459,7 @@ void GameObject::createDebugSphere(int depth)
 
     if (boundSphere)
     {
-        sphere->setColor(getRandomVec3());
+        sphere->setColor(global.getRandomVec3());
         sphere->construct(boundSphere->getCenter(), boundSphere->getRadius(), depth);
     }
 }

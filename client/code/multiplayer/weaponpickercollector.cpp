@@ -1,6 +1,6 @@
 #include "../shader/shader.hpp"
 
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
@@ -83,17 +83,17 @@ string WeaponPickerCollector::getData() const
     
     /* pickFrom */
     XMLElement* fromElem = weaponPickerDoc.NewElement("frm");
-    fromElem->SetAttribute("x", cutFloat(pickFrom.x, 4));
-    fromElem->SetAttribute("y", cutFloat(pickFrom.y, 4));
-    fromElem->SetAttribute("z", cutFloat(pickFrom.z, 4));
+    fromElem->SetAttribute("x", global.cutFloat(pickFrom.x, 4));
+    fromElem->SetAttribute("y", global.cutFloat(pickFrom.y, 4));
+    fromElem->SetAttribute("z", global.cutFloat(pickFrom.z, 4));
 
     root->InsertEndChild(fromElem);
     
     /* pickTo */
     XMLElement* toElem = weaponPickerDoc.NewElement("to");
-    toElem->SetAttribute("x", cutFloat(pickTo.x, 4));
-    toElem->SetAttribute("y", cutFloat(pickTo.y, 4));
-    toElem->SetAttribute("z", cutFloat(pickTo.z, 4));
+    toElem->SetAttribute("x", global.cutFloat(pickTo.x, 4));
+    toElem->SetAttribute("y", global.cutFloat(pickTo.y, 4));
+    toElem->SetAttribute("z", global.cutFloat(pickTo.z, 4));
 
     root->InsertEndChild(toElem);
 

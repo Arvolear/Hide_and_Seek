@@ -1,6 +1,6 @@
 #include "../shader/shader.hpp"
 
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"

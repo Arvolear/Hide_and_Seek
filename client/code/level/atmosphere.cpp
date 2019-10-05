@@ -1,5 +1,5 @@
 #include "../shader/shader.hpp"
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
@@ -26,7 +26,7 @@ Atmosphere::Atmosphere()
     this->mieHeight = 1200;
     this->mieDir = 0.758;
 
-    this->axis = vec3(1.0, (getRandomNumber() - 0.5) * 4, 0.0);
+    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
 }
         
 Atmosphere::Atmosphere(vec3 rayOrigin, vec3 sunPos, float sunIntensity, float planetRadius, float atmoRadius, vec3 rayleighCoeff, float mieCoeff, float rayleighHeight, float mieHeight, float mieDir)
@@ -46,12 +46,12 @@ Atmosphere::Atmosphere(vec3 rayOrigin, vec3 sunPos, float sunIntensity, float pl
     this->mieHeight = mieHeight;
     this->mieDir = mieDir;
     
-    this->axis = vec3(1.0, (getRandomNumber() - 0.5) * 4, 0.0);
+    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
 }
         
 void Atmosphere::genBuffer(int width, int height)
 {
-    colorBuffer->genBuffer(width, height, 1);
+    colorBuffer->genBuffer(width, height, {{GL_RGBA16F, GL_RGBA, GL_FLOAT}});
 
     quad->init();
     sphere->construct(vec3(0, 5, 0), 70, 3);
@@ -71,7 +71,7 @@ void Atmosphere::setSunPos(vec3 sunPos)
 {
     this->sunPos = sunPos;
     
-    this->axis = vec3(1.0, (getRandomNumber() - 0.5) * 4, 0.0);
+    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
 }
 
 void Atmosphere::setSunIntensity(float sunIntensity)

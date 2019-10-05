@@ -19,8 +19,8 @@ struct DirLight
     vec3 color;
 
     int isShadow; 
-    sampler2D texture_shadow1;
-    
+    sampler2D texture_shadow1; // depth
+
     mat4 shadowView;
     mat4 shadowProjection;
 };
@@ -38,31 +38,23 @@ const float PI = 3.1415926535;
 
 float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
-    /* ESM shadows */
-    float bias = 0.006;
-
-    vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
+    vec4 projCoords = shadowCoords / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
 
-    vec2 moments = texture(light.texture_shadow1, projCoords.xy).rg;
+    float moment = texture(light.texture_shadow1, projCoords.xy).r;
 
-    if ((currentDepth + bias) < moments.x)
+    if (currentDepth > 1.0)
     {
-        return 1.0;    
-    }
-
-    if (currentDepth < 0 || currentDepth > 0.85)
-    {
-        return 1.0;    
+        return 1.0; 
     }
 
     float esmFactor = 85.0;
 
-    float occluder = moments.y;
-    float receiver = esmFactor * (currentDepth + bias);
-    float shadow = smoothstep(0.45, 1.0, exp(occluder - receiver));
+    float occluder = exp(esmFactor * moment);
+    float receiver = exp(-esmFactor * currentDepth);
+    float shadow = smoothstep(0.0, 1.0, occluder * receiver);
 
     return shadow;
 }
@@ -124,7 +116,7 @@ vec4 calcDirLights()
     vec3 viewDir = normalize(viewPos - fragPos);
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, fragAlbedo, fragMetal);
-    
+
     vec3 L0 = vec3(0.0);
 
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
@@ -166,7 +158,7 @@ vec4 calcDirLights()
 
     vec3 ambient = vec3(0.03) * fragAlbedo; // * fragAO;
     vec3 res = ambient + L0;
-    
+
     return vec4(res, 1.0);
 }
 

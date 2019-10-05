@@ -25,10 +25,10 @@ class GaussianBlur
     public:
         GaussianBlur();
 
-        void genBuffer(float width, float height, float scaleFactor = 1);
-        void genBuffer(vec2 size, float scaleFactor = 1);
+        void genBuffer(int width, int height, FrameBufferData data, float scaleFactor = 1);
+        void genBuffer(vec2 size, FrameBufferData data, float scaleFactor = 1);
 
-        GLuint blur(GLuint textureID, float intensity, float radius = 1);
+        GLuint blur(GLuint textureID, int intensity, float radius = 1);
 
         GLuint getTexture() const;
         pair < GLuint, GLuint > getBuffers() const;

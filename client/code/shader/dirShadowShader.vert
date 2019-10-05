@@ -36,7 +36,9 @@ void main()
         bonesTransform = mat4(1.0);    
     }
 
-    gl_Position = projection * view * model * localTransform * bonesTransform * vec4(position, 1.0f);    
+    gl_Position = projection * view * model * localTransform * bonesTransform * vec4(position, 1.0f);
 
     fragmentPos = gl_Position;
+    fragmentPos /= fragmentPos.w;
+    fragmentPos = fragmentPos * 0.5 + 0.5;
 }

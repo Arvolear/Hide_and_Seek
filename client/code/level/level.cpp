@@ -1,11 +1,11 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
-#include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 #include "../framebuffer/gbuffer.hpp"
 
 #include "../window/renderquad.hpp"
@@ -40,6 +40,7 @@
 
 #include "../player/player.hpp"
 
+#include "dirlightsoftshadow.hpp"
 #include "dirlight.hpp"
 #include "atmosphere.hpp"
 #include "skybox.hpp"
@@ -86,21 +87,35 @@ void Level::loadLevel(string level)
 {
     levelName = level;
 
-    levelColorBuffer->genBuffer(window->getRenderSize(), 2);
-    gBuffer->genBuffer(window->getRenderSize());
-    
-    gBufferShader->loadShaders(path("code/shader/gBufferShader.vert"), path("code/shader/gBufferShader.frag"));
-    gameObjectShader->loadShaders(path("code/shader/objectShader.vert"), path("code/shader/objectShader.frag"));
-    dirShadowShader->loadShaders(path("code/shader/dirShadowShader.vert"), path("code/shader/dirShadowShader.frag"));
-    skyBoxShader->loadShaders(path("code/shader/skyBoxShader.vert"), path("code/shader/skyBoxShader.frag"));
-    dirSphereShader->loadShaders(path("code/shader/dirSphereShader.vert"), path("code/shader/dirSphereShader.frag"));
-    lightBlenderShader->loadShaders(path("code/shader/lightBlenderShader.vert"), path("code/shader/lightBlenderShader.frag"));
-    atmosphereShader->loadShaders(path("code/shader/atmosphereShader.vert"), path("code/shader/atmosphereShader.frag"));
-    domeShader->loadShaders(path("code/shader/domeShader.vert"), path("code/shader/domeShader.frag"));
-    
-    debugShader->loadShaders(path("code/shader/debugShader.vert"), path("code/shader/debugShader.frag"));
+    levelColorBuffer->genBuffer(window->getRenderSize(), 
+            {
+                {GL_RGBA16F, GL_RGBA, GL_FLOAT}, 
+                {GL_RGBA16F, GL_RGBA, GL_FLOAT}
+            });
 
-    levelLoader->loadLevel(path("levels/test1"));
+    gBuffer->genBuffer(window->getRenderSize(), 
+            {
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, 
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, 
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
+                {GL_R8, GL_RED, GL_UNSIGNED_BYTE}, 
+                {GL_R8, GL_RED, GL_UNSIGNED_BYTE},
+                {GL_R8, GL_RED, GL_UNSIGNED_BYTE},
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}
+            });
+    
+    gBufferShader->loadShaders(global.path("code/shader/gBufferShader.vert"), global.path("code/shader/gBufferShader.frag"));
+    gameObjectShader->loadShaders(global.path("code/shader/objectShader.vert"), global.path("code/shader/objectShader.frag"));
+    dirShadowShader->loadShaders(global.path("code/shader/dirShadowShader.vert"), global.path("code/shader/dirShadowShader.frag"));
+    skyBoxShader->loadShaders(global.path("code/shader/skyBoxShader.vert"), global.path("code/shader/skyBoxShader.frag"));
+    dirSphereShader->loadShaders(global.path("code/shader/dirSphereShader.vert"), global.path("code/shader/dirSphereShader.frag"));
+    lightBlenderShader->loadShaders(global.path("code/shader/lightBlenderShader.vert"), global.path("code/shader/lightBlenderShader.frag"));
+    atmosphereShader->loadShaders(global.path("code/shader/atmosphereShader.vert"), global.path("code/shader/atmosphereShader.frag"));
+    domeShader->loadShaders(global.path("code/shader/domeShader.vert"), global.path("code/shader/domeShader.frag"));
+    
+    debugShader->loadShaders(global.path("code/shader/debugShader.vert"), global.path("code/shader/debugShader.frag"));
+
+    levelLoader->loadLevel(global.path("levels/test1"));
 
     /*** GET LOADED DATA ***/
     levelLoader->getDirLightData(dirLights);
@@ -183,7 +198,6 @@ void Level::render()
     glCullFace(GL_FRONT);
     
     atmosphere->getBuffer()->use();
-    //atmosphere->getBuffer()->clear(); // on purpose
     
     atmosphereShader->use();
 
@@ -251,7 +265,6 @@ void Level::render()
 
     /*** color buffer ***/
     levelColorBuffer->use();
-    //levelColorBuffer->clear(); // on purpose
     
     glDisable(GL_DEPTH_TEST);
 
@@ -261,11 +274,11 @@ void Level::render()
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        dirLights[i]->blurShadow(1, 1);
+        dirLights[i]->blurShadow(1, 1.0);
 
         levelColorBuffer->use();
         gameObjectShader->use();
-            
+           
         dirLights[i]->renderShadow(gameObjectShader, i);
     }
 

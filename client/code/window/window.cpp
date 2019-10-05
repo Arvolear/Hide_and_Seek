@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
@@ -68,7 +68,7 @@ Window::Window() : GLFWEvents()
 
     /* LOAD SHADERS AT FIRST */
     renderShader = new Shader();
-    renderShader->loadShaders(path("code/shader/renderShader.vert"), path("code/shader/renderShader.frag")); //loading shaders
+    renderShader->loadShaders(global.path("code/shader/renderShader.vert"), global.path("code/shader/renderShader.frag")); //loading shaders
 
     renderQuad = new RenderQuad();
     renderQuad->init();

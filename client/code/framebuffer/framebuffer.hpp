@@ -12,11 +12,17 @@
 using namespace std;
 using namespace glm;
 
+struct FrameBufferData
+{
+    GLint internalFormat;
+    GLenum format;
+    GLenum type;
+};
+
 class FrameBuffer
 {
     protected:
         GLuint bufferID;
-        unsigned int layouts;
         
         vector < GLuint > texturesID;
         vector < unsigned int > attachments;
@@ -26,8 +32,8 @@ class FrameBuffer
         FrameBuffer();
 
     public:
-        virtual void genBuffer(double width, double height, unsigned int layouts = 1) = 0;
-        virtual void genBuffer(vec2 size, unsigned int layouts = 1) = 0;
+        virtual void genBuffer(int width, int height, vector < FrameBufferData > data) = 0;
+        virtual void genBuffer(vec2 size, vector < FrameBufferData > data) = 0;
 
         GLuint getBuffer() const;
         GLuint getTexture(size_t num = 0) const;
@@ -39,7 +45,7 @@ class FrameBuffer
         void copyColorBuffer(int to, FrameBuffer* frameBuffer, int from);
         void copyDepthBuffer(FrameBuffer* frameBuffer);
 
-        virtual void clear(vec3 color = vec3(0)) = 0;
+        virtual void clear(vec4 colorDepth = vec4(0.0, 0.0, 0.0, 1.0)) = 0;
 
         virtual ~FrameBuffer();
 };
