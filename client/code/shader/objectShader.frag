@@ -8,9 +8,7 @@ struct GBuffer
     sampler2D texture_position;
     sampler2D texture_normal;
     sampler2D texture_albedo;
-    sampler2D texture_metallic;
-    sampler2D texture_roughness;
-    sampler2D texture_ao;
+    sampler2D texture_metRoughAO;
 };
 
 struct DirLight
@@ -25,6 +23,8 @@ struct DirLight
     mat4 shadowProjection;
 };
 
+uniform sampler2D texture_ssao;
+
 in vec2 UV;
 
 uniform GBuffer gBuffer;
@@ -38,12 +38,20 @@ const float PI = 3.1415926535;
 
 float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
+    float bias = 0.014;
+
     vec4 projCoords = shadowCoords / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
+    currentDepth += bias;
 
     float moment = texture(light.texture_shadow1, projCoords.xy).r;
+
+    if (currentDepth < moment)
+    {
+        return 1.0;
+    }
 
     if (currentDepth > 1.0)
     {
@@ -54,7 +62,7 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
 
     float occluder = exp(esmFactor * moment);
     float receiver = exp(-esmFactor * currentDepth);
-    float shadow = smoothstep(0.0, 1.0, occluder * receiver);
+    float shadow = smoothstep(0.2, 1.0, occluder * receiver);
 
     return shadow;
 }
@@ -106,9 +114,9 @@ vec4 calcDirLights()
     vec3 fragPos = texture(gBuffer.texture_position, UV).rgb;
     vec3 fragNorm = texture(gBuffer.texture_normal, UV).rgb;
     vec3 fragAlbedo = pow(texture(gBuffer.texture_albedo, UV).rgb, vec3(gamma));
-    float fragMetal = texture(gBuffer.texture_metallic, UV).r;
-    float fragRough = texture(gBuffer.texture_roughness, UV).r;
-    float fragAO =  texture(gBuffer.texture_ao, UV).r;
+    float fragMetal = texture(gBuffer.texture_metRoughAO, UV).r;
+    float fragRough = texture(gBuffer.texture_metRoughAO, UV).g;
+    float fragAO = texture(gBuffer.texture_metRoughAO, UV).b;
 
     //fragMetal = 0.0;
     //fragRough = 0.0;
@@ -156,7 +164,9 @@ vec4 calcDirLights()
         L0 += L00;
     }
 
-    vec3 ambient = vec3(0.03) * fragAlbedo; // * fragAO;
+    float ssao = texture(texture_ssao, UV).r;
+
+    vec3 ambient = vec3(0.03) * fragAlbedo * ssao; // * fragAO;
     vec3 res = ambient + L0;
 
     return vec4(res, 1.0);

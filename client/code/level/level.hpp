@@ -35,6 +35,7 @@ class Level
         Shader* lightBlenderShader;
         Shader* atmosphereShader;
         Shader* domeShader;
+        Shader* sSAOShader;
         
         Shader* debugShader;
 
@@ -42,6 +43,7 @@ class Level
         map < string, GameObject* > gameObjects;
         vector < DirLight* > dirLights;
 
+        SSAO* sSAO; 
         Atmosphere* atmosphere;
         SkyBox* skyBox;
         

@@ -18,7 +18,7 @@ WINDOW = window.o glfwevents.o renderquad.o
 MENU = menu.o 
 GAME = game.o
 MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
-LEVEL = level.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o levelloader.o
+LEVEL = level.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
 GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
@@ -158,6 +158,9 @@ $(OUTPUTDIR)/skybox.o: $(INPUTDIR)/level/skybox.cpp $(INPUTDIR)/level/skybox.hpp
 
 $(OUTPUTDIR)/atmosphere.o: $(INPUTDIR)/level/atmosphere.cpp $(INPUTDIR)/level/atmosphere.hpp
 	g++ -c $(INPUTDIR)/level/atmosphere.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/ssao.o: $(INPUTDIR)/level/ssao.cpp $(INPUTDIR)/level/ssao.hpp
+	g++ -c $(INPUTDIR)/level/ssao.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/levelloader.o: $(INPUTDIR)/level/levelloader.cpp $(INPUTDIR)/level/levelloader.hpp
 	g++ -c $(INPUTDIR)/level/levelloader.cpp -o $@ $(FLAGS)

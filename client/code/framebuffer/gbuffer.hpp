@@ -25,6 +25,7 @@ class GBuffer : public FrameBuffer
         void clear(vec4 color = vec4(0.0, 0.0, 0.0, 1.0)) override;
 
         void render(Shader* shader);
+        void renderSsao(Shader* shader);
 
         ~GBuffer();
 };

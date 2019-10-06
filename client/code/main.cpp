@@ -45,6 +45,7 @@
 
 #include "level/dirlightsoftshadow.hpp"
 #include "level/dirlight.hpp"
+#include "level/ssao.hpp"
 #include "level/atmosphere.hpp"
 #include "level/skybox.hpp"
 #include "level/levelloader.hpp"

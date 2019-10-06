@@ -204,7 +204,7 @@ ColorBuffer* DirLight::getScatterBuffer() const
 
 void DirLight::updateShadowView(vec3 playerPosition)
 {
-    shadowView = lookAt(playerPosition, playerPosition + direction, vec3(0, 1, 0));
+    shadowView = lookAt(playerPosition, playerPosition + normalize(direction), vec3(0, 1, 0));
 }
 
 Sphere* DirLight::getSphere() const

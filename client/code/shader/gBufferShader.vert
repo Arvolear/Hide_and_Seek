@@ -19,10 +19,17 @@ uniform mat4 bones[MAX_BONES_AMOUNT];
 uniform int meshWithBones;
 uniform int meshNormalMapped;
 
+out vec2 textureCoords;
+
 out vec3 fragmentPos;
 out vec3 fragmentNorm;
-out vec2 textureCoords;
+
 out mat3 TBN;
+
+out vec3 ssaoFragmentPos;
+out vec3 ssaoFragmentNorm;
+
+out mat3 ssaoTBN;
 
 void main()
 {
@@ -44,8 +51,11 @@ void main()
 
     gl_Position = projection * view * model * localTransform * bonesTransform * vec4(position, 1.0);
 
-    fragmentPos = vec3(model * localTransform * bonesTransform * vec4(position, 1.0f));
+    fragmentPos = vec3(model * localTransform * bonesTransform * vec4(position, 1.0));
     fragmentNorm = vec3(model * localTransform * bonesTransform * vec4(normal, 0.0));
+
+    ssaoFragmentPos = vec3(view * vec4(fragmentPos, 1.0));
+    ssaoFragmentNorm = vec3(view * vec4(fragmentNorm, 0.0));
 
     /* flip UV */
     textureCoords = vec2(uv.x, -uv.y);
@@ -53,18 +63,27 @@ void main()
     /* normal mapping */
     if (meshNormalMapped == 1)
     {
-        vec3 T = normalize(vec3(model * localTransform * bonesTransform * vec4(tangent, 0.0)));
-        vec3 N = normalize(vec3(model * localTransform * bonesTransform * vec4(normal, 0.0)));
+        vec3 TT = vec3(model * localTransform * bonesTransform * vec4(tangent, 0.0));
+        vec3 NN = vec3(model * localTransform * bonesTransform * vec4(normal, 0.0));
 
-        /* Gram-Schmidt re-orthogonalization process */
+        /* SCENE */
+        vec3 T = normalize(TT);
+        vec3 N = normalize(NN);
+
         T = normalize(T - dot(T, N) * N);
-        
         vec3 B = cross(N, T);
-
         TBN = mat3(T, B, N);
+
+        /* SSAO */
+        vec3 ssaoT = normalize(vec3(view * vec4(TT, 0.0)));
+        vec3 ssaoN = normalize(vec3(view * vec4(NN, 0.0)));
+
+        ssaoT = normalize(ssaoT - dot(ssaoT, ssaoN) * ssaoN);
+        vec3 ssaoB = cross(ssaoN, ssaoT);
+        ssaoTBN = mat3(ssaoT, ssaoB, ssaoN);
     }
     else
     {
-        TBN = mat3(0);
+        ssaoTBN = TBN = mat3(0);
     }
 }

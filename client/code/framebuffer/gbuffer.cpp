@@ -21,10 +21,12 @@ void GBuffer::genBuffer(int width, int height, vector < FrameBufferData > data)
     // rgb16f, rgb, float - position
     // rgb16f, rgb, float - normal
     // rgba, rgba, unsigned_byte - albedo
-    // r8, red, unsigned_byte - metallic
-    // r8, red, unsigned_byte - roughness
-    // r8, red, unsigned_byte - ao
+    // rgb, rbg, unsigned_byte - metallic roughness ao
+    //
     // rgba, rgba, unsigned_byte - lighscattering
+    //
+    // rgb16f, rgb, float - ssao position
+    // rgb16f, rgb, float - ssao normal
 
     for (size_t i = 0; i < data.size(); i++)
     {
@@ -97,20 +99,23 @@ void GBuffer::render(Shader* shader)
     glBindTexture(GL_TEXTURE_2D, texturesID[2]);
     shader->setInt("gBuffer.texture_albedo", texturesID[2]);
     
-    /* metallic */
+    /* met rough ao */
     glActiveTexture(GL_TEXTURE0 + texturesID[3]);
     glBindTexture(GL_TEXTURE_2D, texturesID[3]);
-    shader->setInt("gBuffer.texture_metallic", texturesID[3]);
-    
-    /* roughness */
-    glActiveTexture(GL_TEXTURE0 + texturesID[4]);
-    glBindTexture(GL_TEXTURE_2D, texturesID[4]);
-    shader->setInt("gBuffer.texture_roughness", texturesID[4]);
-    
-    /* AO */
+    shader->setInt("gBuffer.texture_metRoughAO", texturesID[3]);
+}
+        
+void GBuffer::renderSsao(Shader* shader)
+{
+    /* ssao position */
     glActiveTexture(GL_TEXTURE0 + texturesID[5]);
     glBindTexture(GL_TEXTURE_2D, texturesID[5]);
-    shader->setInt("gBuffer.texture_ao", texturesID[5]);
+    shader->setInt("gBuffer.texture_position", texturesID[5]);
+
+    /* ssao normal */
+    glActiveTexture(GL_TEXTURE0 + texturesID[6]);
+    glBindTexture(GL_TEXTURE_2D, texturesID[6]);
+    shader->setInt("gBuffer.texture_normal", texturesID[6]);
 }
 
 GBuffer::~GBuffer() 

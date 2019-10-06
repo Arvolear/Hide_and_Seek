@@ -43,6 +43,7 @@
 
 #include "../level/dirlightsoftshadow.hpp"
 #include "../level/dirlight.hpp"
+#include "../level/ssao.hpp"
 #include "../level/atmosphere.hpp"
 #include "../level/skybox.hpp"
 #include "../level/levelloader.hpp"
@@ -198,7 +199,7 @@ void Game::gameLoop()
         //window->render(level->getRenderTexture());
     
         global.fpsCounter->update(window->getTime());
-        //cout << global.fpsCounter->getFramesTime() << endl;
+        //cout << global.fpsCounter->getFPS() << endl;
     }
         
     sender.join();
