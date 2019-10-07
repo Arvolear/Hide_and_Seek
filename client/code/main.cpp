@@ -1,11 +1,11 @@
-#include "global/convert.hpp"
+#include "global/globaluse.hpp"
 
 #include "shader/shader.hpp"
 
 #include "framebuffer/framebuffer.hpp"
 #include "framebuffer/colorbuffer.hpp"
 #include "framebuffer/depthbuffer.hpp"
-#include "framebuffer/depthcolorbuffer.hpp"
+#include "framebuffer/shadowbuffer.hpp"
 #include "framebuffer/gbuffer.hpp"
 
 #include "window/glfwevents.hpp"
@@ -43,7 +43,10 @@
 #include "multiplayer/client.hpp"
 #include "multiplayer/playerdatacollector.hpp"
 
+#include "level/dirlightsoftshadow.hpp"
 #include "level/dirlight.hpp"
+#include "level/ssao.hpp"
+#include "level/atmosphere.hpp"
 #include "level/skybox.hpp"
 #include "level/levelloader.hpp"
 #include "level/level.hpp"

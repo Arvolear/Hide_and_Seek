@@ -4,6 +4,7 @@
 Sphere::Sphere()
 {
     VAO = VBO = 0;
+    localTransform = mat4(1.0);
     color = vec3(0.0);
 }
 
@@ -194,6 +195,34 @@ void Sphere::construct(vec3 center, double radius, int depth)
 
     setUpSphere();
 }
+        
+void Sphere::construct(int depth)
+{
+    construct(center, radius, depth);
+}
+        
+void Sphere::setCenter(vec3 center)
+{
+    if (vertices.empty())
+    {
+        this->center = center;
+        return;
+    }
+
+    vec3 translation = center - this->center;
+
+    vec3 sc;
+    quat rot;
+    vec3 tran;
+    vec3 skew;
+    vec4 perspective;
+
+    decompose(localTransform, sc, rot, tran, skew, perspective);
+
+    localTransform = mat4(1.0);
+    localTransform *= scale(sc);
+    localTransform *= translate(translation);
+}
 
 void Sphere::setColor(vec3 color)
 {
@@ -207,6 +236,8 @@ void Sphere::setColor(vec3 color)
 
 void Sphere::render(Shader* shader) const
 {
+    shader->setMat4("localTransform", localTransform);
+
     glBindVertexArray(VAO); //bind VAO
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
@@ -215,7 +246,7 @@ void Sphere::render(Shader* shader) const
 
 vec3 Sphere::getCenter() const
 {
-    return center;
+    return vec3(localTransform * vec4(center, 1.0));
 }
 
 double Sphere::getRadius() const

@@ -10,15 +10,15 @@ INPUTDIR = ./code
 OUTPUTDIR = ./build
 
 MAIN = main.o 
-GLOBAL = gaussianblur.o radialblur.o
+GLOBAL = global.o fpscounter.o gaussianblur.o radialblur.o
 DEBUG = debugdrawer.o
 SHADER = shader.o 
-FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o depthcolorbuffer.o gbuffer.o
+FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o shadowbuffer.o gbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
 MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
-LEVEL = level.o dirlight.o skybox.o levelloader.o
+LEVEL = level.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
 GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
@@ -43,6 +43,12 @@ $(OUTPUTDIR)/main.o: $(INPUTDIR)/main.cpp
 	g++ -c $(INPUTDIR)/main.cpp -o $@ $(FLAGS)
 
 ### GLOBAL ###
+
+$(OUTPUTDIR)/global.o: $(INPUTDIR)/global/global.cpp $(INPUTDIR)/global/global.hpp
+	g++ -c $(INPUTDIR)/global/global.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/fpscounter.o: $(INPUTDIR)/global/fpscounter.cpp $(INPUTDIR)/global/fpscounter.hpp
+	g++ -c $(INPUTDIR)/global/fpscounter.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/gaussianblur.o: $(INPUTDIR)/global/gaussianblur.cpp $(INPUTDIR)/global/gaussianblur.hpp
 	g++ -c $(INPUTDIR)/global/gaussianblur.cpp -o $@ $(FLAGS)
@@ -71,8 +77,8 @@ $(OUTPUTDIR)/colorbuffer.o: $(INPUTDIR)/framebuffer/colorbuffer.cpp $(INPUTDIR)/
 $(OUTPUTDIR)/depthbuffer.o: $(INPUTDIR)/framebuffer/depthbuffer.cpp $(INPUTDIR)/framebuffer/depthbuffer.hpp
 	g++ -c $(INPUTDIR)/framebuffer/depthbuffer.cpp -o $@ $(FLAGS)
 
-$(OUTPUTDIR)/depthcolorbuffer.o: $(INPUTDIR)/framebuffer/depthcolorbuffer.cpp $(INPUTDIR)/framebuffer/depthcolorbuffer.hpp
-	g++ -c $(INPUTDIR)/framebuffer/depthcolorbuffer.cpp -o $@ $(FLAGS)
+$(OUTPUTDIR)/shadowbuffer.o: $(INPUTDIR)/framebuffer/shadowbuffer.cpp $(INPUTDIR)/framebuffer/shadowbuffer.hpp
+	g++ -c $(INPUTDIR)/framebuffer/shadowbuffer.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/gbuffer.o: $(INPUTDIR)/framebuffer/gbuffer.cpp $(INPUTDIR)/framebuffer/gbuffer.hpp
 	g++ -c $(INPUTDIR)/framebuffer/gbuffer.cpp -o $@ $(FLAGS)
@@ -144,8 +150,17 @@ $(OUTPUTDIR)/level.o: $(INPUTDIR)/level/level.cpp $(INPUTDIR)/level/level.hpp
 $(OUTPUTDIR)/dirlight.o: $(INPUTDIR)/level/dirlight.cpp $(INPUTDIR)/level/dirlight.hpp
 	g++ -c $(INPUTDIR)/level/dirlight.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/dirlightsoftshadow.o: $(INPUTDIR)/level/dirlightsoftshadow.cpp $(INPUTDIR)/level/dirlightsoftshadow.hpp
+	g++ -c $(INPUTDIR)/level/dirlightsoftshadow.cpp -o $@ $(FLAGS)
+
 $(OUTPUTDIR)/skybox.o: $(INPUTDIR)/level/skybox.cpp $(INPUTDIR)/level/skybox.hpp
 	g++ -c $(INPUTDIR)/level/skybox.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/atmosphere.o: $(INPUTDIR)/level/atmosphere.cpp $(INPUTDIR)/level/atmosphere.hpp
+	g++ -c $(INPUTDIR)/level/atmosphere.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/ssao.o: $(INPUTDIR)/level/ssao.cpp $(INPUTDIR)/level/ssao.hpp
+	g++ -c $(INPUTDIR)/level/ssao.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/levelloader.o: $(INPUTDIR)/level/levelloader.cpp $(INPUTDIR)/level/levelloader.hpp
 	g++ -c $(INPUTDIR)/level/levelloader.cpp -o $@ $(FLAGS)

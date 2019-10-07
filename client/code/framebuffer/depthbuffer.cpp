@@ -3,7 +3,7 @@
 
 DepthBuffer::DepthBuffer() : FrameBuffer() {}
 
-void DepthBuffer::genBuffer(double width, double height, unsigned int layouts)
+void DepthBuffer::genBuffer(int width, int height, vector < FrameBufferData > data)
 {
     this->width = width;
     this->height = height;
@@ -46,14 +46,14 @@ void DepthBuffer::genBuffer(double width, double height, unsigned int layouts)
     glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
-void DepthBuffer::genBuffer(vec2 size, unsigned int layouts)
+void DepthBuffer::genBuffer(vec2 size, vector < FrameBufferData > data)
 {
-    genBuffer(size.x, size.y, layouts);
+    genBuffer(size.x, size.y, data);
 }
 
-void DepthBuffer::clear(vec3 depth)
+void DepthBuffer::clear(vec4 depth)
 {
-    glClearDepth(depth.x);
+    glClearDepth(depth.w);
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 

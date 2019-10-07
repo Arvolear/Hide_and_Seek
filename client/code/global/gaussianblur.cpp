@@ -1,10 +1,11 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 
@@ -14,10 +15,10 @@ template < typename T >
 GaussianBlur<T>::GaussianBlur()
 {
     blurShader = new Shader();
-    blurShader->loadShaders(path("code/shader/gaussianBlurShader.vert"), path("code/shader/gaussianBlurShader.frag"));
+    blurShader->loadShaders(global.path("code/shader/gaussianBlurShader.vert"), global.path("code/shader/gaussianBlurShader.frag"));
     
     scaleShader = new Shader();
-    scaleShader->loadShaders(path("code/shader/renderShader.vert"), path("code/shader/renderShader.frag"));
+    scaleShader->loadShaders(global.path("code/shader/renderShader.vert"), global.path("code/shader/renderShader.frag"));
 
     for (int i = 0; i < 2; i++)
     {
@@ -33,30 +34,31 @@ GaussianBlur<T>::GaussianBlur()
 }
 
 template < typename T >
-void GaussianBlur<T>::genBuffer(float width, float height, float scaleFactor)
+void GaussianBlur<T>::genBuffer(int width, int height, FrameBufferData data, float scaleFactor)
 {
     for (int i = 0; i < 2; i++)
     {
-        colorBuffers[i]->genBuffer(width / scaleFactor, height / scaleFactor);
+        colorBuffers[i]->genBuffer(width / scaleFactor, height / scaleFactor, {data});
     }
 
-    downscaleBuffer->genBuffer(width / scaleFactor, height / scaleFactor);
-    upscaleBuffer->genBuffer(width, height);
+    downscaleBuffer->genBuffer(width / scaleFactor, height / scaleFactor, {data});
+    upscaleBuffer->genBuffer(width, height, {data});
     quad->init();
 }
 
 template < typename T >
-void GaussianBlur<T>::genBuffer(vec2 size, float scaleFactor)
+void GaussianBlur<T>::genBuffer(vec2 size, FrameBufferData data, float scaleFactor)
 {
-    genBuffer(size.x, size.y, scaleFactor);
+    genBuffer(size.x, size.y, data, scaleFactor);
 }
     
 template < typename T >
-GLuint GaussianBlur<T>::blur(GLuint textureID, float intensity, float radius)
+GLuint GaussianBlur<T>::blur(GLuint textureID, int intensity, float radius)
 {
+    glDisable(GL_DEPTH_TEST);
+
     /* downscale */
     downscaleBuffer->use();
-    downscaleBuffer->clear();
 
     scaleShader->use();
 
@@ -74,8 +76,7 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, float intensity, float radius)
     for (int i = 0; i < intensity * 2; i++)
     {
         colorBuffers[buffer]->use();
-        colorBuffers[buffer]->clear();
-        
+    
         blurShader->use();
 
         bluredTexture = !i ? bluredTexture : colorBuffers[(buffer + 1) % 2]->getTexture();
@@ -95,8 +96,7 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, float intensity, float radius)
 
     /* upscale */
     upscaleBuffer->use();
-    upscaleBuffer->clear();
-
+    
     scaleShader->use();
 
     scaleShader->setInt("finalTexture", bluredTexture);
@@ -108,6 +108,8 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, float intensity, float radius)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    glEnable(GL_DEPTH_TEST);
+    
     bluredTexture = upscaleBuffer->getTexture();
     return bluredTexture;
 }

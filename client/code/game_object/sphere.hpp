@@ -6,6 +6,9 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 using namespace std;
 using namespace glm;
@@ -28,6 +31,8 @@ class Sphere
         vec3 center;
         double radius;
 
+        mat4 localTransform;
+
         void setUpSphere();
         void constructOcta(vec3 center, double radius);
         void constructSphere(vector < Vertex > localVertices, int curDepth, int maxDepth);
@@ -37,6 +42,9 @@ class Sphere
         Sphere();
 
         void construct(vec3 center, double radius, int depth);
+        void construct(int depth);
+
+        void setCenter(vec3 center);
 
         void setColor(vec3 color);
 

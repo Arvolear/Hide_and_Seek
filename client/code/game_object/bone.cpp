@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
@@ -20,7 +20,7 @@ mat4 Bone::getFullTransform() const
 
     while (b) 
     {
-        mat4 tmp = aiMatrix4x4ToGlm(b->node->mTransformation); 
+        mat4 tmp = global.aiMatrix4x4ToGlm(b->node->mTransformation); 
         matrices.push_back(tmp); 
 
         b = b->parentBone; 
@@ -168,7 +168,7 @@ void Bone::updateKeyframeTransform(int id, float time)
     res *= translate(pos);
     res *= mat4_cast(rot);
 
-    node->mTransformation = glmToAiMatrix4x4(res); 
+    node->mTransformation = global.glmToAiMatrix4x4(res); 
 }
 
 void Bone::setName(string &name)

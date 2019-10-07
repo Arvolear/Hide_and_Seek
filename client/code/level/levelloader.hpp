@@ -24,7 +24,9 @@ class LevelLoader
 
         map < string, GameObject* > gameObjects;
         vector < DirLight* > dirLights;
-
+    
+        SSAO* sSAO;
+        Atmosphere* atmosphere;
         SkyBox* skyBox;
 
         mat4 projection;
@@ -50,6 +52,8 @@ class LevelLoader
         void loadPistols();
         void loadDirLight();
         void loadSkyBox();
+        void loadAtmosphere();
+        void loadSsao();
 
         void loadProjection();
 
@@ -64,7 +68,8 @@ class LevelLoader
         void getGameObjectsData(map < string, GameObject* > &gameObjects) const;
         void getDirLightData(vector < DirLight* > &dirLights) const;
         void getSkyBoxData(SkyBox*& skyBox) const;
-        
+        void getAtmosphereData(Atmosphere*& atmosphere) const;
+        void getSsaoData(SSAO*& sSAO) const;
 
         /*******/
         void getProjectionData(mat4 &projection) const;

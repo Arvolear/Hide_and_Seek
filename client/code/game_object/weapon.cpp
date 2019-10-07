@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
@@ -93,7 +93,7 @@ void Weapon::drop(vec3 where)
 {
     int power = 3;
 
-    physicsObject->getRigidBody()->applyCentralImpulse(toBtVector3(where) * power); 
+    physicsObject->getRigidBody()->applyCentralImpulse(global.toBtVector3(where) * power); 
     stopAnimation();
     
     setVisible(true);
@@ -135,7 +135,7 @@ void Weapon::pick(vec3 forward, vec3 up, bool active)
             angle *= -1;
         }
 
-        btQuaternion rot(toBtVector3(up), angle);
+        btQuaternion rot(global.toBtVector3(up), angle);
         physicsObject->setRotation(rot);
     }
     
@@ -160,7 +160,7 @@ void Weapon::pick(vec3 forward, vec3 up, bool active)
 
         angle = acos(cosRotAngle); 
 
-        btQuaternion rot(toBtVector3(cross(up, forward)), angle);
+        btQuaternion rot(global.toBtVector3(cross(up, forward)), angle);
         physicsObject->setRotation(rot);
     }
 
@@ -238,7 +238,7 @@ void Weapon::updateStatus()
 
 void Weapon::updateRotation(mat3 rotation)
 {
-    btQuaternion rot = toBtQuaternion(quat_cast(rotation)); 
+    btQuaternion rot = global.toBtQuaternion(quat_cast(rotation)); 
     physicsObject->setRotation(rot);
 }
 
@@ -251,7 +251,7 @@ void Weapon::updatePosition(vec3 center, vec3 forward, vec3 up)
     center += localUp * offset.y;
     center += left * offset.z;
 
-    physicsObject->setPosition(toBtVector3(center), false);
+    physicsObject->setPosition(global.toBtVector3(center), false);
 }
 
 Weapon::~Weapon() {}

@@ -1,11 +1,11 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
-#include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
@@ -40,6 +40,9 @@
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
+#include "ssao.hpp"
+#include "atmosphere.hpp"
+#include "dirlightsoftshadow.hpp"
 #include "dirlight.hpp"
 #include "skybox.hpp"
 #include "levelloader.hpp"
@@ -49,6 +52,8 @@ LevelLoader::LevelLoader(Window* window, World* physicsWorld)
     this->window = window;
     this->physicsWorld = physicsWorld;
 
+    sSAO = nullptr;
+    atmosphere = nullptr;
     skyBox = nullptr;
 
     projection = mat4(1.0);
@@ -382,7 +387,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& 
                     childRotationElem->QueryFloatAttribute("z", &z);
                     childRotationElem->QueryFloatAttribute("angle", &angle);
 
-                    childRotation = btQuaternion(btVector3(x, y, z), toRads(angle));
+                    childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
                 }
 
                 CS->add(childShape, childPosition, childRotation);
@@ -433,7 +438,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& 
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)));
+                GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), global.toRads(angle)));
             }
 
             /* angular factor */
@@ -564,7 +569,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             twistElem->QueryFloatAttribute("z", &z);
             twistElem->QueryFloatAttribute("angle", &angle);
 
-            rifle->setTwist(vec3(x, y, z), toRads(angle));
+            rifle->setTwist(vec3(x, y, z), global.toRads(angle));
         }
 
         /* storage bullets */
@@ -789,7 +794,7 @@ void LevelLoader::loadDirLight()
                 exposureElem->QueryFloatAttribute("exposure", &exposure);
             }
 
-            DL->setExposure(exposure);
+            DL->setRadialExposure(exposure);
 
             XMLElement* decayElem = scatterElem->FirstChildElement("decay");
 
@@ -800,7 +805,7 @@ void LevelLoader::loadDirLight()
                 decayElem->QueryFloatAttribute("decay", &decay);
             }
 
-            DL->setDecay(decay);
+            DL->setRadialDecay(decay);
 
             XMLElement* densityElem = scatterElem->FirstChildElement("density");
 
@@ -811,7 +816,7 @@ void LevelLoader::loadDirLight()
                 densityElem->QueryFloatAttribute("density", &density);
             }
 
-            DL->setDensity(density);
+            DL->setRadialDensity(density);
 
             XMLElement* weightElem = scatterElem->FirstChildElement("weight");
 
@@ -822,7 +827,7 @@ void LevelLoader::loadDirLight()
                 weightElem->QueryFloatAttribute("weight", &weight);
             }
 
-            DL->setWeight(weight);
+            DL->setRadialWeight(weight);
         }
 
         /* shadow */
@@ -830,15 +835,6 @@ void LevelLoader::loadDirLight()
 
         if (shadowElem)
         {
-            XMLElement* blurScaleElem = shadowElem->FirstChildElement("blurscale");
-
-            float scale = 1.0;
-
-            if (blurScaleElem)
-            {
-                blurScaleElem->QueryFloatAttribute("scale", &scale);
-            }
-
             XMLElement* shadowBufferElem = shadowElem->FirstChildElement("shadowbuffer");
 
             float x = 500, y = 500;
@@ -849,7 +845,40 @@ void LevelLoader::loadDirLight()
                 shadowBufferElem->QueryFloatAttribute("y", &y);
             }
 
-            DL->genShadowBuffer(x, y, scale);
+            DL->genShadowBuffer(x, y);
+            
+            XMLElement* intensityElem = shadowElem->FirstChildElement("intensity");
+                
+            float intensity = 0.0;
+
+            if (intensityElem)
+            {
+                intensityElem->QueryFloatAttribute("intensity", &intensity);
+            }
+           
+            DL->setShadowIntensity(intensity);
+            
+            XMLElement* biasElem = shadowElem->FirstChildElement("bias");
+                
+            float bias = 0.0;
+
+            if (biasElem)
+            {
+                biasElem->QueryFloatAttribute("bias", &bias);
+            }
+           
+            DL->setShadowBias(bias);
+            
+            XMLElement* blurScaleElem = shadowElem->FirstChildElement("blurscale");
+
+            float scale = 1.0;
+
+            if (blurScaleElem)
+            {
+                blurScaleElem->QueryFloatAttribute("scale", &scale);
+            }
+            
+            DL->setShadowSoftness(scale);
 
             XMLElement* projElem = shadowElem->FirstChildElement("projection");
 
@@ -891,6 +920,281 @@ void LevelLoader::loadSkyBox()
     skyBox->init();
 
     skyBox->loadSkyBox(levelName + path);
+}
+
+void LevelLoader::loadAtmosphere()
+{
+    XMLDocument atmosphereDoc;
+
+    atmosphereDoc.LoadFile((levelName + "/atmosphere.xml").c_str());
+
+    XMLNode* root = atmosphereDoc.FirstChildElement("AtmosphereFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadAtmosphere() failed to load XML");
+    }
+
+    XMLElement* atmosphereElem = root->FirstChildElement("atmosphere");
+
+    if (atmosphereElem)
+    {
+        atmosphere = new Atmosphere();
+        atmosphere->genBuffer(window->getRenderSize());
+        
+        XMLElement* iBeautyElem = atmosphereElem->FirstChildElement("ibeauty");
+
+        if (iBeautyElem)
+        {
+            int iBeauty = 0;
+
+            iBeautyElem->QueryIntAttribute("beauty", &iBeauty);
+
+            atmosphere->setIBeauty(iBeauty);
+        }
+        
+        XMLElement* jBeautyElem = atmosphereElem->FirstChildElement("jbeauty");
+
+        if (jBeautyElem)
+        {
+            int jBeauty = 0;
+
+            jBeautyElem->QueryIntAttribute("beauty", &jBeauty);
+
+            atmosphere->setJBeauty(jBeauty);
+        }
+
+        /* sphere */
+        XMLElement* sphereElem = atmosphereElem->FirstChildElement("sphere");
+
+        if (sphereElem)
+        {
+            XMLElement* centerElem = sphereElem->FirstChildElement("center");
+
+            vec3 center(0);
+
+            if (centerElem)
+            {
+                centerElem->QueryFloatAttribute("x", &center.x);
+                centerElem->QueryFloatAttribute("y", &center.y);
+                centerElem->QueryFloatAttribute("z", &center.z);
+            }
+
+            XMLElement* radiusElem = sphereElem->FirstChildElement("radius");
+
+            float radius = 0;
+
+            if (radiusElem)
+            {
+                radiusElem->QueryFloatAttribute("radius", &radius);
+            }
+
+            XMLElement* qualityElem = sphereElem->FirstChildElement("quality");
+
+            int quality = 0;
+
+            if (qualityElem)
+            {
+                qualityElem->QueryIntAttribute("quality", &quality);
+            }
+
+            atmosphere->genDome(center, radius, quality);
+        }
+
+
+        XMLElement* rayOriginElem = atmosphereElem->FirstChildElement("rayorigin");
+
+        if (rayOriginElem)
+        {
+            vec3 rayOrigin(0.0);
+
+            rayOriginElem->QueryFloatAttribute("x", &rayOrigin.x);
+            rayOriginElem->QueryFloatAttribute("y", &rayOrigin.y);
+            rayOriginElem->QueryFloatAttribute("z", &rayOrigin.z);
+
+            atmosphere->setRayOrigin(rayOrigin);
+        }
+        
+        XMLElement* sunPosElem = atmosphereElem->FirstChildElement("sunpos");
+
+        if (sunPosElem)
+        {
+            vec3 sunPos(0.0);
+
+            sunPosElem->QueryFloatAttribute("x", &sunPos.x);
+            sunPosElem->QueryFloatAttribute("y", &sunPos.y);
+            sunPosElem->QueryFloatAttribute("z", &sunPos.z);
+
+            atmosphere->setSunPos(sunPos);
+        }
+        
+        XMLElement* sunIntensityElem = atmosphereElem->FirstChildElement("sunintensity");
+
+        if (sunIntensityElem)
+        {
+            float sunIntensity = 0.0;
+
+            sunIntensityElem->QueryFloatAttribute("intensity", &sunIntensity);
+
+            atmosphere->setSunIntensity(sunIntensity);
+        }
+        
+        XMLElement* planetRadiusElem = atmosphereElem->FirstChildElement("planetradius");
+
+        if (planetRadiusElem)
+        {
+            float planetRadius = 0.0;
+
+            planetRadiusElem->QueryFloatAttribute("radius", &planetRadius);
+
+            atmosphere->setPlanetRadius(planetRadius);
+        }
+        
+        XMLElement* atmoRadiusElem = atmosphereElem->FirstChildElement("atmoradius");
+
+        if (atmoRadiusElem)
+        {
+            float atmoRadius = 0.0;
+
+            atmoRadiusElem->QueryFloatAttribute("radius", &atmoRadius);
+
+            atmosphere->setAtmoRadius(atmoRadius);
+        }
+        
+        XMLElement* rayleighCoeffElem = atmosphereElem->FirstChildElement("rayleighcoeff");
+
+        if (rayleighCoeffElem)
+        {
+            vec3 rayleighCoeff(0.0);
+
+            rayleighCoeffElem->QueryFloatAttribute("x", &rayleighCoeff.x);
+            rayleighCoeffElem->QueryFloatAttribute("y", &rayleighCoeff.y);
+            rayleighCoeffElem->QueryFloatAttribute("z", &rayleighCoeff.z);
+
+            atmosphere->setRayleighCoeff(rayleighCoeff);
+        }
+        
+        XMLElement* mieCoeffElem = atmosphereElem->FirstChildElement("miecoeff");
+
+        if (mieCoeffElem)
+        {
+            float mieCoeff = 0.0;
+
+            mieCoeffElem->QueryFloatAttribute("coeff", &mieCoeff);
+
+            atmosphere->setMieCoeff(mieCoeff);
+        }
+        
+        XMLElement* rayleighHeightElem = atmosphereElem->FirstChildElement("rayleighheight");
+
+        if (rayleighHeightElem)
+        {
+            float rayleighHeight = 0.0;
+
+            rayleighHeightElem->QueryFloatAttribute("height", &rayleighHeight);
+
+            atmosphere->setRayleighHeight(rayleighHeight);
+        }
+        
+        XMLElement* mieHeightElem = atmosphereElem->FirstChildElement("mieheight");
+
+        if (mieHeightElem)
+        {
+            float mieHeight = 0.0;
+
+            mieHeightElem->QueryFloatAttribute("height", &mieHeight);
+
+            atmosphere->setMieHeight(mieHeight);
+        }
+        
+        XMLElement* mieDirElem = atmosphereElem->FirstChildElement("miedir");
+
+        if (mieDirElem)
+        {
+            float mieDir = 0.0;
+
+            mieDirElem->QueryFloatAttribute("dir", &mieDir);
+
+            atmosphere->setMieDir(mieDir);
+        }
+    }
+}
+
+void LevelLoader::loadSsao()
+{
+    XMLDocument sSAODoc;
+
+    sSAODoc.LoadFile((levelName + "/ssao.xml").c_str());
+
+    XMLNode* root = sSAODoc.FirstChildElement("SsaoFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadSsao() failed to load XML");
+    }
+
+    XMLElement* sSAOElem = root->FirstChildElement("ssao");
+
+    if (sSAOElem)
+    {
+        sSAO = new SSAO();
+        sSAO->genBuffer(window->getRenderSize());
+
+        XMLElement* kernelSizeElem = sSAOElem->FirstChildElement("kernelsize");
+
+        if (kernelSizeElem)
+        {
+            int kernelSize = 0;
+
+            kernelSizeElem->QueryIntAttribute("size", &kernelSize);
+
+            sSAO->genSampleKernel(kernelSize);
+        }
+        
+        XMLElement* noiseSizeElem = sSAOElem->FirstChildElement("noisesize");
+
+        if (noiseSizeElem)
+        {
+            int noiseSize = 0;
+
+            noiseSizeElem->QueryIntAttribute("size", &noiseSize);
+
+            sSAO->genNoise(noiseSize);
+        }
+        
+        XMLElement* blurScaleElem = sSAOElem->FirstChildElement("blurscale");
+
+        if (blurScaleElem)
+        {
+            int blurScale = 1;
+
+            blurScaleElem->QueryIntAttribute("scale", &blurScale);
+
+            sSAO->setSoftness(blurScale);
+        }
+        
+        XMLElement* radiusElem = sSAOElem->FirstChildElement("radius");
+
+        if (radiusElem)
+        {
+            float radius = 0.0;
+
+            radiusElem->QueryFloatAttribute("radius", &radius);
+
+            sSAO->setRadius(radius);
+        }
+        
+        XMLElement* biasElem = sSAOElem->FirstChildElement("bias");
+
+        if (biasElem)
+        {
+            float bias = 0.0;
+
+            biasElem->QueryFloatAttribute("bias", &bias);
+
+            sSAO->setBias(bias);
+        }
+    } 
 }
 
 void LevelLoader::loadProjection()
@@ -1219,6 +1523,8 @@ void LevelLoader::loadLevel(string name)
 
     loadProjection();
 
+    loadSsao();
+    loadAtmosphere();
     loadSkyBox();
     loadDirLight();
     loadGameObjects();
@@ -1242,6 +1548,16 @@ void LevelLoader::getDirLightData(vector < DirLight* > &dirLights) const
 void LevelLoader::getSkyBoxData(SkyBox*& skyBox) const
 {
     skyBox = this->skyBox;
+}
+        
+void LevelLoader::getAtmosphereData(Atmosphere*& atmosphere) const
+{
+    atmosphere = this->atmosphere;
+}
+        
+void LevelLoader::getSsaoData(SSAO*& sSAO) const
+{
+    sSAO = this->sSAO;
 }
 
 void LevelLoader::getProjectionData(mat4 &projection) const

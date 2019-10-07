@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
@@ -13,10 +13,10 @@
 RadialBlur::RadialBlur()
 {
     blurShader = new Shader();
-    blurShader->loadShaders(path("code/shader/radialBlurShader.vert"), path("code/shader/radialBlurShader.frag"));
+    blurShader->loadShaders(global.path("code/shader/radialBlurShader.vert"), global.path("code/shader/radialBlurShader.frag"));
     
     scaleShader = new Shader();
-    scaleShader->loadShaders(path("code/shader/renderShader.vert"), path("code/shader/renderShader.frag"));
+    scaleShader->loadShaders(global.path("code/shader/renderShader.vert"), global.path("code/shader/renderShader.frag"));
 
     colorBuffer = new ColorBuffer();
         
@@ -33,10 +33,10 @@ RadialBlur::RadialBlur()
 RadialBlur::RadialBlur(float exposure, float decay, float density, float weight)
 {
     blurShader = new Shader();
-    blurShader->loadShaders(path("code/shader/radialBlurShader.vert"), path("code/shader/radialBlurShader.frag"));
+    blurShader->loadShaders(global.path("code/shader/radialBlurShader.vert"), global.path("code/shader/radialBlurShader.frag"));
     
     scaleShader = new Shader();
-    scaleShader->loadShaders(path("code/shader/renderShader.vert"), path("code/shader/renderShader.frag"));
+    scaleShader->loadShaders(global.path("code/shader/renderShader.vert"), global.path("code/shader/renderShader.frag"));
 
     colorBuffer = new ColorBuffer();
         
@@ -53,18 +53,18 @@ RadialBlur::RadialBlur(float exposure, float decay, float density, float weight)
     this->weight = weight;
 }
 
-void RadialBlur::genBuffer(float width, float height, float scaleFactor)
+void RadialBlur::genBuffer(int width, int height, FrameBufferData data, float scaleFactor)
 {
-    colorBuffer->genBuffer(width / scaleFactor, height / scaleFactor);
+    colorBuffer->genBuffer(width / scaleFactor, height / scaleFactor, {data});
 
-    downscaleBuffer->genBuffer(width / scaleFactor, height / scaleFactor);
-    upscaleBuffer->genBuffer(width, height);
+    downscaleBuffer->genBuffer(width / scaleFactor, height / scaleFactor, {data});
+    upscaleBuffer->genBuffer(width, height, {data});
     quad->init();
 }
 
-void RadialBlur::genBuffer(vec2 size, float scaleFactor)
+void RadialBlur::genBuffer(vec2 size, FrameBufferData data, float scaleFactor)
 {
-    genBuffer(size.x, size.y, scaleFactor);
+    genBuffer(size.x, size.y, data, scaleFactor);
 }
 
 void RadialBlur::setExposure(float exposure)
@@ -89,9 +89,10 @@ void RadialBlur::setWeight(float weight)
     
 GLuint RadialBlur::blur(GLuint textureID, vec2 center)
 {
+    glDisable(GL_DEPTH_TEST);
+
     /* downscale */
     downscaleBuffer->use();
-    downscaleBuffer->clear();
 
     scaleShader->use();
 
@@ -105,7 +106,6 @@ GLuint RadialBlur::blur(GLuint textureID, vec2 center)
 
     /* blur */
     colorBuffer->use();
-    colorBuffer->clear();
 
     blurShader->use();
 
@@ -125,7 +125,6 @@ GLuint RadialBlur::blur(GLuint textureID, vec2 center)
 
     /* upscale */
     upscaleBuffer->use();
-    upscaleBuffer->clear();
 
     scaleShader->use();
 
@@ -137,6 +136,8 @@ GLuint RadialBlur::blur(GLuint textureID, vec2 center)
         
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
+    
+    glEnable(GL_DEPTH_TEST);
 
     bluredTexture = upscaleBuffer->getTexture();
     return bluredTexture;

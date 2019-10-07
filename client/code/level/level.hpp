@@ -33,6 +33,9 @@ class Level
         Shader* skyBoxShader;
         Shader* dirSphereShader;
         Shader* lightBlenderShader;
+        Shader* atmosphereShader;
+        Shader* domeShader;
+        Shader* sSAOShader;
         
         Shader* debugShader;
 
@@ -40,6 +43,8 @@ class Level
         map < string, GameObject* > gameObjects;
         vector < DirLight* > dirLights;
 
+        SSAO* sSAO; 
+        Atmosphere* atmosphere;
         SkyBox* skyBox;
         
         int playerID;
@@ -59,7 +64,7 @@ class Level
         void loadLevel(string level);
 
         void setPlayerID(int playerID);
-        
+
         void addGameObject(GameObject* gameObject);
         GameObject* getGameObject(string name) const;
         map < string, GameObject* > getGameObjects() const;
@@ -69,10 +74,13 @@ class Level
         
         void render();
         void updatePlayers(int mode);
+        void updateSunPos();
 
         GLuint getRenderTexture(unsigned int num = 0) const;
         Player* getPlayer(int id = -1) const;
         vector < Player* > getPlayers() const;
+        vec3 getSunPosition() const;
+
         string getLevelName() const;
 
         /* DEBUG */

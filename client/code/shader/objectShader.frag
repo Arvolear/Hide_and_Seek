@@ -8,9 +8,7 @@ struct GBuffer
     sampler2D texture_position;
     sampler2D texture_normal;
     sampler2D texture_albedo;
-    sampler2D texture_metallic;
-    sampler2D texture_roughness;
-    sampler2D texture_ao;
+    sampler2D texture_metRoughAO;
 };
 
 struct DirLight
@@ -19,11 +17,16 @@ struct DirLight
     vec3 color;
 
     int isShadow; 
-    sampler2D texture_shadow1;
+    sampler2D texture_shadow1; // depth
     
+    float esmFactor;
+    float bias;
+
     mat4 shadowView;
     mat4 shadowProjection;
 };
+
+uniform sampler2D texture_ssao;
 
 in vec2 UV;
 
@@ -38,31 +41,27 @@ const float PI = 3.1415926535;
 
 float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
-    /* ESM shadows */
-    float bias = 0.006;
-
-    vec3 projCoords = shadowCoords.xyz / shadowCoords.w;
+    vec4 projCoords = shadowCoords / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
+    currentDepth += light.bias;
 
-    vec2 moments = texture(light.texture_shadow1, projCoords.xy).rg;
+    float moment = texture(light.texture_shadow1, projCoords.xy).r;
 
-    if ((currentDepth + bias) < moments.x)
+    if (currentDepth < moment)
     {
-        return 1.0;    
+        return 1.0;
     }
 
-    if (currentDepth < 0 || currentDepth > 0.85)
+    if (currentDepth > 1.0)
     {
-        return 1.0;    
+        return 1.0; 
     }
 
-    float esmFactor = 85.0;
-
-    float occluder = moments.y;
-    float receiver = esmFactor * (currentDepth + bias);
-    float shadow = smoothstep(0.45, 1.0, exp(occluder - receiver));
+    float occluder = exp(light.esmFactor * moment);
+    float receiver = exp(-light.esmFactor * currentDepth);
+    float shadow = smoothstep(0.2, 1.0, occluder * receiver);
 
     return shadow;
 }
@@ -114,9 +113,9 @@ vec4 calcDirLights()
     vec3 fragPos = texture(gBuffer.texture_position, UV).rgb;
     vec3 fragNorm = texture(gBuffer.texture_normal, UV).rgb;
     vec3 fragAlbedo = pow(texture(gBuffer.texture_albedo, UV).rgb, vec3(gamma));
-    float fragMetal = texture(gBuffer.texture_metallic, UV).r;
-    float fragRough = texture(gBuffer.texture_roughness, UV).r;
-    float fragAO =  texture(gBuffer.texture_ao, UV).r;
+    float fragMetal = texture(gBuffer.texture_metRoughAO, UV).r;
+    float fragRough = texture(gBuffer.texture_metRoughAO, UV).g;
+    float fragAO = texture(gBuffer.texture_metRoughAO, UV).b;
 
     //fragMetal = 0.0;
     //fragRough = 0.0;
@@ -124,7 +123,7 @@ vec4 calcDirLights()
     vec3 viewDir = normalize(viewPos - fragPos);
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, fragAlbedo, fragMetal);
-    
+
     vec3 L0 = vec3(0.0);
 
     for (int i = 0; i < MAX_DIR_LIGHTS; i++)
@@ -164,9 +163,11 @@ vec4 calcDirLights()
         L0 += L00;
     }
 
-    vec3 ambient = vec3(0.03) * fragAlbedo; // * fragAO;
+    float ssao = texture(texture_ssao, UV).r;
+
+    vec3 ambient = vec3(0.03) * fragAlbedo * ssao; // * fragAO;
     vec3 res = ambient + L0;
-    
+
     return vec4(res, 1.0);
 }
 

@@ -1,6 +1,6 @@
 #include "../shader/shader.hpp"
 
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
@@ -79,7 +79,7 @@ string GameObjectDataCollector::getData() const
             string str;
             str = char('a' + (i * 4 + j));
 
-            modelElem->SetAttribute(str.data(), cutFloat(model[i][j], 4));
+            modelElem->SetAttribute(str.data(), global.cutFloat(model[i][j], 4));
         }
     }
 

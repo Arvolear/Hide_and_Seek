@@ -27,8 +27,8 @@ class RadialBlur
         RadialBlur();
         RadialBlur(float exposure, float decay, float density, float weight);
 
-        void genBuffer(float width, float height, float scaleFactor = 1);
-        void genBuffer(vec2 size, float scaleFactor = 1);
+        void genBuffer(int width, int height, FrameBufferData data, float scaleFactor = 1);
+        void genBuffer(vec2 size, FrameBufferData data, float scaleFactor = 1);
 
         void setExposure(float exposure);
         void setDecay(float decay);

@@ -1,11 +1,11 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../shader/shader.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
 #include "../framebuffer/depthbuffer.hpp"
-#include "../framebuffer/depthcolorbuffer.hpp"
+#include "../framebuffer/shadowbuffer.hpp"
 #include "../framebuffer/gbuffer.hpp"
 
 #include "../window/renderquad.hpp"
@@ -40,7 +40,10 @@
 
 #include "../player/player.hpp"
 
+#include "dirlightsoftshadow.hpp"
 #include "dirlight.hpp"
+#include "ssao.hpp"
+#include "atmosphere.hpp"
 #include "skybox.hpp"
 #include "levelloader.hpp"
 #include "level.hpp"
@@ -63,9 +66,14 @@ Level::Level(Window* window, World* physicsWorld)
     skyBoxShader = new Shader();
     dirSphereShader = new Shader();
     lightBlenderShader = new Shader();
+    atmosphereShader = new Shader();
+    domeShader = new Shader();
+    sSAOShader = new Shader();
 
     debugShader = new Shader();
-
+    
+    sSAO = nullptr;
+    atmosphere = nullptr;
     skyBox = nullptr;
 
     playerID = 0;
@@ -82,21 +90,40 @@ void Level::loadLevel(string level)
 {
     levelName = level;
 
-    levelColorBuffer->genBuffer(window->getRenderSize(), 2);
-    gBuffer->genBuffer(window->getRenderSize());
-    
-    gBufferShader->loadShaders(path("code/shader/gBufferShader.vert"), path("code/shader/gBufferShader.frag"));
-    gameObjectShader->loadShaders(path("code/shader/objectShader.vert"), path("code/shader/objectShader.frag"));
-    dirShadowShader->loadShaders(path("code/shader/dirShadowShader.vert"), path("code/shader/dirShadowShader.frag"));
-    skyBoxShader->loadShaders(path("code/shader/skyBoxShader.vert"), path("code/shader/skyBoxShader.frag"));
-    dirSphereShader->loadShaders(path("code/shader/dirSphereShader.vert"), path("code/shader/dirSphereShader.frag"));
-    lightBlenderShader->loadShaders(path("code/shader/lightBlenderShader.vert"), path("code/shader/lightBlenderShader.frag"));
-    
-    debugShader->loadShaders(path("code/shader/debugShader.vert"), path("code/shader/debugShader.frag"));
+    levelColorBuffer->genBuffer(window->getRenderSize(), 
+            {
+                {GL_RGBA16F, GL_RGBA, GL_FLOAT}, 
+                {GL_RGBA16F, GL_RGBA, GL_FLOAT}
+            });
 
-    levelLoader->loadLevel(path("levels/test1"));
+    gBuffer->genBuffer(window->getRenderSize(), 
+            {
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, 
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, 
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
+                {GL_RGB, GL_RGB, GL_UNSIGNED_BYTE}, 
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},
+                {GL_R16F, GL_RED, GL_FLOAT}, 
+                {GL_RGB16F, GL_RGB, GL_FLOAT}
+            });
+    
+    gBufferShader->loadShaders(global.path("code/shader/gBufferShader.vert"), global.path("code/shader/gBufferShader.frag"));
+    gameObjectShader->loadShaders(global.path("code/shader/objectShader.vert"), global.path("code/shader/objectShader.frag"));
+    dirShadowShader->loadShaders(global.path("code/shader/dirShadowShader.vert"), global.path("code/shader/dirShadowShader.frag"));
+    skyBoxShader->loadShaders(global.path("code/shader/skyBoxShader.vert"), global.path("code/shader/skyBoxShader.frag"));
+    dirSphereShader->loadShaders(global.path("code/shader/dirSphereShader.vert"), global.path("code/shader/dirSphereShader.frag"));
+    lightBlenderShader->loadShaders(global.path("code/shader/lightBlenderShader.vert"), global.path("code/shader/lightBlenderShader.frag"));
+    atmosphereShader->loadShaders(global.path("code/shader/atmosphereShader.vert"), global.path("code/shader/atmosphereShader.frag"));
+    domeShader->loadShaders(global.path("code/shader/domeShader.vert"), global.path("code/shader/domeShader.frag"));
+    sSAOShader->loadShaders(global.path("code/shader/ssaoShader.vert"), global.path("code/shader/ssaoShader.frag"));
+    
+    debugShader->loadShaders(global.path("code/shader/debugShader.vert"), global.path("code/shader/debugShader.frag"));
+
+    levelLoader->loadLevel(global.path("levels/test1"));
 
     /*** GET LOADED DATA ***/
+    levelLoader->getSsaoData(sSAO);
+    levelLoader->getAtmosphereData(atmosphere);
     levelLoader->getDirLightData(dirLights);
     levelLoader->getSkyBoxData(skyBox);
     levelLoader->getPlayersData(players);
@@ -158,26 +185,41 @@ void Level::render()
     /***********************************/
 
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
 
     mat4 view = players[playerID]->getView();
     mat4 staticView = mat4(mat3(view));
     
     viewFrustum->updateFrustum(view, projection);
+    
+    /************************************
+     * ATMOSPHERE
+     * */
+    
+    glCullFace(GL_FRONT);
+    
+    atmosphere->getBuffer()->use();
+    
+    atmosphereShader->use();
+
+    atmosphereShader->setMat4("view", staticView);
+    atmosphereShader->setMat4("projection", projection);
+
+    atmosphere->renderAtmosphere(atmosphereShader);
 
     /************************************
      * DIR SHADOWS
      * */ 
     
     glCullFace(GL_FRONT);
-
+    
     for (size_t i = 0; i < dirLights.size(); i++)
     {
         if (dirLights[i]->getShadowBuffer())
         {
             /*** shadow buffer ***/
             dirLights[i]->getShadowBuffer()->use();
-            dirLights[i]->getShadowBuffer()->clear();
+            /* crucial */
+            dirLights[i]->getShadowBuffer()->clear(vec4(1.0, 0.0, 0.0, 1.0));
 
             dirLights[i]->updateShadowView(players[playerID]->getPosition());
 
@@ -210,19 +252,39 @@ void Level::render()
 
     gBufferShader->setMat4("view", view);
     gBufferShader->setMat4("projection", projection);
-
+    
     for (auto& i : gameObjects)
     {
         i.second->render(gBufferShader); 
     }
+    
+    /************************************
+     * SSAO
+     * */ 
+
+    sSAO->getBuffer()->use();
+    sSAO->getBuffer()->clear();
+
+    sSAOShader->use();
+    
+    sSAOShader->setMat4("invProjection", transpose(inverse(projection)));
+    sSAOShader->setMat4("projection", projection);
+
+    gBuffer->renderSsao(sSAOShader);
+    sSAO->renderInfo(sSAOShader);
+
+    quad->render(sSAOShader);
 
     /************************************
      * GAMEOBJECT
      * */ 
 
+    glCullFace(GL_BACK);
+
     /*** color buffer ***/
     levelColorBuffer->use();
-    levelColorBuffer->clear();
+
+    glDisable(GL_DEPTH_TEST);
 
     gameObjectShader->use();
 
@@ -230,30 +292,42 @@ void Level::render()
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
-        dirLights[i]->blurShadow(1, 1);
+        dirLights[i]->blurShadow(1, 1.0);
 
         levelColorBuffer->use();
         gameObjectShader->use();
-            
+
         dirLights[i]->renderShadow(gameObjectShader, i);
     }
 
+    sSAO->blur(1, 1.0);
+        
+    levelColorBuffer->use();
+    gameObjectShader->use();
+
+    sSAO->renderSsao(gameObjectShader);
+
     gBuffer->render(gameObjectShader);
     quad->render(gameObjectShader);
-    
+
+    glEnable(GL_DEPTH_TEST);
+
     /************************************
      * LIGHT SCATTERER
      * */
-    
+
+    glCullFace(GL_BACK);
+
     for (size_t i = 0; i < dirLights.size(); i++)
     {
         if (dirLights[i]->getScatterBuffer())
         {
             /*** scatter buffer ***/
             dirLights[i]->getScatterBuffer()->copyDepthBuffer(gBuffer);
-            dirLights[i]->getScatterBuffer()->copyColorBuffer(0, gBuffer, 6);
+            /* crusial */
+            dirLights[i]->getScatterBuffer()->copyColorBuffer(0, gBuffer, 4);
             dirLights[i]->getScatterBuffer()->use();
-           
+
             dirSphereShader->use();
 
             dirSphereShader->setMat4("view", staticView);
@@ -270,24 +344,39 @@ void Level::render()
         }
     }
 
+    levelColorBuffer->copyDepthBuffer(gBuffer);
+    levelColorBuffer->use();
+
+    /************************************
+     * DOME (atmosphere)
+     * */
+
+    glCullFace(GL_BACK);
+
+    domeShader->use();
+
+    atmosphere->renderDome(domeShader);
+
     /************************************
      * SKYBOX 
      * */
 
-    levelColorBuffer->copyDepthBuffer(gBuffer);
-    levelColorBuffer->use();
+    glCullFace(GL_BACK);
 
     skyBoxShader->use();
-            
+
     skyBoxShader->setMat4("view", staticView);
     skyBoxShader->setMat4("projection", projection);
 
-    skyBox->render(skyBoxShader);
-    
+    //skyBox->render(skyBoxShader);
+
     /************************************
      * SCATTERED LIGHT BLENDING
      * */
 
+    glCullFace(GL_BACK);
+
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
 
@@ -298,7 +387,8 @@ void Level::render()
         dirLights[i]->renderLight(lightBlenderShader);
         quad->render(lightBlenderShader);
     }
-    
+
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
     /************************************
@@ -337,10 +427,20 @@ void Level::updatePlayers(int mode)
     }
 }
 
+void Level::updateSunPos()
+{
+    atmosphere->updateSunPos();
+    vec3 sunPos = atmosphere->getSunPos();
+
+    dirLights[0]->setDirection(-normalize(sunPos));
+    dirLights[0]->getSphere()->setCenter(sunPos);
+}
+
 GLuint Level::getRenderTexture(unsigned int num) const
 {
     return levelColorBuffer->getTexture(num);
-    //return dirLights[0]->getScatterTexture();
+    //return atmosphere->getTexture();
+    //return sSAO->getTexture();
 }
 
 Player* Level::getPlayer(int id) const
@@ -385,6 +485,9 @@ Level::~Level()
     delete skyBoxShader;
     delete dirSphereShader;
     delete lightBlenderShader;
+    delete atmosphereShader;
+    delete domeShader;
+    delete sSAOShader;
 
     delete debugShader;
 
@@ -398,6 +501,8 @@ Level::~Level()
         delete dirLights[i];
     }
 
+    delete sSAO;
+    delete atmosphere;
     delete skyBox;
 
     for (size_t i = 0; i < players.size(); i++)

@@ -1,6 +1,6 @@
 #include "../shader/shader.hpp"
 
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/colorbuffer.hpp"
@@ -373,7 +373,7 @@ void Player::updateCamera()
     setPosition(headCenter.x(), headCenter.y(), headCenter.z());
 
     /* new Up */
-    Up = normalize(toVec3(headCenter) - toVec3(globalCenter));
+    Up = normalize(global.toVec3(headCenter) - global.toVec3(globalCenter));
 
     Pos += normalize(cross(Left, Up)) * cameraOffset.x;
     Pos += Up * cameraOffset.y;
@@ -402,7 +402,7 @@ void Player::updateModel(vec3 newForward)
             cosRotAngle = 1;
         }
 
-        angle = toDegs(acos(cosRotAngle)); 
+        angle = global.toDegs(acos(cosRotAngle)); 
 
         vec3 diff = newForward - modelForward;
 
