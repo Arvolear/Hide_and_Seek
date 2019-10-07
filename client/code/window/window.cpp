@@ -27,14 +27,15 @@ Window::Window() : GLFWEvents()
 
     //glfwWindowHint(GLFW_SAMPLES, 4);
 
-    /* 30 FPS */
-    glfwWindowHint(GLFW_REFRESH_RATE, 30);
-    
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(width, height, "Hide&Seek", NULL, NULL);
+
+    glfwSetWindowPos(window, 100, 100);
+    glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    glfwSetWindowAspectRatio(window, width, height);
 
     if (!window)
     {

@@ -41,7 +41,9 @@ class DirLight
         void setRadialDecay(float decay);
         void setRadialDensity(float density);
         void setRadialWeight(float weight);
-       
+      
+        void setShadowIntensity(float intensity);
+        void setShadowBias(float bias);
         void setShadowSoftness(float softness);
 
         void setShadowProjection(mat4 projection);

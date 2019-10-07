@@ -27,15 +27,22 @@ class Atmosphere
         float mieHeight;
         float mieDir;
 
+        int iBeauty;
+        int jBeauty;
+
         vec3 axis;
 
     public:
         Atmosphere();
         Atmosphere(vec3 rayOrigin, vec3 sunPos, float sunIntensity, float planetRadius, float atmoRadius, vec3 rayleighCoeff, float mieCoeff, float rayleighHeight, float mieHeight, float mieDir);
-        
+
         void genBuffer(int width, int height);
         void genBuffer(vec2 size);
+
+        void genDome(vec3 center, float radius, int quality);
         
+        void setIBeauty(int iBeauty);
+        void setJBeauty(int jBeauty);
         void setRayOrigin(vec3 rayOrigin);
         void setSunPos(vec3 sunPos);
         void setSunIntensity(float sunIntensity);

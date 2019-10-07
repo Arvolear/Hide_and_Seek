@@ -14,6 +14,9 @@ class DirLightSoftShadow
         GaussianBlur < ShadowBuffer >* gaussBlur;
         
         int width, height;
+
+        float intensity;
+        float bias;
         float softness;
 
     public:
@@ -22,6 +25,8 @@ class DirLightSoftShadow
         void genBuffer(int width, int height);
         void genBuffer(vec2 size);
 
+        void setIntensity(float intensity);
+        void setBias(float bias);
         void setSoftness(float softness);
 
         void blurShadow(int intensity, float radius);

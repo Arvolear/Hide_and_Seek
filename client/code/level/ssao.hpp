@@ -16,6 +16,9 @@ class SSAO
         vector < vec3 > kernel;
         vector < vec3 > noise;
 
+        float radius;
+        float bias;
+
         GLuint texture_noise;
 
         vec2 renderSize;
@@ -31,6 +34,8 @@ class SSAO
         void genNoise(int size);
 
         void setSoftness(int softness);
+        void setRadius(float radius);
+        void setBias(float bias);
 
         void blur(int intensity, float radius);
         void renderInfo(Shader* shader);

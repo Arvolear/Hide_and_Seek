@@ -104,6 +104,16 @@ void DirLight::setRadialWeight(float weight)
     radialBlur->setWeight(weight);
 } 
 
+void DirLight::setShadowIntensity(float intensity)
+{
+    shadow->setIntensity(intensity);
+}
+
+void DirLight::setShadowBias(float bias)
+{
+    shadow->setBias(bias);
+}
+
 void DirLight::setShadowSoftness(float softness)
 {
     shadow->setSoftness(softness);
@@ -118,7 +128,7 @@ void DirLight::setShadowProjection(mat4 projection)
 {
     this->shadowProjection = projection;
 }
-        
+
 void DirLight::blurShadow(int intensity, float radius)
 {
     shadow->blurShadow(intensity, radius);

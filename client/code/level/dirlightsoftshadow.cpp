@@ -20,6 +20,7 @@ DirLightSoftShadow::DirLightSoftShadow()
     gaussBlur = new GaussianBlur < ShadowBuffer >();
 
     width = height = 0;
+    intensity = bias = 0.0;
     softness = 0;
 }
 
@@ -37,6 +38,16 @@ void DirLightSoftShadow::genBuffer(int width, int height)
 void DirLightSoftShadow::genBuffer(vec2 size)
 {
     genBuffer(size.x, size.y);
+}
+        
+void DirLightSoftShadow::setIntensity(float intensity)
+{
+    this->intensity = intensity;
+}
+
+void DirLightSoftShadow::setBias(float bias)
+{
+    this->bias = bias;
 }
 
 void DirLightSoftShadow::setSoftness(float softness)
@@ -59,6 +70,9 @@ void DirLightSoftShadow::render(Shader* shader, int index)
     glActiveTexture(GL_TEXTURE0 + getTexture());
     glBindTexture(GL_TEXTURE_2D, getTexture());
     shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", getTexture());
+
+    shader->setFloat("dirLights[" + to_string(index) + "].esmFactor", intensity);
+    shader->setFloat("dirLights[" + to_string(index) + "].bias", bias);
 }
 
 ShadowBuffer* DirLightSoftShadow::getBuffer() const

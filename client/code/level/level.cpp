@@ -122,6 +122,8 @@ void Level::loadLevel(string level)
     levelLoader->loadLevel(global.path("levels/test1"));
 
     /*** GET LOADED DATA ***/
+    levelLoader->getSsaoData(sSAO);
+    levelLoader->getAtmosphereData(atmosphere);
     levelLoader->getDirLightData(dirLights);
     levelLoader->getSkyBoxData(skyBox);
     levelLoader->getPlayersData(players);
@@ -130,18 +132,6 @@ void Level::loadLevel(string level)
     levelLoader->getViewFrustumData(viewFrustum);
     
     quad->init();
-
-
-    ////////////////////////////
-    ////////////////////////////
-    atmosphere = new Atmosphere();
-    atmosphere->genBuffer(window->getRenderSize());
-
-    sSAO = new SSAO();
-    sSAO->genBuffer(window->getRenderSize());
-    sSAO->genSampleKernel(16);
-    sSAO->genNoise(4);
-    sSAO->setSoftness(2);
 }
         
 void Level::setPlayerID(int playerID)

@@ -16,8 +16,8 @@ uniform float mieHeight;
 uniform float mieDir;
 
 const float PI = 3.1415926535;
-const int iSteps = 4;
-const int jSteps = 1;
+uniform int iSteps;
+uniform int jSteps;
 
 vec2 rsi(vec3 r0, vec3 rd, float sr) 
 {

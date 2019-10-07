@@ -10,10 +10,13 @@ struct GBuffer
 
 in vec2 UV;
 
-const int kernelSize = 16;
-const int noiseSize = 4;
-const float radius = 1.0;
-const float bias = 0.02;
+#define MAX_KERNEL_SIZE 128
+
+uniform int kernelSize;
+uniform int noiseSize;
+
+uniform float radius;
+uniform float bias;
 
 uniform mat4 invProjection;
 uniform mat4 projection;
@@ -22,7 +25,7 @@ uniform GBuffer gBuffer;
 
 uniform sampler2D texture_noise;
 
-uniform vec3 sphereSamples[kernelSize];
+uniform vec3 sphereSamples[MAX_KERNEL_SIZE];
 
 uniform vec2 renderSize;
 

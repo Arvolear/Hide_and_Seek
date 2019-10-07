@@ -19,6 +19,8 @@ SSAO::SSAO()
     colorBuffer = new ColorBuffer();
     gaussBlur = new GaussianBlur < ColorBuffer >();
 
+    radius = bias = 0.0;
+
     texture_noise = 0;
 }
 
@@ -98,6 +100,16 @@ void SSAO::setSoftness(int softness)
 {
     gaussBlur->genBuffer(renderSize, {GL_R16F, GL_RGB, GL_FLOAT}, softness); 
 }
+        
+void SSAO::setRadius(float radius)
+{
+    this->radius = radius;
+}
+
+void SSAO::setBias(float bias)
+{
+    this->bias = bias;
+}
 
 void SSAO::blur(int intensity, float radius)
 {
@@ -109,6 +121,12 @@ void SSAO::blur(int intensity, float radius)
 
 void SSAO::renderInfo(Shader* shader)
 {
+    shader->setInt("kernelSize", kernel.size());
+    shader->setInt("noiseSize", sqrt(noise.size()));
+
+    shader->setFloat("radius", radius);
+    shader->setFloat("bias", bias);
+
     glActiveTexture(GL_TEXTURE0 + texture_noise);
     glBindTexture(GL_TEXTURE_2D, texture_noise);
     shader->setInt("texture_noise", texture_noise);

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<SsaoFile>
+    
+    <ssao>
+        <kernelsize size="16"/>
+        <noisesize size="4"/>
+        <blurscale scale="2"/>
+        <radius radius="1.0"/>
+        <bias bias="0.02"/>
+    </ssao>
+
+</SsaoFile>

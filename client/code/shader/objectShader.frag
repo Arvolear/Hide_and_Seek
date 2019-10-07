@@ -18,6 +18,9 @@ struct DirLight
 
     int isShadow; 
     sampler2D texture_shadow1; // depth
+    
+    float esmFactor;
+    float bias;
 
     mat4 shadowView;
     mat4 shadowProjection;
@@ -38,13 +41,11 @@ const float PI = 3.1415926535;
 
 float calcDirShadow(DirLight light, vec4 shadowCoords)
 {
-    float bias = 0.014;
-
     vec4 projCoords = shadowCoords / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
-    currentDepth += bias;
+    currentDepth += light.bias;
 
     float moment = texture(light.texture_shadow1, projCoords.xy).r;
 
@@ -58,10 +59,8 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
         return 1.0; 
     }
 
-    float esmFactor = 85.0;
-
-    float occluder = exp(esmFactor * moment);
-    float receiver = exp(-esmFactor * currentDepth);
+    float occluder = exp(light.esmFactor * moment);
+    float receiver = exp(-light.esmFactor * currentDepth);
     float shadow = smoothstep(0.2, 1.0, occluder * receiver);
 
     return shadow;

@@ -15,16 +15,18 @@ Atmosphere::Atmosphere()
     sphere = new Sphere();
     colorBuffer = new ColorBuffer();
 
-    this->rayOrigin = vec3(0.0, 6372e3, 0.0);
-    this->sunPos = vec3(0, -10, -100);
-    this->sunIntensity = 22.0;
-    this->planetRadius = 6371e3;
-    this->atmoRadius = 6571e3;
-    this->rayleighCoeff = vec3(5.5e-6, 13.0e-6, 22.4e-6);
-    this->mieCoeff = 21e-6;
-    this->rayleighHeight = 8000;
-    this->mieHeight = 1200;
-    this->mieDir = 0.758;
+    this->rayOrigin = vec3(0.0);
+    this->sunPos = vec3(0.0);
+    this->sunIntensity = 0.0;
+    this->planetRadius = 0.0;
+    this->atmoRadius = 0.0;
+    this->rayleighCoeff = vec3(0.0);
+    this->mieCoeff = 0.0;
+    this->rayleighHeight = 0.0;
+    this->mieHeight = 0.0;
+    this->mieDir = 0.0;
+
+    this->iBeauty = this->jBeauty = 0;
 
     this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
 }
@@ -46,6 +48,8 @@ Atmosphere::Atmosphere(vec3 rayOrigin, vec3 sunPos, float sunIntensity, float pl
     this->mieHeight = mieHeight;
     this->mieDir = mieDir;
     
+    this->iBeauty = this->jBeauty = 0;
+    
     this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
 }
         
@@ -54,12 +58,26 @@ void Atmosphere::genBuffer(int width, int height)
     colorBuffer->genBuffer(width, height, {{GL_RGBA16F, GL_RGBA, GL_FLOAT}});
 
     quad->init();
-    sphere->construct(vec3(0, 5, 0), 70, 3);
 }
 
 void Atmosphere::genBuffer(vec2 size)
 {
     genBuffer(size.x, size.y);
+}
+        
+void Atmosphere::genDome(vec3 center, float radius, int quality)
+{
+    sphere->construct(center, radius, quality);
+}
+        
+void Atmosphere::setIBeauty(int iBeauty)
+{
+    this->iBeauty = iBeauty;
+}
+
+void Atmosphere::setJBeauty(int jBeauty)
+{
+    this->jBeauty = jBeauty;
 }
 
 void Atmosphere::setRayOrigin(vec3 rayOrigin)
@@ -116,6 +134,9 @@ void Atmosphere::setMieDir(float mieDir)
 
 void Atmosphere::renderAtmosphere(Shader* shader)
 {
+    shader->setInt("iSteps", iBeauty);
+    shader->setInt("jSteps", jBeauty);
+
     shader->setVec3("rayOrigin", rayOrigin);
     shader->setVec3("sunPos", sunPos);
     shader->setFloat("sunIntensity", sunIntensity);
