@@ -87,9 +87,6 @@ void Soldier::setConnected(bool connected)
 
 void Soldier::weaponAction()
 {
-    pickFrom = pickTo = vec3(0);
-    dropTo = false;
-
     if (window->isKeyPressedOnce(GLFW_KEY_G))
     {
         drop();

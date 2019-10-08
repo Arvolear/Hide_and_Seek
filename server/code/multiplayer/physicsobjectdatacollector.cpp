@@ -33,7 +33,7 @@ string PhysicsObjectDataCollector::getData(bool raw) const
 
     /* root */
     XMLNode* root = physicsObjectDataCollectorDoc.NewElement("Objs");
-    physicsObjectDataCollectorDoc.InsertEndChild(root);
+    physicsObjectDataCollectorDoc.InsertFirstChild(root);
 
     for (size_t i = 0; i < names.size(); i++)
     {

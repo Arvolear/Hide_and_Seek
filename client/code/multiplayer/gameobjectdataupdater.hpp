@@ -26,7 +26,7 @@ class GameObjectDataUpdater
         void updateData(GameObject* gameObject, bool interpolation = true);
         void updateData(map < string, GameObject* > gameObjects, bool interpolation = true);
 
-        string getName(int index) const;
+        string getName(int index = 0) const;
         vector < string > getNames() const;
 
         void clear();

@@ -13,6 +13,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <deque>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -32,7 +33,7 @@ class Client
         mutable mutex mtx;
         mutable condition_variable cv;
 
-        vector < pair < string, bool > > messages;
+        deque < pair < string, bool > > messages;
 
         string lastMsg;
 
@@ -43,7 +44,7 @@ class Client
 
         void sendMSG(string data, bool force = false);
         
-        void constructFineMessage(char* buffer, int size);
+        void constructFineMessage(char* buffer, int size, int curMsg, int begOffset);
         void recvMSG(int size = 2048, int timeoutSec = 1);
 
         string getMessage() const;

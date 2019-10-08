@@ -3,7 +3,6 @@
 Client::Client()
 {
     sock = 0;
-    messages.resize(2, {"", false});
     ready = true;
     lastMsg = "";
 }
@@ -82,58 +81,42 @@ void Client::sendMSG(string data, bool force)
     send(sock, data.data(), data.size(), 0);
 }
 
-void Client::constructFineMessage(char* buffer, int size)
+void Client::constructFineMessage(char* buffer, int size, int curMsg, int begOffset)
 { 
     /* BEG */
     if (!buffer || size <= 0)
     {
-        messages[0].second = false;
-        messages[1].second = false;
+        messages.clear();
+        return;
+    }
 
+    if (begOffset >= size)
+    {
         return;
     }
 
     string tmp(buffer, size);
 
-    if (messages[0].first.empty())
+    if ((int)messages.size() <= curMsg)
     {
-        size_t beg = tmp.find("BEG");
+        messages.push_back({"", false});
+
+        size_t beg = tmp.find("BEG", begOffset);
         if (beg != string::npos)
         {
             size_t end = tmp.find("END", beg + 3);
             if (end != string::npos)
             {
-                messages[0].first = tmp.substr(beg + 3, end - beg - 3);
+                messages[curMsg].first = tmp.substr(beg + 3, end - beg - 3);
+                messages[curMsg].second = true;
 
-                size_t beg2 = tmp.find("BEG", end + 3);
-                if (beg2 != string::npos)
-                {
-                    size_t end2 = tmp.find("END", beg2 + 3);
-                    if (end2 != string::npos)
-                    {
-                        messages[1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
-                        messages[0].second = true;
-                        messages[1].second = true;
-
-                        return;
-                    }
-                    else
-                    {
-                        messages[1].first = tmp.substr(beg2 + 3);
-                    }
-                }
-
-                messages[0].second = true;
-                messages[1].second = false;
-
+                constructFineMessage(buffer, size, curMsg + 1, end + 3);
                 return;
             }
             else
             {
-                messages[0].first = tmp.substr(beg + 3);
-
-                messages[0].second = false;
-                messages[1].second = false;
+                messages[curMsg].first = tmp.substr(beg + 3);
+                messages[curMsg].second = false;
 
                 return;
             }
@@ -141,47 +124,23 @@ void Client::constructFineMessage(char* buffer, int size)
     }
     else
     {
-        size_t end = tmp.find("END");
+        size_t end = tmp.find("END", begOffset);
         if (end != string::npos)
         {
-            messages[0].first += tmp.substr(0, end);
+            messages[curMsg].first += tmp.substr(begOffset, end);
+            messages[curMsg].second = true;
 
-            size_t beg2 = tmp.find("BEG", end + 3);
-            if (beg2 != string::npos)
-            {
-                size_t end2 = tmp.find("END", beg2 + 3);
-                if (end2 != string::npos)
-                {
-                    messages[1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
-                    messages[0].second = true;
-                    messages[1].second = true;
-
-                    return;
-                }
-                else
-                {
-                    messages[1].first = tmp.substr(beg2 + 3);
-                }
-            }
-
-            messages[0].second = true;
-            messages[1].second = false;
-
+            constructFineMessage(buffer, size, curMsg + 1, end + 3);
             return;
         }
         else
         {
-            messages[0].first += tmp;
-
-            messages[0].second = false;
-            messages[1].second = false;
+            messages[curMsg].first += tmp;
+            messages[curMsg].second = false;
 
             return;
         }
     }
-
-    messages[0].second = false;
-    messages[1].second = false;
 
     return;
     /* END */
@@ -202,10 +161,12 @@ void Client::recvMSG(int size, int timeoutSec)
         unique_lock < mutex > lk(mtx);
         ready = false;
 
-        messages[0] = messages[1];
-        messages[1] = {"", false};
+        if (!messages.empty())
+        {
+            messages.pop_front();
+        }
 
-        while (!messages[0].second)
+        while (messages.empty() || (!messages.empty() && !messages[0].second))
         {
             memset(buffer, 0, size + 1);
 
@@ -222,19 +183,19 @@ void Client::recvMSG(int size, int timeoutSec)
                 break;
             }
 
-            constructFineMessage(buffer, bytes_read);
-
-            if (messages[0].second)
+            constructFineMessage(buffer, bytes_read, 0, 0);
+        }
+         
+        if (!messages.empty() && messages[0].second)
+        {
+            /* END fix */
+            if (!messages[0].first.empty())
             {
-                /* END fix */
-                if (!messages[0].first.empty())
+                int s = messages[0].first.size() - 1;
+                while (s >= 0 && messages[0].first[s] != '>')
                 {
-                    int s = messages[0].first.size() - 1;
-                    while (s >= 0 && messages[0].first[s] != '>')
-                    {
-                        messages[0].first[s] = ' ';
-                        s--;
-                    }
+                    messages[0].first[s] = ' ';
+                    s--;
                 }
             }
         }
@@ -249,9 +210,8 @@ void Client::recvMSG(int size, int timeoutSec)
         unique_lock < mutex > lk(mtx);
         ready = false;
 
-        messages[0] = {"", false};
-        messages[1] = {"", false};
-        
+        messages.clear();
+
         ready = true;
         cv.notify_all();
     }
@@ -266,7 +226,7 @@ string Client::getMessage() const
         cv.wait(lk);
     }
 
-    return messages[0].second ? messages[0].first : "";
+    return !messages.empty() && messages[0].second ? messages[0].first : "";
 }
 
 Client::~Client()

@@ -2,89 +2,174 @@
 
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
+#include "../physics_object/weapon.hpp"
 
 #include "../world/raytracer.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "playerdatacollector.hpp"
         
-PlayerDataCollector::PlayerDataCollector()
-{
-    playerID = 0;
-    model = nullptr;
-}
-
-void PlayerDataCollector::setPlayerID(int playerID)
-{
-    this->playerID = playerID;
-}
+PlayerDataCollector::PlayerDataCollector() {}
 
 void PlayerDataCollector::collect(Player* player)
 {
-    if (player->getPhysicsObject())
+    if (player->getPhysicsObject() && player->getPhysicsObject()->getOwnerID() >= 0)
     {
-        model = player->getPhysicsObject()->getTransform();
-        moveDirection = player->getMoveDirection();
+        playerIDs.push_back(player->getPhysicsObject()->getOwnerID());
+        models.push_back(player->getPhysicsObject()->getTransform());
+        moveDirections.push_back(player->getMoveDirection());
+
+        Soldier* soldier = dynamic_cast < Soldier* >(player);
+
+        if (soldier)
+        {
+            deque < Weapon* > weapons = soldier->getWeapons();
+            vector < string > tmp;
+
+            for (size_t i = 0; i < weapons.size(); i++)
+            {
+                tmp.push_back(weapons[i]->getName());
+            }
+
+            if (!tmp.empty())
+            {
+                pickedWeapons.push_back(tmp);
+            }
+        }
     }
 }
 
-string PlayerDataCollector::getData() const
+void PlayerDataCollector::collect(vector < Player* > players)
 {
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        if (players[i]->getPhysicsObject() && players[i]->getPhysicsObject()->getOwnerID() >= 0)
+        {
+            playerIDs.push_back(players[i]->getPhysicsObject()->getOwnerID());
+            models.push_back(players[i]->getPhysicsObject()->getTransform());
+            moveDirections.push_back(players[i]->getMoveDirection());
+
+            Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
+
+            if (soldier)
+            {
+                deque < Weapon* > weapons = soldier->getWeapons();
+                vector < string > tmp;
+
+                for (size_t j = 0; j < weapons.size(); j++)
+                {
+                    tmp.push_back(weapons[j]->getName());
+                }
+
+                if (!tmp.empty())
+                {
+                    pickedWeapons.push_back(tmp);
+                }
+            }
+        }
+    }
+}
+
+string PlayerDataCollector::getData(bool weapons, bool raw) const
+{
+    if (playerIDs.empty())
+    {
+        return "";
+    }
+
     XMLDocument playerDataCollectorDoc;
 
     /* root */
-    XMLNode* root = playerDataCollectorDoc.NewElement("Player");
-
+    XMLNode* root = playerDataCollectorDoc.NewElement("Players");
     playerDataCollectorDoc.InsertFirstChild(root);
 
-    /* playerID */
-    XMLElement* playerIDElem = playerDataCollectorDoc.NewElement("id");
-    playerIDElem->SetText(playerID);
-
-    root->InsertEndChild(playerIDElem);
-
-    /* model */
-    XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
-
-    for (int i = 0; i < 16; i++)
+    for (size_t i = 0; i < playerIDs.size(); i++)
     {
-        string str;
-        str = char('a' + i);
+        XMLElement* playerElem = playerDataCollectorDoc.NewElement("plr");
 
-        modelElem->SetAttribute(str.data(), cutFloat(model[i], 4));
+        /* playerID */
+        XMLElement* playerIDElem = playerDataCollectorDoc.NewElement("id");
+        playerIDElem->SetText(playerIDs[i]);
+
+        playerElem->InsertEndChild(playerIDElem);
+
+        /* model */
+        XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
+
+        for (int j = 0; j < 16; j++)
+        {
+            string str;
+            str = char('a' + j);
+
+            modelElem->SetAttribute(str.data(), cutFloat(models[i][j], 4));
+        }
+
+        playerElem->InsertEndChild(modelElem);
+
+        /* moveDirection */
+        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[i].x(), 4));
+        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[i].y(), 4));
+        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[i].z(), 4));
+
+        playerElem->InsertEndChild(moveDirectionElem);
+
+        /* weapons */
+        if (weapons && !pickedWeapons.empty())
+        {
+            for (size_t j = 0; j < pickedWeapons[i].size(); j++)
+            {
+                XMLElement* pickedElem = playerDataCollectorDoc.NewElement("pick");
+                pickedElem->SetText(pickedWeapons[i][j].data());
+
+                playerElem->InsertEndChild(pickedElem);
+            }
+        }
+
+        root->InsertEndChild(playerElem);
     }
-
-    root->InsertEndChild(modelElem);
-    
-    /* moveDirection */
-    XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-    moveDirectionElem->SetAttribute("x", cutFloat(moveDirection.x(), 4));
-    moveDirectionElem->SetAttribute("y", cutFloat(moveDirection.y(), 4));
-    moveDirectionElem->SetAttribute("z", cutFloat(moveDirection.z(), 4));
-
-    root->InsertEndChild(moveDirectionElem);
 
     /* printer */
     XMLPrinter playerDataCollectorPrinter;
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
-    string res("BEG\n");
-    res += playerDataCollectorPrinter.CStr();
-    res += "END";
+    string res = "";
 
-    return res;
+    if (!raw)
+    {
+        res += "BEG\n";
+        res += playerDataCollectorPrinter.CStr();
+        res += "END";
+    }
+    else
+    {
+        res += playerDataCollectorPrinter.CStr();
+    }
+
+    return res; 
 }
-        
+
 void PlayerDataCollector::clear()
 {
-    playerID = 0;  
+    playerIDs.clear();
+    moveDirections.clear();
+    pickedWeapons.clear();
 
-    delete[] model;
-    model = nullptr;
+    for (size_t i = 0; i < models.size(); i++)
+    {   
+        delete[] models[i];
+        models[i] = nullptr;
+    }
+
+    models.clear();
 }
 
 PlayerDataCollector::~PlayerDataCollector() 
 {
-    delete[] model;
+    for (size_t i = 0; i < models.size(); i++)
+    {   
+        delete[] models[i];
+    }
 }

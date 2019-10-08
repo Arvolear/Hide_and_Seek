@@ -56,6 +56,18 @@ map < string, PhysicsObject* > Level::getPhysicsObjects() const
     return physicsObjects;
 }
 
+map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
+{
+    map < string, PhysicsObject* > tmp = physicsObjects;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        tmp.erase(players[i]->getPhysicsObject()->getName());
+    }
+
+    return tmp;
+}
+
 void Level::removePhysicsObject(PhysicsObject* physicsObject)
 {
     if (physicsObjects.find(physicsObject->getName()) != physicsObjects.end())
@@ -118,6 +130,14 @@ Player* Level::getPlayer(int id) const
 vector < Player* > Level::getPlayers() const
 {
     return players;
+}
+
+vector < Player* > Level::getPlayersExcept(int index) const
+{
+    vector < Player* > tmp = players;
+    tmp.erase(tmp.begin() + index);
+
+    return tmp;
 }
 
 string Level::getLevelName() const

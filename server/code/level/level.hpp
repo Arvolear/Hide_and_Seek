@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -30,6 +31,7 @@ class Level
         void addPhysicsObject(PhysicsObject* physicsObject);
         PhysicsObject* getPhysicsObject(string name) const;
         map < string, PhysicsObject* > getPhysicsObjects() const;
+        map < string, PhysicsObject* > getNoPlayersPhysicsObjects() const;
 
         void removePhysicsObject(PhysicsObject* physicsObject);
         void removePhysicsObject(string name);
@@ -38,6 +40,7 @@ class Level
         
         Player* getPlayer(int id) const;
         vector < Player* > getPlayers() const;
+        vector < Player* > getPlayersExcept(int index) const;
         string getLevelName() const;
 
         ~Level();

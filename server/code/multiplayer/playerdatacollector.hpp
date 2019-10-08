@@ -12,19 +12,20 @@ using namespace tinyxml2;
 class PlayerDataCollector
 {
     private:
-        int playerID;
+        vector < int > playerIDs;
         
-        btScalar* model;
-        btVector3 moveDirection;
+        vector < btScalar* > models;
+        vector < btVector3 > moveDirections;
+
+        vector < vector < string > > pickedWeapons;
 
     public:
         PlayerDataCollector();
 
-        void setPlayerID(int playerID);
-        
         void collect(Player* player);
+        void collect(vector < Player* > players);
 
-        string getData() const;
+        string getData(bool weapons = false, bool raw = false) const;
 
         void clear();
         

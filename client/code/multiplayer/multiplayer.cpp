@@ -84,14 +84,13 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 
 void Multiplayer::connect()
 {
-    client->connectToServer("159.224.87.241", 5040);
+    //client->connectToServer("159.224.87.241", 5040);
     //client->connectToServer("192.168.0.145", 5040);
     //client->connectToServer("192.168.0.184", 5040);
-    //client->connectToServer("127.0.0.1", 5040);
+    client->connectToServer("127.0.0.1", 5040);
 
+    /* players info */
     client->recvMSG(1150);
-
-    /* get playerID */
     string msg = client->getMessage();
 
     if (msg != "")
@@ -106,7 +105,24 @@ void Multiplayer::connect()
         {
             joinElem->QueryIntText(&playerID);
         }
-            
+        
+        map < string, GameObject* > gameObjects = level->getGameObjects();
+        
+        playerDataUpdater->collect(msg);
+        playerDataUpdater->updateData(level->getPlayers(), false, gameObjects);
+        playerDataUpdater->clear();
+    }
+    else
+    {
+        throw(runtime_error("ERROR::Multiplayer::connect() server is down"));
+    }
+   
+    /* gameObjects info */
+    client->recvMSG(1150);
+    msg = client->getMessage();
+
+    if (msg != "")
+    {
         gameObjectDataUpdater->collect(msg);
         gameObjectDataUpdater->updateData(level->getGameObjects(), false);
         gameObjectDataUpdater->clear();
@@ -225,7 +241,7 @@ void Multiplayer::update()
 
             playerConnectionUpdater->clear();
         }
-        else if (msg.find("Player") != string::npos)
+        else if (msg.find("Players") != string::npos)
         { 
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()), true);
