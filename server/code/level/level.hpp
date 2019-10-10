@@ -32,6 +32,7 @@ class Level
         PhysicsObject* getPhysicsObject(string name) const;
         map < string, PhysicsObject* > getPhysicsObjects() const;
         map < string, PhysicsObject* > getNoPlayersPhysicsObjects() const;
+        map < string, PhysicsObject* > getNoPlayersAndTheirWeaponsPhysicsObjects() const;
 
         void removePhysicsObject(PhysicsObject* physicsObject);
         void removePhysicsObject(string name);

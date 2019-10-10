@@ -148,12 +148,13 @@ void Node::checkConnections(int size)
             char* buffer = new char[size + 1];
             int bytes_read = 1;
 
-            if (!messages[i].empty())
+            int last = 0;
+            while (last < int(messages[i].size()) && messages[i][last].second)
             {
-                messages[i].pop_front();
+                last++;
             }
 
-            while (messages[i].empty() || (!messages[i].empty() && !messages[i][0].second))
+            while (messages[i].empty() || (!messages[i].empty() && !messages[i][last].second))
             {	
                 memset(buffer, 0, size + 1);
 
@@ -169,19 +170,22 @@ void Node::checkConnections(int size)
                     break;
                 }
 
-                constructFineMessage(buffer, bytes_read, i, 0, 0);
+                constructFineMessage(buffer, bytes_read, i, last, 0);
             }
             
-            if (!messages[i].empty() && messages[i][0].second)
+            for (size_t j = last; j < messages[i].size(); j++)
             {
-                /* END fix */
-                if (!messages[i][0].first.empty())
+                if (messages[i][j].second)
                 {
-                    int s = messages[i][0].first.size() - 1;
-                    while (s >= 0 && messages[i][0].first[s] != '>')
+                    /* END fix */
+                    if (!messages[i][j].first.empty())
                     {
-                        messages[i][0].first[s] = ' ';
-                        s--;
+                        int s = messages[i][j].first.size() - 1;
+                        while (s >= 0 && messages[i][j].first[s] != '>')
+                        {
+                            messages[i][j].first[s] = ' ';
+                            s--;
+                        }
                     }
                 }
             }
@@ -377,6 +381,7 @@ vector < string > Node::getMessages() const
         if (!messages[i].empty() && messages[i][0].second)
         {
             res.push_back(messages[i][0].first);
+            messages[i].pop_front();
         }
         else
         {

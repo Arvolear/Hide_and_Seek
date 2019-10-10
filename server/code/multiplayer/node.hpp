@@ -30,7 +30,7 @@ class Node
 
         fd_set readfds;
 
-		vector < deque < pair < string, bool > > > messages;
+		mutable vector < deque < pair < string, bool > > > messages;
         vector < string > lastMsgs; 
         
         bool ready;

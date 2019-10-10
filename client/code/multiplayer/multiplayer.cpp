@@ -85,9 +85,9 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
 void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
-    //client->connectToServer("192.168.0.145", 5040);
+    client->connectToServer("192.168.0.145", 5040);
     //client->connectToServer("192.168.0.184", 5040);
-    client->connectToServer("127.0.0.1", 5040);
+    //client->connectToServer("127.0.0.1", 5040);
 
     /* players info */
     client->recvMSG(1150);
@@ -142,11 +142,6 @@ void Multiplayer::connect()
     level->getPlayer()->setActive(true);
 
     cout << "PlayerID: " << playerID << endl;
-   
-    /* send player info */
-    playerDataCollector->collect(level->getPlayer());
-    client->sendMSG(playerDataCollector->getData());
-    playerDataCollector->clear();
 }
 
 void Multiplayer::broadcast()
@@ -225,8 +220,6 @@ void Multiplayer::update()
 
             this_thread::sleep_for(chrono::milliseconds(10));
         }
-
-        //cout << msg << endl << msg.size() << endl;
 
         if (msg.find("Con") != string::npos)
         { 

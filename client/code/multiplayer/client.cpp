@@ -160,13 +160,14 @@ void Client::recvMSG(int size, int timeoutSec)
 
         unique_lock < mutex > lk(mtx);
         ready = false;
-
-        if (!messages.empty())
+        
+        int last = 0;
+        while (last < int(messages.size()) && messages[last].second)
         {
-            messages.pop_front();
+            last++;
         }
 
-        while (messages.empty() || (!messages.empty() && !messages[0].second))
+        while (messages.empty() || (!messages.empty() && !messages[last].second))
         {
             memset(buffer, 0, size + 1);
 
@@ -183,19 +184,22 @@ void Client::recvMSG(int size, int timeoutSec)
                 break;
             }
 
-            constructFineMessage(buffer, bytes_read, 0, 0);
+            constructFineMessage(buffer, bytes_read, last, 0);
         }
-         
-        if (!messages.empty() && messages[0].second)
+        
+        for (size_t i = last; i < messages.size(); i++)
         {
-            /* END fix */
-            if (!messages[0].first.empty())
+            if (messages[i].second)
             {
-                int s = messages[0].first.size() - 1;
-                while (s >= 0 && messages[0].first[s] != '>')
+                /* END fix */
+                if (!messages[i].first.empty())
                 {
-                    messages[0].first[s] = ' ';
-                    s--;
+                    int s = messages[i].first.size() - 1;
+                    while (s >= 0 && messages[i].first[s] != '>')
+                    {
+                        messages[i].first[s] = ' ';
+                        s--;
+                    }
                 }
             }
         }
@@ -204,16 +208,6 @@ void Client::recvMSG(int size, int timeoutSec)
         cv.notify_all();
 
         delete[] buffer;
-    }
-    else
-    {
-        unique_lock < mutex > lk(mtx);
-        ready = false;
-
-        messages.clear();
-
-        ready = true;
-        cv.notify_all();
     }
 }
 
@@ -226,7 +220,22 @@ string Client::getMessage() const
         cv.wait(lk);
     }
 
-    return !messages.empty() && messages[0].second ? messages[0].first : "";
+    if (!messages.empty() && messages[0].second)
+    {
+        string msg = messages[0].first;
+        
+        /*for (size_t i = 0; i < messages.size(); i++)
+        {
+            cout << messages[i].first << endl;
+        }
+        cout << "-----------------" << endl;*/
+
+        messages.pop_front();
+
+        return msg;
+    }
+
+    return "";
 }
 
 Client::~Client()

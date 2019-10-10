@@ -2,7 +2,7 @@
 <RifleFile>
     <rifles>
 
-        <rifle name="m4">
+        <rifle name="weapon_m4">
             <graphicsobject path="/animated_models/Gun/gun.fbx">
                 <viewfrustum apply="true"/>
                 <scale x="0.2" y="0.2" z="0.2"/>

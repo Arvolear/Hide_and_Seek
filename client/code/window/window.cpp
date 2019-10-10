@@ -14,8 +14,8 @@ Window::Window() : GLFWEvents()
     height = 768;
     resized = false;
 
-    renderWidth = 1600;
-    renderHeight = 900;
+    renderWidth = 1280;
+    renderHeight = 720;
 
     mousePosition = vec2(0);
     mouseMoved = false;
@@ -33,7 +33,12 @@ Window::Window() : GLFWEvents()
 
     window = glfwCreateWindow(width, height, "Hide&Seek", NULL, NULL);
 
-    glfwSetWindowPos(window, 100, 100);
+    glfwGetPrimaryMonitor();
+
+    int monitorPosX, monitorPosY;
+    glfwGetMonitorPos(glfwGetPrimaryMonitor(), &monitorPosX, &monitorPosY);
+
+    glfwSetWindowPos(window, monitorPosX + 100, monitorPosY + 100);
     glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
     glfwSetWindowAspectRatio(window, width, height);
 

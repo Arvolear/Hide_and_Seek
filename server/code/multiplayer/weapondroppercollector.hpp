@@ -21,8 +21,6 @@ class WeaponDropperCollector
     public:
         WeaponDropperCollector();
 
-        void setPlayerID(int playerID);
-
         void collect(Player* player);
 
         string getData() const;

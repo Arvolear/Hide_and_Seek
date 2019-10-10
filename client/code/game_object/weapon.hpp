@@ -45,7 +45,7 @@ class Weapon : public GameObject
         void setShotPower(float shotPower);
 
         void reload();
-        void drop(vec3 where);
+        void drop(vec3 where, bool active);
         void pick(vec3 forward, vec3 up, bool active = true);
         void choose();
         

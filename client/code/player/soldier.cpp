@@ -130,7 +130,7 @@ void Soldier::drop(Weapon* weapon)
     }
 
     weapons[0]->setUserPointer(nullptr);
-    weapons[0]->drop(getForward() + getUp());
+    weapons[0]->drop(getForward() + getUp(), active);
     weapons.pop_front();
 }
 

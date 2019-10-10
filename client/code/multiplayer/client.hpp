@@ -33,7 +33,7 @@ class Client
         mutable mutex mtx;
         mutable condition_variable cv;
 
-        deque < pair < string, bool > > messages;
+        mutable deque < pair < string, bool > > messages;
 
         string lastMsg;
 

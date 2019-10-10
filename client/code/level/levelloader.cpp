@@ -77,7 +77,7 @@ void LevelLoader::loadProjection(XMLElement* projElem, mat4 &proj)
             projElem->QueryFloatAttribute("near", &near);
             projElem->QueryFloatAttribute("far", &far);
 
-            proj = perspective(fovy, aspect, near, far);
+            proj = perspective(radians(fovy), aspect, near, far);
         }
         else if (!strcmp(type, "orthogonal"))
         {

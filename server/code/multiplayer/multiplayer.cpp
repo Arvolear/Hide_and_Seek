@@ -80,7 +80,7 @@ void Multiplayer::broadcast()
                 }
             }
 
-            physicsObjectDataCollector->collect(level->getNoPlayersPhysicsObjects());
+            physicsObjectDataCollector->collect(level->getNoPlayersAndTheirWeaponsPhysicsObjects());
 
             for (size_t i = 0; i < new_sockets.size(); i++)
             {
@@ -98,7 +98,7 @@ void Multiplayer::broadcast()
                     node->newToClient(i);    
                 }
             }
-
+                    
             physicsObjectDataCollector->clear();
 
             /* show connected */
@@ -148,12 +148,12 @@ void Multiplayer::broadcast()
         }
         
         /* physicsobject data */
-        map < string, PhysicsObject* > physicsObjects = level->getNoPlayersPhysicsObjects();
+        map < string, PhysicsObject* > physicsObjects = level->getNoPlayersAndTheirWeaponsPhysicsObjects();
 
         /* physics object */
         for (auto& i: physicsObjects)
         {
-            if (i.second->isCollidable() && i.second->getRigidBody()->isActive() && !i.second->getRigidBody()->isStaticOrKinematicObject())
+            if (i.second->isCollidable() && !i.second->getRigidBody()->isStaticOrKinematicObject() && (i.second->getRigidBody()->isActive() || i.second->getName().find("weapon") != string::npos))
             {
                 physicsObjectDataCollector->collect(i.second); 
 

@@ -63,10 +63,7 @@ void PlayerDataCollector::collect(vector < Player* > players)
                     tmp.push_back(weapons[j]->getName());
                 }
 
-                if (!tmp.empty())
-                {
-                    pickedWeapons.push_back(tmp);
-                }
+                pickedWeapons.push_back(tmp);
             }
         }
     }

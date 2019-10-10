@@ -9,6 +9,7 @@
 #include "../physics_object/weapon.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "levelloader.hpp"
 #include "level.hpp"
@@ -63,6 +64,29 @@ map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
     for (size_t i = 0; i < players.size(); i++)
     {
         tmp.erase(players[i]->getPhysicsObject()->getName());
+    }
+
+    return tmp;
+}
+        
+map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects() const
+{
+    map < string, PhysicsObject* > tmp = physicsObjects;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        tmp.erase(players[i]->getPhysicsObject()->getName());
+
+        Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
+
+        if (soldier)
+        {
+            deque < Weapon* > weapons = soldier->getWeapons();
+            for (size_t j = 0; j < weapons.size(); j++)
+            {
+                tmp.erase(weapons[j]->getName());
+            }
+        }
     }
 
     return tmp;
