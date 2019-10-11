@@ -18,11 +18,6 @@ WeaponPickerCollector::WeaponPickerCollector()
     playerID = 0;
 }
 
-void WeaponPickerCollector::setPlayerID(int playerID)
-{
-    this->playerID = playerID;
-}
-
 void WeaponPickerCollector::collect(Player* player)
 {
     Soldier* soldier = dynamic_cast < Soldier* >(player);
@@ -31,6 +26,8 @@ void WeaponPickerCollector::collect(Player* player)
     {
         throw(runtime_error("ERROR::WeaponPickerCollector::collect() player is not a soldier"));
     }
+
+    playerID = soldier->getPhysicsObject()->getOwnerID();
 
     deque < Weapon* > new_weapons = soldier->getNewWeapons();
 

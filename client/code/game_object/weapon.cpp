@@ -89,7 +89,7 @@ void Weapon::reload()
     playAnimation("reload2");
 }
 
-void Weapon::drop(vec3 where)
+void Weapon::drop(vec3 where, bool active)
 {
     int power = 3;
 
@@ -98,7 +98,12 @@ void Weapon::drop(vec3 where)
     
     setVisible(true);
     physicsObject->setCollidable(true);
-    physicsObject->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+
+    if (active)
+    {
+        physicsObject->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+    }
+
     setShadow(true);
 }
 
@@ -159,7 +164,7 @@ void Weapon::pick(vec3 forward, vec3 up, bool active)
         }
 
         angle = acos(cosRotAngle); 
-
+        
         btQuaternion rot(global.toBtVector3(cross(up, forward)), angle);
         physicsObject->setRotation(rot);
     }

@@ -87,9 +87,6 @@ void Soldier::setConnected(bool connected)
 
 void Soldier::weaponAction()
 {
-    pickFrom = pickTo = vec3(0);
-    dropTo = false;
-
     if (window->isKeyPressedOnce(GLFW_KEY_G))
     {
         drop();
@@ -133,7 +130,7 @@ void Soldier::drop(Weapon* weapon)
     }
 
     weapons[0]->setUserPointer(nullptr);
-    weapons[0]->drop(getForward() + getUp());
+    weapons[0]->drop(getForward() + getUp(), active);
     weapons.pop_front();
 }
 

@@ -10,6 +10,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <mutex>
 #include <condition_variable>
 
@@ -29,14 +30,14 @@ class Node
 
         fd_set readfds;
 
-		vector < vector < pair < string, bool > > > messages;
+		mutable vector < deque < pair < string, bool > > > messages;
         vector < string > lastMsgs; 
         
         bool ready;
         mutable mutex mtx;
         mutable condition_variable cv;
 		
-        void constructFineMessage(char* buffer, int size, int index);     
+        void constructFineMessage(char* buffer, int size, int index, int curMsg, int begOffset);
  
         void checkNewConnections();
         void checkConnections(int size);

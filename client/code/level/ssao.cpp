@@ -34,7 +34,7 @@ void SSAO::genBuffer(int width, int height)
     this->renderSize.x = width;
     this->renderSize.y = height;
 
-    colorBuffer->genBuffer(width, height, {{GL_RGB16F, GL_RGB, GL_FLOAT}});
+    colorBuffer->genBuffer(width, height, {{GL_R16F, GL_RED, GL_FLOAT}});
 }
 
 void SSAO::genBuffer(vec2 size)
@@ -91,7 +91,7 @@ void SSAO::genNoise(int size)
         noise.push_back(noiseSample); 
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, size, size, 0, GL_RED, GL_FLOAT, noise.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size, size, 0, GL_RED, GL_FLOAT, noise.data());
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }

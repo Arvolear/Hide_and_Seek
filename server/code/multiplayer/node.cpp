@@ -8,12 +8,6 @@ Node::Node(int max_clients, int max_queue, int port)
     old_client_sockets.resize(max_clients);
 
     messages.resize(max_clients);
-
-    for (size_t i = 0; i < messages.size(); i++)
-    {
-        messages[i].resize(2, {"", false});
-    }
-    
     lastMsgs.resize(max_clients, "");
 
     ready = true;
@@ -77,59 +71,43 @@ void Node::checkNewConnections()
     }
 }
 
-void Node::constructFineMessage(char* buffer, int size, int index)
+void Node::constructFineMessage(char* buffer, int size, int index, int curMsg, int begOffset)
 {
 	/* BEG */
 	if (!buffer || size <= 0)
 	{
-        messages[index][0].second = false;
-        messages[index][1].second = false;
+        messages[index].clear();
 
+        return;
+    }
+
+    if (begOffset >= size)
+    {
         return;
     }
 
     string tmp(buffer, size);
 
-    if (messages[index][0].first.empty())
+    if ((int)messages[index].size() <= curMsg)
     {
-        size_t beg = tmp.find("BEG");
+        messages[index].push_back({"", false});
+
+        size_t beg = tmp.find("BEG", begOffset);
         if (beg != string::npos)
         {
             size_t end = tmp.find("END", beg + 3);
             if (end != string::npos)
             {
-                messages[index][0].first = tmp.substr(beg + 3, end - beg - 3);		
+                messages[index][curMsg].first = tmp.substr(beg + 3, end - beg - 3);		
+                messages[index][curMsg].second = true;
 
-                size_t beg2 = tmp.find("BEG", end + 3);
-                if (beg2 != string::npos)
-                {
-                    size_t end2 = tmp.find("END", beg2 + 3);
-                    if (end2 != string::npos)
-                    {
-                        messages[index][1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
-                        
-                        messages[index][0].second = true;
-                        messages[index][1].second = true;
-
-                        return;
-                    }
-                    else
-                    {
-                        messages[index][1].first = tmp.substr(beg2 + 3);
-                    }
-                }
-
-                messages[index][0].second = true;
-                messages[index][1].second = false;
-
+                constructFineMessage(buffer, size, index, curMsg + 1, end + 3);
                 return;
             }
             else
             {
-                messages[index][0].first = tmp.substr(beg + 3);
-
-                messages[index][0].second = false;
-                messages[index][1].second = false;
+                messages[index][curMsg].first = tmp.substr(beg + 3);
+                messages[index][curMsg].second = false;
 
                 return;
             }
@@ -137,48 +115,23 @@ void Node::constructFineMessage(char* buffer, int size, int index)
     }
     else
     {
-        size_t end = tmp.find("END");
+        size_t end = tmp.find("END", begOffset);
         if (end != string::npos)
         {
-            messages[index][0].first += tmp.substr(0, end);		
+            messages[index][curMsg].first += tmp.substr(begOffset, end);
+            messages[index][curMsg].second = true;
 
-            size_t beg2 = tmp.find("BEG", end + 3);
-            if (beg2 != string::npos)
-            {
-                size_t end2 = tmp.find("END", beg2 + 3);
-                if (end2 != string::npos)
-                {
-                    messages[index][1].first = tmp.substr(beg2 + 3, end2 - beg2 - 3);
-
-                    messages[index][0].second = true;
-                    messages[index][1].second = true;
-
-                    return;
-                }
-                else
-                {
-                    messages[index][1].first = tmp.substr(beg2 + 3);
-                }
-            }
-
-            messages[index][0].second = true;
-            messages[index][1].second = false;
-
+            constructFineMessage(buffer, size, index, curMsg + 1, end + 3);
             return;
         }
         else
         {
-            messages[index][0].first += tmp;
-
-            messages[index][0].second = false;
-            messages[index][1].second = false;
+            messages[index][curMsg].first += tmp;
+            messages[index][curMsg].second = false;
 
             return;
         }
     }
-
-    messages[index][0].second = false;
-    messages[index][1].second = false;
 
     return;
     /* END */
@@ -195,10 +148,13 @@ void Node::checkConnections(int size)
             char* buffer = new char[size + 1];
             int bytes_read = 1;
 
-            messages[i][0] = messages[i][1];
-            messages[i][1] = {"", false};
+            int last = 0;
+            while (last < int(messages[i].size()) && messages[i][last].second)
+            {
+                last++;
+            }
 
-            while (!messages[i][0].second)
+            while (messages[i].empty() || (!messages[i].empty() && !messages[i][last].second))
             {	
                 memset(buffer, 0, size + 1);
 
@@ -214,17 +170,20 @@ void Node::checkConnections(int size)
                     break;
                 }
 
-                constructFineMessage(buffer, bytes_read, i);
-
-                if (messages[i][0].second)
+                constructFineMessage(buffer, bytes_read, i, last, 0);
+            }
+            
+            for (size_t j = last; j < messages[i].size(); j++)
+            {
+                if (messages[i][j].second)
                 {
                     /* END fix */
-                    if (!messages[i][0].first.empty())
+                    if (!messages[i][j].first.empty())
                     {
-                        int s = messages[i][0].first.size() - 1;
-                        while (s >= 0 && messages[i][0].first[s] != '>')
+                        int s = messages[i][j].first.size() - 1;
+                        while (s >= 0 && messages[i][j].first[s] != '>')
                         {
-                            messages[i][0].first[s] = ' ';
+                            messages[i][j].first[s] = ' ';
                             s--;
                         }
                     }
@@ -240,8 +199,7 @@ void Node::checkConnections(int size)
                 client_sockets[i] = 0;
                 new_client_sockets[i] = 0;
 
-                messages[i][0] = {"", false};
-                messages[i][1] = {"", false};
+                messages[i].clear();
 
                 close(inputsd);
             }
@@ -286,7 +244,7 @@ void Node::checkActivity(int size, float timeoutSec)
 
     checkNewConnections();
     checkConnections(size);
-    
+
     ready = true;
     cv.notify_all();
 }
@@ -420,9 +378,10 @@ vector < string > Node::getMessages() const
 
     for (size_t i = 0; i < messages.size(); i++)
     {
-        if (messages[i][0].second)
+        if (!messages[i].empty() && messages[i][0].second)
         {
             res.push_back(messages[i][0].first);
+            messages[i].pop_front();
         }
         else
         {

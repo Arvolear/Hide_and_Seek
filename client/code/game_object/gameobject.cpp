@@ -251,18 +251,13 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
         unique_ptr < btScalar > transform(global.glmMat42BtScalar(model));
         physicsObject->setTransform(transform.get());
 
-        prevTransform = model;
+        prevTransform = nextTransform = model;
     }
     else
     {
         prevTransform = nextTransform;
         nextTransform = model;
         interpolationCoeff = 0.0;
-    
-        if (name == "soldier0")
-        {
-            //cout << "NEW" << endl;
-        }
     }
 }
 
@@ -393,7 +388,7 @@ void GameObject::render(Shader* shader, bool cull)
 {
     if (interpolation && interpolationCoeff < 1.0)
     {
-        mat4 model = (1 - interpolationCoeff) * prevTransform + interpolationCoeff * nextTransform;
+        mat4 model = float(1.0 - interpolationCoeff) * prevTransform + interpolationCoeff * nextTransform;
 
         unique_ptr < btScalar > scalarModel(global.glmMat42BtScalar(model));
 
@@ -402,11 +397,6 @@ void GameObject::render(Shader* shader, bool cull)
         interpolationCoeff += 0.2;
     }
     
-    if (name == "soldier0")
-    {
-        //cout << interpolationCoeff << endl;
-    }
-
     if (visible && cull && viewFrustum && boundSphere)
     {
         unique_lock < mutex > lk(mtx);

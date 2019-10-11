@@ -2,7 +2,7 @@
 <WeaponFile>
     <weapons>
 
-        <weapon name="m4">
+        <weapon name="weapon_m4">
             <shape type="compound">
                 <childshape type="box" x="0.07" y="0.1" z="0.9">
                     <position x="0.0" y="0.12" z="0.2"/>

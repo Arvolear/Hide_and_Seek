@@ -52,7 +52,6 @@ void Multiplayer::broadcast()
         /* new clients */
         if (node->isNewClients())
         {
-            physicsObjectDataCollector->collect(level->getPhysicsObjects());
             vector < int > new_sockets = node->getNewClientSockets();
 
             for (size_t i = 0; i < new_sockets.size(); i++)
@@ -60,26 +59,48 @@ void Multiplayer::broadcast()
                 if (new_sockets[i] > 0)
                 {
                     cout << "Join playerID: " << i << endl;
-                    
-                    /* connected */
-                    level->getPlayer(i)->setConnected(true);
-
-                    string message = "BEG\n<join>" + to_string(i) + "</join>\n";
-                    message += physicsObjectDataCollector->getData(true);
-                    message += "END";
-
-                    /* send here */
-                    node->sendMSG(new_sockets[i], message);
-
-                    node->newToClient(i);
-                    
                     level->getPlayer(i)->getPhysicsObject()->setOwnerID(i);
                     level->getPlayer(i)->setConnected(true);
+
+                    /* init player data */
+                    vector < Player* > players = level->getPlayers();
+                    playerDataCollector->collect(players);
+
+                    string message = "BEG\n<join>" + to_string(i) + "</join>\n";
+                    message += playerDataCollector->getData(true, true);
+                    message += "END";
+
+                    try
+                    {
+                        node->sendMSG(new_sockets[i], message);
+                    }
+                    catch(exception& ex) {}
+
+                    playerDataCollector->clear();
                 }
             }
 
+            physicsObjectDataCollector->collect(level->getNoPlayersAndTheirWeaponsPhysicsObjects());
+
+            for (size_t i = 0; i < new_sockets.size(); i++)
+            {
+                if (new_sockets[i] > 0)
+                {
+                    string message = physicsObjectDataCollector->getData();
+
+                    /* send here */
+                    try
+                    {
+                        node->sendMSG(new_sockets[i], message);
+                    }
+                    catch(exception& ex) {}
+
+                    node->newToClient(i);    
+                }
+            }
+                    
             physicsObjectDataCollector->clear();
-            
+
             /* show connected */
             vector < int > sockets = node->getClientSockets();
 
@@ -102,16 +123,10 @@ void Multiplayer::broadcast()
 
         /* player data */
         vector < Player* > players = level->getPlayers();
-        /* physicsobject data */
-        map < string, PhysicsObject* > physicsObjects = level->getPhysicsObjects();
 
         /* player */
         for (size_t i = 0; i < players.size(); i++)
         {
-            /* erase PO */
-            physicsObjects.erase(players[i]->getPhysicsObject()->getName());
-
-            playerDataCollector->setPlayerID(i);
             playerDataCollector->collect(players[i]);
 
             /* send position info */
@@ -131,11 +146,14 @@ void Multiplayer::broadcast()
 
             playerDataCollector->clear();
         }
+        
+        /* physicsobject data */
+        map < string, PhysicsObject* > physicsObjects = level->getNoPlayersAndTheirWeaponsPhysicsObjects();
 
         /* physics object */
         for (auto& i: physicsObjects)
         {
-            if (i.second->isCollidable() && i.second->getRigidBody()->isActive() && !i.second->getRigidBody()->isStaticOrKinematicObject())
+            if (i.second->isCollidable() && !i.second->getRigidBody()->isStaticOrKinematicObject() && (i.second->getRigidBody()->isActive() || i.second->getName().find("weapon") != string::npos))
             {
                 physicsObjectDataCollector->collect(i.second); 
 
@@ -161,7 +179,6 @@ void Multiplayer::broadcast()
         /* pickWeapons */
         for (size_t i = 0; i < players.size(); i++)
         {
-            weaponPickerCollector->setPlayerID(i);
             weaponPickerCollector->collect(players[i]);
 
             vector < int > sockets = node->getClientSockets();
@@ -177,11 +194,10 @@ void Multiplayer::broadcast()
 
             weaponPickerCollector->clear();
         }
-        
+
         /* dropWeapons */
         for (size_t i = 0; i < players.size(); i++)
         {
-            weaponDropperCollector->setPlayerID(i);
             weaponDropperCollector->collect(players[i]);
 
             vector < int > sockets = node->getClientSockets();
@@ -197,7 +213,7 @@ void Multiplayer::broadcast()
 
             weaponDropperCollector->clear();
         }
-        
+
         /* old clients */
         if (node->isOldClients())
         {
@@ -223,7 +239,7 @@ void Multiplayer::broadcast()
                 if (old_sockets[i] > 0)
                 {
                     cout << "Quit playerID: " << i << endl;
-                    
+
                     /* disconnected */
                     level->getPlayer(i)->setConnected(false);
 
@@ -240,7 +256,7 @@ void Multiplayer::update()
     while (true)
     {
         vector < string > messages;
-        
+
         while (true)
         {
             node->checkActivity(300);

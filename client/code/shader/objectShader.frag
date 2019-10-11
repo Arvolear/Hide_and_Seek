@@ -117,8 +117,8 @@ vec4 calcDirLights()
     float fragRough = texture(gBuffer.texture_metRoughAO, UV).g;
     float fragAO = texture(gBuffer.texture_metRoughAO, UV).b;
 
-    //fragMetal = 0.0;
-    //fragRough = 0.0;
+    //fragMetal = 0.5;
+    //fragRough = 0.5;
 
     vec3 viewDir = normalize(viewPos - fragPos);
     vec3 F0 = vec3(0.04);

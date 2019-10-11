@@ -21,8 +21,6 @@ class WeaponPickerCollector
     public:
         WeaponPickerCollector();
 
-        void setPlayerID(int playerID);
-
         void collect(Player* player);
 
         string getData() const;

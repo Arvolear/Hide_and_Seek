@@ -18,11 +18,6 @@ WeaponDropperCollector::WeaponDropperCollector()
     playerID = 0;
 }
 
-void WeaponDropperCollector::setPlayerID(int playerID)
-{
-    this->playerID = playerID;
-}
-
 void WeaponDropperCollector::collect(Player* player)
 {
     Soldier* soldier = dynamic_cast < Soldier* >(player);
@@ -31,6 +26,8 @@ void WeaponDropperCollector::collect(Player* player)
     {
         throw(runtime_error("ERROR::WeaponDropperCollector::collect() player is not a soldier"));
     }
+
+    playerID = soldier->getPhysicsObject()->getOwnerID();
 
     deque < Weapon* > old_weapons = soldier->getOldWeapons();
 
