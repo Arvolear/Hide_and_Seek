@@ -52,46 +52,6 @@ PhysicsObject* Level::getPhysicsObject(string name) const
     return nullptr;
 }
 
-map < string, PhysicsObject* > Level::getPhysicsObjects() const
-{
-    return physicsObjects;
-}
-
-map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
-{
-    map < string, PhysicsObject* > tmp = physicsObjects;
-
-    for (size_t i = 0; i < players.size(); i++)
-    {
-        tmp.erase(players[i]->getPhysicsObject()->getName());
-    }
-
-    return tmp;
-}
-        
-map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects() const
-{
-    map < string, PhysicsObject* > tmp = physicsObjects;
-
-    for (size_t i = 0; i < players.size(); i++)
-    {
-        tmp.erase(players[i]->getPhysicsObject()->getName());
-
-        Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
-
-        if (soldier)
-        {
-            deque < Weapon* > weapons = soldier->getWeapons();
-            for (size_t j = 0; j < weapons.size(); j++)
-            {
-                tmp.erase(weapons[j]->getName());
-            }
-        }
-    }
-
-    return tmp;
-}
-
 void Level::removePhysicsObject(PhysicsObject* physicsObject)
 {
     if (physicsObjects.find(physicsObject->getName()) != physicsObjects.end())
@@ -140,6 +100,63 @@ void Level::update()
         }
     }
 }
+        
+void Level::clearNoPlayersAndTheirWeaponsOwner(int owner)
+{
+    map < string, PhysicsObject* > tmp = getNoPlayersAndTheirWeaponsPhysicsObjects();
+
+    for (auto& it : tmp)
+    {
+        if (it.second->getOwnerID() == owner)
+        {
+            it.second->getRigidBody()->forceActivationState(ACTIVE_TAG);
+            it.second->getRigidBody()->applyCentralImpulse(it.second->getRigidBody()->getGravity());
+            
+            it.second->setOwnerID(-1);
+        }
+    }
+}
+
+map < string, PhysicsObject* > Level::getPhysicsObjects() const
+{
+    return physicsObjects;
+}
+
+map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
+{
+    map < string, PhysicsObject* > tmp = physicsObjects;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        tmp.erase(players[i]->getPhysicsObject()->getName());
+    }
+
+    return tmp;
+}
+        
+map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects() const
+{
+    map < string, PhysicsObject* > tmp = physicsObjects;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        tmp.erase(players[i]->getPhysicsObject()->getName());
+
+        Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
+
+        if (soldier)
+        {
+            deque < Weapon* > weapons = soldier->getWeapons();
+            for (size_t j = 0; j < weapons.size(); j++)
+            {
+                tmp.erase(weapons[j]->getName());
+            }
+        }
+    }
+
+    return tmp;
+}
+
 
 Player* Level::getPlayer(int id) const
 {

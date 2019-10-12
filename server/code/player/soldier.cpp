@@ -21,23 +21,22 @@ void Soldier::pick(Weapon* weapon)
         return;
     }
 
-    new_weapons.push_front(weapon);
-    
     weapon->setOwnerID(physicsObject->getOwnerID());
     weapon->setUserPointer(this);
     weapon->setCollidable(false);
+        
+    new_weapons.push_front(weapon);
 }
 
 void Soldier::drop(btScalar* model)
 {
     if (!weapons.empty())
     {
-        old_weapons.push_back(weapons[0]);
-        
         weapons[0]->setTransform(model);
         weapons[0]->setUserPointer(nullptr);
         weapons[0]->setCollidable(true);
-
+        
+        old_weapons.push_back(weapons[0]); 
         weapons.pop_front();
     }
 }

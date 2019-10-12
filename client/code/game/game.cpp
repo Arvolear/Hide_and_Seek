@@ -161,9 +161,11 @@ void Game::gameLoop()
         physicsWorld->pollEvents();
         checkEvents();        
 
-        if (window->getTime() > 1)
+        if (global.fpsCounter->getFramesTime() > 0)
         {
-            physicsWorld->updateSimulation(window->getTime());
+            float step = 2.0 / (global.fpsCounter->getFPS());
+
+            physicsWorld->updateSimulation(step, 1000);
         }
 
         level->updateSunPos();

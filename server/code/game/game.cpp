@@ -64,15 +64,15 @@ void Game::gameLoop()
     init();
 
     while (true)
-    { 
-        this_thread::sleep_for(chrono::milliseconds(10));
+    {
+        this_thread::sleep_for(chrono::milliseconds(16));
 
         physicsWorld->pollEvents();
         checkEvents();        
 
         if (getTime() > 1)
         {
-            physicsWorld->updateSimulation(getTime());
+            physicsWorld->updateSimulation(1.0, 1);
         }
 
         level->update();

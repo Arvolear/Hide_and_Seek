@@ -101,7 +101,7 @@ void Weapon::drop(vec3 where, bool active)
 
     if (active)
     {
-        physicsObject->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+        physicsObject->getRigidBody()->setActivationState(ACTIVE_TAG);
     }
 
     setShadow(true);
@@ -109,7 +109,7 @@ void Weapon::drop(vec3 where, bool active)
 
 void Weapon::pick(vec3 forward, vec3 up, bool active)
 {
-    physicsObject->clearTransform();
+    clearPhysicsObjectTransform();
     
     float angle = 0.0;
     

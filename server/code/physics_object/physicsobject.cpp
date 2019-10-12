@@ -107,7 +107,7 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
 
     if (!collidable)
     {
-        body->setCollisionFlags(btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
+        body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
     }
 }        
 
@@ -265,14 +265,14 @@ void PhysicsObject::setTransform(btTransform* transform)
 {
     motionState->setBTTransform(transform);
     body->setWorldTransform(*motionState->getBTTransform());     
-    body->setActivationState(ACTIVE_TAG);
+    body->forceActivationState(ACTIVE_TAG);
 }
 
 void PhysicsObject::setTransform(btScalar* transform)
 {
     motionState->setGLTransform(transform);
     body->setWorldTransform(*motionState->getBTTransform());     
-    body->setActivationState(ACTIVE_TAG);
+    body->forceActivationState(ACTIVE_TAG);
 }
 
 void PhysicsObject::clearTransform()

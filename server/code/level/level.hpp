@@ -30,14 +30,17 @@ class Level
 
         void addPhysicsObject(PhysicsObject* physicsObject);
         PhysicsObject* getPhysicsObject(string name) const;
-        map < string, PhysicsObject* > getPhysicsObjects() const;
-        map < string, PhysicsObject* > getNoPlayersPhysicsObjects() const;
-        map < string, PhysicsObject* > getNoPlayersAndTheirWeaponsPhysicsObjects() const;
 
         void removePhysicsObject(PhysicsObject* physicsObject);
         void removePhysicsObject(string name);
 
         void update();
+       
+        void clearNoPlayersAndTheirWeaponsOwner(int owner);
+
+        map < string, PhysicsObject* > getPhysicsObjects() const;
+        map < string, PhysicsObject* > getNoPlayersPhysicsObjects() const;
+        map < string, PhysicsObject* > getNoPlayersAndTheirWeaponsPhysicsObjects() const;
         
         Player* getPlayer(int id) const;
         vector < Player* > getPlayers() const;

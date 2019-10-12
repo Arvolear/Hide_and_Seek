@@ -224,12 +224,6 @@ string Client::getMessage() const
     {
         string msg = messages[0].first;
         
-        /*for (size_t i = 0; i < messages.size(); i++)
-        {
-            cout << messages[i].first << endl;
-        }
-        cout << "-----------------" << endl;*/
-
         messages.pop_front();
 
         return msg;

@@ -77,6 +77,7 @@ class GameObject
         void setLocalPosition(vec3 pos, bool add = true);
         void setLocalTransform(mat4 localTransform);
         void clearLocalTransform();
+        void clearPhysicsObjectTransform();
 
         void setPhysicsObjectTransform(mat4 model, bool interpolation = false);
 

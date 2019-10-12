@@ -237,6 +237,15 @@ void GameObject::clearLocalTransform()
     localTransform = mat4(1.0);
 }
         
+void GameObject::clearPhysicsObjectTransform()
+{
+    physicsObject->clearTransform();
+    
+    this->interpolation = false;
+    prevTransform = nextTransform = mat4(1.0);
+    interpolationCoeff = 1.0;
+}
+        
 void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
 {
     if (!physicsObject)
@@ -252,6 +261,7 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
         physicsObject->setTransform(transform.get());
 
         prevTransform = nextTransform = model;
+        interpolationCoeff = 1.0;
     }
     else
     {

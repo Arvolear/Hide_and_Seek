@@ -120,8 +120,43 @@ void Multiplayer::broadcast()
                 }
             }
         }
+        
+        /* old clients */
+        if (node->isOldClients())
+        {
+            /* hide old clients */
+            vector < int > old_sockets = node->getOldClientSockets();
+            vector < int > sockets = node->getClientSockets();
 
-        /* player data */
+            playerDisconnectionCollector->collect(old_sockets);  
+
+            for (size_t i = 0; i < sockets.size(); i++)
+            {
+                try
+                {
+                    node->sendMSG(sockets[i], playerDisconnectionCollector->getData());
+                }
+                catch(exception& ex) {}
+            }
+
+            playerDisconnectionCollector->clear();
+        
+            for (size_t i = 0; i < old_sockets.size(); i++)
+            {
+                if (old_sockets[i] > 0)
+                {
+                    cout << "Quit playerID: " << i << endl;
+
+                    /* disconnected */
+                    level->clearNoPlayersAndTheirWeaponsOwner(i);
+                    level->getPlayer(i)->setConnected(false);
+
+                    /* send here */
+                    node->oldToNothing(i);
+                }
+            }
+        }
+
         vector < Player* > players = level->getPlayers();
 
         /* player */
@@ -147,35 +182,6 @@ void Multiplayer::broadcast()
             playerDataCollector->clear();
         }
         
-        /* physicsobject data */
-        map < string, PhysicsObject* > physicsObjects = level->getNoPlayersAndTheirWeaponsPhysicsObjects();
-
-        /* physics object */
-        for (auto& i: physicsObjects)
-        {
-            if (i.second->isCollidable() && !i.second->getRigidBody()->isStaticOrKinematicObject() && (i.second->getRigidBody()->isActive() || i.second->getName().find("weapon") != string::npos))
-            {
-                physicsObjectDataCollector->collect(i.second); 
-
-                /* send position info */
-                vector < int > sockets = node->getClientSockets();
-
-                for (size_t j = 0; j < sockets.size(); j++)
-                {
-                    if ((int)j != i.second->getOwnerID())
-                    {
-                        try
-                        {
-                            node->sendMSG(sockets[j], physicsObjectDataCollector->getData());
-                        }
-                        catch(exception& ex) {}
-                    }
-                }
-
-                physicsObjectDataCollector->clear();
-            }
-        }
-
         /* pickWeapons */
         for (size_t i = 0; i < players.size(); i++)
         {
@@ -213,39 +219,33 @@ void Multiplayer::broadcast()
 
             weaponDropperCollector->clear();
         }
+        
+        /* physicsobject data */
+        map < string, PhysicsObject* > physicsObjects = level->getNoPlayersAndTheirWeaponsPhysicsObjects();
 
-        /* old clients */
-        if (node->isOldClients())
+        /* physics object */
+        for (auto& i: physicsObjects)
         {
-            /* hide old clients */
-            vector < int > old_sockets = node->getOldClientSockets();
-            vector < int > sockets = node->getClientSockets();
-
-            playerDisconnectionCollector->collect(old_sockets);  
-
-            for (size_t i = 0; i < sockets.size(); i++)
+            if (i.second->isCollidable() && !i.second->getRigidBody()->isStaticOrKinematicObject() && (i.second->getRigidBody()->isActive() || i.second->getName().find("weapon") != string::npos))
             {
-                try
+                physicsObjectDataCollector->collect(i.second);
+
+                /* send position info */
+                vector < int > sockets = node->getClientSockets();
+
+                for (size_t j = 0; j < sockets.size(); j++)
                 {
-                    node->sendMSG(sockets[i], playerDisconnectionCollector->getData());
+                    if ((int)j != i.second->getOwnerID())
+                    {
+                        try
+                        {
+                            node->sendMSG(sockets[j], physicsObjectDataCollector->getData());
+                        }
+                        catch(exception& ex) {}
+                    }
                 }
-                catch(exception& ex) {}
-            }
 
-            playerDisconnectionCollector->clear();
-
-            for (size_t i = 0; i < old_sockets.size(); i++)
-            {
-                if (old_sockets[i] > 0)
-                {
-                    cout << "Quit playerID: " << i << endl;
-
-                    /* disconnected */
-                    level->getPlayer(i)->setConnected(false);
-
-                    /* send here */
-                    node->oldToNothing(i);
-                }
+                physicsObjectDataCollector->clear();
             }
         }
     }
@@ -267,8 +267,6 @@ void Multiplayer::update()
             {
                 break;
             }
-
-            this_thread::sleep_for(chrono::milliseconds(10));
         }
 
         /* player data */
@@ -285,18 +283,6 @@ void Multiplayer::update()
                 }
 
                 playerDataUpdater->clear();
-            }
-            else if (messages[i].find("Obj") != string::npos)
-            {
-                physicsObjectDataUpdater->collect(messages[i]);
-                PhysicsObject* physicsObject = level->getPhysicsObject(physicsObjectDataUpdater->getName());
-
-                if (physicsObjectDataUpdater->getSenderID() == physicsObject->getOwnerID())
-                {
-                    physicsObjectDataUpdater->updateData(physicsObject);
-                }
-
-                physicsObjectDataUpdater->clear();
             }
             else if (messages[i].find("Pick") != string::npos)
             {
@@ -315,6 +301,18 @@ void Multiplayer::update()
                 weaponDropperUpdater->updateData(player);
 
                 weaponDropperUpdater->clear();
+            }
+            else if (messages[i].find("Obj") != string::npos)
+            {
+                physicsObjectDataUpdater->collect(messages[i]);
+                PhysicsObject* physicsObject = level->getPhysicsObject(physicsObjectDataUpdater->getName());
+
+                if (physicsObjectDataUpdater->getSenderID() == physicsObject->getOwnerID())
+                {
+                    physicsObjectDataUpdater->updateData(physicsObject);
+                }
+
+                physicsObjectDataUpdater->clear();
             }
         }
     }

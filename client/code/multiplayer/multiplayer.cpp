@@ -86,7 +86,7 @@ void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
     client->connectToServer("192.168.0.145", 5040);
-    //client->connectToServer("192.168.0.184", 5040);
+    //client->connectToServer("192.168.0.183", 5040);
     //client->connectToServer("127.0.0.1", 5040);
 
     /* players info */
@@ -151,7 +151,7 @@ void Multiplayer::broadcast()
         this_thread::sleep_for(chrono::milliseconds(50));
 
         /* player */
-        if (level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody()->getLinearVelocity().length() > 0.05)
+        if (level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody()->getLinearVelocity().length() > 0.01)
         {
             playerDataCollector->collect(level->getPlayer());
             client->sendMSG(playerDataCollector->getData());
@@ -178,9 +178,7 @@ void Multiplayer::broadcast()
                 {
                     btRigidBody* RB = PO->getRigidBody();
 
-                    btVector3 linearVel = RB->getLinearVelocity();
-
-                    if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject() && linearVel.length() > 0.05)
+                    if (i.second->isCollidable() && RB->isActive() && !RB->isStaticOrKinematicObject())
                     {
                         gameObjectDataCollector->collect(i.second); 
                         client->sendMSG(gameObjectDataCollector->getData());

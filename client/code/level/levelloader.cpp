@@ -1138,7 +1138,18 @@ void LevelLoader::loadSsao()
     if (sSAOElem)
     {
         sSAO = new SSAO();
-        sSAO->genBuffer(window->getRenderSize());
+        
+        XMLElement* bufferElem = sSAOElem->FirstChildElement("buffer");
+
+        if (bufferElem)
+        {
+            int x = 0, y = 0;
+
+            bufferElem->QueryIntAttribute("x", &x);
+            bufferElem->QueryIntAttribute("y", &y);
+
+            sSAO->genBuffer(x, y);
+        }
 
         XMLElement* kernelSizeElem = sSAOElem->FirstChildElement("kernelsize");
 

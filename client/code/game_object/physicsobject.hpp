@@ -60,7 +60,7 @@ class PhysicsObject
         void setPosition(btVector3 position, bool add = true);
         void setRotation(btQuaternion rotation, bool add = true);
         void setTransform(btScalar* transform);
-        void setTransform(btTransform* transform);
+        void setTransform(btTransform transform);
         void clearTransform();
         void setCollidable(bool collidable);
         void setStatic(bool stat);

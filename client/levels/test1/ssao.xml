@@ -2,6 +2,7 @@
 <SsaoFile>
     
     <ssao>
+        <buffer x="1280" y="720"/>
         <kernelsize size="16"/>
         <noisesize size="4"/>
         <blurscale scale="2"/>

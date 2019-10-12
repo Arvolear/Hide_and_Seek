@@ -238,12 +238,15 @@ void Node::checkActivity(int size, float timeoutSec)
     {
         throw(runtime_error("ERROR::Node::checkActivity() select"));
     }
-
+    
     unique_lock < mutex > lck(mtx);
     ready = false;
 
-    checkNewConnections();
-    checkConnections(size);
+    if (activity)
+    {
+        checkNewConnections();
+        checkConnections(size);
+    }
 
     ready = true;
     cv.notify_all();
