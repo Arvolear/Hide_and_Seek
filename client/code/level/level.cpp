@@ -119,7 +119,9 @@ void Level::loadLevel(string level)
     
     debugShader->loadShaders(global.path("code/shader/debugShader.vert"), global.path("code/shader/debugShader.frag"));
 
-    levelLoader->loadLevel(global.path("levels/test1"));
+    cout << "Loading " << levelName << " level..." << endl;
+
+    levelLoader->loadLevel(global.path("levels/" + levelName));
 
     /*** GET LOADED DATA ***/
     levelLoader->getSsaoData(sSAO);

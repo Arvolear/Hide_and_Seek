@@ -85,37 +85,37 @@ void GBuffer::clear(vec4 color)
 void GBuffer::render(Shader* shader)
 {
     /* position */
-    glActiveTexture(GL_TEXTURE0 + texturesID[0]);
+    glActiveTexture(GL_TEXTURE0);
+    shader->setInt("gBuffer.texture_position", 0);
     glBindTexture(GL_TEXTURE_2D, texturesID[0]);
-    shader->setInt("gBuffer.texture_position", texturesID[0]);
 
     /* normal */
-    glActiveTexture(GL_TEXTURE0 + texturesID[1]);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    shader->setInt("gBuffer.texture_normal", 1);
     glBindTexture(GL_TEXTURE_2D, texturesID[1]);
-    shader->setInt("gBuffer.texture_normal", texturesID[1]);
 
     /* albedo */
-    glActiveTexture(GL_TEXTURE0 + texturesID[2]);
+    glActiveTexture(GL_TEXTURE0 + 2);
+    shader->setInt("gBuffer.texture_albedo", 2);
     glBindTexture(GL_TEXTURE_2D, texturesID[2]);
-    shader->setInt("gBuffer.texture_albedo", texturesID[2]);
     
     /* met rough ao */
-    glActiveTexture(GL_TEXTURE0 + texturesID[3]);
+    glActiveTexture(GL_TEXTURE0 + 3);
+    shader->setInt("gBuffer.texture_metRoughAO", 3);
     glBindTexture(GL_TEXTURE_2D, texturesID[3]);
-    shader->setInt("gBuffer.texture_metRoughAO", texturesID[3]);
 }
         
 void GBuffer::renderSsao(Shader* shader)
 {
     /* ssao position */
-    glActiveTexture(GL_TEXTURE0 + texturesID[5]);
+    glActiveTexture(GL_TEXTURE0);
+    shader->setInt("gBuffer.texture_position", 0);
     glBindTexture(GL_TEXTURE_2D, texturesID[5]);
-    shader->setInt("gBuffer.texture_position", texturesID[5]);
 
     /* ssao normal */
-    glActiveTexture(GL_TEXTURE0 + texturesID[6]);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    shader->setInt("gBuffer.texture_normal", 1);
     glBindTexture(GL_TEXTURE_2D, texturesID[6]);
-    shader->setInt("gBuffer.texture_normal", texturesID[6]);
 }
 
 GBuffer::~GBuffer() 

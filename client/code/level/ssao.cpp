@@ -127,7 +127,7 @@ void SSAO::renderInfo(Shader* shader)
     shader->setFloat("radius", radius);
     shader->setFloat("bias", bias);
 
-    glActiveTexture(GL_TEXTURE0 + texture_noise);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_noise);
     shader->setInt("texture_noise", texture_noise);
 
@@ -141,9 +141,9 @@ void SSAO::renderInfo(Shader* shader)
         
 void SSAO::renderSsao(Shader* shader)
 {
-    glActiveTexture(GL_TEXTURE0 + getTexture());
+    glActiveTexture(GL_TEXTURE0 + 5);
+    shader->setInt("texture_ssao", 5);
     glBindTexture(GL_TEXTURE_2D, getTexture());
-    shader->setInt("texture_ssao", getTexture());
 }
 
 ColorBuffer* SSAO::getBuffer() const

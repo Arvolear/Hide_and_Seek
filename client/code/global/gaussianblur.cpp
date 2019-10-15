@@ -62,8 +62,8 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, int intensity, float radius)
 
     scaleShader->use();
 
-    scaleShader->setInt("finalTexture", textureID);
-    glActiveTexture(GL_TEXTURE0 + textureID);
+    glActiveTexture(GL_TEXTURE0);
+    scaleShader->setInt("finalTexture", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
     quad->render(scaleShader);
@@ -83,8 +83,8 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, int intensity, float radius)
         blurShader->setInt("isHorizontal", (buffer + 1) % 2);
         blurShader->setFloat("intensity", radius);
     
-        blurShader->setInt("blurTexture", bluredTexture);
-        glActiveTexture(GL_TEXTURE0 + bluredTexture);
+        glActiveTexture(GL_TEXTURE0);
+        blurShader->setInt("blurTexture", 0);
         glBindTexture(GL_TEXTURE_2D, bluredTexture);
         
         quad->render(blurShader);
@@ -99,8 +99,8 @@ GLuint GaussianBlur<T>::blur(GLuint textureID, int intensity, float radius)
     
     scaleShader->use();
 
-    scaleShader->setInt("finalTexture", bluredTexture);
-    glActiveTexture(GL_TEXTURE0 + bluredTexture);
+    glActiveTexture(GL_TEXTURE0);
+    scaleShader->setInt("finalTexture", 0);
     glBindTexture(GL_TEXTURE_2D, bluredTexture);
 
     quad->render(scaleShader);

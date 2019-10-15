@@ -155,6 +155,8 @@ void Game::gameLoop()
     thread sender(&Multiplayer::broadcast, multiplayer);
     thread receiver(&Multiplayer::update, multiplayer);
         
+    level->updateSunPos();
+        
     while (window->isOpen())
     {
         window->pollEvents();
@@ -168,7 +170,7 @@ void Game::gameLoop()
             physicsWorld->updateSimulation(step, 1000);
         }
 
-        level->updateSunPos();
+        //level->updateSunPos();
         level->updatePlayers(mode);
         level->render();
 
@@ -184,13 +186,13 @@ void Game::gameLoop()
         
         gameShader->use();
 
-        glActiveTexture(GL_TEXTURE0 + level->getRenderTexture(0));
+        glActiveTexture(GL_TEXTURE0);
+        gameShader->setInt("scene", 0);
         glBindTexture(GL_TEXTURE_2D, level->getRenderTexture(0));
-        gameShader->setInt("scene", level->getRenderTexture(0));
         
-        glActiveTexture(GL_TEXTURE0 + blured);
+        glActiveTexture(GL_TEXTURE0 + 1);
+        gameShader->setInt("blurBloom", 1);
         glBindTexture(GL_TEXTURE_2D, blured);
-        gameShader->setInt("blurBloom", blured);
 
         gameShader->setFloat("exposure", 1.0);
 

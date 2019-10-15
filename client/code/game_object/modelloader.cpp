@@ -239,12 +239,15 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
     
     vector < Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
-
-    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_metallic"); 
+    
+    vector < Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_roughness");
+    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    
+    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_metallic"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     
-    vector < Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SHININESS, "texture_roughness");
-    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    vector < Texture > aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ao");
+    textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
     
     /* .obj */
     vector < Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
@@ -323,7 +326,6 @@ unsigned int ModelLoader::textureFromFile(const char *path)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);
 
         SOIL_free_image_data(image); 
     }

@@ -68,9 +68,8 @@ void SkyBox::render(Shader* shader)
 {
     glDepthFunc(GL_LEQUAL);
 
-    shader->setInt("skybox", textureID);
-    glActiveTexture(GL_TEXTURE0 + textureID); 
-
+    glActiveTexture(GL_TEXTURE0); 
+    shader->setInt("skybox", 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     glBindVertexArray(VAO);

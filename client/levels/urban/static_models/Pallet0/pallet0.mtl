@@ -1,0 +1,44 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Material.001
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/wooden_pallet_BaseColor.png
+map_Bump textures/wooden_pallet_Normal.png
+map_Ke textures/wooden_pallet_Metallic.png
+map_Ks textures/wooden_pallet_Roughness.png
+
+newmtl Material.002
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/wooden_pallet_BaseColor.png
+map_Bump textures/wooden_pallet_Normal.png
+map_Ke textures/wooden_pallet_Metallic.png
+map_Ks textures/wooden_pallet_Roughness.png
+
+newmtl Material.003
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/wooden_pallet_BaseColor.png
+map_Bump textures/wooden_pallet_Normal.png
+map_Ke textures/wooden_pallet_Metallic.png
+map_Ks textures/wooden_pallet_Roughness.png

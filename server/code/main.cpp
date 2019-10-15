@@ -31,7 +31,7 @@
 
 int main()
 {
-    Game* G = new Game("test1");
+    Game* G = new Game("urban");
 
     G->gameLoop();
 

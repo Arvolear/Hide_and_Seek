@@ -27,7 +27,7 @@ void Level::loadLevel(string level)
 {
     levelName = level;
 
-    levelLoader->loadLevel(path("levels/test1"));
+    levelLoader->loadLevel(path("levels/" + levelName));
 
     /*** GET LOADED DATA ***/
     levelLoader->getPlayersData(players);

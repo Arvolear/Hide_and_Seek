@@ -65,7 +65,7 @@ void Mesh::render(Shader *shader) const
         
     for (size_t i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + textures[i].id);
+        glActiveTexture(GL_TEXTURE0 + i);
 
         string number;
         
@@ -93,8 +93,8 @@ void Mesh::render(Shader *shader) const
         //cout << "material." + textures[i].type + number << endl;
         //cout << textures[i].id << endl;
 
+        shader->setInt("material." + textures[i].type + number, i); // send the texture to the shader (example: material.texture_diffuse1)
         glBindTexture(GL_TEXTURE_2D, textures[i].id); // bind this texture
-        shader->setInt("material." + textures[i].type + number, textures[i].id); // send the texture to the shader (example: material.texture_diffuse1)
     }
 
     if (normalNR == 1)
@@ -109,12 +109,6 @@ void Mesh::render(Shader *shader) const
     glBindVertexArray(VAO); // bind VAO
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // draw mesh from indices 
     glBindVertexArray(0); // unbind VAO
-    
-    for (size_t i = 0; i < textures.size(); i++) // loop through textures
-    {
-        glActiveTexture(GL_TEXTURE0 + textures[i].id);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);

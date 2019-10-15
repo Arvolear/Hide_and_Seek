@@ -1,0 +1,453 @@
+<?xml version="1.0"?>
+<GameObjectFile>
+    <gameobjects>
+
+        <gameobject name="ground0">
+            <graphicsobject path="/static_models/Ground1/ground1.obj">
+                <viewfrustum apply="true"/>
+                <scale x="8.727" y="8.727" z="8.727"/>
+                <position x="0.0" y="0.067" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="100.0" y="1.0" z="100.0"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence00">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence01">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence02">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence03">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence04">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence05">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence06">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence07">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="360.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="5.27" y="3.81" z="0.28"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="barrel0">
+            <graphicsobject path="/static_models/Barrel0/barrel0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.1" y="1.1" z="1.1"/>
+                <position x="-0.03" y="-0.99" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="cylinder" radius="0.7" height="1.1" zup="0.7"/>
+                <mass mass="60.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="barrel1">
+            <graphicsobject path="/static_models/Barrel0/barrel0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.1" y="1.1" z="1.1"/>
+                <position x="-0.03" y="-0.99" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="cylinder" radius="0.7" height="1.1" zup="0.7"/>
+                <mass mass="60.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="barrel2">
+            <graphicsobject path="/static_models/Barrel1/barrel1.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="-1.37" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="cylinder" radius="0.92" height="1.38" zup="0.92"/>
+                <mass mass="80.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="railing0">
+            <graphicsobject path="/static_models/Railing0/railing0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <position x="0.0" y="-0.95" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="0.1" y="1.4" z="4.75"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="jerrycan0">
+            <graphicsobject path="/static_models/Jerrycan0/jerrycan0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <position x="0.0" y="-0.4" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="0.28" y="0.61" z="0.43"/>
+                <mass mass="30.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
+        
+        <gameobject name="metal_plane0">
+            <graphicsobject path="/static_models/Metal_plane0/metal_plane0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.7" y="0.7" z="0.7"/>
+                <position x="0.0" y="-0.05" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="2.1" y="0.02" z="1.4"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="metal_plane1">
+            <graphicsobject path="/static_models/Metal_plane0/metal_plane0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.7" y="0.7" z="0.7"/>
+                <position x="0.0" y="-0.05" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="2.1" y="0.02" z="1.4"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="wrench0">
+            <graphicsobject path="/static_models/Wrench0/wrench0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.9" y="0.9" z="0.9"/>
+                <position x="0.0" y="0.0" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="0.75" y="0.03" z="0.08"/>
+                <mass mass="10.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="wrench1">
+            <graphicsobject path="/static_models/Wrench1/wrench1.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.1" y="1.1" z="1.1"/>
+                <position x="0.0" y="0.0" z="0.02"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="0.82" y="0.04" z="0.11"/>
+                <mass mass="15.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="pallet0">
+            <graphicsobject path="/static_models/Pallet0/pallet0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <position x="-0.05" y="-0.1" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="1.35" y="0.12" z="1.35"/>
+                <mass mass="30.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="pallet1">
+            <graphicsobject path="/static_models/Pallet0/pallet0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <position x="-0.05" y="-0.1" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="1.35" y="0.12" z="1.35"/>
+                <mass mass="30.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="safety_fence0">
+            <graphicsobject path="/static_models/Safety_fence0/safety_fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <position x="0.0" y="0.0" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="1.0" y="0.12" z="1.0"/>
+                <mass mass="30.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="stool0">
+            <graphicsobject path="/static_models/Stool0/stool0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.275" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="0.4" y="0.56" z="0.4"/>
+                <mass mass="30.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
+         
+        <gameobject name="tires0">
+            <graphicsobject path="/static_models/Tires0/tires0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.7" y="2.7" z="2.7"/>
+                <position x="0.05" y="-0.5" z="-0.6"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="cylinder" radius="1.4" height="1.3" zup="1.4"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="door0">
+            <graphicsobject path="/static_models/Door0/door0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.2" y="1.2" z="1.2"/>
+                <position x="-2.35" y="0.0" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="2.8" y="0.1" z="1.2"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="box_of_nails0">
+            <graphicsobject path="/static_models/Box_of_nails0/box_of_nails0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.2" y="1.2" z="1.2"/>
+                <position x="0.0" y="0.0" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="0.55" y="0.34" z="0.735"/>
+                <mass mass="60.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="car0">
+            <graphicsobject path="/static_models/Car0/car0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.7" y="0.7" z="0.7"/>
+                <position x="0.0" y="-1.4" z="0.7"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="2.1" y="1.0" z="6.0"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="car1">
+            <graphicsobject path="/static_models/Car1/car1.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.9" y="1.9" z="1.9"/>
+                <position x="0.0" y="-1.30" z="-0.2"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="2.8" y="2.3" z="6.8"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="car2">
+            <graphicsobject path="/static_models/Car2/car2.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.3" y="2.3" z="2.3"/>
+                <position x="0.0" y="-0.68" z="0.0"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="box" x="2.1" y="1.0" z="6.0"/>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="building0">
+            <graphicsobject path="/static_models/Building0/building0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-1.30" z="-0.2"/>
+            </graphicsobject>
+            <physicsobject>
+                <shape type="compound">
+                    <childshape type="box" x="7.55" y="13.3" z="9.5">
+                        <position x="-8.5" y="0.0" z="-1.0"/>
+                    </childshape>
+                </shape>
+                <mass mass="0.0"/>
+            </physicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+         
+    </gameobjects>
+</GameObjectFile>
