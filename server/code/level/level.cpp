@@ -26,8 +26,9 @@ Level::Level(World* physicsWorld)
 void Level::loadLevel(string level)
 {
     levelName = level;
+    levelPath = path("levels/" + levelName);
 
-    levelLoader->loadLevel(path("levels/" + levelName));
+    levelLoader->loadLevel(levelPath);
 
     /*** GET LOADED DATA ***/
     levelLoader->getPlayersData(players);
@@ -160,9 +161,12 @@ map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects(
 
 Player* Level::getPlayer(int id) const
 {
-    if (id >= 0 && id < (int)players.size())
+    for (size_t i = 0; i < players.size(); i++)
     {
-        return players[id];
+        if (players[i]->getID() == id)
+        {
+            return players[i];
+        }
     }
 
     return nullptr;
@@ -173,10 +177,18 @@ vector < Player* > Level::getPlayers() const
     return players;
 }
 
-vector < Player* > Level::getPlayersExcept(int index) const
+vector < Player* > Level::getPlayersExcept(int id) const
 {
     vector < Player* > tmp = players;
-    tmp.erase(tmp.begin() + index);
+    
+    for (size_t i = 0; i < tmp.size(); i++)
+    {
+        if (tmp[i]->getID() == id)
+        {
+            tmp.erase(tmp.begin() + i);
+            break;
+        }
+    }
 
     return tmp;
 }
@@ -184,6 +196,11 @@ vector < Player* > Level::getPlayersExcept(int index) const
 string Level::getLevelName() const
 {
     return levelName;
+}
+
+string Level::getLevelPath() const
+{
+    return levelPath;
 }
 
 Level::~Level()

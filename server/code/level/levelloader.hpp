@@ -28,7 +28,6 @@ class LevelLoader
         void loadPhysicsObjects();
         void loadWeapons();
 
-        void loadPlayers();
         void loadSoldiers();
 
     public:

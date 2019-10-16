@@ -3,8 +3,18 @@
 
 #include "player.hpp"
 
-Player::Player(float speed)
+set < int > Player::globalIDs;
+
+Player::Player(int id, float speed)
 {
+    if (globalIDs.find(id) != globalIDs.end())
+    {
+        throw(runtime_error("ERROR::player id duplicate"));
+    }
+
+    this->id = id;
+    globalIDs.insert(id);
+
     this->speed = speed;
 
     physicsObject = nullptr;
@@ -12,8 +22,16 @@ Player::Player(float speed)
     this->connected = false;
 }
         
-Player::Player(PhysicsObject* physicsObject, float speed)
+Player::Player(int id, PhysicsObject* physicsObject, float speed)
 {
+    if (globalIDs.find(id) != globalIDs.end())
+    {
+        throw(runtime_error("ERROR::player id duplicate"));
+    }
+
+    this->id = id;
+    globalIDs.insert(id);
+
     this->speed = speed;
 
     this->physicsObject = physicsObject;
@@ -84,6 +102,11 @@ btVector3 Player::getMoveDirection() const
 float Player::getSpeed() const
 {
     return speed;
+}
+
+int Player::getID() const
+{
+    return id;
 }
 
 Player::~Player() {}

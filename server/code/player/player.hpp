@@ -16,7 +16,10 @@ using namespace std;
 class Player
 {
     protected:
+        static set < int > globalIDs;
+
         bool connected;
+        int id;
         
         float speed;
 
@@ -25,8 +28,8 @@ class Player
         btVector3 moveDirection;
         
     public:
-        Player(float speed = 1);
-        Player(PhysicsObject* physicsObject, float speed = 1);
+        Player(int id, float speed = 1);
+        Player(int id, PhysicsObject* physicsObject, float speed = 1);
 
         void setConnected(bool connected);
         void setPhysicsObject(PhysicsObject* player);
@@ -40,6 +43,7 @@ class Player
         PhysicsObject* getPhysicsObject() const;
         btVector3 getMoveDirection() const;
         float getSpeed() const;
+        int getID() const;
 
         virtual ~Player();
 };

@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<SkyBoxFile>
-    <skyboxes>
-        <skybox path="/skyboxes/Space"/>
-            
-        <!-- <skybox path="/skyboxes/Bluerocky"/> -->
-    </skyboxes>
-</SkyBoxFile>

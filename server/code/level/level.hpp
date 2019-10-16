@@ -17,6 +17,7 @@ class Level
         LevelLoader* levelLoader;
         
         string levelName;
+        string levelPath;
 
         /* all objects in the level */
         map < string, PhysicsObject* > physicsObjects;
@@ -44,8 +45,9 @@ class Level
         
         Player* getPlayer(int id) const;
         vector < Player* > getPlayers() const;
-        vector < Player* > getPlayersExcept(int index) const;
+        vector < Player* > getPlayersExcept(int id) const;
         string getLevelName() const;
+        string getLevelPath() const;
 
         ~Level();
 };

@@ -20,8 +20,8 @@ class Soldier : public Player
         deque < Weapon* > old_weapons;
 
     public:
-        Soldier(float speed = 1);
-        Soldier(PhysicsObject* physicsObject, float speed = 1);
+        Soldier(int id, float speed = 1);
+        Soldier(int id, PhysicsObject* physicsObject, float speed = 1);
 
         void pick(Weapon* weapon);
         void drop(btScalar* model);

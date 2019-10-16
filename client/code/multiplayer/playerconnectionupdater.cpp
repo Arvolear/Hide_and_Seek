@@ -56,7 +56,7 @@ void PlayerConnectionUpdater::collect(string info)
     int id;
     int i = 0;
 
-    do 
+    while (true)
     {
         str = char('a' + i);
         id = -1;
@@ -71,7 +71,6 @@ void PlayerConnectionUpdater::collect(string info)
         playerIDs.push_back(id);
         i++;
     } 
-    while (true);
 }
 
 void PlayerConnectionUpdater::updateData(Player* player)

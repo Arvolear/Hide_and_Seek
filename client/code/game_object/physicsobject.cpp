@@ -176,7 +176,6 @@ void PhysicsObject::setShape(CompoundShape* shape)
     delete this->phShape;
     this->phShape = nullptr;
     delete this->comShape;
-
     this->comShape = shape;
 
     updateBody(shape->getShape(), mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation());

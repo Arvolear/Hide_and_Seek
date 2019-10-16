@@ -5,9 +5,9 @@
 #include "player.hpp"
 #include "soldier.hpp"
 
-Soldier::Soldier(float speed) : Player(speed) {}
+Soldier::Soldier(int id, float speed) : Player(id, speed) {}
 
-Soldier::Soldier(PhysicsObject* physicsObject, float speed) : Player(physicsObject, speed) {}
+Soldier::Soldier(int id, PhysicsObject* physicsObject, float speed) : Player(id, physicsObject, speed) {}
 
 void Soldier::pick(Weapon* weapon)
 {

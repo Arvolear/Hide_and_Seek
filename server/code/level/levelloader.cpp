@@ -50,8 +50,8 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
         {
             float radius = 0, height = 0, zup = 0;
 
-            shapeElem->QueryFloatAttribute("radius", &radius);
-            shapeElem->QueryFloatAttribute("height", &height);
+            shapeElem->QueryFloatAttribute("r", &radius);
+            shapeElem->QueryFloatAttribute("h", &height);
             shapeElem->QueryFloatAttribute("zup", &zup);
 
             PO->setShape(new btCylinderShape(btVector3(radius, height, zup)));    
@@ -61,7 +61,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
         {
             float radius = 0;
 
-            shapeElem->QueryFloatAttribute("radius", &radius);
+            shapeElem->QueryFloatAttribute("r", &radius);
 
             PO->setShape(new btSphereShape(radius));    
             shape = true;
@@ -71,8 +71,8 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
             float radius = 0;
             float height = 0;
 
-            shapeElem->QueryFloatAttribute("radius", &radius);
-            shapeElem->QueryFloatAttribute("height", &height);
+            shapeElem->QueryFloatAttribute("r", &radius);
+            shapeElem->QueryFloatAttribute("h", &height);
 
             PO->setShape(new btCapsuleShape(radius, height));    
             shape = true;
@@ -81,7 +81,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
         {
             CompoundShape* CS = new CompoundShape;
 
-            XMLElement* childShapeElem = shapeElem->FirstChildElement("childshape");
+            XMLElement* childShapeElem = shapeElem->FirstChildElement("cshape");
 
             while (childShapeElem)
             {
@@ -105,8 +105,8 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 {
                     float radius = 0, height = 0, zup = 0;
 
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-                    childShapeElem->QueryFloatAttribute("height", &height);
+                    childShapeElem->QueryFloatAttribute("r", &radius);
+                    childShapeElem->QueryFloatAttribute("h", &height);
                     childShapeElem->QueryFloatAttribute("zup", &zup);
 
                     childShape = new btCylinderShape(btVector3(radius, height, zup));
@@ -115,7 +115,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 {
                     float radius = 0;
 
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
+                    childShapeElem->QueryFloatAttribute("r", &radius);
 
                     childShape = new btSphereShape(radius);
                 }
@@ -124,8 +124,8 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                     float radius = 0;
                     float height = 0;
 
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-                    childShapeElem->QueryFloatAttribute("height", &height);
+                    childShapeElem->QueryFloatAttribute("r", &radius);
+                    childShapeElem->QueryFloatAttribute("h", &height);
 
                     childShape = new btCapsuleShape(radius, height);
                 }
@@ -137,7 +137,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
 
                 /* child position */
                 btVector3 childPosition = btVector3(0, 0, 0);
-                XMLElement* childPositionElem = childShapeElem->FirstChildElement("position");
+                XMLElement* childPositionElem = childShapeElem->FirstChildElement("pos");
 
                 if (childPositionElem)
                 {
@@ -152,7 +152,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
 
                 /* child rotation */
                 btQuaternion childRotation = btQuaternion(btVector3(0, 0, 1), 0);
-                XMLElement* childRotationElem = childShapeElem->FirstChildElement("rotation");
+                XMLElement* childRotationElem = childShapeElem->FirstChildElement("rot");
 
                 if (childRotationElem)
                 {
@@ -189,7 +189,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
             }
 
             /* position */
-            XMLElement* positionElem = physicsObjectElem->FirstChildElement("position");
+            XMLElement* positionElem = physicsObjectElem->FirstChildElement("pos");
 
             if (positionElem)
             {
@@ -203,7 +203,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
             }
 
             /* rotation */
-            XMLElement* rotationElem = physicsObjectElem->FirstChildElement("rotation");
+            XMLElement* rotationElem = physicsObjectElem->FirstChildElement("rot");
 
             if (rotationElem)
             {
@@ -218,7 +218,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
             }
 
             /* angular factor */
-            XMLElement* angularElem = physicsObjectElem->FirstChildElement("angularfactor");
+            XMLElement* angularElem = physicsObjectElem->FirstChildElement("afactor");
 
             if (angularElem)
             {
@@ -266,8 +266,8 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         {
             float radius = 0, height = 0, zup = 0;
 
-            shapeElem->QueryFloatAttribute("radius", &radius);
-            shapeElem->QueryFloatAttribute("height", &height);
+            shapeElem->QueryFloatAttribute("r", &radius);
+            shapeElem->QueryFloatAttribute("h", &height);
             shapeElem->QueryFloatAttribute("zup", &zup);
 
             WE->setShape(new btCylinderShape(btVector3(radius, height, zup)));    
@@ -277,7 +277,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         {
             float radius = 0;
 
-            shapeElem->QueryFloatAttribute("radius", &radius);
+            shapeElem->QueryFloatAttribute("r", &radius);
 
             WE->setShape(new btSphereShape(radius));    
             shape = true;
@@ -287,8 +287,8 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
             float radius = 0;
             float height = 0;
 
-            shapeElem->QueryFloatAttribute("radius", &radius);
-            shapeElem->QueryFloatAttribute("height", &height);
+            shapeElem->QueryFloatAttribute("r", &radius);
+            shapeElem->QueryFloatAttribute("h", &height);
 
             WE->setShape(new btCapsuleShape(radius, height));    
             shape = true;
@@ -297,7 +297,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         {
             CompoundShape* CS = new CompoundShape;
 
-            XMLElement* childShapeElem = shapeElem->FirstChildElement("childshape");
+            XMLElement* childShapeElem = shapeElem->FirstChildElement("cshape");
 
             while (childShapeElem)
             {
@@ -321,8 +321,8 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 {
                     float radius = 0, height = 0, zup = 0;
 
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-                    childShapeElem->QueryFloatAttribute("height", &height);
+                    childShapeElem->QueryFloatAttribute("r", &radius);
+                    childShapeElem->QueryFloatAttribute("h", &height);
                     childShapeElem->QueryFloatAttribute("zup", &zup);
 
                     childShape = new btCylinderShape(btVector3(radius, height, zup));
@@ -331,7 +331,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 {
                     float radius = 0;
 
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
+                    childShapeElem->QueryFloatAttribute("r", &radius);
 
                     childShape = new btSphereShape(radius);
                 }
@@ -340,8 +340,8 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                     float radius = 0;
                     float height = 0;
 
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-                    childShapeElem->QueryFloatAttribute("height", &height);
+                    childShapeElem->QueryFloatAttribute("r", &radius);
+                    childShapeElem->QueryFloatAttribute("h", &height);
 
                     childShape = new btCapsuleShape(radius, height);
                 }
@@ -353,7 +353,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
 
                 /* child position */
                 btVector3 childPosition = btVector3(0, 0, 0);
-                XMLElement* childPositionElem = childShapeElem->FirstChildElement("position");
+                XMLElement* childPositionElem = childShapeElem->FirstChildElement("pos");
 
                 if (childPositionElem)
                 {
@@ -368,7 +368,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
 
                 /* child rotation */
                 btQuaternion childRotation = btQuaternion(btVector3(0, 0, 1), 0);
-                XMLElement* childRotationElem = childShapeElem->FirstChildElement("rotation");
+                XMLElement* childRotationElem = childShapeElem->FirstChildElement("rot");
 
                 if (childRotationElem)
                 {
@@ -405,7 +405,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
             }
 
             /* position */
-            XMLElement* positionElem = weaponElem->FirstChildElement("position");
+            XMLElement* positionElem = weaponElem->FirstChildElement("pos");
 
             if (positionElem)
             {
@@ -419,7 +419,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
             }
 
             /* rotation */
-            XMLElement* rotationElem = weaponElem->FirstChildElement("rotation");
+            XMLElement* rotationElem = weaponElem->FirstChildElement("rot");
 
             if (rotationElem)
             {
@@ -434,7 +434,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
             }
 
             /* angular factor */
-            XMLElement* angularElem = weaponElem->FirstChildElement("angularfactor");
+            XMLElement* angularElem = weaponElem->FirstChildElement("afactor");
 
             if (angularElem)
             {
@@ -449,13 +449,13 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         }
     }
 
-    XMLElement* weaponInfoElem = weaponElem->FirstChildElement("weaponinfo");
+    XMLElement* weaponInfoElem = weaponElem->FirstChildElement("info");
 
     /* info */
     if (weaponElem)
     {
         /* storage bullets */
-        XMLElement* storageBulletsElem = weaponInfoElem->FirstChildElement("storagebullets");
+        XMLElement* storageBulletsElem = weaponInfoElem->FirstChildElement("storage");
 
         if (storageBulletsElem)
         {
@@ -467,7 +467,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         }
 
         /* magazine size */
-        XMLElement* magazineSizeElem = weaponInfoElem->FirstChildElement("magazinesize");
+        XMLElement* magazineSizeElem = weaponInfoElem->FirstChildElement("size");
 
         if (magazineSizeElem)
         {
@@ -479,7 +479,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         }
 
         /* magazine bullets */
-        XMLElement* magazineBulletsElem = weaponInfoElem->FirstChildElement("magazinebullets");
+        XMLElement* magazineBulletsElem = weaponInfoElem->FirstChildElement("magazine");
 
         if (magazineBulletsElem)
         {
@@ -491,7 +491,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
         }
 
         /* shot speed */
-        XMLElement* shotSpeedElem = weaponInfoElem->FirstChildElement("shotspeed");
+        XMLElement* shotSpeedElem = weaponInfoElem->FirstChildElement("speed");
 
         if (shotSpeedElem)
         {
@@ -510,15 +510,14 @@ void LevelLoader::loadPhysicsObjects()
 
     physicsObjectDoc.LoadFile((levelName + "/physics_object.xml").c_str());
 
-    XMLNode* root = physicsObjectDoc.FirstChildElement("PhysicsObjectFile");
+    XMLNode* root = physicsObjectDoc.FirstChildElement("Objs");
 
     if (!root)
     {
         throw runtime_error("ERROR::loadPhysicsObjects() failed to load XML");
     }
 
-    XMLNode* physicsObjectsNode = root->FirstChildElement("physicsobjects"); 
-    XMLElement* physicsObjectElem = physicsObjectsNode->FirstChildElement("physicsobject");
+    XMLElement* physicsObjectElem = root->FirstChildElement("obj");
 
     while (physicsObjectElem)
     {
@@ -538,15 +537,14 @@ void LevelLoader::loadWeapons()
 
     weaponDoc.LoadFile((levelName + "/weapon.xml").c_str());
 
-    XMLNode* root = weaponDoc.FirstChildElement("WeaponFile");
+    XMLNode* root = weaponDoc.FirstChildElement("Weapons");
 
     if (!root)
     {
         throw runtime_error("ERROR::LevelLoader::loadWeapons() failed to load XML");
     }
 
-    XMLNode* weaponsNode = root->FirstChildElement("weapons"); 
-    XMLElement* weaponElem = weaponsNode->FirstChildElement("weapon");
+    XMLElement* weaponElem = root->FirstChildElement("weapon");
 
     while (weaponElem)
     {
@@ -560,73 +558,28 @@ void LevelLoader::loadWeapons()
     } 
 }
 
-void LevelLoader::loadPlayers()
-{
-    XMLDocument playerDoc;
-
-    playerDoc.LoadFile((levelName + "/player.xml").c_str());
-
-    XMLNode* root = playerDoc.FirstChildElement("PlayerFile");
-
-    if (!root)
-    {
-        throw runtime_error("ERROR::loadPlayers() failed to load XML");
-    }
-
-    XMLNode* playerNode = root->FirstChildElement("players"); 
-    XMLElement* playerElem = playerNode->FirstChildElement("player");
-
-    while (playerElem)
-    {
-        /* speed */
-        XMLElement* speedElem = playerElem->FirstChildElement("speed");
-        float speed = 1.0;
-
-        if (speedElem)
-        {
-            speedElem->QueryFloatAttribute("speed", &speed);
-        }
-
-        Player* player = new Player(speed);
-
-        /* physics object */
-        XMLElement* physicsObjectElem = playerElem->FirstChildElement("physicsobject");
-
-        if (physicsObjectElem)
-        {
-            PhysicsObject* PO = nullptr;
-
-            loadPhysicsObject(physicsObjectElem, PO);
-
-            physicsObjects.insert({PO->getName(), PO});
-
-            player->setPhysicsObject(PO);
-        }
-
-        players.push_back(player);
-
-        playerElem = playerElem->NextSiblingElement();
-    }
-}
-
 void LevelLoader::loadSoldiers()
 {
     XMLDocument soldierDoc;
 
     soldierDoc.LoadFile((levelName + "/soldier.xml").c_str());
 
-    XMLNode* root = soldierDoc.FirstChildElement("SoldierFile");
+    XMLNode* root = soldierDoc.FirstChildElement("Soldiers");
 
     if (!root)
     {
         throw runtime_error("ERROR::LevelLoader::loadSoldiers() failed to load XML");
     }
 
-    XMLNode* soldierNode = root->FirstChildElement("soldiers"); 
-    XMLElement* soldierElem = soldierNode->FirstChildElement("soldier");
+    XMLElement* soldierElem = root->FirstChildElement("soldier");
 
     while (soldierElem)
     {
+        /* id */
+        int id = 0;
+
+        soldierElem->QueryIntAttribute("id", &id);
+        
         /* speed */
         XMLElement* speedElem = soldierElem->FirstChildElement("speed");
         float speed = 1.0;
@@ -636,10 +589,10 @@ void LevelLoader::loadSoldiers()
             speedElem->QueryFloatAttribute("speed", &speed);
         }
 
-        Soldier* soldier = new Soldier(speed);
+        Soldier* soldier = new Soldier(id, speed);
 
         /* physics object */
-        XMLElement* physicsObjectElem = soldierElem->FirstChildElement("physicsobject");
+        XMLElement* physicsObjectElem = soldierElem->FirstChildElement("obj");
 
         if (physicsObjectElem)
         {
@@ -691,12 +644,11 @@ void LevelLoader::loadLevel(string name)
     loadPhysicsObjects();
     loadWeapons();
 
-    loadPlayers();
     loadSoldiers();
 
     if (players.empty())
     {
-        throw runtime_error("ERROR::loadPlayers() at least 1 player is required");
+        throw runtime_error("ERROR::loadLevel() at least 1 player is required");
     }
 }
 

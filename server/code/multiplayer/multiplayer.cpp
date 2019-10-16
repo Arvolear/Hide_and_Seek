@@ -67,7 +67,7 @@ void Multiplayer::broadcast()
                     playerDataCollector->collect(players);
 
                     string message = "BEG\n<join>" + to_string(i) + "</join>\n";
-                    message += playerDataCollector->getData(true, true);
+                    message += playerDataCollector->getMergedData(level->getLevelPath() + "/soldier.xml", true, true);
                     message += "END";
 
                     try
@@ -75,7 +75,7 @@ void Multiplayer::broadcast()
                         node->sendMSG(new_sockets[i], message);
                     }
                     catch(exception& ex) {}
-
+                    
                     playerDataCollector->clear();
                 }
             }
@@ -86,7 +86,7 @@ void Multiplayer::broadcast()
             {
                 if (new_sockets[i] > 0)
                 {
-                    string message = physicsObjectDataCollector->getData();
+                    string message = physicsObjectDataCollector->getMergedData(level->getLevelPath() + "/physics_object.xml"); 
 
                     /* send here */
                     try
@@ -98,7 +98,7 @@ void Multiplayer::broadcast()
                     node->newToClient(i);    
                 }
             }
-                    
+
             physicsObjectDataCollector->clear();
 
             /* show connected */
@@ -120,7 +120,7 @@ void Multiplayer::broadcast()
                 }
             }
         }
-        
+
         /* old clients */
         if (node->isOldClients())
         {
@@ -162,6 +162,11 @@ void Multiplayer::broadcast()
         /* player */
         for (size_t i = 0; i < players.size(); i++)
         {
+            if (!players[i]->isConnected())
+            {
+                continue;
+            }
+
             playerDataCollector->collect(players[i]);
 
             /* send position info */
@@ -169,7 +174,7 @@ void Multiplayer::broadcast()
 
             for (size_t j = 0; j < sockets.size(); j++)
             {
-                if ((int)j != players[i]->getPhysicsObject()->getOwnerID())
+                if ((int)j != players[i]->getID())
                 {
                     try
                     {
@@ -277,7 +282,7 @@ void Multiplayer::update()
                 playerDataUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(playerDataUpdater->getPlayerID());
 
-                if (playerDataUpdater->getPlayerID() == player->getPhysicsObject()->getOwnerID())
+                if (playerDataUpdater->getPlayerID() == player->getID())
                 {
                     playerDataUpdater->updateData(player);
                 }

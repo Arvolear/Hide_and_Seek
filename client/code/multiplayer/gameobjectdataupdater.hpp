@@ -15,8 +15,11 @@ class GameObjectDataUpdater
 {
     private:
         vector < string > names;
-
-        vector < mat4 > models;
+        map < string, btCollisionShape* > collShapes; 
+        map < string, CompoundShape* > compShapes;
+        map < string, float > masses;
+        map < string, mat4 > models;
+        map < string, vec3 > aFactors;
     
     public:
         GameObjectDataUpdater();

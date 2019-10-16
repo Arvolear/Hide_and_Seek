@@ -249,6 +249,11 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& 
 {
     GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
 
+    if (!physicsObjectElem)
+    {
+        return;
+    }
+
     /* shape */
     XMLElement* shapeElem = physicsObjectElem->FirstChildElement("shape");
 
@@ -491,11 +496,11 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
     /* physics object */
     XMLElement* physicsObjectElem = gameObjectElem->FirstChildElement("physicsobject");
 
-    if (physicsObjectElem)
-    {
+    //if (physicsObjectElem)
+    //{
         loadPhysicsObject(physicsObjectElem, GO);
-    }
-
+    //}
+    
     /* debug object */
     XMLElement* debugObjectElem = gameObjectElem->FirstChildElement("debugobject");
 

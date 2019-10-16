@@ -1,205 +1,201 @@
-<?xml version="1.0"?>
-<PhysicsObjectFile>
-    <physicsobjects>
+<Objs>
+    <obj name="ground0">
+        <shape type="box" x="100.0" y="1.0" z="100.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
 
-        <physicsobject name="ground0">
-            <shape type="box" x="100.0" y="1.0" z="100.0"/>
-            <mass mass="0.0"/>
-            <position x="0.0" y="0.0" z="0.0"/>
-        </physicsobject>
-        
-        <physicsobject name="fence00">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-94.77" y="3.7" z="99.7"/>
-        </physicsobject>
-        
-        <physicsobject name="fence01">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-84.23" y="3.7" z="99.7"/>
-        </physicsobject>
-        
-        <physicsobject name="fence02">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-99.7" y="3.7" z="94.77"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-90.0"/>
-        </physicsobject>
-        
-        <physicsobject name="fence03">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-99.7" y="3.7" z="84.23"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-90.0"/>
-        </physicsobject>
-        
-        <physicsobject name="fence04">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-99.7" y="3.7" z="73.69"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-90.0"/>
-        </physicsobject>
-        
-        <physicsobject name="fence05">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-99.7" y="3.7" z="63.14"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-90.0"/>
-        </physicsobject>
-        
-        <physicsobject name="fence06">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-99.7" y="3.7" z="52.61"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-90.0"/>
-        </physicsobject>
-        
-        <physicsobject name="fence07">
-            <shape type="box" x="5.27" y="3.81" z="0.28"/>
-            <mass mass="0.0"/>
-            <position x="-94.77" y="3.7" z="47.2"/>
-        </physicsobject>
-        
-        <physicsobject name="barrel0">
-            <shape type="cylinder" radius="0.7" height="1.1" zup="0.7"/>
-            <mass mass="60.0"/>
-            <position x="-98.0" y="3.0" z="98.0"/>
-        </physicsobject>
-        
-        <physicsobject name="barrel1">
-            <shape type="cylinder" radius="0.7" height="1.1" zup="0.7"/>
-            <mass mass="60.0"/>
-            <position x="-98.0" y="6.0" z="98.0"/>
-        </physicsobject>
-        
-        <physicsobject name="barrel2">
-            <shape type="cylinder" radius="0.92" height="1.38" zup="0.92"/>
-            <mass mass="80.0"/>
-            <position x="-90.5" y="3.0" z="48.7"/>
-        </physicsobject>
-        
-        <physicsobject name="railing0">
-            <shape type="box" x="0.1" y="1.35" z="4.75"/>
-            <mass mass="0.0"/>
-            <position x="-98.8" y="2.3" z="81.0"/>
-            <rotation x="0.0" y="0.0" z="1.0" angle="18.0"/>
-        </physicsobject>
-        
-        <physicsobject name="jerrycan0">
-            <shape type="box" x="0.28" y="0.61" z="0.43"/>
-            <mass mass="30.0"/>
-            <position x="-85.0" y="1.3" z="78.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-30.0"/>
-        </physicsobject>
-        
-        <physicsobject name="metal_plane0">
-            <shape type="box" x="2.1" y="0.02" z="1.4"/>
-            <mass mass="0.0"/>
-            <position x="-87.0" y="0.99" z="96.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="22.0"/>
-        </physicsobject>
-        
-        <physicsobject name="metal_plane1">
-            <shape type="box" x="2.1" y="0.02" z="1.4"/>
-            <mass mass="0.0"/>
-            <position x="-93.0" y="0.99" z="92.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="68.7"/>
-        </physicsobject>
-        
-        <physicsobject name="wrench0">
-            <shape type="box" x="0.75" y="0.03" z="0.08"/>
-            <mass mass="10.0"/>
-            <position x="-88.0" y="1.1" z="96.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="44.0"/>
-        </physicsobject>
-        
-        <physicsobject name="wrench1">
-            <shape type="box" x="0.75" y="0.03" z="0.08"/>
-            <mass mass="15.0"/>
-            <position x="-87.0" y="1.1" z="96.6"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="55.0"/>
-        </physicsobject>
-        
-        <physicsobject name="pallet0">
-            <shape type="box" x="1.35" y="0.12" z="1.35"/>
-            <mass mass="30.0"/>
-            <position x="-77.0" y="2.4" z="90.0"/>
-            <rotation x="4.0" y="-1.0" z="0.0" angle="70.0"/>
-        </physicsobject>
-        
-        <physicsobject name="pallet1">
-            <shape type="box" x="1.35" y="0.12" z="1.35"/>
-            <mass mass="30.0"/>
-            <position x="-79.0" y="2.0" z="89.5"/>
-            <rotation x="4.0" y="-1.0" z="0.0" angle="75.0"/>
-        </physicsobject>
-        
-        <physicsobject name="safety_fence0">
-            <shape type="box" x="1.0" y="0.12" z="1.0"/>
-            <mass mass="30.0"/>
-            <position x="-95.5" y="2.0" z="67.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="10.0"/>
-        </physicsobject>
-        
-        <physicsobject name="stool0">
-            <shape type="box" x="0.4" y="0.56" z="0.4"/>
-            <mass mass="30.0"/>
-            <position x="-89.9" y="2.0" z="64.5"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="2.0"/>
-        </physicsobject>
-        
-        <physicsobject name="tires0">
-            <shape type="cylinder" radius="1.4" height="1.3" zup="1.4"/>
-            <mass mass="0.0"/>
-            <position x="-69.8" y="2.26" z="69.5"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="50.0"/>
-        </physicsobject>
-        
-        <physicsobject name="door0">
-            <shape type="box" x="2.8" y="0.1" z="1.2"/>
-            <mass mass="0.0"/>
-            <position x="-76.0" y="0.98" z="78.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="15.0"/>
-        </physicsobject>
-        
-        <physicsobject name="box_of_nails0">
-            <shape type="box" x="0.55" y="0.34" z="0.735"/>
-            <mass mass="60.0"/>
-            <position x="-80.2" y="3.8" z="85.4"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="150.0"/>
-        </physicsobject>
-        
-        <physicsobject name="car0">
-            <shape type="box" x="2.1" y="1.0" z="6.0"/>
-            <mass mass="0.0"/>
-            <position x="-76.0" y="2.0" z="88.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="66.0"/>
-        </physicsobject>
-        
-        <physicsobject name="car1">
-            <shape type="box" x="2.8" y="2.3" z="6.8"/>
-            <mass mass="0.0"/>
-            <position x="-88.0" y="3.3" z="77.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="-22.0"/>
-        </physicsobject>
-        
-        <physicsobject name="car2">
-            <shape type="box" x="2.1" y="1.0" z="6.0"/>
-            <mass mass="0.0"/>
-            <position x="-95.7" y="2.0" z="57.0"/>
-            <rotation x="0.0" y="1.0" z="0.0" angle="5.0"/>
-        </physicsobject>
-        
-        <physicsobject name="building0">
-            <shape type="compound">
-                <childshape type="box" x="7.55" y="13.3" z="9.5">
-                    <position x="-8.5" y="0.0" z="-1.0"/>
-                </childshape>
-            </shape>
-            <mass mass="0.0"/>
-            <position x="-73.6" y="3.0" z="57.1"/>
-        </physicsobject>
+    <obj name="fence00">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-94.77" y="3.7" z="99.7"/>
+    </obj>
 
-    </physicsobjects>
-</PhysicsObjectFile>
+    <obj name="fence01">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-84.23" y="3.7" z="99.7"/>
+    </obj>
+
+    <obj name="fence02">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-99.7" y="3.7" z="94.77"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-90.0"/>
+    </obj>
+
+    <obj name="fence03">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-99.7" y="3.7" z="84.23"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-90.0"/>
+    </obj>
+
+    <obj name="fence04">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-99.7" y="3.7" z="73.69"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-90.0"/>
+    </obj>
+
+    <obj name="fence05">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-99.7" y="3.7" z="63.14"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-90.0"/>
+    </obj>
+
+    <obj name="fence06">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-99.7" y="3.7" z="52.61"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-90.0"/>
+    </obj>
+
+    <obj name="fence07">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="-94.77" y="3.7" z="47.2"/>
+    </obj>
+
+    <obj name="barrel0">
+        <shape type="cylinder" r="0.7" h="1.1" zup="0.7"/>
+        <mass mass="60.0"/>
+        <pos x="-98.0" y="3.0" z="98.0"/>
+    </obj>
+
+    <obj name="barrel1">
+        <shape type="cylinder" r="0.7" h="1.1" zup="0.7"/>
+        <mass mass="60.0"/>
+        <pos x="-98.0" y="6.0" z="98.0"/>
+    </obj>
+
+    <obj name="barrel2">
+        <shape type="cylinder" r="0.92" h="1.38" zup="0.92"/>
+        <mass mass="80.0"/>
+        <pos x="-90.5" y="3.0" z="48.7"/>
+    </obj>
+
+    <obj name="railing0">
+        <shape type="box" x="0.1" y="1.35" z="4.75"/>
+        <mass mass="0.0"/>
+        <pos x="-98.8" y="2.3" z="81.0"/>
+        <rot x="0.0" y="0.0" z="1.0" angle="18.0"/>
+    </obj>
+
+    <obj name="jerrycan0">
+        <shape type="box" x="0.28" y="0.61" z="0.43"/>
+        <mass mass="30.0"/>
+        <pos x="-85.0" y="1.3" z="78.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-30.0"/>
+    </obj>
+
+    <obj name="metal_plane0">
+        <shape type="box" x="2.1" y="0.02" z="1.4"/>
+        <mass mass="0.0"/>
+        <pos x="-87.0" y="0.99" z="96.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="22.0"/>
+    </obj>
+
+    <obj name="metal_plane1">
+        <shape type="box" x="2.1" y="0.02" z="1.4"/>
+        <mass mass="0.0"/>
+        <pos x="-93.0" y="0.99" z="92.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="68.7"/>
+    </obj>
+
+    <obj name="wrench0">
+        <shape type="box" x="0.75" y="0.03" z="0.08"/>
+        <mass mass="10.0"/>
+        <pos x="-88.0" y="1.1" z="96.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="44.0"/>
+    </obj>
+
+    <obj name="wrench1">
+        <shape type="box" x="0.75" y="0.03" z="0.08"/>
+        <mass mass="15.0"/>
+        <pos x="-87.0" y="1.1" z="96.6"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="55.0"/>
+    </obj>
+
+    <obj name="pallet0">
+        <shape type="box" x="1.35" y="0.12" z="1.35"/>
+        <mass mass="30.0"/>
+        <pos x="-77.0" y="2.4" z="90.0"/>
+        <rot x="4.0" y="-1.0" z="0.0" angle="70.0"/>
+    </obj>
+
+    <obj name="pallet1">
+        <shape type="box" x="1.35" y="0.12" z="1.35"/>
+        <mass mass="30.0"/>
+        <pos x="-79.0" y="2.0" z="89.5"/>
+        <rot x="4.0" y="-1.0" z="0.0" angle="75.0"/>
+    </obj>
+
+    <obj name="safety_fence0">
+        <shape type="box" x="1.0" y="0.12" z="1.0"/>
+        <mass mass="30.0"/>
+        <pos x="-95.5" y="2.0" z="67.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="10.0"/>
+    </obj>
+
+    <obj name="stool0">
+        <shape type="box" x="0.4" y="0.56" z="0.4"/>
+        <mass mass="30.0"/>
+        <pos x="-89.9" y="2.0" z="64.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="2.0"/>
+    </obj>
+
+    <obj name="tires0">
+        <shape type="cylinder" r="1.4" h="1.3" zup="1.4"/>
+        <mass mass="0.0"/>
+        <pos x="-69.8" y="2.26" z="69.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="50.0"/>
+    </obj>
+
+    <obj name="door0">
+        <shape type="box" x="2.8" y="0.1" z="1.2"/>
+        <mass mass="0.0"/>
+        <pos x="-76.0" y="0.98" z="78.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="15.0"/>
+    </obj>
+
+    <obj name="box_of_nails0">
+        <shape type="box" x="0.55" y="0.34" z="0.735"/>
+        <mass mass="60.0"/>
+        <pos x="-80.2" y="3.8" z="85.4"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="150.0"/>
+    </obj>
+
+    <obj name="car0">
+        <shape type="box" x="2.1" y="1.0" z="6.0"/>
+        <mass mass="0.0"/>
+        <pos x="-76.0" y="2.0" z="88.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="66.0"/>
+    </obj>
+
+    <obj name="car1">
+        <shape type="box" x="2.8" y="2.3" z="6.8"/>
+        <mass mass="0.0"/>
+        <pos x="-88.0" y="3.3" z="77.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-22.0"/>
+    </obj>
+
+    <obj name="car2">
+        <shape type="box" x="2.1" y="1.0" z="6.0"/>
+        <mass mass="0.0"/>
+        <pos x="-95.7" y="2.0" z="57.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="5.0"/>
+    </obj>
+
+    <obj name="building0">
+        <shape type="compound">
+            <cshape type="box" x="7.55" y="13.3" z="9.5">
+                <pos x="-8.5" y="0.0" z="-1.0"/>
+            </cshape>
+        </shape>
+        <mass mass="0.0"/>
+        <pos x="-73.6" y="3.0" z="57.1"/>
+    </obj>
+
+</Objs>
