@@ -192,7 +192,11 @@
         </physicsobject>
         
         <physicsobject name="building0">
-            <shape type="box" x="1.0" y="1.0" z="1.0"/>
+            <shape type="compound">
+                <childshape type="box" x="7.55" y="13.3" z="9.5">
+                    <position x="-8.5" y="0.0" z="-1.0"/>
+                </childshape>
+            </shape>
             <mass mass="0.0"/>
             <position x="-73.6" y="3.0" z="57.1"/>
         </physicsobject>
