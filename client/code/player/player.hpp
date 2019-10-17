@@ -16,6 +16,10 @@ using namespace std;
 class Player : public Camera
 {
     protected:
+        static set < int > globalIDs;
+
+        int id;
+        
         bool connected;
         bool active;
         bool jumpAllowed;
@@ -41,8 +45,8 @@ class Player : public Camera
         void movePhysics();
 
     public:
-        Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
-        Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
+        Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
+        Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
         
         virtual void setConnected(bool connected);
         virtual void setActive(bool active);
@@ -66,6 +70,7 @@ class Player : public Camera
         vec3 getCameraOffset() const;
         vec3 getModelOffset() const;
         vec3 getModelForward() const;
+        int getID() const;
 
         virtual ~Player();
 };

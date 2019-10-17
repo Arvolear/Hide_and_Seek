@@ -18,6 +18,7 @@ void PlayerDataCollector::collect(Player* player)
     if (player->getPhysicsObject())
     {
         playerIDs.push_back(player->getID());
+        names.push_back(player->getPhysicsObject()->getName());
         models.insert({player->getID(), player->getPhysicsObject()->getTransform()});
         moveDirections.insert({player->getID(), player->getMoveDirection()});
 
@@ -48,6 +49,7 @@ void PlayerDataCollector::collect(vector < Player* > players)
         if (players[i]->getPhysicsObject())
         {
             playerIDs.push_back(players[i]->getID());
+            names.push_back(players[i]->getPhysicsObject()->getName());
             models.insert({players[i]->getID(), players[i]->getPhysicsObject()->getTransform()});
             moveDirections.insert({players[i]->getID(), players[i]->getMoveDirection()});
 
@@ -91,6 +93,19 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
 
         /* playerID */
         soldierElem->SetAttribute("id", playerIDs[i]);
+        
+        /* moveDirection */
+        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[playerIDs[i]].x(), 4));
+        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[playerIDs[i]].y(), 4));
+        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[playerIDs[i]].z(), 4));
+
+        soldierElem->InsertEndChild(moveDirectionElem);
+
+        /* obj */
+        XMLElement* objElem = playerDataCollectorDoc.NewElement("obj");
+
+        objElem->SetAttribute("name", names[playerIDs[i]].c_str());
 
         /* model */
         XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
@@ -103,15 +118,9 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
             modelElem->SetAttribute(str.data(), cutFloat(models[playerIDs[i]][j], 4));
         }
 
-        soldierElem->InsertEndChild(modelElem);
+        objElem->InsertEndChild(modelElem);
 
-        /* moveDirection */
-        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[playerIDs[i]].x(), 4));
-        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[playerIDs[i]].y(), 4));
-        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[playerIDs[i]].z(), 4));
-
-        soldierElem->InsertEndChild(moveDirectionElem);
+        soldierElem->InsertEndChild(objElem);
 
         /* weapons */
         if (weapons && !pickedWeapons.empty())
@@ -206,6 +215,14 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
             soldierElem->DeleteChild(armoryElem);
         }
         
+        /* moveDirection */
+        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[id].x(), 4));
+        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[id].y(), 4));
+        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[id].z(), 4));
+
+        soldierElem->InsertEndChild(moveDirectionElem);
+
         XMLElement* objElem = soldierElem->FirstChildElement("obj");
 
         if (objElem)
@@ -237,14 +254,6 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
 
             objElem->InsertEndChild(modelElem);
         }
-
-        /* moveDirection */
-        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[id].x(), 4));
-        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[id].y(), 4));
-        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[id].z(), 4));
-
-        soldierElem->InsertEndChild(moveDirectionElem);
 
         /* weapons */
         if (weapons && !pickedWeapons.empty())

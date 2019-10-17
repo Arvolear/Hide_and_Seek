@@ -91,7 +91,7 @@ void Weapon::reload()
 
 void Weapon::drop(vec3 where, bool active)
 {
-    int power = 3;
+    int power = 16;
 
     physicsObject->getRigidBody()->applyCentralImpulse(global.toBtVector3(where) * power); 
     stopAnimation();
@@ -174,8 +174,6 @@ void Weapon::pick(vec3 forward, vec3 up, bool active)
     setVisible(active);
     setShadow(false);
     physicsObject->getRigidBody()->setActivationState(WANTS_DEACTIVATION);
-
-    //physicsObject->setRotation(toBtQuaternion(twist), false);
 }
 
 vec3 Weapon::getOffset() const

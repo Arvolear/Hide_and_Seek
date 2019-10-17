@@ -501,6 +501,18 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
 
             WE->setShotSpeed(speed);
         }
+        
+        /* shot power */
+        XMLElement* shotPowerElem = weaponInfoElem->FirstChildElement("power");
+
+        if (shotPowerElem)
+        {
+            float power = 0;
+
+            shotPowerElem->QueryFloatAttribute("power", &power);
+
+            WE->setShotPower(power);
+        }
     }
 }
 

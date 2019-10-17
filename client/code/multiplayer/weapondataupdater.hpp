@@ -1,5 +1,3 @@
-//client
-
 #pragma once
 
 #include <stdexcept>
@@ -11,24 +9,28 @@
 using namespace std;
 using namespace tinyxml2;
 
-class GameObjectDataUpdater
+class WeaponDataUpdater
 {
     private:
         PhysicsObjectDataParser* objParser;
         vector < string > names;
 
+        map < string, int > storages;
+        map < string, int > sizes;
+        map < string, int > magazines;
+        map < string, float > speeds;
+        map < string, float > powers;
+
     public:
-        GameObjectDataUpdater();
+        WeaponDataUpdater();
 
         void collect(string info);
 
-        void updateData(GameObject* gameObject, bool interpolation = false);
         void updateData(map < string, GameObject* > gameObjects, bool interpolation = false);
 
-        string getName(int index = 0) const;
         vector < string > getNames() const;
 
         void clear();
 
-        ~GameObjectDataUpdater();
+        ~WeaponDataUpdater();
 };

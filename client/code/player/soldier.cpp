@@ -32,13 +32,13 @@
 #include "player.hpp"
 #include "soldier.hpp"
 
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) 
+Soldier::Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(id, window, playerPos, cameraForward, speed) 
 {
     pickFrom = pickTo = vec3(0);
     dropTo = false;
 }
         
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) 
+Soldier::Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(id, window, playerPos, cameraForward, tracer, player, speed, active) 
 {
     pickFrom = pickTo = vec3(0);
     dropTo = false;

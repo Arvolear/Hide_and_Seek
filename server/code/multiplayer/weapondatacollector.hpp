@@ -10,21 +10,24 @@
 using namespace std;
 using namespace tinyxml2;
 
-class PhysicsObjectDataCollector
+class WeaponDataCollector
 {
     private:
         mutable map < string, btScalar* > pos;
+        mutable map < string, int > storages;
+        mutable map < string, int > sizes;
+        mutable map < string, int > magazines;
+        mutable map < string, float > speeds;
+        mutable map < string, float > powers;
 
     public:
-        PhysicsObjectDataCollector();
+        WeaponDataCollector();
 
-        void collect(PhysicsObject* physicsObject);
         void collect(map < string, PhysicsObject* > physicsObjects);
 
-        string getData(bool raw = false) const;
         string getMergedData(string fileName, bool raw = false) const;
 
         void clear(); 
 
-        ~PhysicsObjectDataCollector();
+        ~WeaponDataCollector();
 };

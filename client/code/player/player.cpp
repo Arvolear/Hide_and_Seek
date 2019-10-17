@@ -29,8 +29,18 @@
 
 #include "player.hpp"
 
-Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Camera(window, playerPos, cameraForward, speed)
+set < int > Player::globalIDs;
+
+Player::Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Camera(window, playerPos, cameraForward, speed)
 {
+    if (globalIDs.find(id) != globalIDs.end())
+    {
+        throw(runtime_error("ERROR::Player() player id is not unique"));
+    }
+
+    this->id = id;
+    globalIDs.insert(id);
+
     rayTracer = nullptr;
     player = nullptr;
 
@@ -44,8 +54,16 @@ Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, float speed) 
     this->active = false;
 }
         
-Player::Player(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Camera(window, playerPos, cameraForward, speed)
+Player::Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Camera(window, playerPos, cameraForward, speed)
 {
+    if (globalIDs.find(id) != globalIDs.end())
+    {
+        throw(runtime_error("ERROR::Player() player id is not unique"));
+    }
+
+    this->id = id;
+    globalIDs.insert(id);
+
     rayTracer = tracer;
     this->player = player;
     
@@ -493,6 +511,11 @@ vec3 Player::getModelOffset() const
 vec3 Player::getModelForward() const
 {
     return modelForward;
+}
+
+int Player::getID() const
+{
+    return id;
 }
 
 Player::~Player()

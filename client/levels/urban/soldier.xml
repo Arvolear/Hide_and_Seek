@@ -2,7 +2,7 @@
 <SoldierFile>
     <soldiers>
 
-         <soldier>
+         <soldier id="0">
             <position x="0.0" y="0.0" z="0.0"/>
             <forward x="0.0" y="0.0" z="-1.0"/>
             <speed speed="1.0"/>
@@ -25,17 +25,6 @@
                         </animation>
                     </animations>
                 </graphicsobject>
-                <physicsobject>
-                    <shape type="compound">
-                        <childshape type="sphere" radius="0.4">
-                            <position x="0.0" y="1.75" z="0.0"/>
-                        </childshape>
-                        <childshape type="capsule" radius="0.4" height="3.5"/>
-                    </shape>
-                    <mass mass="10.0"/>
-                    <position x="10.0" y="3.0" z="10.0"/>
-                    <angularfactor x="0.0" y="0.0" z="0.0"/>
-                </physicsobject>
                 <debugobject>
                     <debugsphere detail="3"/>
                 </debugobject>
@@ -49,7 +38,7 @@
             </armory>
         </soldier>
         
-        <soldier>
+        <soldier id="1">
             <position x="0.0" y="0.0" z="0.0"/>
             <forward x="0.0" y="0.0" z="-1.0"/>
             <speed speed="1.0"/>
@@ -72,17 +61,6 @@
                         </animation>
                     </animations>
                 </graphicsobject>
-                <physicsobject>
-                    <shape type="compound">
-                        <childshape type="sphere" radius="0.4">
-                            <position x="0.0" y="1.75" z="0.0"/>
-                        </childshape>
-                        <childshape type="capsule" radius="0.4" height="3.5"/>
-                    </shape>
-                    <mass mass="10.0"/>
-                    <position x="7.0" y="3.0" z="5.0"/>
-                    <angularfactor x="0.0" y="0.0" z="0.0"/>
-                </physicsobject>
                 <debugobject>
                     <debugsphere detail="3"/>
                 </debugobject>

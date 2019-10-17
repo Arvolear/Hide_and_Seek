@@ -52,10 +52,12 @@
 #include "level/level.hpp"
 
 #include "multiplayer/client.hpp"
+#include "multiplayer/physicsobjectdataparser.hpp"
 #include "multiplayer/playerdatacollector.hpp"
 #include "multiplayer/playerdataupdater.hpp"
 #include "multiplayer/gameobjectdatacollector.hpp"
 #include "multiplayer/gameobjectdataupdater.hpp"
+#include "multiplayer/weapondataupdater.hpp"
 #include "multiplayer/weaponpickercollector.hpp"
 #include "multiplayer/weaponpickerupdater.hpp"
 #include "multiplayer/weapondroppercollector.hpp"

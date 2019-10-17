@@ -14,6 +14,8 @@ class PlayerDataCollector
 {
     private:
         vector < int > playerIDs;
+
+        vector < string > names;
         mutable map < int, btScalar* > models;
         mutable map < int, btVector3 > moveDirections;
         mutable map < int, vector < string > > pickedWeapons;

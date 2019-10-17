@@ -49,10 +49,12 @@
 #include "../level/level.hpp"
 
 #include "client.hpp"
+#include "physicsobjectdataparser.hpp"
 #include "playerdatacollector.hpp"
 #include "playerdataupdater.hpp"
 #include "gameobjectdatacollector.hpp"
 #include "gameobjectdataupdater.hpp"
+#include "weapondataupdater.hpp"
 #include "weaponpickercollector.hpp"
 #include "weaponpickerupdater.hpp"
 #include "weapondroppercollector.hpp"
@@ -68,6 +70,7 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
     playerDataUpdater = new PlayerDataUpdater();
     gameObjectDataCollector = new GameObjectDataCollector();
     gameObjectDataUpdater = new GameObjectDataUpdater();
+    weaponDataUpdater = new WeaponDataUpdater();
     weaponPickerCollector = new WeaponPickerCollector();
     weaponPickerUpdater = new WeaponPickerUpdater();
     weaponDropperCollector = new WeaponDropperCollector();
@@ -88,11 +91,11 @@ void Multiplayer::connect()
     //client->connectToServer("192.168.0.145", 5040);
     client->connectToServer("192.168.0.183", 5040);
     //client->connectToServer("127.0.0.1", 5040);
-
-    /* players info */
-    client->recvMSG(500);
+    
+    /* connection info */
+    client->recvMSG(50);
     string msg = client->getMessage();
-
+        
     if (msg != "")
     {
         XMLDocument newConnectionDoc;
@@ -105,18 +108,12 @@ void Multiplayer::connect()
         {
             joinElem->QueryIntText(&playerID);
         }
-        
-        map < string, GameObject* > gameObjects = level->getGameObjects();
-        
-        playerDataUpdater->collect(msg);
-        playerDataUpdater->updateData(level->getPlayers(), false, gameObjects);
-        playerDataUpdater->clear();
     }
     else
     {
         throw(runtime_error("ERROR::Multiplayer::connect() server is down"));
-    }
-   
+    }    
+
     /* gameObjects info */
     client->recvMSG(10000);
     msg = client->getMessage();
@@ -129,9 +126,42 @@ void Multiplayer::connect()
     }
     else
     {
-        throw(runtime_error("ERROR::Multiplayer::connect() server is down"));
+        throw(runtime_error("ERROR::Multiplayer::connect() not enough buffer (gameObject)"));
     }
+    
+    /* weapons info */
+    client->recvMSG(1000);
+    msg = client->getMessage();
 
+    if (msg != "")
+    {
+        weaponDataUpdater->collect(msg);
+        weaponDataUpdater->updateData(level->getGameObjects(), false);
+        weaponDataUpdater->clear();
+    }
+    else
+    {
+        throw(runtime_error("ERROR::Multiplayer::connect() not enough buffer (weapon)"));
+    }
+    
+    /* players info */
+    client->recvMSG(1500);
+    msg = client->getMessage();
+
+    if (msg != "")
+    {
+        map < string, GameObject* > gameObjects = level->getGameObjects();
+       
+        playerDataUpdater->collect(msg);
+
+        playerDataUpdater->updateData(level->getPlayers(), false, gameObjects);
+        playerDataUpdater->clear();
+    }
+    else
+    {
+        throw(runtime_error("ERROR::Multiplayer::connect() not enough buffer (player)"));
+    }
+   
     level->setPlayerID(playerID);
     playerDataCollector->setPlayerID(playerID);
     gameObjectDataCollector->setSenderID(playerID);
@@ -232,7 +262,7 @@ void Multiplayer::update()
 
             playerConnectionUpdater->clear();
         }
-        else if (msg.find("Players") != string::npos)
+        else if (msg.find("Soldiers") != string::npos)
         { 
             playerDataUpdater->collect(msg);
             playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()), true);
@@ -297,6 +327,7 @@ Multiplayer::~Multiplayer()
     delete playerDataUpdater;
     delete gameObjectDataCollector;
     delete gameObjectDataUpdater;
+    delete weaponDataUpdater;
     delete weaponPickerCollector;
     delete weaponPickerUpdater;
     delete weaponDropperCollector;

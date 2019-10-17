@@ -39,7 +39,6 @@ class LevelLoader
         void loadAnimation(XMLElement* animationElem, Animation*& anim);
 
         void loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*& GO);
-        void loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& GO);
         void loadDebugObject(XMLElement* debugObjectElem, GameObject*& GO);
 
         void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);

@@ -76,7 +76,7 @@ Level::Level(Window* window, World* physicsWorld)
     atmosphere = nullptr;
     skyBox = nullptr;
 
-    playerID = 0;
+    playerID = -1;
 
     projection = mat4(1.0);
     viewFrustum = nullptr;
@@ -132,7 +132,7 @@ void Level::loadLevel(string level)
     levelLoader->getGameObjectsData(gameObjects);
     levelLoader->getProjectionData(projection);
     levelLoader->getViewFrustumData(viewFrustum);
-    
+
     quad->init();
 }
         
@@ -188,7 +188,7 @@ void Level::render()
 
     glEnable(GL_CULL_FACE);
 
-    mat4 view = players[playerID]->getView();
+    mat4 view = getPlayer()->getView();
     mat4 staticView = mat4(mat3(view));
     
     viewFrustum->updateFrustum(view, projection);
@@ -223,7 +223,7 @@ void Level::render()
             /* crucial */
             dirLights[i]->getShadowBuffer()->clear(vec4(1.0, 0.0, 0.0, 1.0));
 
-            dirLights[i]->updateShadowView(players[playerID]->getPosition());
+            dirLights[i]->updateShadowView(getPlayer()->getPosition());
 
             dirShadowShader->use();
 
@@ -290,7 +290,7 @@ void Level::render()
 
     gameObjectShader->use();
 
-    gameObjectShader->setVec3("viewPos", players[playerID]->getPosition());
+    gameObjectShader->setVec3("viewPos", getPlayer()->getPosition());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
@@ -449,11 +449,23 @@ Player* Level::getPlayer(int id) const
 {
     if (id == -1)
     {
-        return players[playerID];
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            if (players[i]->getID() == playerID)
+            {
+                return players[i];
+            }
+        }
     }
     else if (id >= 0 && id < (int)players.size())
     {
-        return players[id];
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            if (players[i]->getID() == id)
+            {
+                return players[i];
+            }
+        }
     }
 
     return nullptr;

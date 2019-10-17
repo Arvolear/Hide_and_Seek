@@ -245,224 +245,6 @@ void LevelLoader::loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*
     }
 }
 
-void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& GO)
-{
-    GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
-
-    if (!physicsObjectElem)
-    {
-        return;
-    }
-
-    /* shape */
-    XMLElement* shapeElem = physicsObjectElem->FirstChildElement("shape");
-
-    if (shapeElem)
-    {
-        bool shape = false;
-
-        const char* type = nullptr;
-        shapeElem->QueryStringAttribute("type", &type);
-
-        if (!strcmp(type, "box"))
-        {
-            float x = 0, y = 0, z = 0;
-
-            shapeElem->QueryFloatAttribute("x", &x);
-            shapeElem->QueryFloatAttribute("y", &y);
-            shapeElem->QueryFloatAttribute("z", &z);
-
-            GO->getPhysicsObject()->setShape(new btBoxShape(btVector3(x, y, z)));    
-            shape = true;
-        }
-        else if (!strcmp(type, "cylinder"))
-        {
-            float radius = 0, height = 0, zup = 0;
-
-            shapeElem->QueryFloatAttribute("radius", &radius);
-            shapeElem->QueryFloatAttribute("height", &height);
-            shapeElem->QueryFloatAttribute("zup", &zup);
-
-            GO->getPhysicsObject()->setShape(new btCylinderShape(btVector3(radius, height, zup)));    
-            shape = true;
-        }
-        else if (!strcmp(type, "sphere"))
-        {
-            float radius = 0;
-
-            shapeElem->QueryFloatAttribute("radius", &radius);
-
-            GO->getPhysicsObject()->setShape(new btSphereShape(radius));    
-            shape = true;
-        }
-        else if (!strcmp(type, "capsule"))
-        {
-            float radius = 0;
-            float height = 0;
-
-            shapeElem->QueryFloatAttribute("radius", &radius);
-            shapeElem->QueryFloatAttribute("height", &height);
-
-            GO->getPhysicsObject()->setShape(new btCapsuleShape(radius, height));    
-            shape = true;
-        }
-        else if (!strcmp(type, "compound"))
-        {
-            CompoundShape* CS = new CompoundShape;
-
-            XMLElement* childShapeElem = shapeElem->FirstChildElement("childshape");
-
-            while (childShapeElem)
-            {
-                const char* childType = nullptr;
-                childShapeElem->QueryStringAttribute("type", &childType);
-
-                /* child shape */
-                btCollisionShape* childShape = nullptr;
-
-                if (!strcmp(childType, "box"))
-                {
-                    float x = 0, y = 0, z = 0;
-
-                    childShapeElem->QueryFloatAttribute("x", &x);
-                    childShapeElem->QueryFloatAttribute("y", &y);
-                    childShapeElem->QueryFloatAttribute("z", &z);
-
-                    childShape = new btBoxShape(btVector3(x, y, z));
-                }
-                else if (!strcmp(childType, "cylinder"))
-                {
-                    float radius = 0, height = 0, zup = 0;
-
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-                    childShapeElem->QueryFloatAttribute("height", &height);
-                    childShapeElem->QueryFloatAttribute("zup", &zup);
-
-                    childShape = new btCylinderShape(btVector3(radius, height, zup));
-                }
-                else if (!strcmp(childType, "sphere"))
-                {
-                    float radius = 0;
-
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-
-                    childShape = new btSphereShape(radius);
-                }
-                else if (!strcmp(childType, "capsule"))
-                {
-                    float radius = 0;
-                    float height = 0;
-
-                    childShapeElem->QueryFloatAttribute("radius", &radius);
-                    childShapeElem->QueryFloatAttribute("height", &height);
-
-                    childShape = new btCapsuleShape(radius, height);
-                }
-                else
-                {
-                    childShapeElem = childShapeElem->NextSiblingElement();
-                    continue;
-                }
-
-                /* child position */
-                btVector3 childPosition = btVector3(0, 0, 0);
-                XMLElement* childPositionElem = childShapeElem->FirstChildElement("position");
-
-                if (childPositionElem)
-                {
-                    float x = 0, y = 0, z = 0;
-
-                    childPositionElem->QueryFloatAttribute("x", &x);
-                    childPositionElem->QueryFloatAttribute("y", &y);
-                    childPositionElem->QueryFloatAttribute("z", &z);
-
-                    childPosition = btVector3(x, y, z);
-                }
-
-                /* child rotation */
-                btQuaternion childRotation = btQuaternion(btVector3(0, 0, 1), 0);
-                XMLElement* childRotationElem = childShapeElem->FirstChildElement("rotation");
-
-                if (childRotationElem)
-                {
-                    float x = 0, y = 0, z = 1, angle = 0;
-
-                    childRotationElem->QueryFloatAttribute("x", &x);
-                    childRotationElem->QueryFloatAttribute("y", &y);
-                    childRotationElem->QueryFloatAttribute("z", &z);
-                    childRotationElem->QueryFloatAttribute("angle", &angle);
-
-                    childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
-                }
-
-                CS->add(childShape, childPosition, childRotation);
-                shape = true;
-
-                childShapeElem = childShapeElem->NextSiblingElement();
-            }
-
-            GO->getPhysicsObject()->setShape(CS);    
-        }
-
-        if (shape)
-        {
-            /* mass */
-            XMLElement* massElem = physicsObjectElem->FirstChildElement("mass");
-
-            if (massElem)
-            {
-                float mass = 0;
-                massElem->QueryFloatAttribute("mass", &mass);
-
-                GO->getPhysicsObject()->setMass(mass);
-            }
-
-            /* position */
-            XMLElement* positionElem = physicsObjectElem->FirstChildElement("position");
-
-            if (positionElem)
-            {
-                float x = 0, y = 0, z = 0;
-
-                positionElem->QueryFloatAttribute("x", &x);
-                positionElem->QueryFloatAttribute("y", &y);
-                positionElem->QueryFloatAttribute("z", &z);
-
-                GO->getPhysicsObject()->setPosition(btVector3(x, y, z));
-            }
-
-            /* rotation */
-            XMLElement* rotationElem = physicsObjectElem->FirstChildElement("rotation");
-
-            if (rotationElem)
-            {
-                float x = 0, y = 0, z = 0, angle = 0;
-
-                rotationElem->QueryFloatAttribute("x", &x);
-                rotationElem->QueryFloatAttribute("y", &y);
-                rotationElem->QueryFloatAttribute("z", &z);
-                rotationElem->QueryFloatAttribute("angle", &angle);
-
-                GO->getPhysicsObject()->setRotation(btQuaternion(btVector3(x, y, z), global.toRads(angle)));
-            }
-
-            /* angular factor */
-            XMLElement* angularElem = physicsObjectElem->FirstChildElement("angularfactor");
-
-            if (angularElem)
-            {
-                float x = 0, y = 0, z = 0;
-
-                angularElem->QueryFloatAttribute("x", &x);
-                angularElem->QueryFloatAttribute("y", &y);
-                angularElem->QueryFloatAttribute("z", &z);
-
-                GO->getPhysicsObject()->getRigidBody()->setAngularFactor(btVector3(x, y, z));
-            }
-        }
-    }
-}
-
 void LevelLoader::loadDebugObject(XMLElement* debugObjectElem, GameObject*& GO)
 {
     XMLElement* debugSphereElem = debugObjectElem->FirstChildElement("debugsphere");
@@ -494,12 +276,7 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
     }
 
     /* physics object */
-    XMLElement* physicsObjectElem = gameObjectElem->FirstChildElement("physicsobject");
-
-    //if (physicsObjectElem)
-    //{
-        loadPhysicsObject(physicsObjectElem, GO);
-    //}
+    GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
     
     /* debug object */
     XMLElement* debugObjectElem = gameObjectElem->FirstChildElement("debugobject");
@@ -526,12 +303,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
     }
 
     /* physics object */
-    XMLElement* physicsObjectElem = rifleElem->FirstChildElement("physicsobject");
-
-    if (physicsObjectElem)
-    {
-        loadPhysicsObject(physicsObjectElem, GO);
-    }
+    GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
 
     /* debug object */
     XMLElement* debugObjectElem = rifleElem->FirstChildElement("debugobject");
@@ -575,54 +347,6 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
             twistElem->QueryFloatAttribute("angle", &angle);
 
             rifle->setTwist(vec3(x, y, z), global.toRads(angle));
-        }
-
-        /* storage bullets */
-        XMLElement* storageBulletsElem = rifleInfoElem->FirstChildElement("storagebullets");
-
-        if (storageBulletsElem)
-        {
-            int amount = 0;
-
-            storageBulletsElem->QueryIntAttribute("amount", &amount);
-
-            rifle->setStorageBullets(amount);
-        }
-
-        /* magazine size */
-        XMLElement* magazineSizeElem = rifleInfoElem->FirstChildElement("magazinesize");
-
-        if (magazineSizeElem)
-        {
-            int size = 0;
-
-            magazineSizeElem->QueryIntAttribute("size", &size);
-
-            rifle->setMagazineSize(size);
-        }
-
-        /* magazine bullets */
-        XMLElement* magazineBulletsElem = rifleInfoElem->FirstChildElement("magazinebullets");
-
-        if (magazineBulletsElem)
-        {
-            int amount = 0;
-
-            magazineBulletsElem->QueryIntAttribute("amount", &amount);
-
-            rifle->setMagazineBullets(amount);
-        }
-
-        /* shot speed */
-        XMLElement* shotSpeedElem = rifleInfoElem->FirstChildElement("shotspeed");
-
-        if (shotSpeedElem)
-        {
-            float speed = 0;
-
-            shotSpeedElem->QueryFloatAttribute("speed", &speed);
-
-            rifle->setShotSpeed(speed);
         }
     }
 }
@@ -1252,6 +976,11 @@ void LevelLoader::loadPlayers()
 
     while (playerElem)
     {
+        /* playerID */
+        int playerID;
+
+        playerElem->QueryIntAttribute("id", &playerID);
+
         /* position */
         XMLElement* positionElem = playerElem->FirstChildElement("position");
         vec3 position(0.0);
@@ -1289,7 +1018,7 @@ void LevelLoader::loadPlayers()
             speedElem->QueryFloatAttribute("speed", &speed);
         }
 
-        Player* player = new Player(window, position, forward, speed);
+        Player* player = new Player(playerID, window, position, forward, speed);
 
         /* game object */
         XMLElement* gameObjectElem = playerElem->FirstChildElement("gameobject");
@@ -1391,6 +1120,11 @@ void LevelLoader::loadSoldiers()
 
     while (soldierElem)
     {
+        /* playerID */
+        int playerID;
+
+        soldierElem->QueryIntAttribute("id", &playerID);
+
         /* position */
         XMLElement* positionElem = soldierElem->FirstChildElement("position");
         vec3 position(0.0);
@@ -1428,7 +1162,7 @@ void LevelLoader::loadSoldiers()
             speedElem->QueryFloatAttribute("speed", &speed);
         }
 
-        Soldier* soldier = new Soldier(window, position, forward, speed);
+        Soldier* soldier = new Soldier(playerID, window, position, forward, speed);
 
         /* game object */
         XMLElement* gameObjectElem = soldierElem->FirstChildElement("gameobject");

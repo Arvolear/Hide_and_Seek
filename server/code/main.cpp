@@ -19,6 +19,7 @@
 #include "multiplayer/playerdataupdater.hpp"
 #include "multiplayer/physicsobjectdatacollector.hpp"
 #include "multiplayer/physicsobjectdataupdater.hpp"
+#include "multiplayer/weapondatacollector.hpp"
 #include "multiplayer/weaponpickercollector.hpp"
 #include "multiplayer/weaponpickerupdater.hpp"
 #include "multiplayer/weapondroppercollector.hpp"

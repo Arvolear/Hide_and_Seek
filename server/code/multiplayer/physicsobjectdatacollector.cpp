@@ -13,7 +13,7 @@ void PhysicsObjectDataCollector::collect(PhysicsObject* physicsObject)
 {
     if (physicsObject)
     {
-        info.insert({physicsObject->getName(), physicsObject->getTransform()});
+        pos.insert({physicsObject->getName(), physicsObject->getTransform()});
     }
 }
 
@@ -21,7 +21,7 @@ void PhysicsObjectDataCollector::collect(map < string, PhysicsObject* > physicsO
 {
     for (auto& i: physicsObjects)
     {
-        info.insert({i.first, i.second->getTransform()});
+        pos.insert({i.first, i.second->getTransform()});
     }
 }
 
@@ -33,7 +33,7 @@ string PhysicsObjectDataCollector::getData(bool raw) const
     XMLNode* root = physicsObjectDataCollectorDoc.NewElement("Objs");
     physicsObjectDataCollectorDoc.InsertFirstChild(root);
 
-    for (auto& i: info)
+    for (auto& i: pos)
     {
         /* obj */
         XMLElement* objElem = physicsObjectDataCollectorDoc.NewElement("obj");
@@ -87,7 +87,7 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
 
     if (!root)
     {
-        throw runtime_error("ERROR::PhysicsObjectdataCollector::getMergedData() failed to load XML");
+        throw runtime_error("ERROR::PhysicsObjectDataCollector::getMergedData() failed to load XML");
     }
 
     XMLElement* objElem = root->FirstChildElement("obj");
@@ -114,7 +114,7 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
         /* model */
         XMLElement* modelElem = physicsObjectDataCollectorDoc.NewElement("mdl");
 
-        btScalar* model = info[name];
+        btScalar* model = pos[name];
 
         if (model)
         {
@@ -154,12 +154,12 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
 
 void PhysicsObjectDataCollector::clear()
 {
-    for (auto& i: info)
+    for (auto& i: pos)
     {
         delete[] i.second;
     }
 
-    info.clear();
+    pos.clear();
 }
 
 PhysicsObjectDataCollector::~PhysicsObjectDataCollector() 

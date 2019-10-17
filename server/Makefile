@@ -11,7 +11,7 @@ OUTPUTDIR = ./build
 
 MAIN = main.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectioncollector.o playerdisconnectioncollector.o
+MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weapondatacollector.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectioncollector.o playerdisconnectioncollector.o
 LEVEL = level.o levelloader.o
 WORLD = world.o bulletevents.o raytracer.o
 PLAYER = player.o soldier.o
@@ -60,6 +60,9 @@ $(OUTPUTDIR)/physicsobjectdatacollector.o: $(INPUTDIR)/multiplayer/physicsobject
 
 $(OUTPUTDIR)/physicsobjectdataupdater.o: $(INPUTDIR)/multiplayer/physicsobjectdataupdater.cpp $(INPUTDIR)/multiplayer/physicsobjectdataupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/physicsobjectdataupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/weapondatacollector.o: $(INPUTDIR)/multiplayer/weapondatacollector.cpp $(INPUTDIR)/multiplayer/weapondatacollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/weapondatacollector.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/weaponpickercollector.o: $(INPUTDIR)/multiplayer/weaponpickercollector.cpp $(INPUTDIR)/multiplayer/weaponpickercollector.hpp
 	g++ -c $(INPUTDIR)/multiplayer/weaponpickercollector.cpp -o $@ $(FLAGS)
