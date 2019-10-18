@@ -34,6 +34,11 @@ void Level::loadLevel(string level)
     levelLoader->getPlayersData(players);
     levelLoader->getPhysicsObjectsData(physicsObjects);
 }
+
+void Level::updateLevel()
+{
+    levelLoader->updateLevel();
+}
         
 void Level::addPhysicsObject(PhysicsObject* physicsObject)
 {

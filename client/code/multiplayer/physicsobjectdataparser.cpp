@@ -9,7 +9,14 @@
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
 
+#include "../player/camera.hpp"
+
 #include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
@@ -250,7 +257,7 @@ void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool i
 
     if (massIt != masses.end())
     {
-        gameObject->getPhysicsObject()->setMass(massIt->second); 
+        gameObject->getPhysicsObject()->setMass(massIt->second, false); 
     }
 
     if (modelIt != models.end())

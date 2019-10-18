@@ -1,5 +1,9 @@
 #include "../global/convert.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
 #include "../physics_object/weapon.hpp"

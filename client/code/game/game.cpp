@@ -134,6 +134,12 @@ void Game::checkEvents()
         level->toggleDebug();
     }
     
+    /* draw debug spheres */
+    if (window->isKeyPressedOnce(GLFW_KEY_P))
+    {
+        level->toggleVirtualPlayer();
+    }
+    
     /* PHYSICS EVENTS */
 }
 
@@ -169,6 +175,7 @@ void Game::gameLoop()
         {
             float step = 2.0 / (global.fpsCounter->getFPS());
 
+            /* lock mtx to block bodies removal */
             physicsWorld->updateSimulation(step, 1000);
         }
 

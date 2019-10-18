@@ -2,49 +2,59 @@
 # Material Count: 4
 
 newmtl drevo
-Ns 96.078431
+Ns 94.117647
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
-illum 9
+illum 3
 map_Kd textures/Drevo[Albedo].png
+map_Bump textures/Drevo[Normal].png
+map_Ka textures/AO.png
+map_Ke textures/Drevo[Gloss].png
 map_d textures/Drevo[Albedo].png
 
 newmtl dum
-Ns 96.078431
+Ns 94.117647
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
-illum 9
+illum 3
 map_Kd textures/Zed[Albedo].png
+map_Bump textures/Zed[Normal].png
+map_Ke textures/Zed[Gloss].png
 map_d textures/Zed[Albedo].png
 
 newmtl okna
-Ns 96.078431
+Ns 94.117647
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
-illum 9
+illum 3
 map_Kd textures/okno[Albedo].png
+map_Bump textures/okno[Norm].png
+map_Ke textures/okno[Gloss].png
 map_d textures/okno[Albedo].png
 
 newmtl props
-Ns 96.078431
+Ns 94.117647
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
-illum 9
+illum 2
 map_Kd textures/props[Albedo].png
+map_Bump textures/props[Norm].png
+map_Ka textures/props_ao.png
+map_Ke textures/props[Gloss].png
 map_d textures/props[Albedo].png

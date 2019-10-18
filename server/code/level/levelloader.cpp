@@ -20,10 +20,13 @@ LevelLoader::LevelLoader(World* physicsWorld)
         
 void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject*& PO)
 {
-    const char* name = nullptr;
-    physicsObjectElem->QueryStringAttribute("name", &name);
+    if (!PO)
+    {
+        const char* name = nullptr;
+        physicsObjectElem->QueryStringAttribute("name", &name);
     
-    PO = new PhysicsObject(name, physicsWorld->getWorld());
+        PO = new PhysicsObject(name, physicsWorld);
+    }
 
     /* shape */
     XMLElement* shapeElem = physicsObjectElem->FirstChildElement("shape");
@@ -185,7 +188,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 float mass = 0;
                 massElem->QueryFloatAttribute("mass", &mass);
 
-                PO->setMass(mass);
+                PO->setMass(mass, false);
             }
 
             /* position */
@@ -199,7 +202,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 positionElem->QueryFloatAttribute("y", &y);
                 positionElem->QueryFloatAttribute("z", &z);
 
-                PO->setPosition(btVector3(x, y, z));
+                PO->setPosition(btVector3(x, y, z), false);
             }
 
             /* rotation */
@@ -214,7 +217,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                PO->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)));
+                PO->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), false);
             }
 
             /* angular factor */
@@ -236,10 +239,13 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
 
 void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
 {
-    const char* name = nullptr;
-    weaponElem->QueryStringAttribute("name", &name);
+    if (!WE)
+    {
+        const char* name = nullptr;
+        weaponElem->QueryStringAttribute("name", &name);
 
-    WE = new Weapon(name, physicsWorld->getWorld());
+        WE = new Weapon(name, physicsWorld);
+    }
 
     /* shape */
     XMLElement* shapeElem = weaponElem->FirstChildElement("shape");
@@ -401,7 +407,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 float mass = 0;
                 massElem->QueryFloatAttribute("mass", &mass);
 
-                WE->setMass(mass);
+                WE->setMass(mass, false);
             }
 
             /* position */
@@ -415,7 +421,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 positionElem->QueryFloatAttribute("y", &y);
                 positionElem->QueryFloatAttribute("z", &z);
 
-                WE->setPosition(btVector3(x, y, z));
+                WE->setPosition(btVector3(x, y, z), false);
             }
 
             /* rotation */
@@ -430,7 +436,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                WE->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)));
+                WE->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), false);
             }
 
             /* angular factor */
@@ -501,7 +507,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
 
             WE->setShotSpeed(speed);
         }
-        
+
         /* shot power */
         XMLElement* shotPowerElem = weaponInfoElem->FirstChildElement("power");
 
@@ -533,11 +539,24 @@ void LevelLoader::loadPhysicsObjects()
 
     while (physicsObjectElem)
     {
-        PhysicsObject* PO = nullptr;
+        const char* name = nullptr;
+        physicsObjectElem->QueryStringAttribute("name", &name);
 
-        loadPhysicsObject(physicsObjectElem, PO);
+        /* new */
+        if (physicsObjects.find(name) == physicsObjects.end())
+        {
+            PhysicsObject* PO = nullptr;
 
-        physicsObjects.insert({PO->getName(), PO});
+            loadPhysicsObject(physicsObjectElem, PO);
+
+            physicsObjects.insert({PO->getName(), PO});
+        }
+        else // update
+        {
+            PhysicsObject* PO = physicsObjects.find(name)->second;
+
+            loadPhysicsObject(physicsObjectElem, PO);
+        }
 
         physicsObjectElem = physicsObjectElem->NextSiblingElement();
     }
@@ -560,11 +579,25 @@ void LevelLoader::loadWeapons()
 
     while (weaponElem)
     {
-        Weapon* WE = nullptr;
+        const char* name = nullptr;
+        weaponElem->QueryStringAttribute("name", &name);
 
-        loadWeapon(weaponElem, WE);
+        /* new */
+        if (physicsObjects.find(name) == physicsObjects.end())
+        {
+            Weapon* WE = nullptr;
 
-        physicsObjects.insert({WE->getName(), WE});
+            loadWeapon(weaponElem, WE);
+
+            physicsObjects.insert({WE->getName(), WE});
+
+        }
+        else // update
+        {
+            Weapon* WE = dynamic_cast < Weapon* >(physicsObjects.find(name)->second);
+
+            loadWeapon(weaponElem, WE);
+        }
 
         weaponElem = weaponElem->NextSiblingElement();
     } 
@@ -588,10 +621,9 @@ void LevelLoader::loadSoldiers()
     while (soldierElem)
     {
         /* id */
-        int id = 0;
-
+        int id = -1;
         soldierElem->QueryIntAttribute("id", &id);
-        
+
         /* speed */
         XMLElement* speedElem = soldierElem->FirstChildElement("speed");
         float speed = 1.0;
@@ -601,49 +633,79 @@ void LevelLoader::loadSoldiers()
             speedElem->QueryFloatAttribute("speed", &speed);
         }
 
-        Soldier* soldier = new Soldier(id, speed);
+        Soldier* soldier = nullptr;
+
+        bool found = false;
+        for (size_t i = 0; i < players.size(); i++)
+        {
+            if (players[i]->getID() == id)
+            {
+                found = true;
+                soldier = dynamic_cast < Soldier* >(players[i]);
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            soldier = new Soldier(id, speed);
+            players.push_back(soldier);
+        }
 
         /* physics object */
         XMLElement* physicsObjectElem = soldierElem->FirstChildElement("obj");
 
         if (physicsObjectElem)
         {
-            PhysicsObject* PO = nullptr;
+            const char* name = nullptr;
+            physicsObjectElem->QueryStringAttribute("name", &name);
 
-            loadPhysicsObject(physicsObjectElem, PO);
-
-            physicsObjects.insert({PO->getName(), PO});
-
-            soldier->setPhysicsObject(PO);
-        }
-
-        /* add weapon */
-        XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
-
-        if (armoryElem)
-        {
-            XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
-
-            while (weaponElem)
+            /* new */
+            if (physicsObjects.find(name) == physicsObjects.end())
             {
-                const char* name = nullptr;
+                PhysicsObject* PO = nullptr;
 
-                weaponElem->QueryStringAttribute("name", &name);
+                loadPhysicsObject(physicsObjectElem, PO);
 
-                Weapon* weapon = dynamic_cast < Weapon* >(physicsObjects.find(name)->second);
+                physicsObjects.insert({PO->getName(), PO});
 
-                if (!weapon)
-                {
-                    throw runtime_error("ERROR::LevelLoader::loadSoldiers() can't find the weapon");
-                }
+                soldier->setPhysicsObject(PO);
+            }
+            else // update
+            {
+                PhysicsObject* PO = physicsObjects.find(name)->second;
 
-                soldier->pick(weapon);
-
-                weaponElem = weaponElem->NextSiblingElement();
+                loadPhysicsObject(physicsObjectElem, PO);
             }
         }
 
-        players.push_back(soldier);
+        if (!found)
+        {
+            /* add weapon */
+            XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
+
+            if (armoryElem)
+            {
+                XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
+
+                while (weaponElem)
+                {
+                    const char* name = nullptr;
+                    weaponElem->QueryStringAttribute("name", &name);
+
+                    Weapon* weapon = dynamic_cast < Weapon* >(physicsObjects.find(name)->second);
+
+                    if (!weapon)
+                    {
+                        throw runtime_error("ERROR::LevelLoader::loadSoldiers() can't find the weapon");
+                    }
+
+                    soldier->pick(weapon);
+
+                    weaponElem = weaponElem->NextSiblingElement();
+                }
+            }
+        }
 
         soldierElem = soldierElem->NextSiblingElement();
     }
@@ -662,6 +724,12 @@ void LevelLoader::loadLevel(string name)
     {
         throw runtime_error("ERROR::loadLevel() at least 1 player is required");
     }
+}
+
+void LevelLoader::updateLevel()
+{
+    loadPhysicsObjects();
+    loadWeapons();
 }
 
 void LevelLoader::getPhysicsObjectsData(map < string, PhysicsObject* > &physicsObjects) const

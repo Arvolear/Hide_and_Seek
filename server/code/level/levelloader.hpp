@@ -34,6 +34,7 @@ class LevelLoader
         LevelLoader(World* physicsWorld);
 
         void loadLevel(string name);
+        void updateLevel();
 
         void getPhysicsObjectsData(map < string, PhysicsObject* > &physicsObjects) const;
         void getPlayersData(vector < Player* > &players) const;

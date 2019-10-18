@@ -3,6 +3,8 @@
 //native
 #include <vector>
 #include <algorithm>
+#include <mutex>
+#include <condition_variable>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -33,7 +35,7 @@ class World : public BulletEvents
         
         DebugDrawer* debugDrawer;
 
-    public: 
+    public:
         World();
 
         void pollEvents(); 

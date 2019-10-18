@@ -1,3 +1,7 @@
+#include "../world/raytracer.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "openglmotionstate.hpp"
 #include "physicsobject.hpp"
         
@@ -71,13 +75,7 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
     {
         return;
     }
-
-    if (body)
-    {
-        world->removeRigidBody(body);
-        delete body;
-    }
-
+    
     this->phShape = shape;
     this->mass = mass;
 
@@ -93,27 +91,29 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
         this->stat = true;
     }
 
-    btTransform* transform = motionState->getBTTransform();
-    transform->setOrigin(position);
-    transform->setRotation(rotation);
+    btTransform transform = motionState->getBTTransform();
+
+    transform.setIdentity();
+    transform.setOrigin(position);
+    transform.setRotation(rotation);
+
+    motionState->setBTTransform(transform);
     motionState->update();
 
-    btRigidBody::btRigidBodyConstructionInfo cInfo(mass, motionState, phShape, localInertia);
+    body->setWorldTransform(motionState->getBTTransform());     
 
-    body = new btRigidBody(cInfo);
-    body->setUserPointer(this);
-
-    world->addRigidBody(body);
-
-    if (!collidable)
-    {
-        body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_NO_CONTACT_RESPONSE);
-    }
+    body->setCollisionShape(phShape);
+    body->setMassProps(mass, localInertia); 
+    
+    physicsWorld->getWorld()->removeRigidBody(body);
+    physicsWorld->getWorld()->addRigidBody(body);
+    
+    body->forceActivationState(ACTIVE_TAG);
 }        
 
-PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world)
+PhysicsObject::PhysicsObject(string name, World* physicsWorld)
 {
-    this->world = world;
+    this->physicsWorld = physicsWorld;
     this->mass = 0;
     this->phShape = nullptr;
     this->comShape = nullptr;
@@ -122,10 +122,12 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world)
     this->stat = true;
     this->userPointer = nullptr;
 
-    btTransform* transform = new btTransform();
-    transform->setIdentity();
+    btTransform transform;
+    transform.setIdentity();
 
     motionState = new OpenGLMotionState(transform);
+    body = new btRigidBody(mass, motionState, nullptr);
+    body->setUserPointer(this);
     
     if (globalNames.find(name) != globalNames.end())
     {
@@ -137,9 +139,9 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world)
     ownerID = -1;
 }
 
-PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
+PhysicsObject::PhysicsObject(string name, World* physicsWorld, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
 {
-    this->world = world;
+    this->physicsWorld = physicsWorld;
     this->mass = mass;
     this->body = nullptr;
     this->comShape = nullptr;
@@ -147,10 +149,12 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionSha
     this->stat = mass ? false : true;
     this->userPointer = nullptr;
 
-    btTransform* transform = new btTransform();
-    transform->setIdentity();
+    btTransform transform;
+    transform.setIdentity();
 
     motionState = new OpenGLMotionState(transform);
+    body = new btRigidBody(mass, motionState, nullptr);
+    body->setUserPointer(this);
     
     updateBody(shape, mass, position, rotation);
     
@@ -164,9 +168,9 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, btCollisionSha
     ownerID = -1;
 }
 
-PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
+PhysicsObject::PhysicsObject(string name, World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
 {
-    this->world = world;
+    this->physicsWorld = physicsWorld;
     this->mass = mass;
     this->body = nullptr;
     this->comShape = nullptr;
@@ -174,10 +178,12 @@ PhysicsObject::PhysicsObject(string name, btDynamicsWorld* world, CompoundShape*
     this->stat = mass ? false : true;
     this->userPointer = nullptr;
 
-    btTransform* transform = new btTransform();
-    transform->setIdentity();
+    btTransform transform;
+    transform.setIdentity();
 
     motionState = new OpenGLMotionState(transform);
+    body = new btRigidBody(mass, motionState, nullptr);
+    body->setUserPointer(this);
     
     this->comShape = shape;
     
@@ -217,7 +223,7 @@ void PhysicsObject::setShape(btCollisionShape* shape)
     delete this->comShape;
     this->comShape = nullptr;
 
-    updateBody(shape, mass, motionState->getBTTransform()->getOrigin(), motionState->getBTTransform()->getRotation());
+    updateBody(shape, mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation());
 }
 
 void PhysicsObject::setShape(CompoundShape* shape)
@@ -228,7 +234,7 @@ void PhysicsObject::setShape(CompoundShape* shape)
 
     this->comShape = shape;
 
-    updateBody(shape->getShape(), mass, motionState->getBTTransform()->getOrigin(), motionState->getBTTransform()->getRotation());
+    updateBody(shape->getShape(), mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation());
 }
 
 void PhysicsObject::setMass(float mass, bool add)
@@ -237,41 +243,41 @@ void PhysicsObject::setMass(float mass, bool add)
     {
         mass += this->mass;
     }
-        
-    updateBody(phShape, mass, motionState->getBTTransform()->getOrigin(), motionState->getBTTransform()->getRotation());
+
+    updateBody(phShape, mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation());
 }
 
 void PhysicsObject::setPosition(btVector3 position, bool add)
 {
     if (add)
     {
-        position += motionState->getBTTransform()->getOrigin();
+        position += motionState->getBTTransform().getOrigin();
     }
 
-    updateBody(phShape, mass, position, motionState->getBTTransform()->getRotation());
+    updateBody(phShape, mass, position, motionState->getBTTransform().getRotation());
 }
 
 void PhysicsObject::setRotation(btQuaternion rotation, bool add)
 {
     if (add)
     {
-        rotation *= motionState->getBTTransform()->getRotation();
+        rotation *= motionState->getBTTransform().getRotation();
     }
 
-    updateBody(phShape, mass, motionState->getBTTransform()->getOrigin(), rotation);
+    updateBody(phShape, mass, motionState->getBTTransform().getOrigin(), rotation);
 }
         
-void PhysicsObject::setTransform(btTransform* transform)
+void PhysicsObject::setTransform(btTransform transform)
 {
     motionState->setBTTransform(transform);
-    body->setWorldTransform(*motionState->getBTTransform());     
+    body->setWorldTransform(motionState->getBTTransform());     
     body->forceActivationState(ACTIVE_TAG);
 }
 
 void PhysicsObject::setTransform(btScalar* transform)
 {
     motionState->setGLTransform(transform);
-    body->setWorldTransform(*motionState->getBTTransform());     
+    body->setWorldTransform(motionState->getBTTransform());     
     body->forceActivationState(ACTIVE_TAG);
 }
 
@@ -379,7 +385,7 @@ PhysicsObject::~PhysicsObject()
 {
     if (body)
     {
-        world->removeRigidBody(body);
+        physicsWorld->getWorld()->removeRigidBody(body);
     }
 
     delete phShape;

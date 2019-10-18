@@ -13,6 +13,11 @@
 
 #include "../debug/debugdrawer.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
@@ -26,8 +31,6 @@
 #include "../game_object/gameobject.hpp"
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
-
-#include "../world/raytracer.hpp"
 
 #include "player.hpp"
 #include "soldier.hpp"

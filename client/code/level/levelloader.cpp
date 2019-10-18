@@ -276,7 +276,7 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
     }
 
     /* physics object */
-    GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
+    GO->setPhysicsObject(new PhysicsObject(physicsWorld));
     
     /* debug object */
     XMLElement* debugObjectElem = gameObjectElem->FirstChildElement("debugobject");
@@ -303,7 +303,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
     }
 
     /* physics object */
-    GO->setPhysicsObject(new PhysicsObject(physicsWorld->getWorld()));
+    GO->setPhysicsObject(new PhysicsObject(physicsWorld));
 
     /* debug object */
     XMLElement* debugObjectElem = rifleElem->FirstChildElement("debugobject");
@@ -958,7 +958,7 @@ void LevelLoader::loadProjection()
     viewFrustum = new ViewFrustum;
 }
 
-void LevelLoader::loadPlayers()
+void LevelLoader::loadVirtualPlayer()
 {
     XMLDocument playerDoc;
 
@@ -974,12 +974,10 @@ void LevelLoader::loadPlayers()
     XMLNode* playerNode = root->FirstChildElement("players"); 
     XMLElement* playerElem = playerNode->FirstChildElement("player");
 
-    while (playerElem)
+    if (playerElem)
     {
         /* playerID */
-        int playerID;
-
-        playerElem->QueryIntAttribute("id", &playerID);
+        int playerID = -1;
 
         /* position */
         XMLElement* positionElem = playerElem->FirstChildElement("position");
@@ -1091,14 +1089,7 @@ void LevelLoader::loadPlayers()
             player->setModelOffset(vec3(x, y, z));
         }
 
-        players.push_back(player);
-
-        playerElem = playerElem->NextSiblingElement();
-    }
-
-    if (players.empty())
-    {
-        throw runtime_error("ERROR::loadPlayers() at least 1 player is required");
+        virtualPlayer = player;
     }
 }
 
@@ -1235,32 +1226,6 @@ void LevelLoader::loadSoldiers()
             soldier->setModelOffset(vec3(x, y, z));
         }
 
-        /* add weapon */
-        XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
-
-        if (armoryElem)
-        {
-            XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
-
-            while (weaponElem)
-            {
-                const char* name = nullptr;
-
-                weaponElem->QueryStringAttribute("name", &name);
-
-                Weapon* weapon = dynamic_cast < Weapon* >(gameObjects.find(name)->second);
-
-                if (!weapon)
-                {
-                    throw runtime_error("ERROR::loadSoldiers() can't find the weapon");
-                }
-
-                soldier->pick(weapon);
-
-                weaponElem = weaponElem->NextSiblingElement();
-            }
-        }
-
         players.push_back(soldier);
 
         soldierElem = soldierElem->NextSiblingElement();
@@ -1282,7 +1247,7 @@ void LevelLoader::loadLevel(string name)
     loadRifles();
 
     loadSoldiers();
-    loadPlayers();
+    loadVirtualPlayer();
 }
 
 void LevelLoader::getGameObjectsData(map < string, GameObject* > &gameObjects) const
@@ -1323,6 +1288,11 @@ void LevelLoader::getViewFrustumData(ViewFrustum*& viewFrustum)
 void LevelLoader::getPlayersData(vector < Player* > &players) const
 {
     players = this->players;
+}
+        
+void LevelLoader::getVirtualPlayerData(Player*& virtualPlayer) const
+{
+    virtualPlayer = this->virtualPlayer;
 }
 
 LevelLoader::~LevelLoader() {}

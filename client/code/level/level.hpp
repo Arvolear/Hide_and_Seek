@@ -48,7 +48,7 @@ class Level
         SkyBox* skyBox;
         
         int playerID;
-        vector < Player* > players;
+        vector < Player* > players;      
 
         ViewFrustum* viewFrustum;
         RenderQuad* quad;
@@ -57,6 +57,8 @@ class Level
 
         /* DEBUG */
         int drawDebug;
+        Player* virtualPlayer;
+        int activeVirtualPlayer;
 
     public:
         Level(Window* window, World* physicsWorld);
@@ -77,7 +79,7 @@ class Level
         void updateSunPos();
 
         GLuint getRenderTexture(unsigned int num = 0) const;
-        Player* getPlayer(int id = -1) const;
+        Player* getPlayer(bool andVirtual = false) const;
         vector < Player* > getPlayers() const;
         vec3 getSunPosition() const;
 
@@ -85,6 +87,7 @@ class Level
 
         /* DEBUG */
         void toggleDebug();
+        void toggleVirtualPlayer();
 
         ~Level();
 };

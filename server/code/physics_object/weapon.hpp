@@ -19,9 +19,9 @@ class Weapon : public PhysicsObject
         float shotPower;
 
     public:
-        Weapon(string name, btDynamicsWorld* world);
-        Weapon(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
-        Weapon(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+        Weapon(string name, World* physicsWorld);
+        Weapon(string name, World* physicsWorld, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+        Weapon(string name, World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
 
         void setStorageBullets(int storageBullets);
         void setMagazineSize(int magazineSize);

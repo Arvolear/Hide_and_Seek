@@ -33,9 +33,6 @@
             <raytracer apply="true"/>
             <cameraoffset x="0.2" y="0.0" z="0.0"/> 
             <modeloffset x="-0.38" y="6.55" z="0.0"/>
-
-            <armory>
-            </armory>
         </soldier>
         
         <soldier id="1">

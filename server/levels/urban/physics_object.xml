@@ -121,15 +121,15 @@
     <obj name="pallet0">
         <shape type="box" x="1.35" y="0.12" z="1.35"/>
         <mass mass="30.0"/>
-        <pos x="-77.0" y="2.4" z="90.0"/>
-        <rot x="4.0" y="-1.0" z="0.0" angle="70.0"/>
+        <pos x="-77.0" y="2.5" z="90.9"/>
+        <rot x="1.0" y="0.0" z="0.0" angle="70.0"/>
     </obj>
 
     <obj name="pallet1">
         <shape type="box" x="1.35" y="0.12" z="1.35"/>
         <mass mass="30.0"/>
-        <pos x="-79.0" y="2.0" z="89.5"/>
-        <rot x="4.0" y="-1.0" z="0.0" angle="75.0"/>
+        <pos x="-78.7" y="2.5" z="89.9"/>
+        <rot x="1.0" y="0.0" z="0.0" angle="70.0"/>
     </obj>
 
     <obj name="safety_fence0">

@@ -28,6 +28,7 @@ class Level
         Level(World* physicsWorld);
         
         void loadLevel(string level);
+        void updateLevel();
 
         void addPhysicsObject(PhysicsObject* physicsObject);
         PhysicsObject* getPhysicsObject(string name) const;
