@@ -17,7 +17,7 @@
             </cshape>
         </shape>
         <mass mass="5.0"/>
-        <pos x="-93.0" y="1.5" z="93.0"/>
+        <pos x="-73.0" y="1.5" z="73.0"/>
         <rot x="1.0" y="1.0" z="0.0" angle="47.0"/>
         <info>
             <storage amount="180"/>

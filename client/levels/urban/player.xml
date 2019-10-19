@@ -3,7 +3,7 @@
     <players>
 
          <player>
-            <position x="-100.0" y="10.0" z="100.0"/>
+            <position x="-80.0" y="10.0" z="80.0"/>
             <forward x="1.0" y="-0.3" z="-1.0"/>
             <speed speed="1.0"/>
             <active active="false"/>

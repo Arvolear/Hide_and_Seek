@@ -108,9 +108,10 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
 
         XMLElement* rotationElem = objElem->FirstChildElement("rot");
 
-        if (rotationElem)
+        while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
         {
             objElem->DeleteChild(rotationElem);
+            rotationElem = rotationElem->NextSiblingElement();
         }
 
         /* model */

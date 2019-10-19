@@ -207,8 +207,9 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
 
             /* rotation */
             XMLElement* rotationElem = physicsObjectElem->FirstChildElement("rot");
+            bool add = false;
 
-            if (rotationElem)
+            while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
             {
                 float x = 0, y = 0, z = 0, angle = 0;
 
@@ -217,7 +218,10 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                PO->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), false);
+                PO->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), add);
+                add = true;
+
+                rotationElem = rotationElem->NextSiblingElement();
             }
 
             /* angular factor */
@@ -426,8 +430,9 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
 
             /* rotation */
             XMLElement* rotationElem = weaponElem->FirstChildElement("rot");
+            bool add = false;
 
-            if (rotationElem)
+            while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
             {
                 float x = 0, y = 0, z = 0, angle = 0;
 
@@ -436,7 +441,10 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                WE->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), false);
+                WE->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), add);
+                add = true;
+
+                rotationElem = rotationElem->NextSiblingElement();
             }
 
             /* angular factor */

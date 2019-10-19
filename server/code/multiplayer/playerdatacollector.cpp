@@ -205,9 +205,10 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
 
         XMLElement* rotationElem = soldierElem->FirstChildElement("rot");
 
-        if (rotationElem)
+        while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
         {
             soldierElem->DeleteChild(rotationElem);
+            rotationElem = rotationElem->NextSiblingElement();
         }
         
         XMLElement* armoryElem = soldierElem->FirstChildElement("armory");

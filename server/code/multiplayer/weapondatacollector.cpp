@@ -59,9 +59,10 @@ string WeaponDataCollector::getMergedData(string fileName, bool raw) const
 
         XMLElement* rotationElem = weaponElem->FirstChildElement("rot");
 
-        if (rotationElem)
+        while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
         {
             weaponElem->DeleteChild(rotationElem);
+            rotationElem = rotationElem->NextSiblingElement();
         }
 
         /* model */
