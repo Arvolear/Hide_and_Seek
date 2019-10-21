@@ -1,8 +1,8 @@
 # Blender MTL File: 'None'
-# Material Count: 1
+# Material Count: 2
 
 newmtl Material.001
-Ns 96.078431
+Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
@@ -10,7 +10,22 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump dry-dirt1-normal2.png
-map_Kd dry-dirt1-albedo.png
-map_Ke dry-dirt1-metalness.png
-map_Ka dry-dirt1-ao.png
+map_Kd Dry_dirt/dry-dirt1-albedo.png
+map_Bump Dry_dirt/dry-dirt1-normal2.png
+map_Ka Dry_dirt/dry-dirt1-ao.png
+map_Ke Dry_dirt/dry-dirt1-metalness.png
+map_Ks Dry_dirt/dry-dirt1-roughness.png
+
+newmtl Material.002
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Gravel_path/gravel_path-albedo.png
+map_Bump Gravel_path/gravel_path_Normal-ogl.png
+map_Ka Gravel_path/gravel_path-ao.png
+map_Ke Gravel_path/gravel_path_Metallic.png

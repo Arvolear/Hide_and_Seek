@@ -1,0 +1,47 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Building_normal.jpg
+map_Ka textures/Building_AO.jpg
+map_Kd textures/Building_albedo.jpg
+map_Ke textures/Building_metallic.jpg
+map_Ks textures/Building_roughness.jpg
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Floor and ceiling_normal.jpg
+map_Ka textures/Floor and ceiling_AO.jpg
+map_Kd textures/Floor and ceiling_albedo.jpg
+map_Ke textures/Floor and ceiling_metallic.jpg
+map_Ks textures/Floor and ceiling_roughness.jpg
+
+newmtl Material.003
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/door and windows_normal.jpg
+map_Ka textures/door and windows_AO.jpg
+map_Kd textures/door and windows_albedo.jpg
+map_Ke textures/door and windows_metallic.jpg
+map_Ks textures/door and windows_roughness.jpg

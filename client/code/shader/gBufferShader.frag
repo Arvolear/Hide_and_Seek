@@ -71,7 +71,7 @@ void main()
     }
 
     /* alpha */
-    if (gAlbedo.a < 0.05)
+    if (gAlbedo.a < 0.1)
     {
         discard;
     }

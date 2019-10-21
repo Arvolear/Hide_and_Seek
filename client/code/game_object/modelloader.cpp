@@ -11,6 +11,8 @@
 using namespace std;
 using namespace glm;
 using namespace Assimp;
+        
+map < string, Texture > ModelLoader::textures_loaded; 
 
 ModelLoader::ModelLoader(){}
 
@@ -24,6 +26,7 @@ void ModelLoader::loadModel(string path)
     }
 
     directory = path.substr(0, path.find_last_of('/')); 
+    directory += "/";
    
     processNode(scene->mRootNode); 
     processNodeAnim(); 
@@ -43,7 +46,7 @@ void ModelLoader::clear()
 {
     bones.clear();
     meshes.clear();
-    textures_loaded.clear();
+    //textures_loaded.clear();
     directory = "";
     skeleton = nullptr;
 
@@ -273,43 +276,32 @@ vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureT
 
         mat->GetTexture(type, i, &helpStr); 
 
-        bool skip = false;
-        map < string, Texture >::iterator it;
-        it = textures_loaded.find(string(helpStr.C_Str()));
+        string texPath = directory + string(helpStr.C_Str());
+
+        auto it = textures_loaded.find(texPath);
 
         if (it != textures_loaded.end()) 
         {
             textures.push_back(it->second); 
-            skip = true;
         }
-
-        if (!skip) 
+        else 
         {
             Texture texture;
 
-            texture.id = textureFromFile(helpStr.C_Str()); 
-
+            texture.id = textureFromFile(texPath.c_str()); 
             texture.type = typeName; 
-
-            //cout << "Texture type: " << typeName << endl;
-
-            texture.path = helpStr.C_Str(); 
-
-            //cout << texture.path << " " << typeName << endl;
+            texture.path = texPath; 
 
             textures.push_back(texture); 
-            textures_loaded.insert({helpStr.C_Str(), texture}); 
+            textures_loaded.insert({texPath, texture}); 
         }
     }
 
     return textures;
 }
 
-unsigned int ModelLoader::textureFromFile(const char *path)
+unsigned int ModelLoader::textureFromFile(string filename)
 {
-    string filename = string(path); 
-    filename = directory + '/' + filename; 
-
     unsigned int textureID;
     glGenTextures(1, &textureID); 
     glBindTexture(GL_TEXTURE_2D, textureID); 
@@ -319,7 +311,9 @@ unsigned int ModelLoader::textureFromFile(const char *path)
 
     if (image) 
     {
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
+
         glGenerateMipmap(GL_TEXTURE_2D); 
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -333,7 +327,7 @@ unsigned int ModelLoader::textureFromFile(const char *path)
     {
         SOIL_free_image_data(image);
         throw runtime_error("ERROR::Failed to load texture at path: " + filename);
-    }
+    } 
 
     return textureID;
 }

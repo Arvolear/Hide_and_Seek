@@ -13,7 +13,7 @@
             </debugobject>
         </gameobject>
         
-        <gameobject name="fence00">
+        <!-- <gameobject name="fence00">
             <graphicsobject path="/static_models/Fence0/fence0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="2.0" y="2.0" z="2.0"/>
@@ -108,6 +108,18 @@
                 <debugsphere detail="3"/>
             </debugobject>
         </gameobject>
+        
+        <gameobject name="garage0">
+            <graphicsobject path="/static_models/Garage0/garage0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.3" y="2.3" z="2.3"/>
+                <position x="0.0" y="-1.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
         
         <gameobject name="barrel0">
             <graphicsobject path="/static_models/Barrel0/barrel0.obj">
@@ -323,6 +335,164 @@
                 <viewfrustum apply="true"/>
                 <scale x="2.0" y="2.0" z="2.0"/>
                 <position x="0.0" y="-1.30" z="-0.2"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> -->
+    
+        <!-- ********************************************************* -->
+        
+        <gameobject name="fence08">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence09">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence10">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="fence11">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+    
+        <gameobject name="road00">
+            <graphicsobject path="/static_models/Road0/road0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="3.0" y="3.0" z="3.0"/>
+                <position x="0.0" y="0.045" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="road01">
+            <graphicsobject path="/static_models/Road0/road1.obj">
+                <viewfrustum apply="true"/>
+                <scale x="3.0" y="3.0" z="3.0"/>
+                <position x="0.0" y="0.045" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="road02">
+            <graphicsobject path="/static_models/Road0/road2.obj">
+                <viewfrustum apply="true"/>
+                <scale x="3.0" y="3.0" z="3.0"/>
+                <position x="0.0" y="0.045" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="block00">
+            <graphicsobject path="/static_models/Block0/block0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.2" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="block01">
+            <graphicsobject path="/static_models/Block0/block0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.2" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="block02">
+            <graphicsobject path="/static_models/Block0/block0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.2" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="road_fence00">
+            <graphicsobject path="/static_models/Road_fence0/road_fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="3.0" y="3.0" z="3.0"/>
+                <position x="0.0" y="-0.18" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="road_fence01">
+            <graphicsobject path="/static_models/Road_fence0/road_fence1.obj">
+                <viewfrustum apply="true"/>
+                <scale x="3.0" y="3.0" z="3.0"/>
+                <position x="0.0" y="-0.18" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="wagon0">
+            <graphicsobject path="/static_models/Wagon0/wagon0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.7" y="1.7" z="1.7"/>
+                <position x="0.0" y="-1.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
             </graphicsobject>
             <debugobject>
                 <debugsphere detail="3"/>
