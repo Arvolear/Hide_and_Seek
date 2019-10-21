@@ -13,6 +13,11 @@
 
 #include "../debug/debugdrawer.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
@@ -27,14 +32,16 @@
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
 
-#include "../world/raytracer.hpp"
-
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
+#include "physicsobjectdataparser.hpp"
 #include "playerdataupdater.hpp"
         
-PlayerDataUpdater::PlayerDataUpdater() {}
+PlayerDataUpdater::PlayerDataUpdater() 
+{
+    objParser = new PhysicsObjectDataParser();
+}
 
 void PlayerDataUpdater::collect(string info)
 {
@@ -43,7 +50,7 @@ void PlayerDataUpdater::collect(string info)
     playerDataUpdaterDoc.Parse(info.c_str());
 
     /* root */
-    XMLNode* root = playerDataUpdaterDoc.FirstChildElement("Players");
+    XMLNode* root = playerDataUpdaterDoc.FirstChildElement("Soldiers");
 
     if (!root)
     {
@@ -52,77 +59,81 @@ void PlayerDataUpdater::collect(string info)
         throw runtime_error("ERROR::PlayerDataUpdater::collect() failed to load XML");
     }
 
-    XMLElement* playerElem = root->FirstChildElement("plr");
+    XMLElement* soldierElem = root->FirstChildElement("soldier");
 
-    while (playerElem)
+    while (soldierElem)
     {
-        int playerID;
-        mat4 model;
-        vec3 moveDirection;
-        vector < string > picked;
-
         /* playerID */
-        XMLElement* playerIDElem = playerElem->FirstChildElement("id");
+        int playerID;
 
-        if (playerIDElem)
+        soldierElem->QueryIntAttribute("id", &playerID);
+
+        playerIDs.push_back(playerID);
+
+        /* speed */
+        XMLElement* speedElem = soldierElem->FirstChildElement("speed");
+
+        if (speedElem)
         {
-            playerIDElem->QueryIntText(&playerID);
-        }
+            float speed;
+            speedElem->QueryFloatAttribute("speed", &speed);
 
-        /* model */
-        XMLElement* modelElem = playerElem->FirstChildElement("mdl");
-
-        if (modelElem)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    string str;
-                    str = char('a' + (i * 4 + j));
-
-                    modelElem->QueryFloatAttribute(str.data(), &model[i][j]);
-                }
-            }
+            speeds.insert({playerID, speed});
         }
 
         /* moveDirection */
-        XMLElement* moveDirectionElem = playerElem->FirstChildElement("dir");
+        XMLElement* moveDirectionElem = soldierElem->FirstChildElement("dir");
 
         if (moveDirectionElem)
         {
+            vec3 moveDirection;
+
             moveDirectionElem->QueryFloatAttribute("x", &moveDirection.x);
             moveDirectionElem->QueryFloatAttribute("y", &moveDirection.y);
             moveDirectionElem->QueryFloatAttribute("z", &moveDirection.z);
+
+            moveDirections.insert({playerID, moveDirection});
         }
+
+        /* obj */
+        XMLElement* objElem = soldierElem->FirstChildElement("obj");
+
+        objParser->parse(objElem);
 
         /* weapons */
-        XMLElement* pickedElem = playerElem->FirstChildElement("pick");
+        XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
 
-        while (pickedElem)
+        if (armoryElem)
         {
-            string name = pickedElem->GetText();
+            vector < string > picked;
 
-            picked.push_back(name);
+            XMLElement* weaponElem = armoryElem->FirstChildElement("weapon");
 
-            pickedElem = pickedElem->NextSiblingElement();
+            while (weaponElem)
+            {
+                string name = weaponElem->GetText();
+
+                picked.push_back(name);
+
+                weaponElem = weaponElem->NextSiblingElement();
+            }
+
+            pickedWeapons.insert({playerID, picked});
         }
 
-        playerIDs.push_back(playerID);
-        models.push_back(model);
-        moveDirections.push_back(moveDirection);
-        pickedWeapons.push_back(picked);
-
-        playerElem = playerElem->NextSiblingElement();
+        soldierElem = soldierElem->NextSiblingElement();
     }
 }
 
 void PlayerDataUpdater::updateData(Player* player, bool interpolation, map < string, GameObject* > gameObjects)
 {
-    player->getGameObject()->setPhysicsObjectTransform(models[0], interpolation);
+    int playerID = player->getID();
 
-    player->updateModel(moveDirections[0]);
-    player->updateAnimation(moveDirections[0]);
+    player->setSpeed(speeds[playerID]);
+    player->updateModel(moveDirections[playerID]);
+    player->updateAnimation(moveDirections[playerID]);
+
+    objParser->updatePhysicsObject(player->getGameObject(), interpolation);
 
     Soldier* soldier = dynamic_cast < Soldier* >(player);
 
@@ -131,9 +142,9 @@ void PlayerDataUpdater::updateData(Player* player, bool interpolation, map < str
         return;
     }
 
-    for (int j = int(pickedWeapons[0].size()) - 1; j >= 0; j--)
+    for (int j = int(pickedWeapons[playerID].size()) - 1; j >= 0; j--)
     {
-        GameObject* gameObject = gameObjects.find(pickedWeapons[0][j])->second;
+        GameObject* gameObject = gameObjects.find(pickedWeapons[playerID][j])->second;
         Weapon* weapon = dynamic_cast < Weapon* >(gameObject);
 
         if (!weapon)
@@ -149,23 +160,34 @@ void PlayerDataUpdater::updateData(vector < Player* > players, bool interpolatio
 {
     for (size_t i = 0; i < playerIDs.size(); i++)
     {
-        Player* player = players[playerIDs[i]];
+        int playerID = playerIDs[i];
+        Player* player = nullptr;
 
-        player->getGameObject()->setPhysicsObjectTransform(models[i], interpolation);
+        for (size_t j = 0; j < players.size(); j++)
+        {
+            if (players[j]->getID() == playerID)
+            {
+                player = players[j];
+                break;
+            }
+        }
 
-        player->updateModel(moveDirections[i]);
-        player->updateAnimation(moveDirections[i]);
+        player->setSpeed(speeds[playerID]);
+        player->updateModel(moveDirections[playerID]);
+        player->updateAnimation(moveDirections[playerID]);
+
+        objParser->updatePhysicsObject(player->getGameObject(), interpolation);
 
         Soldier* soldier = dynamic_cast < Soldier* >(player);
 
         if (!soldier || pickedWeapons.empty() || gameObjects.empty())
         {
-            return;
+            continue;
         }
 
-        for (int j = int(pickedWeapons[i].size()) - 1; j >= 0; j--)
+        for (int j = int(pickedWeapons[playerID].size()) - 1; j >= 0; j--)
         {
-            GameObject* gameObject = gameObjects.find(pickedWeapons[i][j])->second;
+            GameObject* gameObject = gameObjects.find(pickedWeapons[playerID][j])->second;
             Weapon* weapon = dynamic_cast < Weapon* >(gameObject);
 
             if (!weapon)
@@ -191,9 +213,13 @@ vector < int > PlayerDataUpdater::getPlayerIDs() const
 void PlayerDataUpdater::clear()
 {
     playerIDs.clear();
-    models.clear();
+    speeds.clear();
     moveDirections.clear();
+    objParser->clear();
     pickedWeapons.clear();
 }
 
-PlayerDataUpdater::~PlayerDataUpdater() {}
+PlayerDataUpdater::~PlayerDataUpdater() 
+{
+    delete objParser;
+}

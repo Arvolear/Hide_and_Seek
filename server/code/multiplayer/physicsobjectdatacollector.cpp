@@ -1,9 +1,11 @@
 #include "../global/convert.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
-
-#include "../world/raytracer.hpp"
 
 #include "physicsobjectdatacollector.hpp"
         
@@ -13,8 +15,7 @@ void PhysicsObjectDataCollector::collect(PhysicsObject* physicsObject)
 {
     if (physicsObject)
     {
-        models.push_back(physicsObject->getTransform());
-        names.push_back(physicsObject->getName());
+        pos.insert({physicsObject->getName(), physicsObject->getTransform()});
     }
 }
 
@@ -22,8 +23,7 @@ void PhysicsObjectDataCollector::collect(map < string, PhysicsObject* > physicsO
 {
     for (auto& i: physicsObjects)
     {
-        models.push_back(i.second->getTransform());
-        names.push_back(i.second->getName());
+        pos.insert({i.first, i.second->getTransform()});
     }
 }
 
@@ -35,16 +35,13 @@ string PhysicsObjectDataCollector::getData(bool raw) const
     XMLNode* root = physicsObjectDataCollectorDoc.NewElement("Objs");
     physicsObjectDataCollectorDoc.InsertFirstChild(root);
 
-    for (size_t i = 0; i < names.size(); i++)
+    for (auto& i: pos)
     {
         /* obj */
-        XMLNode* objElem = physicsObjectDataCollectorDoc.NewElement("obj");
+        XMLElement* objElem = physicsObjectDataCollectorDoc.NewElement("obj");
 
         /* name */
-        XMLElement* nameElem = physicsObjectDataCollectorDoc.NewElement("name");
-        nameElem->SetText(names[i].data());
-
-        objElem->InsertEndChild(nameElem);
+        objElem->SetAttribute("name", i.first.data());
 
         /* model */
         XMLElement* modelElem = physicsObjectDataCollectorDoc.NewElement("mdl");
@@ -54,7 +51,7 @@ string PhysicsObjectDataCollector::getData(bool raw) const
             string str;
             str = char('a' + j);
 
-            modelElem->SetAttribute(str.data(), cutFloat(models[i][j], 4));
+            modelElem->SetAttribute(str.data(), cutFloat(i.second[j], 4));
         }
 
         objElem->InsertEndChild(modelElem);
@@ -81,23 +78,94 @@ string PhysicsObjectDataCollector::getData(bool raw) const
 
     return res;
 }
+        
+string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) const
+{
+    XMLDocument physicsObjectDataCollectorDoc;
+
+    physicsObjectDataCollectorDoc.LoadFile(fileName.c_str());
+
+    XMLNode* root = physicsObjectDataCollectorDoc.FirstChildElement("Objs");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::PhysicsObjectDataCollector::getMergedData() failed to load XML");
+    }
+
+    XMLElement* objElem = root->FirstChildElement("obj");
+
+    while (objElem)
+    {
+        const char* name = nullptr;
+        objElem->QueryStringAttribute("name", &name);
+
+        XMLElement* positionElem = objElem->FirstChildElement("pos");
+        
+        if (positionElem)
+        {
+            objElem->DeleteChild(positionElem);
+        }
+
+        XMLElement* rotationElem = objElem->FirstChildElement("rot");
+
+        while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
+        {
+            objElem->DeleteChild(rotationElem);
+            rotationElem = rotationElem->NextSiblingElement();
+        }
+
+        /* model */
+        XMLElement* modelElem = physicsObjectDataCollectorDoc.NewElement("mdl");
+
+        btScalar* model = pos[name];
+
+        if (model)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                string str;
+                str = char('a' + j);
+
+                modelElem->SetAttribute(str.data(), cutFloat(model[j], 4));
+            }
+
+            objElem->InsertEndChild(modelElem);
+        }
+
+        objElem = objElem->NextSiblingElement();
+    }
+
+    /* printer */
+    XMLPrinter physicsObjectDataCollectorPrinter;
+    physicsObjectDataCollectorDoc.Print(&physicsObjectDataCollectorPrinter);
+
+    string res;
+
+    if (!raw)
+    {
+        res = "BEG\n";
+        res += physicsObjectDataCollectorPrinter.CStr();
+        res += "END";
+    }
+    else
+    {
+        res = physicsObjectDataCollectorPrinter.CStr();
+    }
+
+    return res;
+}
 
 void PhysicsObjectDataCollector::clear()
 {
-    names.clear();
-
-    for (size_t i = 0; i < models.size(); i++)
+    for (auto& i: pos)
     {
-        delete[] models[i];
+        delete[] i.second;
     }
 
-    models.clear();
+    pos.clear();
 }
 
 PhysicsObjectDataCollector::~PhysicsObjectDataCollector() 
 {
-    for (size_t i = 0; i < models.size(); i++)
-    {
-        delete[] models[i];
-    }
+    clear();
 }

@@ -26,12 +26,18 @@ Level::Level(World* physicsWorld)
 void Level::loadLevel(string level)
 {
     levelName = level;
+    levelPath = path("levels/" + levelName);
 
-    levelLoader->loadLevel(path("levels/test1"));
+    levelLoader->loadLevel(levelPath);
 
     /*** GET LOADED DATA ***/
     levelLoader->getPlayersData(players);
     levelLoader->getPhysicsObjectsData(physicsObjects);
+}
+
+void Level::updateLevel()
+{
+    levelLoader->updateLevel();
 }
         
 void Level::addPhysicsObject(PhysicsObject* physicsObject)
@@ -50,46 +56,6 @@ PhysicsObject* Level::getPhysicsObject(string name) const
     }
 
     return nullptr;
-}
-
-map < string, PhysicsObject* > Level::getPhysicsObjects() const
-{
-    return physicsObjects;
-}
-
-map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
-{
-    map < string, PhysicsObject* > tmp = physicsObjects;
-
-    for (size_t i = 0; i < players.size(); i++)
-    {
-        tmp.erase(players[i]->getPhysicsObject()->getName());
-    }
-
-    return tmp;
-}
-        
-map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects() const
-{
-    map < string, PhysicsObject* > tmp = physicsObjects;
-
-    for (size_t i = 0; i < players.size(); i++)
-    {
-        tmp.erase(players[i]->getPhysicsObject()->getName());
-
-        Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
-
-        if (soldier)
-        {
-            deque < Weapon* > weapons = soldier->getWeapons();
-            for (size_t j = 0; j < weapons.size(); j++)
-            {
-                tmp.erase(weapons[j]->getName());
-            }
-        }
-    }
-
-    return tmp;
 }
 
 void Level::removePhysicsObject(PhysicsObject* physicsObject)
@@ -140,12 +106,72 @@ void Level::update()
         }
     }
 }
+        
+void Level::clearNoPlayersAndTheirWeaponsOwner(int owner)
+{
+    map < string, PhysicsObject* > tmp = getNoPlayersAndTheirWeaponsPhysicsObjects();
+
+    for (auto& it : tmp)
+    {
+        if (it.second->getOwnerID() == owner)
+        {
+            it.second->getRigidBody()->forceActivationState(ACTIVE_TAG);
+            it.second->getRigidBody()->applyCentralImpulse(it.second->getRigidBody()->getGravity());
+            
+            it.second->setOwnerID(-1);
+        }
+    }
+}
+
+map < string, PhysicsObject* > Level::getPhysicsObjects() const
+{
+    return physicsObjects;
+}
+
+map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
+{
+    map < string, PhysicsObject* > tmp = physicsObjects;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        tmp.erase(players[i]->getPhysicsObject()->getName());
+    }
+
+    return tmp;
+}
+        
+map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects() const
+{
+    map < string, PhysicsObject* > tmp = physicsObjects;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        tmp.erase(players[i]->getPhysicsObject()->getName());
+
+        Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
+
+        if (soldier)
+        {
+            deque < Weapon* > weapons = soldier->getWeapons();
+            for (size_t j = 0; j < weapons.size(); j++)
+            {
+                tmp.erase(weapons[j]->getName());
+            }
+        }
+    }
+
+    return tmp;
+}
+
 
 Player* Level::getPlayer(int id) const
 {
-    if (id >= 0 && id < (int)players.size())
+    for (size_t i = 0; i < players.size(); i++)
     {
-        return players[id];
+        if (players[i]->getID() == id)
+        {
+            return players[i];
+        }
     }
 
     return nullptr;
@@ -156,10 +182,18 @@ vector < Player* > Level::getPlayers() const
     return players;
 }
 
-vector < Player* > Level::getPlayersExcept(int index) const
+vector < Player* > Level::getPlayersExcept(int id) const
 {
     vector < Player* > tmp = players;
-    tmp.erase(tmp.begin() + index);
+    
+    for (size_t i = 0; i < tmp.size(); i++)
+    {
+        if (tmp[i]->getID() == id)
+        {
+            tmp.erase(tmp.begin() + i);
+            break;
+        }
+    }
 
     return tmp;
 }
@@ -167,6 +201,11 @@ vector < Player* > Level::getPlayersExcept(int index) const
 string Level::getLevelName() const
 {
     return levelName;
+}
+
+string Level::getLevelPath() const
+{
+    return levelPath;
 }
 
 Level::~Level()

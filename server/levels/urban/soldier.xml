@@ -1,0 +1,37 @@
+<Soldiers>
+    <soldier id="0">
+        <speed speed="1.0"/>
+        <obj name="soldier0">
+            <shape type="compound">
+                <cshape type="sphere" r="0.4">
+                    <pos x="0.0" y="1.75" z="0.0"/>
+                </cshape>
+                <cshape type="capsule" r="0.4" h="3.5"/>
+            </shape>
+            <mass mass="10.0"/>
+            <pos x="-70.0" y="3.0" z="70.0"/>
+            <afactor x="0.0" y="0.0" z="0.0"/>
+        </obj>
+        <armory>
+            <!-- <weapon name="m4"/> -->
+        </armory>
+    </soldier>
+
+    <soldier id="1">
+        <speed speed="1.0"/>
+        <obj name="soldier1">
+            <shape type="compound">
+                <cshape type="sphere" r="0.4">
+                    <pos x="0.0" y="1.75" z="0.0"/>
+                </cshape>
+                <cshape type="capsule" r="0.4" h="3.5"/>
+            </shape>
+            <mass mass="10.0"/>
+            <pos x="7.0" y="3.0" z="5.0"/>
+            <afactor x="0.0" y="0.0" z="0.0"/>
+        </obj>
+        <armory>
+            <!-- <weapon name="m4"/> -->
+        </armory>
+    </soldier>
+</Soldiers>

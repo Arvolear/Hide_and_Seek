@@ -96,8 +96,8 @@ GLuint RadialBlur::blur(GLuint textureID, vec2 center)
 
     scaleShader->use();
 
-    scaleShader->setInt("finalTexture", textureID);
-    glActiveTexture(GL_TEXTURE0 + textureID);
+    glActiveTexture(GL_TEXTURE0);
+    scaleShader->setInt("finalTexture", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
     quad->render(scaleShader);
@@ -115,8 +115,8 @@ GLuint RadialBlur::blur(GLuint textureID, vec2 center)
     blurShader->setFloat("density", density);
     blurShader->setFloat("weight", weight);
 
-    blurShader->setInt("blurTexture", textureID);
-    glActiveTexture(GL_TEXTURE0 + textureID);
+    glActiveTexture(GL_TEXTURE0);
+    blurShader->setInt("blurTexture", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
     quad->render(blurShader);
@@ -128,8 +128,8 @@ GLuint RadialBlur::blur(GLuint textureID, vec2 center)
 
     scaleShader->use();
 
-    scaleShader->setInt("finalTexture", bluredTexture);
-    glActiveTexture(GL_TEXTURE0 + bluredTexture);
+    glActiveTexture(GL_TEXTURE0);
+    scaleShader->setInt("finalTexture", 0);
     glBindTexture(GL_TEXTURE_2D, bluredTexture);
 
     quad->render(scaleShader);

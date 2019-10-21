@@ -76,14 +76,16 @@ Level::Level(Window* window, World* physicsWorld)
     atmosphere = nullptr;
     skyBox = nullptr;
 
-    playerID = 0;
+    playerID = -1;
 
     projection = mat4(1.0);
     viewFrustum = nullptr;
 
     quad = new RenderQuad();
 
+    /* DEBUG */
     drawDebug = 0;
+    activeVirtualPlayer = 0;
 }
 
 void Level::loadLevel(string level)
@@ -119,7 +121,9 @@ void Level::loadLevel(string level)
     
     debugShader->loadShaders(global.path("code/shader/debugShader.vert"), global.path("code/shader/debugShader.frag"));
 
-    levelLoader->loadLevel(global.path("levels/test1"));
+    cout << "Loading " << levelName << " level..." << endl;
+
+    levelLoader->loadLevel(global.path("levels/" + levelName));
 
     /*** GET LOADED DATA ***/
     levelLoader->getSsaoData(sSAO);
@@ -130,7 +134,10 @@ void Level::loadLevel(string level)
     levelLoader->getGameObjectsData(gameObjects);
     levelLoader->getProjectionData(projection);
     levelLoader->getViewFrustumData(viewFrustum);
-    
+
+    /* DEBUG */
+    levelLoader->getVirtualPlayerData(virtualPlayer);
+
     quad->init();
 }
         
@@ -186,7 +193,7 @@ void Level::render()
 
     glEnable(GL_CULL_FACE);
 
-    mat4 view = players[playerID]->getView();
+    mat4 view = getPlayer(true)->getView();
     mat4 staticView = mat4(mat3(view));
     
     viewFrustum->updateFrustum(view, projection);
@@ -221,7 +228,7 @@ void Level::render()
             /* crucial */
             dirLights[i]->getShadowBuffer()->clear(vec4(1.0, 0.0, 0.0, 1.0));
 
-            dirLights[i]->updateShadowView(players[playerID]->getPosition());
+            dirLights[i]->updateShadowView(getPlayer(true)->getPosition());
 
             dirShadowShader->use();
 
@@ -288,7 +295,7 @@ void Level::render()
 
     gameObjectShader->use();
 
-    gameObjectShader->setVec3("viewPos", players[playerID]->getPosition());
+    gameObjectShader->setVec3("viewPos", getPlayer(true)->getPosition());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
@@ -425,6 +432,11 @@ void Level::updatePlayers(int mode)
     {
         players[i]->update(!mode);
     }
+
+    if (activeVirtualPlayer)
+    {
+        virtualPlayer->update(!mode);
+    }
 }
 
 void Level::updateSunPos()
@@ -443,15 +455,19 @@ GLuint Level::getRenderTexture(unsigned int num) const
     //return sSAO->getTexture();
 }
 
-Player* Level::getPlayer(int id) const
+Player* Level::getPlayer(bool andVirtual) const
 {
-    if (id == -1)
+    if (activeVirtualPlayer && andVirtual)
     {
-        return players[playerID];
+        return virtualPlayer;    
     }
-    else if (id >= 0 && id < (int)players.size())
+
+    for (size_t i = 0; i < players.size(); i++)
     {
-        return players[id];
+        if (players[i]->getID() == playerID)
+        {
+            return players[i];
+        }
     }
 
     return nullptr;
@@ -467,9 +483,21 @@ string Level::getLevelName() const
     return levelName;
 }
 
+/* DEBUG */
 void Level::toggleDebug()
 {
     drawDebug = (drawDebug + 1) % 2;
+}
+        
+void Level::toggleVirtualPlayer()
+{
+    activeVirtualPlayer = (activeVirtualPlayer + 1) % 2;
+
+    getPlayer()->setActive(!activeVirtualPlayer);
+    getPlayer()->resetPrevCoords();
+
+    virtualPlayer->setActive(activeVirtualPlayer);
+    virtualPlayer->resetPrevCoords();
 }
 
 Level::~Level()
@@ -509,6 +537,8 @@ Level::~Level()
     {
         delete players[i];
     }
+
+    delete virtualPlayer;
 
     delete viewFrustum;
     delete quad;

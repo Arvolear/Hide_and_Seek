@@ -226,8 +226,8 @@ void Window::render(GLuint finalTexture)
 
     renderShader->use();
 
-    renderShader->setInt("finalTexture", 0);
     glActiveTexture(GL_TEXTURE0);
+    renderShader->setInt("finalTexture", 0);
     glBindTexture(GL_TEXTURE_2D, finalTexture);
 
     renderQuad->render(renderShader);

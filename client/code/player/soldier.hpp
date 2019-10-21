@@ -28,8 +28,8 @@ class Soldier : public Player
         void updateWeapon();
 
     public:
-        Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
-        Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
+        Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
+        Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed = 1, bool active = false);
 
         void setActive(bool active) override;
         void setConnected(bool connected) override;

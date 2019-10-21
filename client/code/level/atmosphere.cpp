@@ -161,9 +161,8 @@ void Atmosphere::renderDome(Shader* shader)
     {
         glDepthFunc(GL_LEQUAL);
 
-        shader->setInt("dome", colorBuffer->getTexture());
-        glActiveTexture(GL_TEXTURE0 + colorBuffer->getTexture()); 
-
+        glActiveTexture(GL_TEXTURE0); 
+        shader->setInt("dome", 0);
         glBindTexture(GL_TEXTURE_2D, colorBuffer->getTexture());
 
         quad->render(shader);

@@ -178,8 +178,8 @@ void DirLight::renderSphere(Shader* shader)
 
 void DirLight::renderLight(Shader* shader)
 {
-    shader->setInt("scatterTexture", getScatterTexture());
-    glActiveTexture(GL_TEXTURE0 + getScatterTexture());
+    glActiveTexture(GL_TEXTURE0);
+    shader->setInt("scatterTexture", 0);
     glBindTexture(GL_TEXTURE_2D, getScatterTexture());
 }
 

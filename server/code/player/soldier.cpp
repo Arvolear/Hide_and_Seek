@@ -1,3 +1,7 @@
+#include "../world/raytracer.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "../physics_object/openglmotionstate.hpp"
 #include "../physics_object/physicsobject.hpp"
 #include "../physics_object/weapon.hpp"
@@ -5,9 +9,9 @@
 #include "player.hpp"
 #include "soldier.hpp"
 
-Soldier::Soldier(float speed) : Player(speed) {}
+Soldier::Soldier(int id, float speed) : Player(id, speed) {}
 
-Soldier::Soldier(PhysicsObject* physicsObject, float speed) : Player(physicsObject, speed) {}
+Soldier::Soldier(int id, PhysicsObject* physicsObject, float speed) : Player(id, physicsObject, speed) {}
 
 void Soldier::pick(Weapon* weapon)
 {
@@ -21,23 +25,22 @@ void Soldier::pick(Weapon* weapon)
         return;
     }
 
-    new_weapons.push_front(weapon);
-    
     weapon->setOwnerID(physicsObject->getOwnerID());
     weapon->setUserPointer(this);
     weapon->setCollidable(false);
+        
+    new_weapons.push_front(weapon);
 }
 
 void Soldier::drop(btScalar* model)
 {
     if (!weapons.empty())
     {
-        old_weapons.push_back(weapons[0]);
-        
         weapons[0]->setTransform(model);
         weapons[0]->setUserPointer(nullptr);
         weapons[0]->setCollidable(true);
-
+        
+        old_weapons.push_back(weapons[0]); 
         weapons.pop_front();
     }
 }

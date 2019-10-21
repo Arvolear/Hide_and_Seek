@@ -17,7 +17,7 @@ FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o shadowbuffer.o gbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o client.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
+MULTIPLAYER = multiplayer.o client.o physicsobjectdataparser.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weapondataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
 LEVEL = level.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
@@ -112,6 +112,9 @@ $(OUTPUTDIR)/multiplayer.o: $(INPUTDIR)/multiplayer/multiplayer.cpp $(INPUTDIR)/
 $(OUTPUTDIR)/client.o: $(INPUTDIR)/multiplayer/client.cpp $(INPUTDIR)/multiplayer/client.hpp
 	g++ -c $(INPUTDIR)/multiplayer/client.cpp -o $@ $(FLAGS)
 
+$(OUTPUTDIR)/physicsobjectdataparser.o: $(INPUTDIR)/multiplayer/physicsobjectdataparser.cpp $(INPUTDIR)/multiplayer/physicsobjectdataparser.hpp
+	g++ -c $(INPUTDIR)/multiplayer/physicsobjectdataparser.cpp -o $@ $(FLAGS)
+
 $(OUTPUTDIR)/playerdatacollector.o: $(INPUTDIR)/multiplayer/playerdatacollector.cpp $(INPUTDIR)/multiplayer/playerdatacollector.hpp
 	g++ -c $(INPUTDIR)/multiplayer/playerdatacollector.cpp -o $@ $(FLAGS)
 
@@ -123,6 +126,9 @@ $(OUTPUTDIR)/gameobjectdatacollector.o: $(INPUTDIR)/multiplayer/gameobjectdataco
 
 $(OUTPUTDIR)/gameobjectdataupdater.o: $(INPUTDIR)/multiplayer/gameobjectdataupdater.cpp $(INPUTDIR)/multiplayer/gameobjectdataupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/gameobjectdataupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/weapondataupdater.o: $(INPUTDIR)/multiplayer/weapondataupdater.cpp $(INPUTDIR)/multiplayer/weapondataupdater.hpp
+	g++ -c $(INPUTDIR)/multiplayer/weapondataupdater.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/weaponpickercollector.o: $(INPUTDIR)/multiplayer/weaponpickercollector.cpp $(INPUTDIR)/multiplayer/weaponpickercollector.hpp
 	g++ -c $(INPUTDIR)/multiplayer/weaponpickercollector.cpp -o $@ $(FLAGS)

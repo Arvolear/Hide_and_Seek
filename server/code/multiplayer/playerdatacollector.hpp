@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <vector>
 #include <string>
+#include <map>
 
 #include <tinyxml2/tinyxml2.h>
 
@@ -13,11 +14,11 @@ class PlayerDataCollector
 {
     private:
         vector < int > playerIDs;
-        
-        vector < btScalar* > models;
-        vector < btVector3 > moveDirections;
 
-        vector < vector < string > > pickedWeapons;
+        vector < string > names;
+        mutable map < int, btScalar* > models;
+        mutable map < int, btVector3 > moveDirections;
+        mutable map < int, vector < string > > pickedWeapons;
 
     public:
         PlayerDataCollector();
@@ -26,6 +27,7 @@ class PlayerDataCollector
         void collect(vector < Player* > players);
 
         string getData(bool weapons = false, bool raw = false) const;
+        string getMergedData(string fileName, bool weapons = false, bool raw = false) const;
 
         void clear();
         

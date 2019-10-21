@@ -1,8 +1,12 @@
+#include "../world/raytracer.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "openglmotionstate.hpp"
 #include "physicsobject.hpp"
 #include "weapon.hpp"
 
-Weapon::Weapon(string name, btDynamicsWorld* world) : PhysicsObject(name, world) 
+Weapon::Weapon(string name, World* physicsWorld) : PhysicsObject(name, physicsWorld) 
 {
     storageBullets = 0;
     magazineSize = 0;
@@ -12,7 +16,7 @@ Weapon::Weapon(string name, btDynamicsWorld* world) : PhysicsObject(name, world)
     shotPower = 0;
 }
 
-Weapon::Weapon(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation) : PhysicsObject(name, world, shape, mass, position, rotation) 
+Weapon::Weapon(string name, World* physicsWorld, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation) : PhysicsObject(name, physicsWorld, shape, mass, position, rotation) 
 {
     storageBullets = 0;
     magazineSize = 0;
@@ -22,7 +26,7 @@ Weapon::Weapon(string name, btDynamicsWorld* world, btCollisionShape* shape, flo
     shotPower = 0;
 }
 
-Weapon::Weapon(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation) : PhysicsObject(name, world, shape, mass, position, rotation)
+Weapon::Weapon(string name, World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation) : PhysicsObject(name, physicsWorld, shape, mass, position, rotation)
 {
     storageBullets = 0;
     magazineSize = 0;

@@ -11,6 +11,8 @@
 using namespace std;
 using namespace glm;
 using namespace Assimp;
+        
+map < string, Texture > ModelLoader::textures_loaded; 
 
 ModelLoader::ModelLoader(){}
 
@@ -24,6 +26,7 @@ void ModelLoader::loadModel(string path)
     }
 
     directory = path.substr(0, path.find_last_of('/')); 
+    directory += "/";
    
     processNode(scene->mRootNode); 
     processNodeAnim(); 
@@ -43,7 +46,7 @@ void ModelLoader::clear()
 {
     bones.clear();
     meshes.clear();
-    textures_loaded.clear();
+    //textures_loaded.clear();
     directory = "";
     skeleton = nullptr;
 
@@ -239,12 +242,15 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
     
     vector < Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
-
-    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_metallic"); 
+    
+    vector < Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_roughness");
+    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    
+    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_metallic"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     
-    vector < Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SHININESS, "texture_roughness");
-    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    vector < Texture > aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ao");
+    textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
     
     /* .obj */
     vector < Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
@@ -270,43 +276,32 @@ vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureT
 
         mat->GetTexture(type, i, &helpStr); 
 
-        bool skip = false;
-        map < string, Texture >::iterator it;
-        it = textures_loaded.find(string(helpStr.C_Str()));
+        string texPath = directory + string(helpStr.C_Str());
+
+        auto it = textures_loaded.find(texPath);
 
         if (it != textures_loaded.end()) 
         {
             textures.push_back(it->second); 
-            skip = true;
         }
-
-        if (!skip) 
+        else 
         {
             Texture texture;
 
-            texture.id = textureFromFile(helpStr.C_Str()); 
-
+            texture.id = textureFromFile(texPath.c_str()); 
             texture.type = typeName; 
-
-            //cout << "Texture type: " << typeName << endl;
-
-            texture.path = helpStr.C_Str(); 
-
-            //cout << texture.path << " " << typeName << endl;
+            texture.path = texPath; 
 
             textures.push_back(texture); 
-            textures_loaded.insert({helpStr.C_Str(), texture}); 
+            textures_loaded.insert({texPath, texture}); 
         }
     }
 
     return textures;
 }
 
-unsigned int ModelLoader::textureFromFile(const char *path)
+unsigned int ModelLoader::textureFromFile(string filename)
 {
-    string filename = string(path); 
-    filename = directory + '/' + filename; 
-
     unsigned int textureID;
     glGenTextures(1, &textureID); 
     glBindTexture(GL_TEXTURE_2D, textureID); 
@@ -316,14 +311,15 @@ unsigned int ModelLoader::textureFromFile(const char *path)
 
     if (image) 
     {
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
+
         glGenerateMipmap(GL_TEXTURE_2D); 
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);
 
         SOIL_free_image_data(image); 
     }
@@ -331,7 +327,7 @@ unsigned int ModelLoader::textureFromFile(const char *path)
     {
         SOIL_free_image_data(image);
         throw runtime_error("ERROR::Failed to load texture at path: " + filename);
-    }
+    } 
 
     return textureID;
 }

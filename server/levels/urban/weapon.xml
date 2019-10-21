@@ -1,0 +1,30 @@
+<Weapons>
+    <weapon name="weapon_m4">
+        <shape type="compound">
+            <cshape type="box" x="0.07" y="0.1" z="0.9">
+                <pos x="0.0" y="0.12" z="0.2"/>
+            </cshape>
+            <cshape type="cylinder" r="0.03" h="0.25" zup="0.03">
+                <pos x="0.0" y="0.14" z="-0.95"/>
+                <rot x="1.0" y="0.0" z="0.0" angle="90.0"/>
+            </cshape>
+            <cshape type="box" x="0.04" y="0.25" z="0.1">
+                <pos x="0.0" y="-0.23" z="0.025"/>
+            </cshape>
+            <cshape type="box" x="0.035" y="0.18" z="0.08">
+                <pos x="0.0" y="-0.18" z="0.43"/>
+                <rot x="1.0" y="0.0" z="0.0" angle="-25.0"/>
+            </cshape>
+        </shape>
+        <mass mass="5.0"/>
+        <pos x="-73.0" y="1.5" z="73.0"/>
+        <rot x="1.0" y="1.0" z="0.0" angle="47.0"/>
+        <info>
+            <storage amount="180"/>
+            <size size="30"/>
+            <magazine amount="30"/>
+            <speed speed="0.1"/>
+            <power power="0.0"/>
+        </info>
+    </weapon>
+</Weapons>

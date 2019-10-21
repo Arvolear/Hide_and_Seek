@@ -1,0 +1,17 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Color_Plane001_normal.tga.png
+map_Ka textures/Color_Plane001_ao.tga.png
+map_Kd textures/Color_Plane001_albedo.tga.png
+map_Ke textures/Color_Plane001_metalness.tga.png
+map_Ks textures/Color_Plane001_roughness.tga.png

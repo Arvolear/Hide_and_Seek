@@ -39,7 +39,7 @@ class PhysicsObject
 
         int ownerID;
 
-        btDynamicsWorld* world;
+        World* physicsWorld;
 
         bool collidable;
         bool stat;
@@ -56,9 +56,9 @@ class PhysicsObject
         void updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation);
 
     public:
-        PhysicsObject(string name, btDynamicsWorld* world);
-        PhysicsObject(string name, btDynamicsWorld* world, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
-        PhysicsObject(string name, btDynamicsWorld* world, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+        PhysicsObject(string name, World* physicsWorld);
+        PhysicsObject(string name, World* physicsWorld, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+        PhysicsObject(string name, World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
 
         void setName(string name);
         void setOwnerID(int ownerID);
@@ -67,7 +67,7 @@ class PhysicsObject
         void setMass(float mass, bool add = true);
         void setPosition(btVector3 position, bool add = true);
         void setRotation(btQuaternion rotation, bool add = true);
-        void setTransform(btTransform* transform);
+        void setTransform(btTransform transform);
         void setTransform(btScalar* transform);
         void clearTransform();
         void setCollidable(bool collidable);

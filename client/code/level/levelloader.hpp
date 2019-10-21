@@ -34,12 +34,14 @@ class LevelLoader
         
         vector < Player* > players;
 
+        /* DEBUG */
+        Player* virtualPlayer;
+
         /* helpers */
         void loadProjection(XMLElement* projElem, mat4 &proj);
         void loadAnimation(XMLElement* animationElem, Animation*& anim);
 
         void loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*& GO);
-        void loadPhysicsObject(XMLElement* physicsObjectElem, GameObject*& GO);
         void loadDebugObject(XMLElement* debugObjectElem, GameObject*& GO);
 
         void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);
@@ -57,7 +59,7 @@ class LevelLoader
 
         void loadProjection();
 
-        void loadPlayers();
+        void loadVirtualPlayer();
         void loadSoldiers();
 
     public:
@@ -70,12 +72,13 @@ class LevelLoader
         void getSkyBoxData(SkyBox*& skyBox) const;
         void getAtmosphereData(Atmosphere*& atmosphere) const;
         void getSsaoData(SSAO*& sSAO) const;
-
-        /*******/
         void getProjectionData(mat4 &projection) const;
         void getViewFrustumData(ViewFrustum*& viewFrustum);
 
         void getPlayersData(vector < Player* > &players) const;
+
+        /* DEBUG */
+        void getVirtualPlayerData(Player*& virtualPlayer) const;
 
         ~LevelLoader();
 };

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<SoldierFile>
+    <soldiers>
+
+         <soldier id="0">
+            <position x="0.0" y="0.0" z="0.0"/>
+            <forward x="0.0" y="0.0" z="-1.0"/>
+            <speed speed="1.0"/>
+            <gameobject name="soldier0">
+                <graphicsobject path="/animated_models/Humaniod/humaniod.fbx">
+                    <viewfrustum apply="true"/>
+                    <scale x="0.36" y="0.36" z="0.36"/>
+                    <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+                    <animations>
+                        <animation name="idle" active="true">
+                            <animid id="1"/>
+                            <framesrange start="1.0" end="44.0"/>
+                            <speed speed="0.0"/>
+                            <loop loop="true"/>
+                        </animation>
+                        <animation name="run" active="false">
+                            <animid id="2"/>
+                            <framesrange start="1.0" end="0.0"/>
+                            <loop loop="true"/>
+                        </animation>
+                    </animations>
+                </graphicsobject>
+                <debugobject>
+                    <debugsphere detail="3"/>
+                </debugobject>
+            </gameobject>
+            <active active="false"/>
+            <raytracer apply="true"/>
+            <cameraoffset x="0.2" y="0.0" z="0.0"/> 
+            <modeloffset x="-0.38" y="6.55" z="0.0"/>
+        </soldier>
+        
+        <soldier id="1">
+            <position x="0.0" y="0.0" z="0.0"/>
+            <forward x="0.0" y="0.0" z="-1.0"/>
+            <speed speed="1.0"/>
+            <gameobject name="soldier1">
+                <graphicsobject path="/animated_models/Humaniod/humaniod.fbx">
+                    <viewfrustum apply="true"/>
+                    <scale x="0.36" y="0.36" z="0.36"/>
+                    <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+                    <animations>
+                        <animation name="idle" active="true">
+                            <animid id="1"/>
+                            <framesrange start="1.0" end="44.0"/>
+                            <speed speed="0.0"/>
+                            <loop loop="true"/>
+                        </animation>
+                        <animation name="run" active="false">
+                            <animid id="2"/>
+                            <framesrange start="1.0" end="0.0"/>
+                            <loop loop="true"/>
+                        </animation>
+                    </animations>
+                </graphicsobject>
+                <debugobject>
+                    <debugsphere detail="3"/>
+                </debugobject>
+            </gameobject>
+            <active active="false"/>
+            <raytracer apply="true"/>
+            <cameraoffset x="0.43" y="0.0" z="0.0"/> 
+            <modeloffset x="-0.38" y="6.55" z="0.0"/>
+        </soldier>
+
+    </soldiers>
+</SoldierFile>

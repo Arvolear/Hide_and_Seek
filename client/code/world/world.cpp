@@ -1,8 +1,5 @@
 #include "../shader/shader.hpp"
 
-#include "../framebuffer/framebuffer.hpp"
-#include "../framebuffer/colorbuffer.hpp"
-
 #include "../window/renderquad.hpp"
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
@@ -155,16 +152,16 @@ set < btRigidBody* > World::getSeparatedWith(btRigidBody* body0) const
     return move(res);
 }
                 
-void World::updateSimulation(float dt)
+void World::updateSimulation(float dt, int subSteps, float fixedStep)
 {
     clearEventsData();
-
+    
     if (world)
     {
-        world->stepSimulation(dt, 2);
+        world->stepSimulation(dt, subSteps, fixedStep);
     }
 }
-        
+
 btDynamicsWorld* World::getWorld() const
 {
     return world;

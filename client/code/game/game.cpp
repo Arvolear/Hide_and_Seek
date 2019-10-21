@@ -50,10 +50,12 @@
 #include "../level/level.hpp"
 
 #include "../multiplayer/client.hpp"
+#include "../multiplayer/physicsobjectdataparser.hpp"
 #include "../multiplayer/playerdatacollector.hpp"
 #include "../multiplayer/playerdataupdater.hpp"
 #include "../multiplayer/gameobjectdatacollector.hpp"
 #include "../multiplayer/gameobjectdataupdater.hpp"
+#include "../multiplayer/weapondataupdater.hpp"
 #include "../multiplayer/weaponpickercollector.hpp"
 #include "../multiplayer/weaponpickerupdater.hpp"
 #include "../multiplayer/weapondroppercollector.hpp"
@@ -132,6 +134,12 @@ void Game::checkEvents()
         level->toggleDebug();
     }
     
+    /* draw debug spheres */
+    if (window->isKeyPressedOnce(GLFW_KEY_P))
+    {
+        level->toggleVirtualPlayer();
+    }
+    
     /* PHYSICS EVENTS */
 }
 
@@ -155,18 +163,23 @@ void Game::gameLoop()
     thread sender(&Multiplayer::broadcast, multiplayer);
     thread receiver(&Multiplayer::update, multiplayer);
         
+    level->updateSunPos();
+        
     while (window->isOpen())
     {
         window->pollEvents();
         physicsWorld->pollEvents();
         checkEvents();        
 
-        if (window->getTime() > 1)
+        if (global.fpsCounter->getFramesTime() > 0)
         {
-            physicsWorld->updateSimulation(window->getTime());
+            float step = 2.0 / (global.fpsCounter->getFPS());
+
+            /* lock mtx to block bodies removal */
+            physicsWorld->updateSimulation(step, 1000);
         }
 
-        level->updateSunPos();
+        //level->updateSunPos();
         level->updatePlayers(mode);
         level->render();
 
@@ -182,13 +195,13 @@ void Game::gameLoop()
         
         gameShader->use();
 
-        glActiveTexture(GL_TEXTURE0 + level->getRenderTexture(0));
+        glActiveTexture(GL_TEXTURE0);
+        gameShader->setInt("scene", 0);
         glBindTexture(GL_TEXTURE_2D, level->getRenderTexture(0));
-        gameShader->setInt("scene", level->getRenderTexture(0));
         
-        glActiveTexture(GL_TEXTURE0 + blured);
+        glActiveTexture(GL_TEXTURE0 + 1);
+        gameShader->setInt("blurBloom", 1);
         glBindTexture(GL_TEXTURE_2D, blured);
-        gameShader->setInt("blurBloom", blured);
 
         gameShader->setFloat("exposure", 1.0);
 

@@ -28,13 +28,13 @@ class LevelLoader
         void loadPhysicsObjects();
         void loadWeapons();
 
-        void loadPlayers();
         void loadSoldiers();
 
     public:
         LevelLoader(World* physicsWorld);
 
         void loadLevel(string name);
+        void updateLevel();
 
         void getPhysicsObjectsData(map < string, PhysicsObject* > &physicsObjects) const;
         void getPlayersData(vector < Player* > &players) const;

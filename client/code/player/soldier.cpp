@@ -13,6 +13,11 @@
 
 #include "../debug/debugdrawer.hpp"
 
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
+
 #include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
 #include "../game_object/animation.hpp"
@@ -27,18 +32,16 @@
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
 
-#include "../world/raytracer.hpp"
-
 #include "player.hpp"
 #include "soldier.hpp"
 
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(window, playerPos, cameraForward, speed) 
+Soldier::Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(id, window, playerPos, cameraForward, speed) 
 {
     pickFrom = pickTo = vec3(0);
     dropTo = false;
 }
         
-Soldier::Soldier(Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(window, playerPos, cameraForward, tracer, player, speed, active) 
+Soldier::Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(id, window, playerPos, cameraForward, tracer, player, speed, active) 
 {
     pickFrom = pickTo = vec3(0);
     dropTo = false;
@@ -146,9 +149,9 @@ void Soldier::drop()
 
 void Soldier::pick(Weapon* weapon)
 {
+    weapon->setUserPointer(this);
     weapon->pick(getForward(), getUp(), active);
     weapons.push_front(weapon); 
-    weapon->setUserPointer(this);
 }
 
 void Soldier::pick()

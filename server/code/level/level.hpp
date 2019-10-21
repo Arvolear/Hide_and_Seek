@@ -17,6 +17,7 @@ class Level
         LevelLoader* levelLoader;
         
         string levelName;
+        string levelPath;
 
         /* all objects in the level */
         map < string, PhysicsObject* > physicsObjects;
@@ -27,22 +28,27 @@ class Level
         Level(World* physicsWorld);
         
         void loadLevel(string level);
+        void updateLevel();
 
         void addPhysicsObject(PhysicsObject* physicsObject);
         PhysicsObject* getPhysicsObject(string name) const;
-        map < string, PhysicsObject* > getPhysicsObjects() const;
-        map < string, PhysicsObject* > getNoPlayersPhysicsObjects() const;
-        map < string, PhysicsObject* > getNoPlayersAndTheirWeaponsPhysicsObjects() const;
 
         void removePhysicsObject(PhysicsObject* physicsObject);
         void removePhysicsObject(string name);
 
         void update();
+       
+        void clearNoPlayersAndTheirWeaponsOwner(int owner);
+
+        map < string, PhysicsObject* > getPhysicsObjects() const;
+        map < string, PhysicsObject* > getNoPlayersPhysicsObjects() const;
+        map < string, PhysicsObject* > getNoPlayersAndTheirWeaponsPhysicsObjects() const;
         
         Player* getPlayer(int id) const;
         vector < Player* > getPlayers() const;
-        vector < Player* > getPlayersExcept(int index) const;
+        vector < Player* > getPlayersExcept(int id) const;
         string getLevelName() const;
+        string getLevelPath() const;
 
         ~Level();
 };

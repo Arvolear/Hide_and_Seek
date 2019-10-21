@@ -1,0 +1,47 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/blinn6SG_normal.png
+map_Ka textures/blinn6SG_AO.jpg
+map_Kd textures/blinn6SG_albedo.jpg
+map_Ke textures/blinn6SG_metallic.jpg
+map_Ks textures/blinn6SG_roughness.jpg
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/blinn5SG_normal.png
+map_Ka textures/blinn5SG_AO.jpg
+map_Kd textures/blinn5SG_albedo.jpg
+map_Ke textures/blinn5SG_metallic.jpg
+map_Ks textures/blinn5SG_roughness.jpg
+
+newmtl Material.003
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/blinn7SG_normal.png
+map_Ka textures/blinn7SG_AO.jpg
+map_Kd textures/blinn7SG_albedo.jpg
+map_Ke textures/blinn7SG_metallic.jpg
+map_Ks textures/blinn7SG_roughness.jpg

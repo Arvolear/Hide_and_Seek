@@ -13,8 +13,7 @@ using namespace tinyxml2;
 class PhysicsObjectDataCollector
 {
     private:
-        vector < string > names;
-        vector < btScalar* > models;        
+        mutable map < string, btScalar* > pos;
 
     public:
         PhysicsObjectDataCollector();
@@ -23,6 +22,7 @@ class PhysicsObjectDataCollector
         void collect(map < string, PhysicsObject* > physicsObjects);
 
         string getData(bool raw = false) const;
+        string getMergedData(string fileName, bool raw = false) const;
 
         void clear(); 
 

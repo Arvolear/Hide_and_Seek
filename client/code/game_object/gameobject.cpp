@@ -2,7 +2,18 @@
 
 #include "../shader/shader.hpp"
 
+#include "../window/renderquad.hpp"
+#include "../window/glfwevents.hpp"
+#include "../window/window.hpp"
+
+#include "../player/camera.hpp"
+
 #include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "sphere.hpp"
 #include "openglmotionstate.hpp"
@@ -237,6 +248,15 @@ void GameObject::clearLocalTransform()
     localTransform = mat4(1.0);
 }
         
+void GameObject::clearPhysicsObjectTransform()
+{
+    physicsObject->clearTransform();
+    
+    this->interpolation = false;
+    prevTransform = nextTransform = mat4(1.0);
+    interpolationCoeff = 1.0;
+}
+        
 void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
 {
     if (!physicsObject)
@@ -252,6 +272,7 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
         physicsObject->setTransform(transform.get());
 
         prevTransform = nextTransform = model;
+        interpolationCoeff = 1.0;
     }
     else
     {

@@ -1,0 +1,34 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl Material.001
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/block_low_albedo.jpg
+map_Bump textures/block_low_normal.jpg
+map_Ka textures/block_low_AO.jpg
+map_Ke textures/block_low_metallic.jpg
+map_Ks textures/block_low_roughness.jpg
+map_d textures/block_low_albedo.jpg
+
+newmtl Material.002
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/petli_low_albedo.jpg
+map_Bump textures/petli_low_normal.jpg
+map_Ka textures/petli_low_AO.jpg
+map_Ke textures/petli_low_metallic.jpg
+map_Ks textures/petli_low_roughness.jpg
+map_d textures/petli_low_albedo.jpg

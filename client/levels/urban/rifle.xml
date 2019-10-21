@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<RifleFile>
+    <rifles>
+
+        <rifle name="weapon_m4">
+            <graphicsobject path="/animated_models/Gun/gun.fbx">
+                <viewfrustum apply="true"/>
+                <scale x="0.2" y="0.2" z="0.2"/>
+                <rotation x="1.0" y="0.0" z="0.0" angle="-90.0"/>
+                <animations>
+                    <animation name="pick" active="false">
+                        <animid id="11"/>
+                        <framesrange start="80.0" end="100.0"/>
+                        <speed speed="0.3"/>
+                        <loop loop="false"/>
+                    </animation>
+                    <animation name="reload1" active="false">
+                        <animid id="5"/>
+                        <framesrange start="0.0" end="0.0"/>
+                        <speed speed="0.0"/>
+                        <loop loop="false"/>
+                    </animation>
+                    <animation name="reload2" active="false">
+                        <animid id="4"/>
+                        <framesrange start="0.0" end="0.0"/>
+                        <speed speed="0.5"/>
+                        <loop loop="false"/>
+                    </animation>
+                    <animation name="walk" active="false">
+                        <animid id="8"/>
+                        <framesrange start="0.0" end="0.0"/>
+                        <speed speed="0.0"/>
+                        <loop loop="true"/>
+                    </animation>
+                    <animation name="fire" active="false">
+                        <animid id="19"/>
+                        <framesrange start="0.0" end="0.0"/>
+                        <speed speed="0.8"/>
+                        <loop loop="false"/>
+                    </animation>
+                    <animation name="idle" active="false">
+                        <animid id="13"/>
+                        <framesrange start="0.0" end="0.0"/>
+                        <speed speed="0.0"/>
+                        <loop loop="true"/>
+                    </animation>
+                </animations>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <rifleinfo>
+                <offset x="2.0" y="-0.5" z="-0.5"/>
+            </rifleinfo>
+        </rifle>
+
+    </rifles>
+</RifleFile>

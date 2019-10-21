@@ -3,6 +3,8 @@
 //native
 #include <vector>
 #include <algorithm>
+#include <mutex>
+#include <condition_variable>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -33,7 +35,7 @@ class World : public BulletEvents
         
         DebugDrawer* debugDrawer;
 
-    public: 
+    public:
         World();
 
         void pollEvents(); 
@@ -45,7 +47,7 @@ class World : public BulletEvents
         set < btRigidBody* > getCollidedWith(btRigidBody* body0) const;
         set < btRigidBody* > getSeparatedWith(btRigidBody* body0) const;
 
-        void updateSimulation(float dt);
+        void updateSimulation(float dt, int subSteps = 1, float fixedStep = 1.0 / 60.0);
        
         btDynamicsWorld* getWorld() const;
 

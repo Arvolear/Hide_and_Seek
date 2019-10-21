@@ -139,13 +139,13 @@ set < btRigidBody* > World::getSeparatedWith(btRigidBody* body0) const
     return move(res);
 }
         
-void World::updateSimulation(float dt)
+void World::updateSimulation(float dt, int step, float fixedStep)
 {
     clearEventsData();
 
     if (world)
     {
-        world->stepSimulation(dt, 1);
+        world->stepSimulation(dt, step, fixedStep);
     }
 }
         

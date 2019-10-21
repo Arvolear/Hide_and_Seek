@@ -6,7 +6,14 @@
 #include "../window/renderquad.hpp"
 #include "../window/window.hpp"
 
+#include "../player/camera.hpp"
+
 #include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "sphere.hpp"
 #include "openglmotionstate.hpp"
@@ -91,7 +98,7 @@ void Weapon::reload()
 
 void Weapon::drop(vec3 where, bool active)
 {
-    int power = 3;
+    int power = 16;
 
     physicsObject->getRigidBody()->applyCentralImpulse(global.toBtVector3(where) * power); 
     stopAnimation();
@@ -101,7 +108,7 @@ void Weapon::drop(vec3 where, bool active)
 
     if (active)
     {
-        physicsObject->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+        physicsObject->getRigidBody()->setActivationState(ACTIVE_TAG);
     }
 
     setShadow(true);
@@ -109,7 +116,7 @@ void Weapon::drop(vec3 where, bool active)
 
 void Weapon::pick(vec3 forward, vec3 up, bool active)
 {
-    physicsObject->clearTransform();
+    clearPhysicsObjectTransform();
     
     float angle = 0.0;
     
@@ -174,8 +181,6 @@ void Weapon::pick(vec3 forward, vec3 up, bool active)
     setVisible(active);
     setShadow(false);
     physicsObject->getRigidBody()->setActivationState(WANTS_DEACTIVATION);
-
-    //physicsObject->setRotation(toBtQuaternion(twist), false);
 }
 
 vec3 Weapon::getOffset() const

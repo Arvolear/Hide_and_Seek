@@ -9,7 +9,14 @@
 #include "../window/glfwevents.hpp"
 #include "../window/window.hpp"
 
+#include "../player/camera.hpp"
+
 #include "../debug/debugdrawer.hpp"
+
+#include "../world/raytracer.hpp"
+#include "../world/constrainthandler.hpp"
+#include "../world/bulletevents.hpp"
+#include "../world/world.hpp"
 
 #include "../game_object/sphere.hpp"
 #include "../game_object/openglmotionstate.hpp"
@@ -25,9 +32,13 @@
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
 
+#include "physicsobjectdataparser.hpp"
 #include "gameobjectdataupdater.hpp"
 
-GameObjectDataUpdater::GameObjectDataUpdater() {}
+GameObjectDataUpdater::GameObjectDataUpdater() 
+{
+    objParser = new PhysicsObjectDataParser();
+}
 
 void GameObjectDataUpdater::collect(string info)
 {
@@ -49,53 +60,33 @@ void GameObjectDataUpdater::collect(string info)
 
     while (objElem)
     {
-        string name = "";
-        mat4 model = mat4(1.0);
+        objParser->parse(objElem);
 
-        /* name */
-        XMLElement* nameElem = objElem->FirstChildElement("name");
-
-        if (nameElem)
-        {
-            name = nameElem->GetText();
-        }
-
-        /* model */
-        XMLElement* modelElem = objElem->FirstChildElement("mdl");
-
-        if (modelElem)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    string str;
-                    str = char('a' + (i * 4 + j));
-
-                    modelElem->QueryFloatAttribute(str.data(), &model[i][j]);
-                }
-            }
-        }
-
-        names.push_back(name);
-        models.push_back(model);
-        
         objElem = objElem->NextSiblingElement();
     }
+
+    names = objParser->getNames();
 }
 
 void GameObjectDataUpdater::updateData(GameObject* gameObject, bool interpolation)
 {
-    gameObject->setPhysicsObjectTransform(models[0], interpolation);
+    if (names.empty())
+    {
+        return;
+    }
+
+    objParser->updatePhysicsObject(gameObject, interpolation);
 }
 
 void GameObjectDataUpdater::updateData(map < string, GameObject* > gameObjects, bool interpolation)
 {
     for (size_t i = 0; i < names.size(); i++)
     {
-        if (gameObjects.find(names[i]) != gameObjects.end())
+        auto it = gameObjects.find(names[i]);
+
+        if (it != gameObjects.end())
         {
-            gameObjects.find(names[i])->second->setPhysicsObjectTransform(models[i], interpolation); 
+            objParser->updatePhysicsObject(it->second, interpolation);
         }
     }
 }
@@ -112,8 +103,11 @@ vector < string > GameObjectDataUpdater::getNames() const
 
 void GameObjectDataUpdater::clear()
 {
+    objParser->clear();
     names.clear();
-    models.clear();
 }
 
-GameObjectDataUpdater::~GameObjectDataUpdater() {}
+GameObjectDataUpdater::~GameObjectDataUpdater() 
+{
+    delete objParser;
+}

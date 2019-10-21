@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<PlayerFile>
+    <players>
+
+         <player>
+            <position x="0.0" y="10.0" z="80.0"/>
+            <forward x="1.0" y="-0.3" z="-1.0"/>
+            <speed speed="1.0"/>
+            <active active="false"/>
+         </player>
+
+    </players>
+</PlayerFile>

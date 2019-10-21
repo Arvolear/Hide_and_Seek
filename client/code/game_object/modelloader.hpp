@@ -29,7 +29,7 @@ class ModelLoader
     private:
         map < string, Bone* > bones; 
         vector < Mesh* > meshes; 
-        map < string, Texture > textures_loaded; 
+        static map < string, Texture > textures_loaded; 
         string directory; 
         Skeleton *skeleton;
 
@@ -46,7 +46,7 @@ class ModelLoader
         Mesh* processMesh(aiMesh *mesh); 
 
         vector < Texture > loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName); 
-        unsigned int textureFromFile(const char* path); 
+        unsigned int textureFromFile(string filename); 
 
         Bone* findBone(string name) const; 
         int findBoneId(string name) const; 

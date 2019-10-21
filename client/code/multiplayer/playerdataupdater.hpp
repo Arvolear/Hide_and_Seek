@@ -13,10 +13,13 @@ class PlayerDataUpdater
 {
     private:
         vector < int > playerIDs;
+ 
+        map < int, float > speeds;
+        map < int, vec3 > moveDirections;
+        
+        PhysicsObjectDataParser* objParser;
 
-        vector < mat4 > models;
-        vector < vec3 > moveDirections;
-        vector < vector < string > > pickedWeapons;
+        map < int, vector < string > > pickedWeapons;
 
     public:
         PlayerDataUpdater();
