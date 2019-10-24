@@ -1,0 +1,137 @@
+# Blender MTL File: 'None'
+# Material Count: 9
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Mid_normal.png
+map_Ka textures/Mid_AO.jpg
+map_Kd textures/Mid_albedo.jpg
+map_Ke textures/Mid_metallic.jpg
+map_Ks textures/Mid_roughness.jpg
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Wheel_normal.png
+map_Ka textures/Wheel_AO.jpg
+map_Kd textures/Wheel_albedo.jpg
+map_Ke textures/Wheel_metallic.jpg
+map_Ks textures/Wheel_roughness.jpg
+
+newmtl Material.003
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Screw_normal.png
+map_Ka textures/Screw_AO.jpg
+map_Kd textures/Screw_albedo.jpg
+map_Ke textures/Screw_metallic.jpg
+map_Ks textures/Screw_roughness.jpg
+
+newmtl Material.004
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Screw_normal.png
+map_Ka textures/Screw_AO.jpg
+map_Kd textures/Screw_albedo.jpg
+map_Ke textures/Screw_metallic.jpg
+map_Ks textures/Screw_roughness.jpg
+
+newmtl Material.005
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Wheel_normal.png
+map_Ka textures/Wheel_AO.jpg
+map_Kd textures/Wheel_albedo.jpg
+map_Ke textures/Wheel_metallic.jpg
+map_Ks textures/Wheel_roughness.jpg
+
+newmtl Material.006
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Mid_normal.png
+map_Ka textures/Mid_AO.jpg
+map_Kd textures/Mid_albedo.jpg
+map_Ke textures/Mid_metallic.jpg
+map_Ks textures/Mid_roughness.jpg
+
+newmtl Material.007
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Screw_normal.png
+map_Ka textures/Screw_AO.jpg
+map_Kd textures/Screw_albedo.jpg
+map_Ke textures/Screw_metallic.jpg
+map_Ks textures/Screw_roughness.jpg
+
+newmtl Material.008
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Wheel_normal.png
+map_Ka textures/Wheel_AO.jpg
+map_Kd textures/Wheel_albedo.jpg
+map_Ke textures/Wheel_metallic.jpg
+map_Ks textures/Wheel_roughness.jpg
+
+newmtl Material.009
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/Mid_normal.png
+map_Ka textures/Mid_AO.jpg
+map_Kd textures/Mid_albedo.jpg
+map_Ke textures/Mid_metallic.jpg
+map_Ks textures/Mid_roughness.jpg

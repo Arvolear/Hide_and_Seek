@@ -1,0 +1,86 @@
+# Blender MTL File: 'None'
+# Material Count: 6
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
+map_Bump textures/shipCMiddleDoor_Material_Normal.png
+map_Ke textures/shipCMiddleDoor_Material_Metallic.png
+map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+
+newmtl Material.003
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
+map_Bump textures/shipCMiddleDoor_Material_Normal.png
+map_Ke textures/shipCMiddleDoor_Material_Metallic.png
+map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+
+newmtl Material.004
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
+map_Bump textures/shipCMiddleDoor_Material_Normal.png
+map_Ke textures/shipCMiddleDoor_Material_Metallic.png
+map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+
+newmtl Material.005
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
+map_Bump textures/shipCMiddleDoor_Material_Normal.png
+map_Ke textures/shipCMiddleDoor_Material_Metallic.png
+map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+
+newmtl Material.006
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
+map_Bump textures/shipCMiddleDoor_Material_Normal.png
+map_Ke textures/shipCMiddleDoor_Material_Metallic.png
+map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+
+newmtl Material.009
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump textures/shipCMiddleDoor_Material_Normal.png
+map_Kd textures/shipCMiddleDoor_DefaultMaterial_BaseColor.png
+map_Ke textures/shipCMiddleDoor_DefaultMaterial_Metallic.png
+map_Ks textures/shipCMiddleDoor_DefaultMaterial_Roughness.png

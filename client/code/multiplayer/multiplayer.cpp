@@ -89,8 +89,8 @@ void Multiplayer::connect()
 {
     //client->connectToServer("159.224.87.241", 5040);
     //client->connectToServer("192.168.0.145", 5040);
-    client->connectToServer("192.168.0.183", 5040);
-    //client->connectToServer("127.0.0.1", 5040);
+    //client->connectToServer("192.168.0.183", 5040);
+    client->connectToServer("127.0.0.1", 5040);
     
     /* connection info */
     client->recvMSG(50);

@@ -311,8 +311,8 @@ unsigned int ModelLoader::textureFromFile(string filename)
 
     if (image) 
     {
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
 
         glGenerateMipmap(GL_TEXTURE_2D); 
 

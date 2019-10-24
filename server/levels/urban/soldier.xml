@@ -9,7 +9,7 @@
                 <cshape type="capsule" r="0.4" h="3.5"/>
             </shape>
             <mass mass="10.0"/>
-            <pos x="-70.0" y="3.0" z="70.0"/>
+            <pos x="0.0" y="3.0" z="70.0"/>
             <afactor x="0.0" y="0.0" z="0.0"/>
         </obj>
         <armory>
