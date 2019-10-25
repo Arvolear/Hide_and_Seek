@@ -10,6 +10,8 @@ Mesh::Mesh(vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > 
     vertices = v; 
     indices = i; 
     textures = t; 
+    
+    instanceAmount = 0;
 
     setupMesh(); 
 }
@@ -38,24 +40,45 @@ void Mesh::setupMesh()
     glEnableVertexAttribArray(2); // 2 layout for UV
     
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
-    glEnableVertexAttribArray(3); // 2 layout for tangent
+    glEnableVertexAttribArray(3); // 3 layout for tangent
    
-    for (int i = 0; i < BONES_AMOUNT; i++)
+    for (int i = 0; i < BONES_AMOUNT / 2; i++)
     {
-        glVertexAttribPointer(4 + i, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, boneIDs) + sizeof(float) * i));
-        glEnableVertexAttribArray(4 + i); // from 3 to 9 (BONES_AMOUNT) layouts for bones ids. Array in shader uses N layouts, equal to the size, instead of single layout location the vec uses
+        glVertexAttribPointer(4 + i, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, boneIDs) + sizeof(float) * 2 * i));
+        glEnableVertexAttribArray(4 + i); // from 4 to 7 (vec2 BONES_AMOUNT)
     }
     
-    for (int i = 0; i < BONES_AMOUNT; i++)
+    for (int i = 0; i < BONES_AMOUNT / 2; i++)
     {
-        glVertexAttribPointer(10 + i, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, weights) + sizeof(float) * i));
-        glEnableVertexAttribArray(10 + i); // from 9 to 15 for the weights
+        glVertexAttribPointer(7 + i, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, weights) + sizeof(float) * 2 * i));
+        glEnableVertexAttribArray(7 + i); // from 7 to 10 for the weights
     }
 
     glBindVertexArray(0); 
 }
+        
+void Mesh::setupInstancedMesh(vector < mat4 > &transformations)
+{
+    instanceAmount = transformations.size();
 
-void Mesh::render(Shader *shader) const
+    glGenBuffers(1, &instanceVBO); 
+
+    glBindVertexArray(VAO); 
+    
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); 
+    glBufferData(GL_ARRAY_BUFFER, sizeof(mat4) * transformations.size(), transformations.data(), GL_STATIC_DRAW); 
+
+    for (int i = 0; i < 4; i++)
+    {
+        glVertexAttribPointer(10 + i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(vec4), (void*)(sizeof(vec4) * i));
+        glEnableVertexAttribArray(10 + i);
+        glVertexAttribDivisor(10 + i, 1);
+    }
+    
+    glBindVertexArray(0); 
+}
+
+void Mesh::render(Shader *shader, bool instanced) const
 {
     unsigned int normalNR = 1;
     unsigned int diffuseNR = 1;
@@ -107,7 +130,16 @@ void Mesh::render(Shader *shader) const
     }
 
     glBindVertexArray(VAO); // bind VAO
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // draw mesh from indices 
+
+    if (!instanced)
+    {
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // draw mesh from indices 
+    }
+    else
+    {
+        glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, instanceAmount);
+    }
+
     glBindVertexArray(0); // unbind VAO
     
     glActiveTexture(GL_TEXTURE0);
@@ -122,6 +154,7 @@ vector < Vertex > Mesh::getVertices() const
 Mesh::~Mesh()
 {
     glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &instanceVBO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 

@@ -14,6 +14,7 @@
 
 #include "../global/gaussianblur.hpp"
 #include "../global/radialblur.hpp"
+#include "../global/poissondisk.hpp"
 
 #include "../player/camera.hpp"
 
@@ -35,6 +36,7 @@
 #include "../game_object/modelloader.hpp"
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/instancedgameobject.hpp"
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
 
@@ -61,6 +63,7 @@ Level::Level(Window* window, World* physicsWorld)
     gBuffer = new GBuffer();
 
     gBufferShader = new Shader();
+    gBufferInstancedShader = new Shader();
     gameObjectShader = new Shader();
     dirShadowShader = new Shader();
     skyBoxShader = new Shader();
@@ -110,6 +113,7 @@ void Level::loadLevel(string level)
             });
     
     gBufferShader->loadShaders(global.path("code/shader/gBufferShader.vert"), global.path("code/shader/gBufferShader.frag"));
+    gBufferInstancedShader->loadShaders(global.path("code/shader/gBufferInstancedShader.vert"), global.path("code/shader/gBufferShader.frag"));
     gameObjectShader->loadShaders(global.path("code/shader/objectShader.vert"), global.path("code/shader/objectShader.frag"));
     dirShadowShader->loadShaders(global.path("code/shader/dirShadowShader.vert"), global.path("code/shader/dirShadowShader.frag"));
     skyBoxShader->loadShaders(global.path("code/shader/skyBoxShader.vert"), global.path("code/shader/skyBoxShader.frag"));
@@ -135,10 +139,22 @@ void Level::loadLevel(string level)
     levelLoader->getProjectionData(projection);
     levelLoader->getViewFrustumData(viewFrustum);
 
-    /* DEBUG */
-    levelLoader->getVirtualPlayerData(virtualPlayer);
-
     quad->init();
+    
+    /* DEBUG */
+    instancedGameObject = new InstancedGameObject("grass");
+    instancedGameObject->setGraphicsObject(global.path("levels/" + levelName) + "/static_models/Vegetation0/low_grass0.obj");
+    
+    PhysicsObject* PO = new PhysicsObject(physicsWorld, new btBoxShape(btVector3(1.0, 1.0, 1.0)), 0, btVector3(0, 1, 0));
+    instancedGameObject->setPhysicsObject(PO);
+
+    instancedGameObject->setLocalScale(vec3(2.0, 2.0, 2.0));
+
+    instancedGameObject->setRadius(1.0);
+    instancedGameObject->setBorders(vec2(-80, 30), vec2(-30, 80));
+    instancedGameObject->genInstances();
+
+    levelLoader->getVirtualPlayerData(virtualPlayer);
 }
         
 void Level::setPlayerID(int playerID)
@@ -264,6 +280,13 @@ void Level::render()
     {
         i.second->render(gBufferShader); 
     }
+    
+    gBufferInstancedShader->use();
+
+    gBufferInstancedShader->setMat4("view", view);
+    gBufferInstancedShader->setMat4("projection", projection);
+    
+    instancedGameObject->render(gBufferInstancedShader); 
     
     /************************************
      * SSAO
@@ -508,6 +531,7 @@ Level::~Level()
     delete gBuffer;
 
     delete gBufferShader;
+    delete gBufferInstancedShader;
     delete gameObjectShader;
     delete dirShadowShader;
     delete skyBoxShader;

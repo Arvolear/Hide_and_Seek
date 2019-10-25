@@ -17,6 +17,7 @@ uniform int noiseSize;
 
 uniform float radius;
 uniform float bias;
+uniform float power;
 
 uniform mat4 invProjection;
 uniform mat4 projection;
@@ -71,5 +72,5 @@ void main()
 
     occlusion = 1.0 - (occlusion / kernelSize);
 
-    ssaoColor = occlusion;
+    ssaoColor = pow(occlusion, power);
 }

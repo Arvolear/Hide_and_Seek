@@ -15,6 +15,7 @@
 #include "../global/radialblur.hpp"
 #include "../global/gaussianblur.hpp"
 #include "../global/gaussianblur.cpp"
+#include "../global/poissondisk.hpp"
 
 #include "../player/camera.hpp"
 
@@ -36,6 +37,7 @@
 #include "../game_object/modelloader.hpp"
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/instancedgameobject.hpp"
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
 

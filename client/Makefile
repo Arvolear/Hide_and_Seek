@@ -10,7 +10,7 @@ INPUTDIR = ./code
 OUTPUTDIR = ./build
 
 MAIN = main.o 
-GLOBAL = global.o fpscounter.o gaussianblur.o radialblur.o
+GLOBAL = global.o fpscounter.o gaussianblur.o radialblur.o poissondisk.o
 DEBUG = debugdrawer.o
 SHADER = shader.o 
 FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o shadowbuffer.o gbuffer.o
@@ -21,7 +21,7 @@ MULTIPLAYER = multiplayer.o client.o physicsobjectdataparser.o playerdatacollect
 LEVEL = level.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
-GAME_OBJECT = rifle.o weapon.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
+GAME_OBJECT = rifle.o weapon.o instancedgameobject.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
 
 OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
 
@@ -55,6 +55,9 @@ $(OUTPUTDIR)/gaussianblur.o: $(INPUTDIR)/global/gaussianblur.cpp $(INPUTDIR)/glo
 
 $(OUTPUTDIR)/radialblur.o: $(INPUTDIR)/global/radialblur.cpp $(INPUTDIR)/global/radialblur.hpp
 	g++ -c $(INPUTDIR)/global/radialblur.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/poissondisk.o: $(INPUTDIR)/global/poissondisk.cpp $(INPUTDIR)/global/poissondisk.hpp
+	g++ -c $(INPUTDIR)/global/poissondisk.cpp -o $@ $(FLAGS)
 
 ### DEBUG ###
 
@@ -203,6 +206,9 @@ $(OUTPUTDIR)/rifle.o: $(INPUTDIR)/game_object/rifle.cpp $(INPUTDIR)/game_object/
 
 $(OUTPUTDIR)/weapon.o: $(INPUTDIR)/game_object/weapon.cpp $(INPUTDIR)/game_object/weapon.hpp
 	g++ -c $(INPUTDIR)/game_object/weapon.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/instancedgameobject.o: $(INPUTDIR)/game_object/instancedgameobject.cpp $(INPUTDIR)/game_object/instancedgameobject.hpp
+	g++ -c $(INPUTDIR)/game_object/instancedgameobject.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/gameobject.o: $(INPUTDIR)/game_object/gameobject.cpp $(INPUTDIR)/game_object/gameobject.hpp
 	g++ -c $(INPUTDIR)/game_object/gameobject.cpp -o $@ $(FLAGS)

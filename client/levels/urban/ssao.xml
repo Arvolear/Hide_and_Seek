@@ -8,6 +8,7 @@
         <blurscale scale="2"/>
         <radius radius="1.0"/>
         <bias bias="0.02"/>
+        <power power="1.5"/>
     </ssao>
 
 </SsaoFile>

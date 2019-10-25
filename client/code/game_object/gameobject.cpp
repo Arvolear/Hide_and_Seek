@@ -448,12 +448,11 @@ void GameObject::render(Shader* shader, bool cull)
         ready = false;
 
         shader->setMat4("localTransform", localTransform);
+        shader->setMat4("model", getPhysicsObjectTransform());
         
         ready = true;
         lk.unlock();
         cv.notify_all();
-
-        shader->setMat4("model", getPhysicsObjectTransform());
 
         for (size_t i = 0; i < meshes.size(); i++)
         {

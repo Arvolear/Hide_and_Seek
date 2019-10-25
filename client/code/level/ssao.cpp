@@ -19,7 +19,7 @@ SSAO::SSAO()
     colorBuffer = new ColorBuffer();
     gaussBlur = new GaussianBlur < ColorBuffer >();
 
-    radius = bias = 0.0;
+    radius = bias = power = 0.0;
 
     texture_noise = 0;
 }
@@ -91,14 +91,14 @@ void SSAO::genNoise(int size)
         noise.push_back(noiseSample); 
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size, size, 0, GL_RED, GL_FLOAT, noise.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, noise.data());
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void SSAO::setSoftness(int softness)
 {
-    gaussBlur->genBuffer(renderSize, {GL_R16F, GL_RGB, GL_FLOAT}, softness); 
+    gaussBlur->genBuffer(renderSize, {GL_R16F, GL_RED, GL_FLOAT}, softness); 
 }
         
 void SSAO::setRadius(float radius)
@@ -109,6 +109,11 @@ void SSAO::setRadius(float radius)
 void SSAO::setBias(float bias)
 {
     this->bias = bias;
+}
+
+void SSAO::setPower(float power)
+{
+    this->power = power;
 }
 
 void SSAO::blur(int intensity, float radius)
@@ -126,10 +131,11 @@ void SSAO::renderInfo(Shader* shader)
 
     shader->setFloat("radius", radius);
     shader->setFloat("bias", bias);
+    shader->setFloat("power", power);
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + 2);
+    shader->setInt("texture_noise", 2);
     glBindTexture(GL_TEXTURE_2D, texture_noise);
-    shader->setInt("texture_noise", texture_noise);
 
     for (size_t i = 0; i < kernel.size(); i++)
     {

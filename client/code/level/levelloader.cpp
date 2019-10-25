@@ -13,6 +13,7 @@
 
 #include "../global/radialblur.hpp"
 #include "../global/gaussianblur.hpp"
+#include "../global/poissondisk.hpp"
 
 #include "../debug/debugdrawer.hpp"
 
@@ -34,6 +35,7 @@
 #include "../game_object/modelloader.hpp"
 #include "../game_object/physicsobject.hpp"
 #include "../game_object/gameobject.hpp"
+#include "../game_object/instancedgameobject.hpp"
 #include "../game_object/weapon.hpp"
 #include "../game_object/rifle.hpp"
 
@@ -933,6 +935,17 @@ void LevelLoader::loadSsao()
             biasElem->QueryFloatAttribute("bias", &bias);
 
             sSAO->setBias(bias);
+        }
+        
+        XMLElement* powerElem = sSAOElem->FirstChildElement("power");
+
+        if (powerElem)
+        {
+            float power = 0.0;
+
+            powerElem->QueryFloatAttribute("power", &power);
+
+            sSAO->setPower(power);
         }
     } 
 }

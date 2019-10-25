@@ -28,6 +28,7 @@ class Level
         GBuffer* gBuffer;
 
         Shader* gBufferShader;
+        Shader* gBufferInstancedShader;
         Shader* gameObjectShader;
         Shader* dirShadowShader;
         Shader* skyBoxShader;
@@ -56,6 +57,9 @@ class Level
         mat4 projection;
 
         /* DEBUG */
+        InstancedGameObject* instancedGameObject;
+
+
         int drawDebug;
         Player* virtualPlayer;
         int activeVirtualPlayer;

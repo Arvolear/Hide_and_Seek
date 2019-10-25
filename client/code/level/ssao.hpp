@@ -18,6 +18,7 @@ class SSAO
 
         float radius;
         float bias;
+        float power;
 
         GLuint texture_noise;
 
@@ -36,6 +37,7 @@ class SSAO
         void setSoftness(int softness);
         void setRadius(float radius);
         void setBias(float bias);
+        void setPower(float power);
 
         void blur(int intensity, float radius);
         void renderInfo(Shader* shader);

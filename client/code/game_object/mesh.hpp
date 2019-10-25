@@ -29,7 +29,10 @@ class Mesh
 {
     private:
         GLuint VAO;
-        GLuint VBO, EBO; 
+        GLuint instanceVBO;
+        GLuint VBO, EBO;
+
+        int instanceAmount;
 
         vector < Vertex > vertices; 
         vector < GLuint > indices; 
@@ -40,7 +43,9 @@ class Mesh
     public:
         Mesh (vector < Vertex > &v, vector < unsigned int > &i, vector < Texture > &t);
 
-        void render(Shader *shader) const; 
+        void setupInstancedMesh(vector < mat4 > &transformations);
+
+        void render(Shader *shader, bool instanced = false) const; 
 
         vector < Vertex > getVertices() const;
 
