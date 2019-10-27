@@ -45,11 +45,12 @@ class LevelLoader
         void loadDebugObject(XMLElement* debugObjectElem, GameObject*& GO);
 
         void loadGameObject(XMLElement* gameObjectElem, GameObject*& GO);
-
+        void loadInstancedGameObject(XMLElement* instancedGameObjectElem, InstancedGameObject*& IGO);
         void loadRifle(XMLElement* rifleElem, Rifle*& rifle);
 
         /* main */
         void loadGameObjects();
+        void loadInstancedGameObjects();
         void loadRifles();
         void loadPistols();
         void loadDirLight();

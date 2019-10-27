@@ -1,0 +1,18 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Bump textures/T_Ferns_Normal.png
+map_Ka textures/T_Ferns_AO.png
+map_Kd textures/T_Ferns_BaseColor.png
+map_Ke textures/T_Ferns_SS.png
+map_Ks textures/T_Ferns_Roughness.png
+map_d textures/T_Ferns_BaseColor.png

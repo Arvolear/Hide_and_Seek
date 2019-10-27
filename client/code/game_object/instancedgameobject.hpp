@@ -16,9 +16,9 @@ using namespace glm;
 class InstancedGameObject : public GameObject
 {
     private:
-        float radius;
-        vec2 leftTop;
-        vec2 rightBottom;
+        vector < float > radiuses;
+        vector < vec2 > leftTops;
+        vector < vec2 > rightBottoms;
         
         vector < mat4 > transformations;
         PoissonDisk* poissonDisk;
@@ -26,12 +26,12 @@ class InstancedGameObject : public GameObject
     public:
         InstancedGameObject(string name);
 
-        void setRadius(float radius);
-        void setBorders(vec2 leftTop, vec2 rightBottom);
+        void addRadius(float radius);
+        void addBorders(vec2 leftTop, vec2 rightBottom);
 
         void genInstances();
 
-        void render(Shader* shader, bool cull = false) override;
+        void render(Shader* shader, bool viewCull = false) override;
 
         ~InstancedGameObject();        
 };

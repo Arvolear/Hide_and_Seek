@@ -160,7 +160,28 @@ void LevelLoader::loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*
     graphicsObjectElem->QueryStringAttribute("path", &path);
 
     GO->setGraphicsObject(levelName + path);
+    
+    /* cullfaces */
+    XMLElement* cullfacesElem = graphicsObjectElem->FirstChildElement("cullfaces");
 
+    if (cullfacesElem)
+    {
+        bool apply = true;
+        cullfacesElem->QueryBoolAttribute("apply", &apply);
+
+        GO->setCull(apply);
+    }
+    
+    /* shadow */
+    XMLElement* shadowElem = graphicsObjectElem->FirstChildElement("shadow");
+
+    if (shadowElem)
+    {
+        bool apply = true;
+        shadowElem->QueryBoolAttribute("apply", &apply);
+
+        GO->setShadow(apply);
+    }
 
     /* view frustum */
     XMLElement* viewFrustumElem = graphicsObjectElem->FirstChildElement("viewfrustum");
@@ -289,6 +310,78 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
     }
 }
 
+void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, InstancedGameObject*& IGO)
+{
+    const char* name = nullptr;
+    instancedGameObjectElem->QueryStringAttribute("name", &name);
+
+    GameObject* GO = new InstancedGameObject(name);
+
+    /* graphics object */
+    XMLElement* graphicsObjectElem = instancedGameObjectElem->FirstChildElement("graphicsobject");
+
+    if (graphicsObjectElem)
+    {
+        loadGraphicsObject(graphicsObjectElem, GO);
+    }
+
+    /* physics object */
+    GO->setPhysicsObject(new PhysicsObject(physicsWorld));
+    
+    /* debug object */
+    XMLElement* debugObjectElem = instancedGameObjectElem->FirstChildElement("debugobject");
+
+    if (debugObjectElem)
+    {
+        loadDebugObject(debugObjectElem, GO);
+    }
+    
+    IGO = dynamic_cast < InstancedGameObject* >(GO);
+
+    /* info */
+    XMLElement* infoElem = instancedGameObjectElem->FirstChildElement("info");
+
+    if (infoElem)
+    {
+        /* fillarea */
+        XMLElement* fillAreaElem = infoElem->FirstChildElement("fillarea");
+
+        while (fillAreaElem)
+        {
+            /* radius */
+            XMLElement* radiusElem = fillAreaElem->FirstChildElement("radius");
+
+            if (radiusElem)
+            {
+                float radius = 0.0;
+
+                radiusElem->QueryFloatAttribute("radius", &radius);
+
+                IGO->addRadius(radius);
+            }
+            
+            /* border */
+            XMLElement* borderElem = fillAreaElem->FirstChildElement("border");
+
+            if (borderElem)
+            {
+                vec2 leftTop = vec2(0.0), rightBottom = vec2(0.0);
+                
+                borderElem->QueryFloatAttribute("x0", &leftTop.x);
+                borderElem->QueryFloatAttribute("y0", &leftTop.y);
+                borderElem->QueryFloatAttribute("x1", &rightBottom.x);
+                borderElem->QueryFloatAttribute("y1", &rightBottom.y);
+
+                IGO->addBorders(leftTop, rightBottom);
+            }
+
+            fillAreaElem = fillAreaElem->NextSiblingElement();
+        }
+
+        IGO->genInstances();
+    }
+}
+
 void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
 {
     const char* name = nullptr;
@@ -318,12 +411,12 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
     rifle = dynamic_cast < Rifle* >(GO);
 
     /* info */
-    XMLElement* rifleInfoElem = rifleElem->FirstChildElement("rifleinfo");
+    XMLElement* infoElem = rifleElem->FirstChildElement("info");
 
-    if (rifleInfoElem)
+    if (infoElem)
     {
         /* offset */
-        XMLElement* offsetElem = rifleInfoElem->FirstChildElement("offset");
+        XMLElement* offsetElem = infoElem->FirstChildElement("offset");
 
         if (offsetElem)
         {
@@ -337,7 +430,7 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
         }
 
         /* twist */
-        XMLElement* twistElem = rifleInfoElem->FirstChildElement("twist");
+        XMLElement* twistElem = infoElem->FirstChildElement("twist");
 
         if (twistElem)
         {
@@ -363,7 +456,7 @@ void LevelLoader::loadGameObjects()
 
     if (!root)
     {
-        throw runtime_error("ERROR::loadObjects() failed to load XML");
+        throw runtime_error("ERROR::loadGameObjects() failed to load XML");
     }
 
     XMLNode* gameObjectsNode = root->FirstChildElement("gameobjects"); 
@@ -377,6 +470,33 @@ void LevelLoader::loadGameObjects()
         gameObjects.insert({GO->getName(), GO});
 
         gameObjectElem = gameObjectElem->NextSiblingElement();
+    }
+}
+
+void LevelLoader::loadInstancedGameObjects()
+{
+    XMLDocument instancedGameObjectDoc;
+
+    instancedGameObjectDoc.LoadFile((levelName + "/instanced_game_object.xml").c_str());
+
+    XMLNode* root = instancedGameObjectDoc.FirstChildElement("InstancedGameObjectFile");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::loadInstancedGameObjects() failed to load XML");
+    }
+
+    XMLNode* instancedGameObjectsNode = root->FirstChildElement("instancedgameobjects"); 
+    XMLElement* instancedGameObjectElem = instancedGameObjectsNode->FirstChildElement("instancedgameobject");
+
+    while (instancedGameObjectElem)
+    {
+        InstancedGameObject* IGO = nullptr;
+        loadInstancedGameObject(instancedGameObjectElem, IGO);
+
+        gameObjects.insert({IGO->getName(), IGO});
+
+        instancedGameObjectElem = instancedGameObjectElem->NextSiblingElement();
     }
 }
 
@@ -577,29 +697,29 @@ void LevelLoader::loadDirLight()
             }
 
             DL->genShadowBuffer(x, y);
-            
+
             XMLElement* intensityElem = shadowElem->FirstChildElement("intensity");
-                
+
             float intensity = 0.0;
 
             if (intensityElem)
             {
                 intensityElem->QueryFloatAttribute("intensity", &intensity);
             }
-           
+
             DL->setShadowIntensity(intensity);
-            
+
             XMLElement* biasElem = shadowElem->FirstChildElement("bias");
-                
+
             float bias = 0.0;
 
             if (biasElem)
             {
                 biasElem->QueryFloatAttribute("bias", &bias);
             }
-           
+
             DL->setShadowBias(bias);
-            
+
             XMLElement* blurScaleElem = shadowElem->FirstChildElement("blurscale");
 
             float scale = 1.0;
@@ -608,7 +728,7 @@ void LevelLoader::loadDirLight()
             {
                 blurScaleElem->QueryFloatAttribute("scale", &scale);
             }
-            
+
             DL->setShadowSoftness(scale);
 
             XMLElement* projElem = shadowElem->FirstChildElement("projection");
@@ -672,7 +792,7 @@ void LevelLoader::loadAtmosphere()
     {
         atmosphere = new Atmosphere();
         atmosphere->genBuffer(window->getRenderSize());
-        
+
         XMLElement* iBeautyElem = atmosphereElem->FirstChildElement("ibeauty");
 
         if (iBeautyElem)
@@ -683,7 +803,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setIBeauty(iBeauty);
         }
-        
+
         XMLElement* jBeautyElem = atmosphereElem->FirstChildElement("jbeauty");
 
         if (jBeautyElem)
@@ -745,7 +865,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setRayOrigin(rayOrigin);
         }
-        
+
         XMLElement* sunPosElem = atmosphereElem->FirstChildElement("sunpos");
 
         if (sunPosElem)
@@ -758,7 +878,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setSunPos(sunPos);
         }
-        
+
         XMLElement* sunIntensityElem = atmosphereElem->FirstChildElement("sunintensity");
 
         if (sunIntensityElem)
@@ -769,7 +889,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setSunIntensity(sunIntensity);
         }
-        
+
         XMLElement* planetRadiusElem = atmosphereElem->FirstChildElement("planetradius");
 
         if (planetRadiusElem)
@@ -780,7 +900,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setPlanetRadius(planetRadius);
         }
-        
+
         XMLElement* atmoRadiusElem = atmosphereElem->FirstChildElement("atmoradius");
 
         if (atmoRadiusElem)
@@ -791,7 +911,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setAtmoRadius(atmoRadius);
         }
-        
+
         XMLElement* rayleighCoeffElem = atmosphereElem->FirstChildElement("rayleighcoeff");
 
         if (rayleighCoeffElem)
@@ -804,7 +924,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setRayleighCoeff(rayleighCoeff);
         }
-        
+
         XMLElement* mieCoeffElem = atmosphereElem->FirstChildElement("miecoeff");
 
         if (mieCoeffElem)
@@ -815,7 +935,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setMieCoeff(mieCoeff);
         }
-        
+
         XMLElement* rayleighHeightElem = atmosphereElem->FirstChildElement("rayleighheight");
 
         if (rayleighHeightElem)
@@ -826,7 +946,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setRayleighHeight(rayleighHeight);
         }
-        
+
         XMLElement* mieHeightElem = atmosphereElem->FirstChildElement("mieheight");
 
         if (mieHeightElem)
@@ -837,7 +957,7 @@ void LevelLoader::loadAtmosphere()
 
             atmosphere->setMieHeight(mieHeight);
         }
-        
+
         XMLElement* mieDirElem = atmosphereElem->FirstChildElement("miedir");
 
         if (mieDirElem)
@@ -869,7 +989,7 @@ void LevelLoader::loadSsao()
     if (sSAOElem)
     {
         sSAO = new SSAO();
-        
+
         XMLElement* bufferElem = sSAOElem->FirstChildElement("buffer");
 
         if (bufferElem)
@@ -892,7 +1012,7 @@ void LevelLoader::loadSsao()
 
             sSAO->genSampleKernel(kernelSize);
         }
-        
+
         XMLElement* noiseSizeElem = sSAOElem->FirstChildElement("noisesize");
 
         if (noiseSizeElem)
@@ -903,7 +1023,7 @@ void LevelLoader::loadSsao()
 
             sSAO->genNoise(noiseSize);
         }
-        
+
         XMLElement* blurScaleElem = sSAOElem->FirstChildElement("blurscale");
 
         if (blurScaleElem)
@@ -914,7 +1034,7 @@ void LevelLoader::loadSsao()
 
             sSAO->setSoftness(blurScale);
         }
-        
+
         XMLElement* radiusElem = sSAOElem->FirstChildElement("radius");
 
         if (radiusElem)
@@ -925,7 +1045,7 @@ void LevelLoader::loadSsao()
 
             sSAO->setRadius(radius);
         }
-        
+
         XMLElement* biasElem = sSAOElem->FirstChildElement("bias");
 
         if (biasElem)
@@ -936,7 +1056,7 @@ void LevelLoader::loadSsao()
 
             sSAO->setBias(bias);
         }
-        
+
         XMLElement* powerElem = sSAOElem->FirstChildElement("power");
 
         if (powerElem)
@@ -1255,8 +1375,9 @@ void LevelLoader::loadLevel(string name)
     loadAtmosphere();
     loadSkyBox();
     loadDirLight();
-    loadGameObjects();
 
+    loadGameObjects();
+    loadInstancedGameObjects();
     loadRifles();
 
     loadSoldiers();
@@ -1277,12 +1398,12 @@ void LevelLoader::getSkyBoxData(SkyBox*& skyBox) const
 {
     skyBox = this->skyBox;
 }
-        
+
 void LevelLoader::getAtmosphereData(Atmosphere*& atmosphere) const
 {
     atmosphere = this->atmosphere;
 }
-        
+
 void LevelLoader::getSsaoData(SSAO*& sSAO) const
 {
     sSAO = this->sSAO;
@@ -1302,7 +1423,7 @@ void LevelLoader::getPlayersData(vector < Player* > &players) const
 {
     players = this->players;
 }
-        
+
 void LevelLoader::getVirtualPlayerData(Player*& virtualPlayer) const
 {
     virtualPlayer = this->virtualPlayer;

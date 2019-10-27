@@ -40,6 +40,7 @@ GameObject::GameObject(string name)
     this->name = name;
     setVisible(true);
     setShadow(true);
+    setCull(true);
 
     modelLoader = new ModelLoader();
     physicsObject = nullptr;
@@ -94,6 +95,11 @@ void GameObject::setName(string name)
     globalNames.erase(this->name);
     globalNames.insert(name);
     this->name = name;
+}
+        
+void GameObject::setCull(bool cull)
+{
+    this->cull = cull;
 }
         
 void GameObject::setVisible(bool visible)
@@ -335,6 +341,11 @@ string GameObject::getName() const
     return name;
 }
 
+bool GameObject::isCull() const
+{
+    return cull;
+}
+
 bool GameObject::isVisible() const
 {
     return visible;
@@ -405,7 +416,7 @@ Animation* GameObject::getAnimation(string name) const
     return nullptr;
 }
 
-void GameObject::render(Shader* shader, bool cull)
+void GameObject::render(Shader* shader, bool viewCull)
 {
     if (interpolation && interpolationCoeff < 1.0)
     {
@@ -418,7 +429,7 @@ void GameObject::render(Shader* shader, bool cull)
         interpolationCoeff += 0.2;
     }
     
-    if (visible && cull && viewFrustum && boundSphere)
+    if (visible && viewCull && viewFrustum && boundSphere)
     {
         unique_lock < mutex > lk(mtx);
         ready = false;
@@ -444,6 +455,11 @@ void GameObject::render(Shader* shader, bool cull)
 
     if (visible)
     {
+        if (!cull)
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
         unique_lock < mutex > lk(mtx);
         ready = false;
 
@@ -458,6 +474,8 @@ void GameObject::render(Shader* shader, bool cull)
         {
             meshes[i]->render(shader);
         }
+    
+        glEnable(GL_CULL_FACE);
     }
 }
 

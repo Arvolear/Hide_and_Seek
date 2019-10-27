@@ -133,10 +133,12 @@ void Mesh::render(Shader *shader, bool instanced) const
 
     if (!instanced)
     {
+        shader->setInt("meshInstanced", 0);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // draw mesh from indices 
     }
     else
     {
+        shader->setInt("meshInstanced", 1);
         glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, instanceAmount);
     }
 

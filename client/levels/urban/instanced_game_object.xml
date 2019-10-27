@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<InstancedGameObjectFile>
+    <instancedgameobjects>
+
+        <instancedgameobject name="grass0">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <shadow apply="false"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <info>
+                <fillarea>
+                    <radius radius="1.0"/>
+                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <instancedgameobject name="grass1">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass1.obj">
+                <cullfaces apply="false"/>
+                <shadow apply="false"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <info>
+                <fillarea>
+                    <radius radius="2.0"/>
+                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <instancedgameobject name="bush0">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/bush0.obj">
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <info>
+                <fillarea>
+                    <radius radius="5.0"/>
+                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <instancedgameobject name="crop0">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/crop0.obj">
+                <cullfaces apply="false"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <info>
+                <fillarea>
+                    <radius radius="3.0"/>
+                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <instancedgameobject name="crop1">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/crop1.obj">
+                <cullfaces apply="false"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <info>
+                <fillarea>
+                    <radius radius="3.0"/>
+                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+    
+    </instancedgameobjects>
+</InstancedGameObjectFile>

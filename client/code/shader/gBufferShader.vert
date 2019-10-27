@@ -8,11 +8,14 @@ layout (location = 2) in vec2 uv;
 layout (location = 3) in vec3 tangent;
 layout (location = 4) in vec2 boneIDs[BONES_AMOUNT / 2];
 layout (location = 7) in vec2 boneWeights[BONES_AMOUNT / 2];
+layout (location = 10) in mat4 instanceMatrix;
 
 uniform mat4 localTransform;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+
+uniform int meshInstanced;
 
 #define MAX_BONES_AMOUNT 50
 uniform mat4 bones[MAX_BONES_AMOUNT];
@@ -33,8 +36,10 @@ out mat3 ssaoTBN;
 
 void main()
 {
+    mat4 instanceMat;
     mat4 bonesTransform;
 
+    /* animated? */
     if (meshWithBones == 1)
     {
         bonesTransform = mat4(0.0);
@@ -50,10 +55,20 @@ void main()
         bonesTransform = mat4(1.0);    
     }
 
-    gl_Position = projection * view * model * localTransform * bonesTransform * vec4(position, 1.0);
+    /* instansed? */
+    if (meshInstanced == 1)
+    {
+        instanceMat = instanceMatrix;
+    }
+    else
+    {
+        instanceMat = mat4(1.0);
+    }
 
-    fragmentPos = vec3(model * localTransform * bonesTransform * vec4(position, 1.0));
-    fragmentNorm = vec3(model * localTransform * bonesTransform * vec4(normal, 0.0));
+    gl_Position = projection * view * model * instanceMat * localTransform * bonesTransform * vec4(position, 1.0);
+
+    fragmentPos = vec3(model * instanceMat * localTransform * bonesTransform * vec4(position, 1.0));
+    fragmentNorm = vec3(model * instanceMat * localTransform * bonesTransform * vec4(normal, 0.0));
 
     ssaoFragmentPos = vec3(view * vec4(fragmentPos, 1.0));
     ssaoFragmentNorm = vec3(view * vec4(fragmentNorm, 0.0));
@@ -61,11 +76,11 @@ void main()
     /* flip UV */
     textureCoords = vec2(uv.x, -uv.y);
 
-    /* normal mapping */
+    /* normal mapped? */
     if (meshNormalMapped == 1)
     {
-        vec3 TT = vec3(model * localTransform * bonesTransform * vec4(tangent, 0.0));
-        vec3 NN = vec3(model * localTransform * bonesTransform * vec4(normal, 0.0));
+        vec3 TT = vec3(model * instanceMat * localTransform * bonesTransform * vec4(tangent, 0.0));
+        vec3 NN = vec3(model * instanceMat * localTransform * bonesTransform * vec4(normal, 0.0));
 
         /* SCENE */
         vec3 T = normalize(TT);

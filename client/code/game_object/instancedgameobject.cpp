@@ -31,41 +31,51 @@
 
 InstancedGameObject::InstancedGameObject(string name ) : GameObject(name) 
 {
-    radius = 0.0;
-    leftTop = rightBottom = vec2(0.0);
     poissonDisk = new PoissonDisk();
 }
 
-void InstancedGameObject::setRadius(float radius)
+void InstancedGameObject::addRadius(float radius)
 {
-    this->radius = radius;
+    radiuses.push_back(radius);
 }
 
-void InstancedGameObject::setBorders(vec2 leftTop, vec2 rightBottom)
+void InstancedGameObject::addBorders(vec2 leftTop, vec2 rightBottom)
 {
-    this->leftTop = leftTop;
-    this->rightBottom = rightBottom;
+    leftTops.push_back(leftTop);
+    rightBottoms.push_back(rightBottom);
 }
 
 void InstancedGameObject::genInstances()
 {
-    poissonDisk->setRadius(radius);
-    poissonDisk->setSize(abs(rightBottom.x - leftTop.x), abs(leftTop.y - rightBottom.y));
-    poissonDisk->generate();
-
-    vector < PoissonDisk::GridInfo > disk = poissonDisk->getDisk();
-
-    for (size_t i = 0; i < disk.size(); i++)
+    if (radiuses.size() != leftTops.size())
     {
-        disk[i].x += leftTop.x;
-        disk[i].y += leftTop.y;
+        throw(runtime_error("ERROR::InstancedGameObject::genInstances() radiuses != borders"));
+    }
 
-        mat4 trans = mat4(1.0);
-        
-        trans *= translate(vec3(disk[i].x, 0.0, disk[i].y));
-        trans *= rotate(global.getRandomNumber() * 2 - 1, vec3(0.0, 1.0, 0.0));
+    for (size_t k = 0; k < radiuses.size(); k++)
+    {
+        float radius = radiuses[k];
+        vec2 leftTop = leftTops[k];
+        vec2 rightBottom = rightBottoms[k];
 
-        transformations.push_back(trans);
+        poissonDisk->setRadius(radius);
+        poissonDisk->setSize(abs(rightBottom.x - leftTop.x), abs(leftTop.y - rightBottom.y));
+        poissonDisk->generate();
+
+        vector < PoissonDisk::GridInfo > disk = poissonDisk->getDisk();
+
+        for (size_t i = 0; i < disk.size(); i++)
+        {
+            disk[i].x += leftTop.x;
+            disk[i].y += leftTop.y;
+
+            mat4 trans = mat4(1.0);
+
+            trans *= translate(vec3(disk[i].x, 0.0, disk[i].y));
+            trans *= rotate(global.getRandomNumber() * 2 - 1, vec3(0.0, 1.0, 0.0));
+
+            transformations.push_back(trans);
+        }
     }
 
     for (size_t i = 0; i < meshes.size(); i++)
@@ -74,7 +84,7 @@ void InstancedGameObject::genInstances()
     }
 }
 
-void InstancedGameObject::render(Shader* shader, bool cull)
+void InstancedGameObject::render(Shader* shader, bool viewCull)
 {
     if (skeleton)
     {
@@ -83,12 +93,17 @@ void InstancedGameObject::render(Shader* shader, bool cull)
 
     if (visible)
     {
+        if (!cull)
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
         unique_lock < mutex > lk(mtx);
         ready = false;
 
         shader->setMat4("localTransform", localTransform);        
         shader->setMat4("model", getPhysicsObjectTransform());
-        
+
         ready = true;
         lk.unlock();
         cv.notify_all();
@@ -97,6 +112,8 @@ void InstancedGameObject::render(Shader* shader, bool cull)
         {
             meshes[i]->render(shader, true);
         }
+        
+        glEnable(GL_CULL_FACE);
     }
 }
 

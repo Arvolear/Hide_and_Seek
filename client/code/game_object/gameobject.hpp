@@ -27,6 +27,7 @@ class GameObject
         string name;
         bool visible;
         bool shadow;
+        bool cull;
 
         ModelLoader* modelLoader;
 
@@ -64,6 +65,7 @@ class GameObject
         GameObject(string name);
 
         void setName(string name);
+        void setCull(bool cull);
         void setVisible(bool visible);
         void setShadow(bool shadow);
         void setCollidable(bool collidable);
@@ -92,6 +94,7 @@ class GameObject
         string getGraphicsObject() const;
         Skeleton* getSkeleton() const;
         string getName() const;
+        bool isCull() const;
         bool isVisible() const;
         bool isShadow() const;
         bool isCollidable() const;
@@ -105,7 +108,7 @@ class GameObject
         Animation* getActiveAnimation() const;
         Animation* getAnimation(string name) const;
 
-        virtual void render(Shader* shader, bool cull = true);
+        virtual void render(Shader* shader, bool viewCull = true);
         
         /*** DEBUG ***/
         void createDebugSphere(int depth);
