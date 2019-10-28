@@ -65,10 +65,10 @@ void main()
         instanceMat = mat4(1.0);
     }
 
-    gl_Position = projection * view * model * instanceMat * localTransform * bonesTransform * vec4(position, 1.0);
+    gl_Position = projection * view * model * localTransform * instanceMat * bonesTransform * vec4(position, 1.0);
 
-    fragmentPos = vec3(model * instanceMat * localTransform * bonesTransform * vec4(position, 1.0));
-    fragmentNorm = vec3(model * instanceMat * localTransform * bonesTransform * vec4(normal, 0.0));
+    fragmentPos = vec3(model * localTransform * instanceMat * bonesTransform * vec4(position, 1.0));
+    fragmentNorm = vec3(model * localTransform * instanceMat * bonesTransform * vec4(normal, 0.0));
 
     ssaoFragmentPos = vec3(view * vec4(fragmentPos, 1.0));
     ssaoFragmentNorm = vec3(view * vec4(fragmentNorm, 0.0));
@@ -79,8 +79,8 @@ void main()
     /* normal mapped? */
     if (meshNormalMapped == 1)
     {
-        vec3 TT = vec3(model * instanceMat * localTransform * bonesTransform * vec4(tangent, 0.0));
-        vec3 NN = vec3(model * instanceMat * localTransform * bonesTransform * vec4(normal, 0.0));
+        vec3 TT = vec3(model * localTransform * instanceMat * bonesTransform * vec4(tangent, 0.0));
+        vec3 NN = vec3(model * localTransform * instanceMat * bonesTransform * vec4(normal, 0.0));
 
         /* SCENE */
         vec3 T = normalize(TT);

@@ -13,54 +13,28 @@ using namespace glm;
 
 class PoissonDisk
 {
-    public:
-        struct GridInfo
-        {
-            float x, y;
-
-            GridInfo()
-            {
-                this->x = this->y = -1.0;
-            }
-            
-            GridInfo(float x, float y)
-            {
-                this->x = x;
-                this->y = y;
-            }
-            
-            GridInfo(const GridInfo& GI)
-            {
-                this->x = GI.x;
-                this->y = GI.y;
-            }
-            
-            GridInfo& operator=(const GridInfo& GI)
-            {
-                this->x = GI.x;
-                this->y = GI.y;
-
-                return *this;
-            }
-        };
-
     private:
+        vec2 leftTop, rightBottom;
         int height, width;
         float radius;
+        vector < vector < vec2 > > without; 
 
         float sampleSize;
 
         int gridHeight, gridWidth;
 
-        vector < vector < GridInfo > > grid;
-        vector < GridInfo > active;
+        vector < vector < vec2 > > grid;
+        vector < vec2 > active;
 
-        float distance(const GridInfo& GI0, const GridInfo& GI1);
+        void addSample(vec2 sample);
+        vec2 generateAround(vec2 sample);
+        bool withinExtent(vec2 sample);
+        bool near(vec2 sample);
 
-        void addSample(const GridInfo& GI);
-        GridInfo generateAround(const GridInfo& GI);
-        bool withinExtent(const GridInfo& GI);
-        bool near(const GridInfo& GI);
+        bool onSegment(vec2 p0, vec2 q, vec2 p1);
+        int orientation(vec2 p0, vec2 p1, vec2 p2);
+        bool intersects(vec2 p0, vec2 q0, vec2 p1, vec2 q1);
+        bool inside(vector < vec2 > polygon, vec2 p);
 
         void clear();
 
@@ -68,12 +42,12 @@ class PoissonDisk
         PoissonDisk();
 
         void setRadius(float radius);
-        void setSize(int width, int height);
-        void setSize(vec2 size);
+        void setBorders(vec2 leftTop, vec2 rightBottom);
+        void setWithoutPolygons(vector < vector < vec2 > > &without);
 
         void generate();
 
-        vector < GridInfo > getDisk() const; 
+        vector < vec2 > getDisk() const; 
 
         ~PoissonDisk();
 };

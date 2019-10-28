@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector> 
+#include <vector>
+#include <map>
 
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/btBulletDynamicsCommon.h>
@@ -16,9 +17,10 @@ using namespace glm;
 class InstancedGameObject : public GameObject
 {
     private:
-        vector < float > radiuses;
-        vector < vec2 > leftTops;
-        vector < vec2 > rightBottoms;
+        map < int, float > radiuses;
+        map < int, vec2 > leftTops;
+        map < int, vec2 > rightBottoms;
+        map < int, vector < vector < vec2 > > > withouts;
         
         vector < mat4 > transformations;
         PoissonDisk* poissonDisk;
@@ -26,8 +28,9 @@ class InstancedGameObject : public GameObject
     public:
         InstancedGameObject(string name);
 
-        void addRadius(float radius);
-        void addBorders(vec2 leftTop, vec2 rightBottom);
+        void setRadius(int index, float radius);
+        void setBorders(int index, vec2 leftTop, vec2 rightBottom);
+        void setWithoutPolygons(int index, vector < vector < vec2 > > without);
 
         void genInstances();
 

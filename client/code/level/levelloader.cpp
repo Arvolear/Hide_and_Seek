@@ -345,9 +345,11 @@ void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, I
     {
         /* fillarea */
         XMLElement* fillAreaElem = infoElem->FirstChildElement("fillarea");
-
         while (fillAreaElem)
         {
+            int id = 0;
+            fillAreaElem->QueryIntAttribute("id", &id);
+
             /* radius */
             XMLElement* radiusElem = fillAreaElem->FirstChildElement("radius");
 
@@ -357,7 +359,7 @@ void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, I
 
                 radiusElem->QueryFloatAttribute("radius", &radius);
 
-                IGO->addRadius(radius);
+                IGO->setRadius(id, radius);
             }
             
             /* border */
@@ -372,7 +374,44 @@ void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, I
                 borderElem->QueryFloatAttribute("x1", &rightBottom.x);
                 borderElem->QueryFloatAttribute("y1", &rightBottom.y);
 
-                IGO->addBorders(leftTop, rightBottom);
+                IGO->setBorders(id, leftTop, rightBottom);
+            }
+            
+            vector < vector < vec2 > > without;
+
+            /* without */
+            XMLElement* withoutElem = fillAreaElem->FirstChildElement("without");
+
+            while (withoutElem)
+            {
+                vector < vec2 > polygon;
+
+                /* point */
+                XMLElement* pointElem = withoutElem->FirstChildElement("point");
+                
+                while (pointElem)
+                {
+                    vec2 point = vec2(0.0);
+
+                    pointElem->QueryFloatAttribute("x", &point.x);
+                    pointElem->QueryFloatAttribute("y", &point.y);
+
+                    polygon.push_back(point);
+
+                    pointElem = pointElem->NextSiblingElement();
+                }
+
+                if (!polygon.empty())
+                {
+                    without.push_back(polygon);
+                }
+
+                withoutElem = withoutElem->NextSiblingElement();
+            }
+
+            if (!without.empty())
+            {
+                IGO->setWithoutPolygons(id, without);
             }
 
             fillAreaElem = fillAreaElem->NextSiblingElement();

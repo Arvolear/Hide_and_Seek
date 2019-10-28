@@ -10,9 +10,33 @@
                 <position x="0.0" y="1.0" z="0.0"/>
             </graphicsobject>
             <info>
-                <fillarea>
-                    <radius radius="1.0"/>
-                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-82.0" y0="40.0" x1="-40.0" y1="82.0"/>
+                    <without>
+                        <point x="-76.2" y="74.5"/>
+                        <point x="-73.2" y="75.5"/>
+                        <point x="-71.5" y="71.4"/>
+                        <point x="-74.5" y="70.3"/>
+                    </without>
+                    <without>
+                        <point x="-69.4" y="79.2"/>
+                        <point x="-65.1" y="77.3"/>
+                        <point x="-66.4" y="74.4"/>
+                        <point x="-70.6" y="76.2"/>
+                    </without>
+                    <without>
+                        <point x="-73.7" y="62.1"/>
+                        <point x="-68.8" y="65.1"/>
+                        <point x="-64.1" y="53.5"/>
+                        <point x="-69.3" y="51.3"/>
+                    </without>
+                    <without>
+                        <point x="-59.4" y="60.3"/>
+                        <point x="-53.6" y="59.5"/>
+                        <point x="-54.4" y="56.7"/>
+                        <point x="-59.9" y="58.3"/>
+                    </without>
                 </fillarea>
             </info>
         </instancedgameobject>
@@ -25,36 +49,33 @@
                 <position x="0.0" y="1.0" z="0.0"/>
             </graphicsobject>
             <info>
-                <fillarea>
-                    <radius radius="2.0"/>
-                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
-                </fillarea>
-            </info>
-        </instancedgameobject>
-        
-        <instancedgameobject name="bush0">
-            <graphicsobject path="/static_models/Vegetation0/Grass0/bush0.obj">
-                <scale x="1.0" y="1.0" z="1.0"/>
-                <position x="0.0" y="1.0" z="0.0"/>
-            </graphicsobject>
-            <info>
-                <fillarea>
-                    <radius radius="5.0"/>
-                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
-                </fillarea>
-            </info>
-        </instancedgameobject>
-        
-        <instancedgameobject name="crop0">
-            <graphicsobject path="/static_models/Vegetation0/Grass0/crop0.obj">
-                <cullfaces apply="false"/>
-                <scale x="1.0" y="1.0" z="1.0"/>
-                <position x="0.0" y="1.0" z="0.0"/>
-            </graphicsobject>
-            <info>
-                <fillarea>
-                    <radius radius="3.0"/>
-                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                <fillarea id="0">
+                    <radius radius="1.7"/>
+                    <border x0="-83.0" y0="40.0" x1="-40.0" y1="83.0"/>
+                    <without>
+                        <point x="-76.2" y="74.5"/>
+                        <point x="-73.2" y="75.5"/>
+                        <point x="-71.5" y="71.4"/>
+                        <point x="-74.5" y="70.3"/>
+                    </without>
+                    <without>
+                        <point x="-69.4" y="79.2"/>
+                        <point x="-65.1" y="77.3"/>
+                        <point x="-66.4" y="74.4"/>
+                        <point x="-70.6" y="76.2"/>
+                    </without>
+                    <without>
+                        <point x="-73.7" y="62.1"/>
+                        <point x="-68.8" y="65.1"/>
+                        <point x="-64.1" y="53.5"/>
+                        <point x="-69.3" y="51.3"/>
+                    </without>
+                    <without>
+                        <point x="-59.4" y="60.3"/>
+                        <point x="-53.6" y="59.5"/>
+                        <point x="-54.4" y="56.7"/>
+                        <point x="-59.9" y="58.3"/>
+                    </without>
                 </fillarea>
             </info>
         </instancedgameobject>
@@ -66,12 +87,36 @@
                 <position x="0.0" y="1.0" z="0.0"/>
             </graphicsobject>
             <info>
-                <fillarea>
-                    <radius radius="3.0"/>
-                    <border x0="-80.0" y0="30.0" x1="-30.0" y1="80.0"/>
+                <fillarea id="0">
+                    <radius radius="5.0"/>
+                    <border x0="-82.0" y0="40.0" x1="-40.0" y1="82.0"/>
+                    <without>
+                        <point x="-76.2" y="74.5"/>
+                        <point x="-73.2" y="75.5"/>
+                        <point x="-71.5" y="71.4"/>
+                        <point x="-74.5" y="70.3"/>
+                    </without>
+                    <without>
+                        <point x="-69.4" y="79.2"/>
+                        <point x="-65.1" y="77.3"/>
+                        <point x="-66.4" y="74.4"/>
+                        <point x="-70.6" y="76.2"/>
+                    </without>
+                    <without>
+                        <point x="-73.7" y="62.1"/>
+                        <point x="-68.8" y="65.1"/>
+                        <point x="-64.1" y="53.5"/>
+                        <point x="-69.3" y="51.3"/>
+                    </without>
+                    <without>
+                        <point x="-59.4" y="60.3"/>
+                        <point x="-53.6" y="59.5"/>
+                        <point x="-54.4" y="56.7"/>
+                        <point x="-59.9" y="58.3"/>
+                    </without>
                 </fillarea>
             </info>
         </instancedgameobject>
-    
+        
     </instancedgameobjects>
 </InstancedGameObjectFile>

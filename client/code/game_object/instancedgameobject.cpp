@@ -34,45 +34,55 @@ InstancedGameObject::InstancedGameObject(string name ) : GameObject(name)
     poissonDisk = new PoissonDisk();
 }
 
-void InstancedGameObject::addRadius(float radius)
+void InstancedGameObject::setRadius(int index, float radius)
 {
-    radiuses.push_back(radius);
+    radiuses.insert({index, radius});
 }
 
-void InstancedGameObject::addBorders(vec2 leftTop, vec2 rightBottom)
+void InstancedGameObject::setBorders(int index, vec2 leftTop, vec2 rightBottom)
 {
-    leftTops.push_back(leftTop);
-    rightBottoms.push_back(rightBottom);
+    leftTops.insert({index, leftTop});
+    rightBottoms.insert({index, rightBottom});
+}
+        
+void InstancedGameObject::setWithoutPolygons(int index, vector < vector < vec2 > > without)
+{
+    withouts.insert({index, without});
 }
 
 void InstancedGameObject::genInstances()
 {
-    if (radiuses.size() != leftTops.size())
+    for (auto& k: radiuses)
     {
-        throw(runtime_error("ERROR::InstancedGameObject::genInstances() radiuses != borders"));
-    }
+        if (leftTops.find(k.first) == leftTops.end())
+        {
+            throw(runtime_error("ERROR::InstancedGameObject::genInstances() radiuses != borders"));
+        }
 
-    for (size_t k = 0; k < radiuses.size(); k++)
-    {
-        float radius = radiuses[k];
-        vec2 leftTop = leftTops[k];
-        vec2 rightBottom = rightBottoms[k];
+        float radius = k.second;
+        vec2 leftTop = leftTops.find(k.first)->second;
+        vec2 rightBottom = rightBottoms.find(k.first)->second;
+
+        auto without = withouts.find(k.first);
+        if (without != withouts.end())
+        {
+            poissonDisk->setWithoutPolygons(without->second);
+        }
 
         poissonDisk->setRadius(radius);
-        poissonDisk->setSize(abs(rightBottom.x - leftTop.x), abs(leftTop.y - rightBottom.y));
+        poissonDisk->setBorders(leftTop, rightBottom);
+
         poissonDisk->generate();
 
-        vector < PoissonDisk::GridInfo > disk = poissonDisk->getDisk();
+        vector < vec2 > disk = poissonDisk->getDisk();
 
         for (size_t i = 0; i < disk.size(); i++)
         {
-            disk[i].x += leftTop.x;
-            disk[i].y += leftTop.y;
-
             mat4 trans = mat4(1.0);
 
             trans *= translate(vec3(disk[i].x, 0.0, disk[i].y));
-            trans *= rotate(global.getRandomNumber() * 2 - 1, vec3(0.0, 1.0, 0.0));
+            trans *= rotate(float(global.getRandomNumber() * 2 * 3.14159265), vec3(0.0, 1.0, 0.0));
+            trans *= scale(vec3(global.getRandomNumber() + 0.5));
 
             transformations.push_back(trans);
         }

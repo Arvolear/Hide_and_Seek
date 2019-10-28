@@ -13,7 +13,7 @@
             </debugobject>
         </gameobject>
         
-        <!-- <gameobject name="fence00">
+        <gameobject name="fence00">
             <graphicsobject path="/static_models/Fence0/fence0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="2.0" y="2.0" z="2.0"/>
@@ -121,7 +121,7 @@
             </debugobject>
         </gameobject> 
         
-        <gameobject name="barrel0">
+        <!-- <gameobject name="barrel0">
             <graphicsobject path="/static_models/Barrel0/barrel0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="1.1" y="1.1" z="1.1"/>
@@ -174,7 +174,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> 
+        </gameobject> -->
         
         <gameobject name="metal_plane0">
             <graphicsobject path="/static_models/Metal_plane0/metal_plane0.obj">
@@ -196,9 +196,9 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> 
         
-        <gameobject name="wrench0">
+        <!-- <gameobject name="wrench0">
             <graphicsobject path="/static_models/Wrench0/wrench0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="0.9" y="0.9" z="0.9"/>
@@ -295,7 +295,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
         
         <gameobject name="car0">
             <graphicsobject path="/static_models/Car0/car0.obj">
@@ -319,7 +319,7 @@
             </debugobject>
         </gameobject>
         
-        <gameobject name="car2">
+        <!-- <gameobject name="car2">
             <graphicsobject path="/static_models/Car2/car2.obj">
                 <viewfrustum apply="true"/>
                 <scale x="2.3" y="2.3" z="2.3"/>
@@ -328,7 +328,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
         
         <gameobject name="building0">
             <graphicsobject path="/static_models/Building0/building0.obj">
@@ -339,7 +339,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> -->
+        </gameobject> 
     
         <!-- ********************************************************* -->
         
