@@ -7,30 +7,40 @@
 
 BoundSphere::BoundSphere(vector < Mesh* > &meshes)
 {
-    transform = mat4(1);
+    transform = mat4(1.0);
     centerAndBound = {vec3(0), vec3(0)};
 
     for (size_t i = 0; i < meshes.size(); i++)
     {
-        allVertices.push_back(meshes[i]->getVertices());
+        vector < Mesh::Vertex > vertices = meshes[i]->getVertices();
+
+        for (size_t j = 0; j < vertices.size(); j++)
+        {
+            allVertices.push_back(vertices[j].position);
+        }
     }
+}
+
+BoundSphere::BoundSphere(vector < vec3 > &points)
+{
+    transform = mat4(1.0);
+    centerAndBound = {vec3(0), vec3(0)};
+
+    allVertices = points;
 }
 
 vec3 BoundSphere::findFurthest(vec3 point)
 {
-    vec3 curFur = allVertices[0][0].position;
+    vec3 curFur = allVertices[0];
 
     for (size_t i = 0; i < allVertices.size(); i++)
     {
-        for (size_t j = 0; j < allVertices[i].size(); j++)
-        {
-            float radius = distance(point, curFur);
-            float newRadius = distance(point, allVertices[i][j].position);
+        float radius = distance(point, curFur);
+        float newRadius = distance(point, allVertices[i]);
 
-            if (newRadius > radius)
-            {
-                curFur = allVertices[i][j].position;
-            }
+        if (newRadius > radius)
+        {
+            curFur = allVertices[i];
         }
     }
 
@@ -39,44 +49,41 @@ vec3 BoundSphere::findFurthest(vec3 point)
 
 vec3 BoundSphere::findCenter()
 {
-    vec3 minAABB = allVertices[0][0].position;
-    vec3 maxAABB = allVertices[0][0].position;
+    vec3 minAABB = allVertices[0];
+    vec3 maxAABB = allVertices[0];
 
     for (size_t i = 0; i < allVertices.size(); i++)
     {
-        for (size_t j = 0; j < allVertices[i].size(); j++)
+        /* MIN */
+        if (allVertices[i].x < minAABB.x)
         {
-            /* MIN */
-            if (allVertices[i][j].position.x < minAABB.x)
-            {
-                minAABB.x = allVertices[i][j].position.x;
-            }
+            minAABB.x = allVertices[i].x;
+        }
 
-            if (allVertices[i][j].position.y < minAABB.y)
-            {
-                minAABB.y = allVertices[i][j].position.y;
-            }
+        if (allVertices[i].y < minAABB.y)
+        {
+            minAABB.y = allVertices[i].y;
+        }
 
-            if (allVertices[i][j].position.z < minAABB.z)
-            {
-                minAABB.z = allVertices[i][j].position.z;
-            }
+        if (allVertices[i].z < minAABB.z)
+        {
+            minAABB.z = allVertices[i].z;
+        }
 
-            /* MAX */
-            if (allVertices[i][j].position.x > maxAABB.x)
-            {
-                maxAABB.x = allVertices[i][j].position.x;
-            }
+        /* MAX */
+        if (allVertices[i].x > maxAABB.x)
+        {
+            maxAABB.x = allVertices[i].x;
+        }
 
-            if (allVertices[i][j].position.y > maxAABB.y)
-            {
-                maxAABB.y = allVertices[i][j].position.y;
-            }
+        if (allVertices[i].y > maxAABB.y)
+        {
+            maxAABB.y = allVertices[i].y;
+        }
 
-            if (allVertices[i][j].position.z > maxAABB.z)
-            {
-                maxAABB.z = allVertices[i][j].position.z;
-            }
+        if (allVertices[i].z > maxAABB.z)
+        {
+            maxAABB.z = allVertices[i].z;
         }
     }
 

@@ -13,7 +13,7 @@ class BoundSphere
     private:
         pair < vec3, vec3 > centerAndBound;
 
-        vector < vector < Vertex > > allVertices;
+        vector < vec3 > allVertices;
 
         mat4 transform;
     
@@ -22,6 +22,7 @@ class BoundSphere
 
     public:
         BoundSphere(vector < Mesh* > &meshes);
+        BoundSphere(vector < vec3 > &points);
 
         void construct();
 

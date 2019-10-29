@@ -3,7 +3,7 @@
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
 layout (location = 2) out vec4 gAlbedo;
-layout (location = 3) out vec3 gMetRoughAO;
+layout (location = 3) out vec4 gMetRoughAOCos;
 
 layout (location = 4) out vec4 gLightScattering;
 
@@ -32,6 +32,7 @@ in vec3 ssaoFragmentNorm;
 in mat3 ssaoTBN;
 
 uniform Material material;
+uniform float minNormalCosAngle;
 
 void main()
 {
@@ -49,9 +50,10 @@ void main()
     }
 
     gAlbedo = texture(material.texture_diffuse1, textureCoords);
-    gMetRoughAO.x = texture(material.texture_metallic1, textureCoords).r;
-    gMetRoughAO.y = texture(material.texture_roughness1, textureCoords).r;
-    gMetRoughAO.z = texture(material.texture_ao1, textureCoords).r;
+    gMetRoughAOCos.x = texture(material.texture_metallic1, textureCoords).r;
+    gMetRoughAOCos.y = texture(material.texture_roughness1, textureCoords).r;
+    gMetRoughAOCos.z = texture(material.texture_ao1, textureCoords).r;
+    gMetRoughAOCos.w = minNormalCosAngle;
     
     gLightScattering = vec4(0, 0, 0, texture(material.texture_diffuse1, textureCoords).a);
 

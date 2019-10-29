@@ -101,7 +101,7 @@ void GBuffer::render(Shader* shader)
     
     /* met rough ao */
     glActiveTexture(GL_TEXTURE0 + 3);
-    shader->setInt("gBuffer.texture_metRoughAO", 3);
+    shader->setInt("gBuffer.texture_metRoughAOCos", 3);
     glBindTexture(GL_TEXTURE_2D, texturesID[3]);
 }
         

@@ -17,6 +17,8 @@ using namespace glm;
 class InstancedGameObject : public GameObject
 {
     private:
+        vec3 aabbMin, aabbMax;
+        
         map < int, float > radiuses;
         map < int, vec2 > leftTops;
         map < int, vec2 > rightBottoms;
@@ -27,6 +29,7 @@ class InstancedGameObject : public GameObject
 
     public:
         InstancedGameObject(string name);
+        void createBoundSphere() override;
 
         void setRadius(int index, float radius);
         void setBorders(int index, vec2 leftTop, vec2 rightBottom);
@@ -34,7 +37,7 @@ class InstancedGameObject : public GameObject
 
         void genInstances();
 
-        void render(Shader* shader, bool viewCull = false) override;
+        void render(Shader* shader, bool viewCull = true) override;
 
         ~InstancedGameObject();        
 };

@@ -12,7 +12,7 @@ using namespace std;
 using namespace glm;
 using namespace Assimp;
         
-map < string, Texture > ModelLoader::textures_loaded; 
+map < string, Mesh::Texture > ModelLoader::textures_loaded; 
 
 ModelLoader::ModelLoader(){}
 
@@ -149,13 +149,13 @@ void ModelLoader::processMeshes(aiNode *node)
 
 Mesh* ModelLoader::processMesh(aiMesh *mesh)
 {
-    vector < Vertex > vertices; 
+    vector < Mesh::Vertex > vertices; 
     vector < unsigned int > indices; 
-    vector < Texture > textures; 
+    vector < Mesh::Texture > textures; 
 
     for (size_t i = 0; i < mesh->mNumVertices; i++) 
     {
-        Vertex vertex;
+        Mesh::Vertex vertex;
         vec3 helpVec3;
 
         helpVec3.x = mesh->mVertices[i].x; 
@@ -240,20 +240,20 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; 
     
-    vector < Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
+    vector < Mesh::Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
     
-    vector < Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_roughness");
+    vector < Mesh::Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_roughness");
     textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
     
-    vector < Texture > specularMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_metallic"); 
+    vector < Mesh::Texture > specularMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_metallic"); 
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     
-    vector < Texture > aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ao");
+    vector < Mesh::Texture > aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ao");
     textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
     
     /* .obj */
-    vector < Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
+    vector < Mesh::Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
 
     /* .fbx */
     if (normalMaps.empty())
@@ -266,9 +266,9 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
     return new Mesh(vertices, indices, textures);
 }
 
-vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
+vector < Mesh::Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
 {
-    vector < Texture > textures; 
+    vector < Mesh::Texture > textures; 
 
     for (size_t i = 0; i < mat->GetTextureCount(type); i++) 
     {
@@ -286,7 +286,7 @@ vector < Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureT
         }
         else 
         {
-            Texture texture;
+            Mesh::Texture texture;
 
             texture.id = textureFromFile(texPath.c_str()); 
             texture.type = typeName; 

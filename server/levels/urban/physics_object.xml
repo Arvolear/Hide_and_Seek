@@ -5,38 +5,85 @@
         <pos x="0.0" y="0.0" z="0.0"/>
     </obj>
     
-    <obj name="grass0">
+    <obj name="grass00">
         <shape type="box" x="1.0" y="1.0" z="1.0"/>
         <mass mass="0.0"/>
         <pos x="0.0" y="0.0" z="0.0"/>
     </obj>
     
-    <obj name="grass1">
+    <obj name="grass01">
         <shape type="box" x="1.0" y="1.0" z="1.0"/>
         <mass mass="0.0"/>
         <pos x="0.0" y="0.0" z="0.0"/>
     </obj>
     
-    <obj name="bush0">
+    <obj name="grass02">
         <shape type="box" x="1.0" y="1.0" z="1.0"/>
         <mass mass="0.0"/>
         <pos x="0.0" y="0.0" z="0.0"/>
     </obj>
     
-    <obj name="crop0">
+    <obj name="grass03">
         <shape type="box" x="1.0" y="1.0" z="1.0"/>
         <mass mass="0.0"/>
         <pos x="0.0" y="0.0" z="0.0"/>
     </obj>
     
-    <obj name="crop1">
+    <obj name="grass04">
         <shape type="box" x="1.0" y="1.0" z="1.0"/>
         <mass mass="0.0"/>
         <pos x="0.0" y="0.0" z="0.0"/>
     </obj>
-    
     <!-- ********************************************************* -->
     
+    <obj name="grass05">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass06">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass07">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass08">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass09">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass010">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass011">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="grass012">
+        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+
     <obj name="fence00">
         <shape type="box" x="5.27" y="3.81" z="0.28"/>
         <mass mass="0.0"/>
@@ -520,14 +567,14 @@
     <obj name="fence13">
         <shape type="box" x="5.27" y="3.81" z="0.28"/>
         <mass mass="0.0"/>
-        <pos x="42.4" y="3.7" z="68.8"/>
-        <rot x="0.0" y="1.0" z="0.0" angle="80.0"/>
+        <pos x="41.8" y="3.7" z="68.6"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="90.0"/>
     </obj>
     
     <obj name="fence14">
         <shape type="box" x="5.27" y="3.81" z="0.28"/>
         <mass mass="0.0"/>
-        <pos x="43.3" y="3.7" z="58.4"/>
+        <pos x="41.8" y="3.7" z="58.06"/>
         <rot x="0.0" y="1.0" z="0.0" angle="90.0"/>
     </obj>
     

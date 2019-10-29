@@ -148,7 +148,7 @@ void Mesh::render(Shader *shader, bool instanced) const
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-vector < Vertex > Mesh::getVertices() const
+vector < Mesh::Vertex > Mesh::getVertices() const
 {
     return vertices;
 }

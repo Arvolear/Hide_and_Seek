@@ -41,6 +41,8 @@ GameObject::GameObject(string name)
     setVisible(true);
     setShadow(true);
     setCull(true);
+        
+    minNormalCosAngle = 0.0;
 
     modelLoader = new ModelLoader();
     physicsObject = nullptr;
@@ -102,6 +104,11 @@ void GameObject::setCull(bool cull)
     this->cull = cull;
 }
         
+void GameObject::setMinNormalCosAngle(float minNormalCosAngle)
+{
+    this->minNormalCosAngle = minNormalCosAngle;
+}
+        
 void GameObject::setVisible(bool visible)
 {
     this->visible = visible;
@@ -135,9 +142,6 @@ void GameObject::setGraphicsObject(string path)
 
     modelLoader->loadModel(path);
     modelLoader->getModelData(skeleton, meshes);
-
-    boundSphere = new BoundSphere(meshes);
-    boundSphere->construct();
 }
         
 void GameObject::setViewFrustum(ViewFrustum* viewFrustum)
@@ -156,6 +160,12 @@ void GameObject::setPhysicsObject(PhysicsObject* object)
 void GameObject::setUserPointer(void* userPointer)
 {
     this->userPointer = userPointer;
+}
+        
+void GameObject::createBoundSphere()
+{
+    boundSphere = new BoundSphere(meshes);
+    boundSphere->construct();
 }
 
 void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
@@ -469,6 +479,9 @@ void GameObject::render(Shader* shader, bool viewCull)
         ready = true;
         lk.unlock();
         cv.notify_all();
+
+        /* minimal diffuse value */
+        shader->setFloat("minNormalCosAngle", minNormalCosAngle);
 
         for (size_t i = 0; i < meshes.size(); i++)
         {

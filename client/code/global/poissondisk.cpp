@@ -216,6 +216,12 @@ void PoissonDisk::setBorders(vec2 leftTop, vec2 rightBottom)
 
     this->width = abs(rightBottom.x - leftTop.x);
     this->height = abs(leftTop.y - rightBottom.y);
+
+    initSamples.push_back(vec2(0, 0));
+    initSamples.push_back(vec2(width - 1, 0));
+    initSamples.push_back(vec2(width / 2.0, height / 2.0));
+    initSamples.push_back(vec2(0, height - 1));
+    initSamples.push_back(vec2(width - 1, height - 1));
 }
         
 void PoissonDisk::setWithoutPolygons(vector < vector < vec2 > > &without)
@@ -234,7 +240,24 @@ void PoissonDisk::generate()
 
     grid.resize(gridHeight, vector < vec2 >(gridWidth, vec2(-1.0)));
 
-    addSample(vec2(width / 2.0, height / 2.0));
+    for (size_t i = 0; i < initSamples.size(); i++)
+    {
+        /* init inside polygons? */
+        bool in = false;
+        for (size_t j = 0; j < without.size(); j++)
+        {
+            if (inside(without[j], initSamples[i]))
+            {
+                in = true;
+                break;
+            }
+        }
+
+        if (!in)
+        {
+            addSample(initSamples[i]);
+        }
+    }
 
     while (true)
     {
@@ -282,7 +305,7 @@ void PoissonDisk::generate()
         }
     }
 }
-        
+
 vector < vec2 > PoissonDisk::getDisk() const
 {
     vector < vec2 > res;
@@ -294,7 +317,7 @@ vector < vec2 > PoissonDisk::getDisk() const
             if (grid[i][j].x != -1 && grid[i][j].y != -1)
             {
                 res.push_back(grid[i][j]);
-                
+
                 res[res.size() - 1].x += leftTop.x;
                 res[res.size() - 1].y += leftTop.y;
             }
@@ -303,7 +326,7 @@ vector < vec2 > PoissonDisk::getDisk() const
 
     return move(res);
 }
-        
+
 void PoissonDisk::clear()
 {   
     grid.clear();

@@ -105,7 +105,7 @@ void Level::loadLevel(string level)
                 {GL_RGB16F, GL_RGB, GL_FLOAT}, 
                 {GL_RGB16F, GL_RGB, GL_FLOAT}, 
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
-                {GL_RGB, GL_RGB, GL_UNSIGNED_BYTE}, 
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},
                 {GL_R16F, GL_RED, GL_FLOAT}, 
                 {GL_RGB16F, GL_RGB, GL_FLOAT}

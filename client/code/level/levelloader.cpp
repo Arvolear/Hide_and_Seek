@@ -172,6 +172,17 @@ void LevelLoader::loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*
         GO->setCull(apply);
     }
     
+    /* min diffuse (minNormalCosAngle) */
+    XMLElement* minCosElem = graphicsObjectElem->FirstChildElement("minnormalcosangle");
+
+    if (minCosElem)
+    {
+        float angle = 0.0;
+        minCosElem->QueryFloatAttribute("angle", &angle);
+
+        GO->setMinNormalCosAngle(angle);
+    }
+    
     /* shadow */
     XMLElement* shadowElem = graphicsObjectElem->FirstChildElement("shadow");
 
@@ -296,6 +307,7 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
     if (graphicsObjectElem)
     {
         loadGraphicsObject(graphicsObjectElem, GO);
+        GO->createBoundSphere();
     }
 
     /* physics object */
@@ -327,14 +339,6 @@ void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, I
 
     /* physics object */
     GO->setPhysicsObject(new PhysicsObject(physicsWorld));
-    
-    /* debug object */
-    XMLElement* debugObjectElem = instancedGameObjectElem->FirstChildElement("debugobject");
-
-    if (debugObjectElem)
-    {
-        loadDebugObject(debugObjectElem, GO);
-    }
     
     IGO = dynamic_cast < InstancedGameObject* >(GO);
 
@@ -419,6 +423,16 @@ void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, I
 
         IGO->genInstances();
     }
+    
+    IGO->createBoundSphere();
+    
+    /* debug object */
+    XMLElement* debugObjectElem = instancedGameObjectElem->FirstChildElement("debugobject");
+
+    if (debugObjectElem)
+    {
+        loadDebugObject(debugObjectElem, GO);
+    }
 }
 
 void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
@@ -438,14 +452,6 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
 
     /* physics object */
     GO->setPhysicsObject(new PhysicsObject(physicsWorld));
-
-    /* debug object */
-    XMLElement* debugObjectElem = rifleElem->FirstChildElement("debugobject");
-
-    if (debugObjectElem)
-    {
-        loadDebugObject(debugObjectElem, GO);
-    }
 
     rifle = dynamic_cast < Rifle* >(GO);
 
@@ -482,6 +488,16 @@ void LevelLoader::loadRifle(XMLElement* rifleElem, Rifle*& rifle)
 
             rifle->setTwist(vec3(x, y, z), global.toRads(angle));
         }
+    }
+    
+    rifle->createBoundSphere();
+    
+    /* debug object */
+    XMLElement* debugObjectElem = rifleElem->FirstChildElement("debugobject");
+
+    if (debugObjectElem)
+    {
+        loadDebugObject(debugObjectElem, GO);
     }
 }
 

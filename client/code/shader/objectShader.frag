@@ -8,7 +8,7 @@ struct GBuffer
     sampler2D texture_position;
     sampler2D texture_normal;
     sampler2D texture_albedo;
-    sampler2D texture_metRoughAO;
+    sampler2D texture_metRoughAOCos;
 };
 
 struct DirLight
@@ -113,9 +113,11 @@ vec4 calcDirLights()
     vec3 fragPos = texture(gBuffer.texture_position, UV).rgb;
     vec3 fragNorm = texture(gBuffer.texture_normal, UV).rgb;
     vec3 fragAlbedo = pow(texture(gBuffer.texture_albedo, UV).rgb, vec3(gamma));
-    float fragMetal = texture(gBuffer.texture_metRoughAO, UV).r;
-    float fragRough = texture(gBuffer.texture_metRoughAO, UV).g;
-    float fragAO = texture(gBuffer.texture_metRoughAO, UV).b;
+    float fragMetal = texture(gBuffer.texture_metRoughAOCos, UV).r;
+    float fragRough = texture(gBuffer.texture_metRoughAOCos, UV).g;
+    float fragAO = texture(gBuffer.texture_metRoughAOCos, UV).b;
+
+    float minNormalCosAngle = texture(gBuffer.texture_metRoughAOCos, UV).a;
 
     //fragMetal = 0.5;
     //fragRough = 0.5;
@@ -147,7 +149,7 @@ vec4 calcDirLights()
         float denominator = 4.0 * max(dot(fragNorm, viewDir), 0.0) * max(dot(fragNorm, lightDir), 0.0);
         vec3 specular = numerator / max(denominator, 0.001);
 
-        float nDotL = max(dot(fragNorm, lightDir), 0.0);
+        float nDotL = max(dot(fragNorm, lightDir), minNormalCosAngle);
 
         vec3 L00 = (kD * fragAlbedo / PI + specular) * radiance * nDotL;
 

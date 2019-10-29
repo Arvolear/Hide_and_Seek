@@ -29,6 +29,8 @@ class GameObject
         bool shadow;
         bool cull;
 
+        float minNormalCosAngle;
+
         ModelLoader* modelLoader;
 
         string graphicsObject;
@@ -66,6 +68,7 @@ class GameObject
 
         void setName(string name);
         void setCull(bool cull);
+        void setMinNormalCosAngle(float minNormalCosAngle);
         void setVisible(bool visible);
         void setShadow(bool shadow);
         void setCollidable(bool collidable);
@@ -73,6 +76,8 @@ class GameObject
         void setGraphicsObject(string path);
         void setViewFrustum(ViewFrustum* frustum);
         void setPhysicsObject(PhysicsObject* object);
+
+        virtual void createBoundSphere();
 
         void setLocalRotation(vec3 axis, float angle, bool add = true);
         void setLocalScale(vec3 growth, bool add = true);

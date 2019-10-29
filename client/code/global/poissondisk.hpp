@@ -19,6 +19,8 @@ class PoissonDisk
         float radius;
         vector < vector < vec2 > > without; 
 
+        vector < vec2 > initSamples;
+
         float sampleSize;
 
         int gridHeight, gridWidth;
