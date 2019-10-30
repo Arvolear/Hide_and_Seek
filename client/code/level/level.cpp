@@ -230,7 +230,7 @@ void Level::render()
             /* crucial */
             dirLights[i]->getShadowBuffer()->clear(vec4(1.0, 0.0, 0.0, 1.0));
 
-            dirLights[i]->updateShadowView(getPlayer(true)->getPosition());
+            dirLights[i]->updateShadowView(getPlayer(true)->getPosition(), getPlayer(true)->getForward());
 
             dirShadowShader->use();
 
@@ -292,6 +292,7 @@ void Level::render()
 
     /*** color buffer ***/
     levelColorBuffer->use();
+    levelColorBuffer->clear();
 
     glDisable(GL_DEPTH_TEST);
 

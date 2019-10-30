@@ -227,12 +227,12 @@ void Soldier::update(bool events)
     lk.unlock();
     cv.notify_all();
 
-    movePhysics();
-
     if (active)
     {
         if (player && player->getPhysicsObject())
         {
+            movePhysics();
+
             updateCamera();
             updateModel(moveDirection);
             updateAnimation(moveDirection);

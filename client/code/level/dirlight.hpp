@@ -58,7 +58,7 @@ class DirLight
         void renderShadow(Shader* shader, GLuint index);
         void renderSphere(Shader* shader);
         void renderLight(Shader* shader);
-        void updateShadowView(vec3 playerPosition);
+        void updateShadowView(vec3 playerPosition, vec3 playerForward);
 
         Sphere* getSphere() const;
 

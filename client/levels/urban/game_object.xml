@@ -570,7 +570,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
         
         <gameobject name="wagon0">
             <graphicsobject path="/static_models/Wagon0/wagon0.obj">
@@ -584,7 +584,7 @@
             </debugobject>
         </gameobject>
         
-        <gameobject name="beam0">
+        <!-- <gameobject name="beam0">
             <graphicsobject path="/static_models/Beam0/beam0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="1.5" y="1.5" z="1.5"/>
@@ -630,7 +630,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
         
         <gameobject name="box00">
             <graphicsobject path="/static_models/Box0/box0.obj">
@@ -704,7 +704,7 @@
             </debugobject>
         </gameobject>
         
-        <gameobject name="engine0">
+        <!-- <gameobject name="engine0">
             <graphicsobject path="/static_models/Engine0/engine0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="1.0" y="1.0" z="1.0"/>
@@ -738,7 +738,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> -->
+        </gameobject>
         
         <gameobject name="container0">
             <graphicsobject path="/static_models/Container0/container0.obj">
@@ -845,7 +845,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
          
     </gameobjects>
 </GameObjectFile>

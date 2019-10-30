@@ -90,9 +90,16 @@ bool Player::isGroundStanding()
     {
         return false;
     }
+    
+    btVector3 Min;
+    btVector3 Max;
 
+    player->getPhysicsObject()->getRigidBody()->getAabb(Min, Max);
+     
     btVector3 from = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
     btVector3 to = btVector3(0, -1, 0);
+    
+    float playerBottomDist = from.y() - Min.y();
 
     unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
 
@@ -103,16 +110,7 @@ bool Player::isGroundStanding()
 
     float dist = (from - result->hitPoint).length();
 
-    btVector3 Min;
-    btVector3 Max;
-
-    player->getPhysicsObject()->getRigidBody()->getAabb(Min, Max);
-
-    float bottomDist = (from - btVector3(from.x(), Min.y(), from.z())).length();
-
-    //cout << dist << " " << bottomDist << endl; 
-    
-    if (dist > bottomDist + 0.1)
+    if (dist > playerBottomDist + 0.1)
     {
         return false;
     }
@@ -129,8 +127,6 @@ void Player::jump()
 
     float power = 70;
     float loss = 0.5;
-
-    //cout << "jump" << endl;
 
     player->getPhysicsObject()->getRigidBody()->setActivationState(ACTIVE_TAG);
 
@@ -206,54 +202,59 @@ void Player::moveAction()
 
 void Player::moveGround()
 {
-    float speedFactor = 34;
-    float friction = 0.6;
+    float speedFactor = 20;
+    float friction = 1.36;
 
     /* push the body */
     player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
 
     btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
-
+    
     /* disable sliding effect */
-    if (velocity.length() < 0.1)
+    if (velocity.length() < 0.05)
     {
         player->getPhysicsObject()->getRigidBody()->setActivationState(WANTS_DEACTIVATION);
     }
 
     /* friction */
-    velocity = btVector3(velocity.x() * friction, velocity.y(), velocity.z() * friction);
+    velocity = btVector3(velocity.x() * (1.0 / friction), velocity.y(), velocity.z() * (1.0 / friction));
 
     player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
-
+    
     jumpAllowed = true;
 }
 
 void Player::moveAir()
 {
-    float speedFactor = 2.2;
+    btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
+    btVector3 XZVelocity = velocity;
+    XZVelocity.setY(0.0);
+
+    float speedFactor = XZVelocity.length() / 2.5 + 2.5;
 
     jumpAllowed = false;
 
     /* push the body */
     player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
 
-    btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
+    velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
 
     /* enable sliding effect */
     if (abs(velocity.y()) < 0.05)
     {
-        player->getPhysicsObject()->getRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+        player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
+        player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(player->getPhysicsObject()->getRigidBody()->getGravity());
     }
 }
 
 void Player::speedHackControl()
 {
-    float maxSpeed = 6;
+    float maxSpeed = 4.8;
 
     /* speed hack control */
     btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
     btVector3 XZVelocity = velocity;
-    XZVelocity.setY(0);
+    XZVelocity.setY(0.0);
 
     if (XZVelocity.length() > maxSpeed)
     {
@@ -282,7 +283,7 @@ void Player::movePhysics()
         }
 
         if (isGroundStanding()) // ground movement
-        { 
+        {
             moveGround();
         }
         else // air movement
