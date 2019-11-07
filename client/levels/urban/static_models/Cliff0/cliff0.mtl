@@ -1,0 +1,87 @@
+# Blender MTL File: 'None'
+# Material Count: 6
+
+newmtl Material.003
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/worn-bumpy-rock-ue/albedo.png
+map_Bump textures/worn-bumpy-rock-ue/normal.png
+map_Ke textures/worn-bumpy-rock-ue/metalness.png
+map_Ks textures/worn-bumpy-rock-ue/roughness.png
+
+newmtl Material.022
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/worn-bumpy-rock-ue/albedo.png
+map_Bump textures/worn-bumpy-rock-ue/normal.png
+map_Ke textures/worn-bumpy-rock-ue/metalness.png
+
+newmtl Material.029
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/worn-bumpy-rock-ue/albedo.png
+map_Bump textures/worn-bumpy-rock-ue/normal.png
+map_Ka textures/worn-bumpy-rock-ue/ao.png
+map_Ke textures/worn-bumpy-rock-ue/metalness.png
+map_Ks textures/worn-bumpy-rock-ue/roughness.png
+
+newmtl top
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/Mossy_ground/albedo.png
+map_Bump textures/Mossy_ground/normal.png
+map_Ka textures/Mossy_ground/ao.png
+map_Ke textures/Mossy_ground/metalness.png
+
+newmtl tunnel
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/Gravel_path/albedo.png
+map_Bump textures/Gravel_path/normal.png
+map_Ka textures/Gravel_path/ao.png
+map_Ke textures/Gravel_path/metalness.png
+
+newmtl wall
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/worn-bumpy-rock-ue/albedo.png
+map_Bump textures/worn-bumpy-rock-ue/normal.png
+map_Ka textures/worn-bumpy-rock-ue/ao.png
+map_Ke textures/worn-bumpy-rock-ue/metalness.png
+map_Ks textures/worn-bumpy-rock-ue/roughness.png

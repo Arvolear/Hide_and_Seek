@@ -26,6 +26,7 @@ class GameObject
         static set < string > globalNames;
         string name;
         bool visible;
+        bool viewStatic;
         bool shadow;
         bool cull;
 
@@ -70,6 +71,7 @@ class GameObject
         void setCull(bool cull);
         void setMinNormalCosAngle(float minNormalCosAngle);
         void setVisible(bool visible);
+        void setViewStatic(bool viewStatic);
         void setShadow(bool shadow);
         void setCollidable(bool collidable);
         void setStatic(bool stat);
@@ -101,6 +103,7 @@ class GameObject
         string getName() const;
         bool isCull() const;
         bool isVisible() const;
+        bool isViewStatic() const;
         bool isShadow() const;
         bool isCollidable() const;
         bool isStatic() const;

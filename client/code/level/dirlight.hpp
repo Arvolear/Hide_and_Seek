@@ -12,6 +12,7 @@ class DirLight
     private:
         vec3 direction;
         vec3 color;
+        float shadowViewOffset;
 
         mat4 shadowView, shadowProjection;
 
@@ -45,6 +46,7 @@ class DirLight
         void setShadowIntensity(float intensity);
         void setShadowBias(float bias);
         void setShadowSoftness(float softness);
+        void setShadowViewOffset(float offset);
 
         void setShadowProjection(mat4 projection);
 

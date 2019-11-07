@@ -14,7 +14,6 @@ map_Kd Dry_dirt/albedo.png
 map_Bump Dry_dirt/normal.png
 map_Ka Dry_dirt/ao.png
 map_Ke Dry_dirt/metalness.png
-map_Ks Dry_dirt/roughness.png
 
 newmtl Material.002
 Ns 92.156863

@@ -502,6 +502,8 @@ void Player::update(bool events)
             Pos += moveDirection * speed; 
         }
     }
+   
+    //cout << getPosition().x << ' ' << getPosition().z << endl;
 }
 
 GameObject* Player::getGameObject() const

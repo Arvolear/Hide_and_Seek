@@ -5,6 +5,7 @@
         <dirlight>
             <direction x="0.0" y="0.1" z="1"/>
             <color r="7.0" g="7.0" b="7.0"/>
+            <shadowviewoffset offset="25.0"/>
             <scatter>
                 <sphere>
                     <color r="6.91" g="5.82" b="1.76"/>

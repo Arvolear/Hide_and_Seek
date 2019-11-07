@@ -19,6 +19,7 @@
 DirLight::DirLight()
 {
     direction = color = vec3(0.0);
+    shadowViewOffset = 0.0;
 
     shadowView = shadowProjection = mat4(1.0);
 
@@ -34,6 +35,9 @@ DirLight::DirLight(vec3 direction, vec3 color)
 {
     this->direction = direction;
     this->color = color;
+    shadowViewOffset = 0.0;
+
+    shadowView = shadowProjection = mat4(1.0);
 
     sphere = new Sphere();
 
@@ -117,6 +121,11 @@ void DirLight::setShadowBias(float bias)
 void DirLight::setShadowSoftness(float softness)
 {
     shadow->setSoftness(softness);
+}
+        
+void DirLight::setShadowViewOffset(float offset)
+{
+    this->shadowViewOffset = offset;
 }
 
 vec3 DirLight::getDirection() const
@@ -215,8 +224,9 @@ ColorBuffer* DirLight::getScatterBuffer() const
 void DirLight::updateShadowView(vec3 playerPosition, vec3 playerForward)
 {
     playerForward = normalize(playerForward);
+    vec3 offset = playerForward * shadowViewOffset;
 
-    shadowView = lookAt(playerForward * 25.0f + playerPosition, playerForward * 25.0f + playerPosition + normalize(direction), vec3(0, 1, 0));
+    shadowView = lookAt(offset + playerPosition, offset + playerPosition + normalize(direction), vec3(0, 1, 0));
 }
 
 Sphere* DirLight::getSphere() const

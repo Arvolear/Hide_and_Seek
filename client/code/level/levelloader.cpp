@@ -625,6 +625,16 @@ void LevelLoader::loadDirLight()
 
             DL->setColor(vec3(r, g, b));
         }
+        
+        XMLElement* offsetElem = dirLightElem->FirstChildElement("shadowviewoffset");
+
+        if (offsetElem)
+        {
+            float offset = 0.0;
+            offsetElem->QueryFloatAttribute("offset", &offset);
+
+            DL->setShadowViewOffset(offset);
+        }
 
         /* scatter */
         XMLElement* scatterElem = dirLightElem->FirstChildElement("scatter");

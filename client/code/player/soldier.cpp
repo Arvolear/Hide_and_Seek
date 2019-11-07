@@ -241,7 +241,7 @@ void Soldier::update(bool events)
         updateWeapon();
     }
 
-    //cout << getPosition().x << ' ' << getPosition().z << endl;
+   //cout << getPosition().x << ' ' << getPosition().z << endl;
 }
 
 void Soldier::clearPickData()

@@ -39,6 +39,7 @@ GameObject::GameObject(string name)
     globalNames.insert(name);
     this->name = name;
     setVisible(true);
+    setViewStatic(false);
     setShadow(true);
     setCull(true);
         
@@ -112,6 +113,11 @@ void GameObject::setMinNormalCosAngle(float minNormalCosAngle)
 void GameObject::setVisible(bool visible)
 {
     this->visible = visible;
+}
+        
+void GameObject::setViewStatic(bool viewStatic)
+{
+    this->viewStatic = viewStatic;
 }
 
 void GameObject::setShadow(bool shadow)
@@ -359,6 +365,11 @@ bool GameObject::isCull() const
 bool GameObject::isVisible() const
 {
     return visible;
+}
+
+bool GameObject::isViewStatic() const
+{
+    return viewStatic;
 }
 
 bool GameObject::isShadow() const
