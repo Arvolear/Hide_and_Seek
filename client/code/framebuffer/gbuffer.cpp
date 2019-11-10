@@ -18,16 +18,6 @@ void GBuffer::genBuffer(int width, int height, vector < FrameBufferData > data)
     glGenFramebuffers(1, &bufferID);
     glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
     
-    // rgb16f, rgb, float - position
-    // rgb16f, rgb, float - normal
-    // rgba, rgba, unsigned_byte - albedo
-    // rgb, rbg, unsigned_byte - metallic roughness ao
-    //
-    // rgba, rgba, unsigned_byte - lighscattering
-    //
-    // rgb16f, rgb, float - ssao position
-    // rgb16f, rgb, float - ssao normal
-
     for (size_t i = 0; i < data.size(); i++)
     {
         glGenTextures(1, &texturesID[i]);
@@ -74,12 +64,26 @@ void GBuffer::genBuffer(vec2 size, vector < FrameBufferData > data)
     genBuffer(size.x, size.y, data);
 }
 
-void GBuffer::clear(vec4 color)
+void GBuffer::clear()
 {
-    glClearColor(color.x, color.y, color.z, 1.0f);
-    glClearDepth(color.w);    
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearDepth(1.0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void GBuffer::clearColor(vec4 color)
+{
+    glClearColor(color.x, color.y, color.z, color.w);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void GBuffer::clearDepth(float depth)
+{
+    glClearDepth(depth);
+
+    glClear(GL_DEPTH_BUFFER_BIT); 
 }
 
 void GBuffer::render(Shader* shader)
@@ -118,6 +122,14 @@ void GBuffer::renderSsao(Shader* shader)
     glBindTexture(GL_TEXTURE_2D, texturesID[6]);
 }
 
+void GBuffer::renderStaticDepth(Shader* shader)
+{
+    /* static depth */
+    glActiveTexture(GL_TEXTURE0);
+    shader->setInt("depthTexture", 0);
+    glBindTexture(GL_TEXTURE_2D, texturesID[7]);
+}
+        
 GBuffer::~GBuffer() 
 {
     glDeleteFramebuffers(1, &bufferID);  

@@ -10,6 +10,8 @@ layout (location = 4) out vec4 gLightScattering;
 layout (location = 5) out float ssaoPosition;
 layout (location = 6) out vec3 ssaoNormal;
 
+layout (location = 7) out float staticDepth;
+
 struct Material
 {
     sampler2D texture_normal1;
@@ -33,6 +35,7 @@ in mat3 ssaoTBN;
 
 uniform Material material;
 uniform float minNormalCosAngle;
+uniform int isStatic;
 
 void main()
 {
@@ -70,6 +73,15 @@ void main()
         ssaoNormal = texture(material.texture_normal1, textureCoords).rgb;
         ssaoNormal = normalize(ssaoNormal * 2.0 - 1.0);
         ssaoNormal = normalize(ssaoTBN * ssaoNormal);
+    }
+
+    if (isStatic == 1)
+    {
+        staticDepth = gl_FragCoord.z;
+    }
+    else
+    {
+        staticDepth = 0.0; 
     }
 
     /* alpha */

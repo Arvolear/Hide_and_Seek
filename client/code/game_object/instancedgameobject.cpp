@@ -191,6 +191,8 @@ void InstancedGameObject::render(Shader* shader, bool viewCull)
         
         /* minimal diffuse value */
         shader->setFloat("minNormalCosAngle", minNormalCosAngle);
+        /* is static */
+        shader->setInt("isStatic", viewStatic);
 
         for (size_t i = 0; i < meshes.size(); i++)
         {

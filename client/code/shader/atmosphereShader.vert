@@ -13,5 +13,5 @@ void main()
 
     gl_Position = pos.xyww;
 
-    vPos = vec3(position);
+    vPos = position;
 }

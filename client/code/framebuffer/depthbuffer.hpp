@@ -19,7 +19,8 @@ class DepthBuffer : public FrameBuffer
         void genBuffer(int width, int height, vector < FrameBufferData > data = {}) override;
         void genBuffer(vec2 size, vector < FrameBufferData > data = {}) override;
 
-        void clear(vec4 depth = vec4(1.0)) override;
+        void clear() override;
+        void clearDepth(float depth = 1.0) override;
 
         ~DepthBuffer();
 };

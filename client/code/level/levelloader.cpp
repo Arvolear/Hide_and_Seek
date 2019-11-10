@@ -193,6 +193,17 @@ void LevelLoader::loadGraphicsObject(XMLElement* graphicsObjectElem, GameObject*
 
         GO->setShadow(apply);
     }
+    
+    /* staticview */
+    XMLElement* viewStaticElem = graphicsObjectElem->FirstChildElement("viewstatic");
+
+    if (viewStaticElem)
+    {
+        bool apply = false;
+        viewStaticElem->QueryBoolAttribute("apply", &apply);
+
+        GO->setViewStatic(apply);
+    }
 
     /* view frustum */
     XMLElement* viewFrustumElem = graphicsObjectElem->FirstChildElement("viewfrustum");

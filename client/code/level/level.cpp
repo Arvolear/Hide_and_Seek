@@ -108,17 +108,23 @@ void Level::loadLevel(string level)
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},
                 {GL_R16F, GL_RED, GL_FLOAT}, 
-                {GL_RGB16F, GL_RGB, GL_FLOAT}
+                {GL_RGB16F, GL_RGB, GL_FLOAT},
+                {GL_R16F, GL_RED, GL_FLOAT}
             });
     
     gBufferShader->loadShaders(global.path("code/shader/gBufferShader.vert"), global.path("code/shader/gBufferShader.frag"));
+    
+
     gameObjectShader->loadShaders(global.path("code/shader/objectShader.vert"), global.path("code/shader/objectShader.frag"));
+    
     dirShadowShader->loadShaders(global.path("code/shader/dirShadowShader.vert"), global.path("code/shader/dirShadowShader.frag"));
     skyBoxShader->loadShaders(global.path("code/shader/skyBoxShader.vert"), global.path("code/shader/skyBoxShader.frag"));
     dirSphereShader->loadShaders(global.path("code/shader/dirSphereShader.vert"), global.path("code/shader/dirSphereShader.frag"));
     lightBlenderShader->loadShaders(global.path("code/shader/lightBlenderShader.vert"), global.path("code/shader/lightBlenderShader.frag"));
+    
     atmosphereShader->loadShaders(global.path("code/shader/atmosphereShader.vert"), global.path("code/shader/atmosphereShader.frag"));
     domeShader->loadShaders(global.path("code/shader/domeShader.vert"), global.path("code/shader/domeShader.frag"));
+    
     sSAOShader->loadShaders(global.path("code/shader/ssaoShader.vert"), global.path("code/shader/ssaoShader.frag"));
     
     debugShader->loadShaders(global.path("code/shader/debugShader.vert"), global.path("code/shader/debugShader.frag"));
@@ -201,21 +207,6 @@ void Level::render()
     viewFrustum->updateFrustum(view, projection);
     
     /************************************
-     * ATMOSPHERE
-     * */
-    
-    glCullFace(GL_FRONT);
-    
-    atmosphere->getBuffer()->use();
-    
-    atmosphereShader->use();
-
-    atmosphereShader->setMat4("view", staticView);
-    atmosphereShader->setMat4("projection", projection);
-
-    atmosphere->renderAtmosphere(atmosphereShader);
-
-    /************************************
      * DIR SHADOWS
      * */ 
     
@@ -228,7 +219,8 @@ void Level::render()
             /*** shadow buffer ***/
             dirLights[i]->getShadowBuffer()->use();
             /* crucial */
-            dirLights[i]->getShadowBuffer()->clear(vec4(1.0, 0.0, 0.0, 1.0));
+            dirLights[i]->getShadowBuffer()->clearColor(vec4(1.0, 0.0, 0.0, 1.0));
+            dirLights[i]->getShadowBuffer()->clearDepth();
 
             dirLights[i]->updateShadowView(getPlayer(true)->getPosition(), getPlayer(true)->getForward());
 
@@ -258,18 +250,57 @@ void Level::render()
     gBuffer->clear();
 
     gBufferShader->use();
-
-    gBufferShader->setMat4("view", view);
-    gBufferShader->setMat4("projection", projection);
     
+    gBufferShader->setMat4("projection", projection);
+
+    gBufferShader->setMat4("view", staticView);
+   
+    /* render view static */
     for (auto& i : gameObjects)
     {
-        i.second->render(gBufferShader); 
+        if (i.second->isViewStatic())
+        {
+            i.second->render(gBufferShader); 
+        }
     }
+    
+    gBuffer->clearDepth();
+    
+    gBufferShader->setMat4("view", view);
+
+    /* render normal */
+    for (auto& i : gameObjects)
+    {
+        if (!i.second->isViewStatic())
+        {
+            i.second->render(gBufferShader);
+        }
+    }
+    
+    /************************************
+     * ATMOSPHERE
+     * */
+    
+    glCullFace(GL_FRONT);
+    
+    atmosphere->getBuffer()->use();
+    atmosphere->getBuffer()->clear();
+    
+    atmosphere->getBuffer()->copyDepthBuffer(gBuffer);
+    
+    atmosphere->getBuffer()->use();
+    atmosphereShader->use();
+
+    atmosphereShader->setMat4("view", staticView);
+    atmosphereShader->setMat4("projection", projection);
+
+    atmosphere->renderAtmosphere(atmosphereShader);
     
     /************************************
      * SSAO
      * */ 
+    
+    glCullFace(GL_BACK);
 
     sSAO->getBuffer()->use();
     sSAO->getBuffer()->clear();
@@ -343,6 +374,7 @@ void Level::render()
             dirSphereShader->setMat4("view", staticView);
             dirSphereShader->setMat4("projection", projection);
 
+            gBuffer->renderStaticDepth(dirSphereShader);
             dirLights[i]->renderSphere(dirSphereShader);
 
             /* radial blur center */
@@ -365,6 +397,7 @@ void Level::render()
 
     domeShader->use();
 
+    gBuffer->renderStaticDepth(domeShader);
     atmosphere->renderDome(domeShader);
 
     /************************************
@@ -378,6 +411,7 @@ void Level::render()
     skyBoxShader->setMat4("view", staticView);
     skyBoxShader->setMat4("projection", projection);
 
+    gBuffer->renderStaticDepth(domeShader);
     //skyBox->render(skyBoxShader);
 
     /************************************
@@ -453,6 +487,7 @@ void Level::updateSunPos()
 
 GLuint Level::getRenderTexture(unsigned int num) const
 {
+    //return gBuffer->getTexture(7);
     return levelColorBuffer->getTexture(num);
     //return atmosphere->getTexture();
     //return sSAO->getTexture();

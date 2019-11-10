@@ -45,7 +45,9 @@ class FrameBuffer
         void copyColorBuffer(int to, FrameBuffer* frameBuffer, int from);
         void copyDepthBuffer(FrameBuffer* frameBuffer);
 
-        virtual void clear(vec4 colorDepth = vec4(0.0, 0.0, 0.0, 1.0)) = 0;
+        virtual void clear() = 0;
+        virtual void clearColor(vec4 color = vec4(0.0, 0.0, 0.0, 1.0)) = 0;
+        virtual void clearDepth(float depth = 1.0) = 0;
 
         virtual ~FrameBuffer();
 };

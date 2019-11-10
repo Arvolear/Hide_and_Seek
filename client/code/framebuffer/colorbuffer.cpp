@@ -63,12 +63,26 @@ void ColorBuffer::genBuffer(vec2 size, vector < FrameBufferData > data)
     genBuffer(size.x, size.y, data);
 }
 
-void ColorBuffer::clear(vec4 color)
+void ColorBuffer::clear()
 {
-    glClearColor(color.x, color.y, color.z, 1.0);
-    glClearDepth(color.w);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearDepth(1.0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void ColorBuffer::clearColor(vec4 color)
+{
+    glClearColor(color.x, color.y, color.z, color.w);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void ColorBuffer::clearDepth(float depth)
+{
+    glClearDepth(depth);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 ColorBuffer::~ColorBuffer() 

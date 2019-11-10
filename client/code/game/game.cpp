@@ -181,7 +181,7 @@ void Game::gameLoop()
             physicsWorld->updateSimulation(step, 1000);
         }
 
-        //level->updateSunPos();
+        level->updateSunPos();
         level->updatePlayers(mode);
         level->render();
 

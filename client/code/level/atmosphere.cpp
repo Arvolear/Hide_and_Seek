@@ -148,11 +148,11 @@ void Atmosphere::renderAtmosphere(Shader* shader)
     shader->setFloat("mieHeight", mieHeight);
     shader->setFloat("mieDir", mieDir);
 
-    glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     sphere->render(shader);
     
-    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 }
 
 void Atmosphere::renderDome(Shader* shader)
@@ -161,8 +161,8 @@ void Atmosphere::renderDome(Shader* shader)
     {
         glDepthFunc(GL_LEQUAL);
 
-        glActiveTexture(GL_TEXTURE0); 
-        shader->setInt("dome", 0);
+        glActiveTexture(GL_TEXTURE0 + 1); 
+        shader->setInt("dome", 1);
         glBindTexture(GL_TEXTURE_2D, colorBuffer->getTexture());
 
         quad->render(shader);

@@ -5,10 +5,16 @@ layout (location = 1) out vec4 brightColor;
 
 in vec3 textureCoords;
 
+uniform sampler2D depthTexture;
 uniform samplerCube skybox;
 
 void main()
 {
+    if (texture(depthTexture, vec2(textureCoords)).x != 0.0)
+    {
+        discard;
+    }
+
     fragColor = texture(skybox, textureCoords);    
 
     float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
