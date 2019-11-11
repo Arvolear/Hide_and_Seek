@@ -3,11 +3,11 @@
     
     <ssao>
         <buffer x="1280" y="720"/>
-        <kernelsize size="16"/>
+        <kernelsize size="4"/>
         <noisesize size="4"/>
         <blurscale scale="2"/>
-        <radius radius="1.0"/>
-        <bias bias="0.01"/>
+        <radius radius="2.0"/>
+        <bias bias="0.025"/>
         <power power="1.0"/>
     </ssao>
 

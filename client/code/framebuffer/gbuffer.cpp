@@ -107,6 +107,11 @@ void GBuffer::render(Shader* shader)
     glActiveTexture(GL_TEXTURE0 + 3);
     shader->setInt("gBuffer.texture_metRoughAOCos", 3);
     glBindTexture(GL_TEXTURE_2D, texturesID[3]);
+    
+    /* static depth */
+    glActiveTexture(GL_TEXTURE0 + 4);
+    shader->setInt("gBuffer.texture_staticDepth", 4);
+    glBindTexture(GL_TEXTURE_2D, texturesID[7]);
 }
         
 void GBuffer::renderSsao(Shader* shader)

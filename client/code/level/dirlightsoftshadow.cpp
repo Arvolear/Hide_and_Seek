@@ -67,8 +67,8 @@ void DirLightSoftShadow::blurShadow(int intensity, float radius)
 
 void DirLightSoftShadow::render(Shader* shader, int index)
 {
-    glActiveTexture(GL_TEXTURE0 + 4);
-    shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", 4);
+    glActiveTexture(GL_TEXTURE0 + 5);
+    shader->setInt("dirLights[" + to_string(index) + "].texture_shadow1", 5);
     glBindTexture(GL_TEXTURE_2D, getTexture());
 
     shader->setFloat("dirLights[" + to_string(index) + "].esmFactor", intensity);

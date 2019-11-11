@@ -147,8 +147,8 @@ void SSAO::renderInfo(Shader* shader)
         
 void SSAO::renderSsao(Shader* shader)
 {
-    glActiveTexture(GL_TEXTURE0 + 5);
-    shader->setInt("texture_ssao", 5);
+    glActiveTexture(GL_TEXTURE0 + 6);
+    shader->setInt("texture_ssao", 6);
     glBindTexture(GL_TEXTURE_2D, getTexture());
 }
 

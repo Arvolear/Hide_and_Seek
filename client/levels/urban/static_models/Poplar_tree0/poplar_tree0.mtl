@@ -1,0 +1,31 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl Material.001
+Ns 356.862745
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.400000 0.400000 0.400000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd textures/TexturesCom_Branches0025_1_M_COLOR.png
+map_Bump textures/TexturesCom_Branches0025_1_M_NRM.png
+map_Ka textures/TexturesCom_Branches0025_1_M_OCC.png
+map_Ks textures/TexturesCom_Branches0025_1_M_SPEC.png
+map_d textures/TexturesCom_Branches0025_1_M_COLOR.png
+
+newmtl Material.002
+Ns 249.019608
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.400000 0.400000 0.400000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd textures/BARK1_COLOR.png
+map_Bump textures/BARK1_NRM.png
+map_Ka textures/BARK1_OCC.png
+map_Ks textures/BARK1_SPEC.png

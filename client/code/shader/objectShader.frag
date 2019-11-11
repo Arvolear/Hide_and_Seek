@@ -9,6 +9,7 @@ struct GBuffer
     sampler2D texture_normal;
     sampler2D texture_albedo;
     sampler2D texture_metRoughAOCos;
+    sampler2D texture_staticDepth;
 };
 
 struct DirLight
@@ -110,14 +111,16 @@ vec4 calcDirLights()
 {
     float gamma = 2.2;
 
-    vec3 fragPos = texture(gBuffer.texture_position, UV).rgb;
-    vec3 fragNorm = texture(gBuffer.texture_normal, UV).rgb;
+    vec3 fragPos = texture(gBuffer.texture_position, UV).xyz;
+    vec3 fragNorm = texture(gBuffer.texture_normal, UV).xyz;
     vec3 fragAlbedo = pow(texture(gBuffer.texture_albedo, UV).rgb, vec3(gamma));
     float fragMetal = texture(gBuffer.texture_metRoughAOCos, UV).r;
     float fragRough = texture(gBuffer.texture_metRoughAOCos, UV).g;
     float fragAO = texture(gBuffer.texture_metRoughAOCos, UV).b;
 
-    float minNormalCosAngle = texture(gBuffer.texture_metRoughAOCos, UV).a;
+    float minNormalCosAngle = texture(gBuffer.texture_metRoughAOCos, UV).w;
+    
+    float staticDepth = texture(gBuffer.texture_staticDepth, UV).x;
 
     //fragMetal = 0.5;
     //fragRough = 0.5;
@@ -153,7 +156,7 @@ vec4 calcDirLights()
 
         vec3 L00 = (kD * fragAlbedo / PI + specular) * radiance * nDotL;
 
-        if (dirLights[i].isShadow == 1)
+        if (dirLights[i].isShadow == 1 && staticDepth == 0.0)
         {
             // calc shadow coords
             vec4 dirShadowCoords = dirLights[i].shadowProjection * dirLights[i].shadowView * vec4(fragPos, 1.0);

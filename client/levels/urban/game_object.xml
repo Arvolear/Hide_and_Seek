@@ -18,14 +18,13 @@
                 <viewstatic apply="true"/>
                 <viewfrustum apply="true"/>
                 <shadow apply="false"/>
-                <scale x="3.0" y="3.0" z="3.0"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
                 <position x="-2.0" y="-10.0" z="-6.0"/>
             </graphicsobject>
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
-        
+        </gameobject> 
         
         <!-- <gameobject name="fence00">
             <graphicsobject path="/static_models/Fence0/fence0.obj">
@@ -358,6 +357,95 @@
     
         <!-- ********************************************************* -->
         
+        <gameobject name="poplar_tree00">
+            <graphicsobject path="/static_models/Poplar_tree0/poplar_tree0.obj">
+                <viewfrustum apply="true"/>
+                <cullfaces apply="false"/>
+                <scale x="3.0" y="2.5" z="3.0"/>
+                <position x="0.0" y="-2.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="poplar_tree01">
+            <graphicsobject path="/static_models/Poplar_tree0/poplar_tree0.obj">
+                <viewfrustum apply="true"/>
+                <cullfaces apply="false"/>
+                <scale x="3.2" y="2.5" z="3.2"/>
+                <position x="0.0" y="-2.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="poplar_tree02">
+            <graphicsobject path="/static_models/Poplar_tree0/poplar_tree0.obj">
+                <viewfrustum apply="true"/>
+                <cullfaces apply="false"/>
+                <scale x="3.1" y="2.5" z="3.1"/>
+                <position x="0.0" y="-2.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="poplar_tree03">
+            <graphicsobject path="/static_models/Poplar_tree0/poplar_tree0.obj">
+                <viewfrustum apply="true"/>
+                <cullfaces apply="false"/>
+                <scale x="2.8" y="2.5" z="2.8"/>
+                <position x="0.0" y="-2.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
+        
+        <gameobject name="picnic_table00">
+            <graphicsobject path="/static_models/Picnic_table0/picnic_table0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.8" y="2.8" z="2.8"/>
+                <position x="0.0" y="-0.09" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
+        
+        <gameobject name="bicycle0">
+            <graphicsobject path="/static_models/Bicycle0/bicycle0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="0.7" y="0.7" z="0.7"/>
+                <position x="0.0" y="-1.2" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
+        
+        <gameobject name="well0">
+            <graphicsobject path="/static_models/Well0/well0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="0.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject> 
+        
+        
         <!-- <gameobject name="pipe00">
             <graphicsobject path="/static_models/Pipe0/pipe0.obj">
                 <viewfrustum apply="true"/>
@@ -584,7 +672,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
         
         <gameobject name="wagon0">
             <graphicsobject path="/static_models/Wagon0/wagon0.obj">
@@ -598,7 +686,7 @@
             </debugobject>
         </gameobject>
         
-        <gameobject name="beam0">
+        <!-- <gameobject name="beam0">
             <graphicsobject path="/static_models/Beam0/beam0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="1.5" y="1.5" z="1.5"/>
@@ -865,10 +953,34 @@
 
         <gameobject name="cliff0">
             <graphicsobject path="/static_models/Cliff0/cliff0.obj">
-                <cullfaces apply="false"/>
                 <viewfrustum apply="true"/>
                 <scale x="2.0" y="1.8" z="2.5"/>
                 <position x="0.0" y="-0.98" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="clay0">
+            <graphicsobject path="/static_models/Clay0/clay0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="1.2" y="2.0" z="1.6"/>
+                <position x="0.0" y="0.0" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <!-- <gameobject name="gate0">
+            <graphicsobject path="/static_models/Gate0/gate0.obj">
+                <cullfaces apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.7" y="1.3" z="1.7"/>
+                <position x="0.0" y="-1.6" z="0.0"/>
                 <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
             </graphicsobject>
             <debugobject>
@@ -900,7 +1012,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
  
     </gameobjects>
 </GameObjectFile>
