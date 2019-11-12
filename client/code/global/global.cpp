@@ -1,12 +1,12 @@
 #include "fpscounter.hpp"
 #include "global.hpp"
 
+FPSCounter* Global::fpsCounter = new FPSCounter();
+
 Global::Global() 
 {
     gen = new mt19937(rd());
     dis = new uniform_real_distribution < float >(0.0, 1.0);
-
-    fpsCounter = new FPSCounter();
 }
 
 string Global::path(string p)
@@ -123,4 +123,8 @@ double Global::toDegs(double rads)
     return rads * 180.0 / 3.14159265;
 }
 
-Global::~Global() {}
+Global::~Global() 
+{
+    delete gen;
+    delete dis;
+}

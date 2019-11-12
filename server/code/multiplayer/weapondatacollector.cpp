@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -42,6 +42,11 @@ string WeaponDataCollector::getMergedData(string fileName, bool raw) const
     {
         throw runtime_error("ERROR::WeaponDataCollector::getMergedData() failed to load XML");
     }
+    
+    /* timestamp */
+    XMLElement* timeElem = weaponDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
 
     XMLElement* weaponElem = root->FirstChildElement("weapon");
 
@@ -77,7 +82,7 @@ string WeaponDataCollector::getMergedData(string fileName, bool raw) const
                 string str;
                 str = char('a' + j);
 
-                modelElem->SetAttribute(str.data(), cutFloat(model[j], 4));
+                modelElem->SetAttribute(str.data(), global.cutFloat(model[j], 4));
             }
 
             weaponElem->InsertEndChild(modelElem);

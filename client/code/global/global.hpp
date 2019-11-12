@@ -34,9 +34,9 @@ class Global
         random_device rd;
         mt19937* gen;
         uniform_real_distribution < float >* dis;
-
+        
     public:
-        FPSCounter* fpsCounter;
+        static FPSCounter* fpsCounter;
 
         Global();
 

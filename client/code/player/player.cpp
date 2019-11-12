@@ -205,6 +205,8 @@ void Player::moveGround()
     float speedFactor = 20;
     float friction = 1.36;
 
+    //cout << moveDirection.x << ' ' << moveDirection.y << ' ' << moveDirection.z << endl; 
+
     /* push the body */
     player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
 
@@ -220,7 +222,7 @@ void Player::moveGround()
     velocity = btVector3(velocity.x() * (1.0 / friction), velocity.y(), velocity.z() * (1.0 / friction));
 
     player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
-    
+
     jumpAllowed = true;
 }
 
@@ -455,6 +457,11 @@ void Player::updateModel(vec3 newForward)
 
 void Player::updateAnimation(vec3 moveDirection)
 {
+    if (!player)
+    {
+        return;
+    }
+
     if (!player->getActiveAnimation() || (player->getActiveAnimation()->getName() != "idle" && (moveDirection == vec3(0) || !isGroundStanding())))
     {
         player->playAnimation("idle");

@@ -181,10 +181,17 @@ void Client::recvMSG(int size, int timeoutSec)
             }
             else if (bytes_read < 0)
             {
-                break;
+                /* temporary unavailable */
+                if (errno != 11)
+                {
+                    cerr << "ERROR::Client::recvMSG(); code " << errno << " = " << strerror(errno) << endl;
+                    break;
+                }
             }
-
-            constructFineMessage(buffer, bytes_read, last, 0);
+            else
+            {
+                constructFineMessage(buffer, bytes_read, last, 0);
+            }
         }
         
         for (size_t i = last; i < messages.size(); i++)

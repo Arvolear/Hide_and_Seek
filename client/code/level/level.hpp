@@ -79,7 +79,8 @@ class Level
         void updateSunPos();
 
         GLuint getRenderTexture(unsigned int num = 0) const;
-        Player* getPlayer(bool andVirtual = false) const;
+        Player* getConnectedPlayer(bool andVirtual = false) const;
+        Player* getIDPlayer(int id) const;
         vector < Player* > getPlayers() const;
         vec3 getSunPosition() const;
 

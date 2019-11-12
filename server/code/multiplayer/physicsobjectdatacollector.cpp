@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -34,6 +34,11 @@ string PhysicsObjectDataCollector::getData(bool raw) const
     /* root */
     XMLNode* root = physicsObjectDataCollectorDoc.NewElement("Objs");
     physicsObjectDataCollectorDoc.InsertFirstChild(root);
+    
+    /* timestamp */
+    XMLElement* timeElem = physicsObjectDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
 
     for (auto& i: pos)
     {
@@ -51,7 +56,7 @@ string PhysicsObjectDataCollector::getData(bool raw) const
             string str;
             str = char('a' + j);
 
-            modelElem->SetAttribute(str.data(), cutFloat(i.second[j], 4));
+            modelElem->SetAttribute(str.data(), global.cutFloat(i.second[j], 4));
         }
 
         objElem->InsertEndChild(modelElem);
@@ -91,6 +96,11 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
     {
         throw runtime_error("ERROR::PhysicsObjectDataCollector::getMergedData() failed to load XML");
     }
+    
+    /* timestamp */
+    XMLElement* timeElem = physicsObjectDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
 
     XMLElement* objElem = root->FirstChildElement("obj");
 
@@ -126,7 +136,7 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
                 string str;
                 str = char('a' + j);
 
-                modelElem->SetAttribute(str.data(), cutFloat(model[j], 4));
+                modelElem->SetAttribute(str.data(), global.cutFloat(model[j], 4));
             }
 
             objElem->InsertEndChild(modelElem);

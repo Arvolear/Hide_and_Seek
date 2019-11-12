@@ -102,14 +102,14 @@ void Level::loadLevel(string level)
 
     gBuffer->genBuffer(window->getRenderSize(), 
             {
-                {GL_RGB16F, GL_RGB, GL_FLOAT}, 
-                {GL_RGB16F, GL_RGB, GL_FLOAT}, 
-                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
-                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, 
-                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},
-                {GL_R16F, GL_RED, GL_FLOAT}, 
-                {GL_RGB16F, GL_RGB, GL_FLOAT},
-                {GL_R16F, GL_RED, GL_FLOAT}
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, // pos
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, // norm
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, // albedo
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, // metroughao
+                {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, // scatter
+                {GL_R16F, GL_RED, GL_FLOAT}, // ssao depth 
+                {GL_RGB16F, GL_RGB, GL_FLOAT}, // ssao norm
+                {GL_R8, GL_RED, GL_UNSIGNED_BYTE} // static depth
             });
     
     gBufferShader->loadShaders(global.path("code/shader/gBufferShader.vert"), global.path("code/shader/gBufferShader.frag"));
@@ -201,7 +201,7 @@ void Level::render()
 
     glEnable(GL_CULL_FACE);
 
-    mat4 view = getPlayer(true)->getView();
+    mat4 view = getConnectedPlayer(true)->getView();
     mat4 staticView = mat4(mat3(view));
     
     viewFrustum->updateFrustum(view, projection);
@@ -222,7 +222,7 @@ void Level::render()
             dirLights[i]->getShadowBuffer()->clearColor(vec4(1.0, 0.0, 0.0, 1.0));
             dirLights[i]->getShadowBuffer()->clearDepth();
 
-            dirLights[i]->updateShadowView(getPlayer(true)->getPosition(), getPlayer(true)->getForward());
+            dirLights[i]->updateShadowView(getConnectedPlayer(true)->getPosition(), getConnectedPlayer(true)->getForward());
 
             dirShadowShader->use();
 
@@ -294,6 +294,8 @@ void Level::render()
     atmosphereShader->setMat4("view", staticView);
     atmosphereShader->setMat4("projection", projection);
 
+    gBuffer->renderStaticDepth(atmosphereShader);
+
     atmosphere->renderAtmosphere(atmosphereShader);
     
     /************************************
@@ -329,7 +331,7 @@ void Level::render()
 
     gameObjectShader->use();
 
-    gameObjectShader->setVec3("viewPos", getPlayer(true)->getPosition());
+    gameObjectShader->setVec3("viewPos", getConnectedPlayer(true)->getPosition());
 
     for (size_t i = 0; i < dirLights.size(); i++)
     {
@@ -493,7 +495,7 @@ GLuint Level::getRenderTexture(unsigned int num) const
     //return sSAO->getTexture();
 }
 
-Player* Level::getPlayer(bool andVirtual) const
+Player* Level::getConnectedPlayer(bool andVirtual) const
 {
     if (activeVirtualPlayer && andVirtual)
     {
@@ -503,6 +505,19 @@ Player* Level::getPlayer(bool andVirtual) const
     for (size_t i = 0; i < players.size(); i++)
     {
         if (players[i]->getID() == playerID)
+        {
+            return players[i];
+        }
+    }
+
+    return nullptr;
+}
+
+Player* Level::getIDPlayer(int id) const
+{
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        if (players[i]->getID() == id)
         {
             return players[i];
         }
@@ -531,8 +546,8 @@ void Level::toggleVirtualPlayer()
 {
     activeVirtualPlayer = (activeVirtualPlayer + 1) % 2;
 
-    getPlayer()->setActive(!activeVirtualPlayer);
-    getPlayer()->resetPrevCoords();
+    getConnectedPlayer()->setActive(!activeVirtualPlayer);
+    getConnectedPlayer()->resetPrevCoords();
 
     virtualPlayer->setActive(activeVirtualPlayer);
     virtualPlayer->resetPrevCoords();

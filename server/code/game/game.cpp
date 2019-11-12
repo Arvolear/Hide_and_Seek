@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -42,28 +42,11 @@ Game::Game(string levelName)
 
 void Game::checkEvents() {}
 
-void Game::init()
-{
-    start = chrono::system_clock::now();
-}
-
-double Game::getTime()
-{
-    auto now = chrono::system_clock::now();
-
-    chrono::duration < double > diff = now - start;
-    
-    return diff.count();
-}
-        
 void Game::gameLoop()
 {
     thread sender(&Multiplayer::broadcast, multiplayer);
     thread receiver(&Multiplayer::update, multiplayer);
         
-    /* time */
-    init();
-
     while (true)
     {
         this_thread::sleep_for(chrono::milliseconds(16));
@@ -71,7 +54,7 @@ void Game::gameLoop()
         physicsWorld->pollEvents();
         checkEvents();        
 
-        if (getTime() > 1)
+        if (global.getTime() > 1.0)
         {
             physicsWorld->updateSimulation(1.0, 1);
         }

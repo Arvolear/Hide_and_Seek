@@ -107,7 +107,7 @@ void Game::checkEvents()
         else
         {
             window->hideCursor();
-            level->getPlayer()->resetPrevCoords();
+            level->getConnectedPlayer(true)->resetPrevCoords();
             
             mode = PLAY;
         }
@@ -173,15 +173,15 @@ void Game::gameLoop()
         physicsWorld->pollEvents();
         checkEvents();        
 
-        if (global.fpsCounter->getFramesTime() > 0)
+        if (Global::fpsCounter->getFramesTime() > 0)
         {
-            float step = 2.0 / (global.fpsCounter->getFPS());
+            float step = 2.0 / (Global::fpsCounter->getFPS());
 
             /* lock mtx to block bodies removal */
             physicsWorld->updateSimulation(step, 1000);
         }
 
-        level->updateSunPos();
+        //level->updateSunPos();
         level->updatePlayers(mode);
         level->render();
 
@@ -213,7 +213,7 @@ void Game::gameLoop()
         window->render(gameBuffer->getTexture());
         //window->render(level->getRenderTexture());
     
-        global.fpsCounter->update(window->getTime());
+        Global::fpsCounter->update(window->getTime());
         //cout << global.fpsCounter->getFPS() << endl;
     }
         

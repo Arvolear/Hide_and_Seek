@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -89,6 +89,11 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
     XMLNode* root = playerDataCollectorDoc.NewElement("Soldiers");
     playerDataCollectorDoc.InsertFirstChild(root);
 
+    /* timestamp */
+    XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
+    
     for (size_t i = 0; i < playerIDs.size(); i++)
     {
         XMLElement* soldierElem = playerDataCollectorDoc.NewElement("soldier");
@@ -98,9 +103,9 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
         
         /* moveDirection */
         XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[playerIDs[i]].x(), 4));
-        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[playerIDs[i]].y(), 4));
-        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[playerIDs[i]].z(), 4));
+        moveDirectionElem->SetAttribute("x", global.cutFloat(moveDirections[playerIDs[i]].x(), 4));
+        moveDirectionElem->SetAttribute("y", global.cutFloat(moveDirections[playerIDs[i]].y(), 4));
+        moveDirectionElem->SetAttribute("z", global.cutFloat(moveDirections[playerIDs[i]].z(), 4));
 
         soldierElem->InsertEndChild(moveDirectionElem);
 
@@ -117,7 +122,7 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
             string str;
             str = char('a' + j);
 
-            modelElem->SetAttribute(str.data(), cutFloat(models[playerIDs[i]][j], 4));
+            modelElem->SetAttribute(str.data(), global.cutFloat(models[playerIDs[i]][j], 4));
         }
 
         objElem->InsertEndChild(modelElem);
@@ -180,6 +185,11 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
     {
         throw runtime_error("ERROR::PlayerDataCollector::getMergedData() failed to load XML");
     }
+    
+    /* timestamp */
+    XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
 
     XMLElement* soldierElem = root->FirstChildElement("soldier");
 
@@ -220,9 +230,9 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
         
         /* moveDirection */
         XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-        moveDirectionElem->SetAttribute("x", cutFloat(moveDirections[id].x(), 4));
-        moveDirectionElem->SetAttribute("y", cutFloat(moveDirections[id].y(), 4));
-        moveDirectionElem->SetAttribute("z", cutFloat(moveDirections[id].z(), 4));
+        moveDirectionElem->SetAttribute("x", global.cutFloat(moveDirections[id].x(), 4));
+        moveDirectionElem->SetAttribute("y", global.cutFloat(moveDirections[id].y(), 4));
+        moveDirectionElem->SetAttribute("z", global.cutFloat(moveDirections[id].z(), 4));
 
         soldierElem->InsertEndChild(moveDirectionElem);
 
@@ -252,7 +262,7 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
                 string str;
                 str = char('a' + j);
 
-                modelElem->SetAttribute(str.data(), cutFloat(models[id][j], 4));
+                modelElem->SetAttribute(str.data(), global.cutFloat(models[id][j], 4));
             }
 
             objElem->InsertEndChild(modelElem);

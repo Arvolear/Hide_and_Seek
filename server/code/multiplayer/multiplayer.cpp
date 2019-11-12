@@ -325,10 +325,7 @@ void Multiplayer::update()
                 playerDataUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(playerDataUpdater->getPlayerID());
 
-                if (playerDataUpdater->getPlayerID() == player->getID())
-                {
-                    playerDataUpdater->updateData(player);
-                }
+                playerDataUpdater->updateData(player);
 
                 playerDataUpdater->clear();
             }

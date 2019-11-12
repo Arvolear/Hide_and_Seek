@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -26,7 +26,7 @@ Level::Level(World* physicsWorld)
 void Level::loadLevel(string level)
 {
     levelName = level;
-    levelPath = path("levels/" + levelName);
+    levelPath = global.path("levels/" + levelName);
 
     levelLoader->loadLevel(levelPath);
 
@@ -101,7 +101,7 @@ void Level::update()
             /* if not picked || player object */
             if (!physicsObject->getUserPointer())
             {
-                physicsObject->setOwnerID(i);
+                physicsObject->setOwnerID(players[i]->getID());
             }
         }
     }
@@ -162,7 +162,6 @@ map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects(
 
     return tmp;
 }
-
 
 Player* Level::getPlayer(int id) const
 {

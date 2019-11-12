@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -166,7 +166,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                     childRotationElem->QueryFloatAttribute("z", &z);
                     childRotationElem->QueryFloatAttribute("angle", &angle);
 
-                    childRotation = btQuaternion(btVector3(x, y, z), toRads(angle));
+                    childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
                 }
 
                 CS->add(childShape, childPosition, childRotation);
@@ -218,7 +218,7 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                PO->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), add);
+                PO->setRotation(btQuaternion(btVector3(x, y, z), global.toRads(angle)), add);
                 add = true;
 
                 rotationElem = rotationElem->NextSiblingElement();
@@ -389,7 +389,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                     childRotationElem->QueryFloatAttribute("z", &z);
                     childRotationElem->QueryFloatAttribute("angle", &angle);
 
-                    childRotation = btQuaternion(btVector3(x, y, z), toRads(angle));
+                    childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
                 }
 
                 CS->add(childShape, childPosition, childRotation);
@@ -441,7 +441,7 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                 rotationElem->QueryFloatAttribute("z", &z);
                 rotationElem->QueryFloatAttribute("angle", &angle);
 
-                WE->setRotation(btQuaternion(btVector3(x, y, z), toRads(angle)), add);
+                WE->setRotation(btQuaternion(btVector3(x, y, z), global.toRads(angle)), add);
                 add = true;
 
                 rotationElem = rotationElem->NextSiblingElement();

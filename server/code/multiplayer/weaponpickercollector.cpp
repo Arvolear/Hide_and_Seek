@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -50,8 +50,12 @@ string WeaponPickerCollector::getData() const
 
     /* root */
     XMLNode* root = weaponPickerCollectorDoc.NewElement("Pick");
-
     weaponPickerCollectorDoc.InsertFirstChild(root);
+    
+    /* timestamp */
+    XMLElement* timeElem = weaponPickerCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
 
     /* playerID */
     XMLElement* playerIDElem = weaponPickerCollectorDoc.NewElement("id");

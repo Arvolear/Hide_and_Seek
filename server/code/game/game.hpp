@@ -13,12 +13,7 @@ class Game
 
         Multiplayer* multiplayer;
 
-        void init();
         void checkEvents(); 
-
-        double getTime();
-
-        chrono::system_clock::time_point start;
 
     public:
         Game(string level);

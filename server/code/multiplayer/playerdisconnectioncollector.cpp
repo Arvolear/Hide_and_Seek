@@ -1,4 +1,4 @@
-#include "../global/convert.hpp"
+#include "../global/globaluse.hpp"
 
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
@@ -24,6 +24,11 @@ string PlayerDisconnectionCollector::getData() const
 
     /* root */
     XMLNode* root = playerDisconnectionCollectorDoc.NewElement("Dis");
+    
+    /* timestamp */
+    XMLElement* timeElem = playerDisconnectionCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    //root->InsertFirstChild(timeElem);
 
     int j = 0;
     for (size_t i = 0; i < old_clients.size(); i++)

@@ -129,11 +129,11 @@ void PlayerDataUpdater::updateData(Player* player, bool interpolation, map < str
 {
     int playerID = player->getID();
 
+    objParser->updatePhysicsObject(player->getGameObject(), interpolation);
+
     player->setSpeed(speeds[playerID]);
     player->updateModel(moveDirections[playerID]);
     player->updateAnimation(moveDirections[playerID]);
-
-    objParser->updatePhysicsObject(player->getGameObject(), interpolation);
 
     Soldier* soldier = dynamic_cast < Soldier* >(player);
 
@@ -171,12 +171,12 @@ void PlayerDataUpdater::updateData(vector < Player* > players, bool interpolatio
                 break;
             }
         }
+        
+        objParser->updatePhysicsObject(player->getGameObject(), interpolation);
 
         player->setSpeed(speeds[playerID]);
         player->updateModel(moveDirections[playerID]);
         player->updateAnimation(moveDirections[playerID]);
-
-        objParser->updatePhysicsObject(player->getGameObject(), interpolation);
 
         Soldier* soldier = dynamic_cast < Soldier* >(player);
 

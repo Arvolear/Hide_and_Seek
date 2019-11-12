@@ -10,6 +10,7 @@ INPUTDIR = ./code
 OUTPUTDIR = ./build
 
 MAIN = main.o 
+GLOBAL = global.o
 GAME = game.o
 MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weapondatacollector.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectioncollector.o playerdisconnectioncollector.o
 LEVEL = level.o levelloader.o
@@ -17,7 +18,7 @@ WORLD = world.o bulletevents.o raytracer.o
 PLAYER = player.o soldier.o
 PHYSICS_OBJECT = physicsobject.o openglmotionstate.o weapon.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(PHYSICS_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(PHYSICS_OBJECT)) 
 
 ### ALL ###
 
@@ -35,6 +36,11 @@ release: $(OBJECTFILES)
 
 $(OUTPUTDIR)/main.o: $(INPUTDIR)/main.cpp
 	g++ -c $(INPUTDIR)/main.cpp -o $@ $(FLAGS)
+
+### GLOBAL ###
+
+$(OUTPUTDIR)/global.o: $(INPUTDIR)/global/global.cpp $(INPUTDIR)/global/global.hpp
+	g++ -c $(INPUTDIR)/global/global.cpp -o $@ $(FLAGS)
 
 ### GAME ###
 

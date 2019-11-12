@@ -19,6 +19,8 @@ const float PI = 3.1415926535;
 uniform int iSteps;
 uniform int jSteps;
 
+uniform sampler2D depthTexture;
+
 vec2 rsi(vec3 r0, vec3 rd, float sr) 
 {
     // ray-sphere intersection that assumes
@@ -132,6 +134,13 @@ vec3 atmosphere(vec3 r, vec3 r0, vec3 pSun, float iSun, float rPlanet, float rAt
 
 void main()
 {
+    vec2 UV = gl_FragCoord.xy / textureSize(depthTexture, 0);
+    
+    if (texture(depthTexture, UV).x != 0.0)
+    {
+        discard;
+    }
+
     vec3 color = atmosphere(normalize(vPos), rayOrigin, sunPos, sunIntensity, planetRadius, atmoRadius, rayleighCoeff, mieCoeff, rayleighHeight, mieHeight, mieDir);
 
     fragColor = vec4(color, 1.0);

@@ -95,7 +95,7 @@ void Multiplayer::connect()
     client->connectToServer("127.0.0.1", 5040);
     
     /* connection info */
-    client->recvMSG(50);
+    client->recvMSG(100);
     string msg = client->getMessage();
         
     if (msg != "")
@@ -147,7 +147,7 @@ void Multiplayer::connect()
     }
     
     /* players info */
-    client->recvMSG(1500);
+    client->recvMSG(1000);
     msg = client->getMessage();
 
     if (msg != "")
@@ -170,8 +170,8 @@ void Multiplayer::connect()
     weaponPickerCollector->setPlayerID(playerID);
     weaponDropperCollector->setPlayerID(playerID);
 
-    level->getPlayer()->setConnected(true);
-    level->getPlayer()->setActive(true);
+    level->getConnectedPlayer()->setConnected(true);
+    level->getConnectedPlayer()->setActive(true);
 
     cout << "PlayerID: " << playerID << endl;
 }
@@ -183,9 +183,9 @@ void Multiplayer::broadcast()
         this_thread::sleep_for(chrono::milliseconds(50));
 
         /* player */
-        if (level->getPlayer()->getGameObject()->getPhysicsObject()->getRigidBody()->getLinearVelocity().length() > 0.01)
+        if (level->getConnectedPlayer()->getGameObject()->getPhysicsObject()->getRigidBody()->getLinearVelocity().length() > 0.01)
         {
-            playerDataCollector->collect(level->getPlayer());
+            playerDataCollector->collect(level->getConnectedPlayer());
             client->sendMSG(playerDataCollector->getData());
             playerDataCollector->clear();
         }
@@ -221,12 +221,12 @@ void Multiplayer::broadcast()
         }
 
         /* pick */
-        weaponPickerCollector->collect(level->getPlayer());
+        weaponPickerCollector->collect(level->getConnectedPlayer());
         client->sendMSG(weaponPickerCollector->getData());
         weaponPickerCollector->clear();
         
         /* drop */
-        weaponDropperCollector->collect(level->getPlayer());
+        weaponDropperCollector->collect(level->getConnectedPlayer());
         client->sendMSG(weaponDropperCollector->getData());
         weaponDropperCollector->clear();
     }
@@ -252,14 +252,14 @@ void Multiplayer::update()
         }
 
         if (msg.find("Con") != string::npos)
-        { 
+        {
             playerConnectionUpdater->collect(msg);
 
             vector < int > playerIDs = playerConnectionUpdater->getPlayerIDs();
 
             for (size_t i = 0; i < playerIDs.size(); i++)
             {
-                playerConnectionUpdater->updateData(level->getPlayer(playerIDs[i]));
+                playerConnectionUpdater->updateData(level->getIDPlayer(playerIDs[i]));
             }
 
             playerConnectionUpdater->clear();
@@ -267,7 +267,7 @@ void Multiplayer::update()
         else if (msg.find("Soldiers") != string::npos)
         { 
             playerDataUpdater->collect(msg);
-            playerDataUpdater->updateData(level->getPlayer(playerDataUpdater->getPlayerID()), true);
+            playerDataUpdater->updateData(level->getIDPlayer(playerDataUpdater->getPlayerID()), true);
             playerDataUpdater->clear();
         }
         else if (msg.find("Objs") != string::npos)
@@ -279,7 +279,7 @@ void Multiplayer::update()
         else if (msg.find("Pick") != string::npos)
         {
             weaponPickerUpdater->collect(msg);
-            Player* player = level->getPlayer(weaponPickerUpdater->getPlayerID());
+            Player* player = level->getIDPlayer(weaponPickerUpdater->getPlayerID());
             vector < string > names = weaponPickerUpdater->getNames();
 
             for (size_t i = 0; i < names.size(); i++)
@@ -294,7 +294,7 @@ void Multiplayer::update()
         else if (msg.find("Drop") != string::npos)
         {
             weaponDropperUpdater->collect(msg);
-            Player* player = level->getPlayer(weaponDropperUpdater->getPlayerID());
+            Player* player = level->getIDPlayer(weaponDropperUpdater->getPlayerID());
             vector < string > names = weaponDropperUpdater->getNames();
 
             for (size_t i = 0; i < names.size(); i++)
@@ -314,7 +314,7 @@ void Multiplayer::update()
 
             for (size_t i = 0; i < playerIDs.size(); i++)
             {
-                playerDisconnectionUpdater->updateData(level->getPlayer(playerIDs[i]));
+                playerDisconnectionUpdater->updateData(level->getIDPlayer(playerIDs[i]));
             }
 
             playerDisconnectionUpdater->clear();
