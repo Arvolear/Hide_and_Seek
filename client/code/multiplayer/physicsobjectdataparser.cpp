@@ -233,7 +233,7 @@ void PhysicsObjectDataParser::parse(XMLElement* objElem)
     models.insert({name, model});
 }
 
-void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool interpolation)
+void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool interpolation, unsigned int timeStamp)
 {
     if (names.empty())
     {
@@ -262,7 +262,7 @@ void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool i
 
     if (modelIt != models.end())
     {
-        gameObject->setPhysicsObjectTransform(modelIt->second, interpolation); 
+        gameObject->setPhysicsObjectTransform(modelIt->second, interpolation, timeStamp); 
     }
 
     if (aFactorIt != aFactors.end())

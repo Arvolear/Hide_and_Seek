@@ -17,6 +17,8 @@ class GameObjectDataUpdater
         PhysicsObjectDataParser* objParser;
         vector < string > names;
 
+        unsigned int timeStamp;
+
     public:
         GameObjectDataUpdater();
 

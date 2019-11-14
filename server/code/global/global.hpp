@@ -31,7 +31,8 @@ class Global
         float cutFloat(float from, int precision) const;
 
         float getRandomNumber() const;
-        float getTime() const;
+        float getUpTime() const;
+        unsigned int getTime() const;
 
         double toRads(double angle) const;
         double toDegs(double rads) const;

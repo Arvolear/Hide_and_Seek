@@ -10,7 +10,10 @@
 
 #include "weapondatacollector.hpp"
         
-WeaponDataCollector::WeaponDataCollector() {}
+WeaponDataCollector::WeaponDataCollector(int clients) 
+{
+    last.resize(clients, "");
+}
 
 void WeaponDataCollector::collect(map < string, PhysicsObject* > weapons)
 {
@@ -30,7 +33,7 @@ void WeaponDataCollector::collect(map < string, PhysicsObject* > weapons)
     }
 }
 
-string WeaponDataCollector::getMergedData(string fileName, bool raw) const
+string WeaponDataCollector::getMergedData(string fileName, int client, bool raw) const
 {
     XMLDocument weaponDataCollectorDoc;
 
@@ -43,11 +46,6 @@ string WeaponDataCollector::getMergedData(string fileName, bool raw) const
         throw runtime_error("ERROR::WeaponDataCollector::getMergedData() failed to load XML");
     }
     
-    /* timestamp */
-    XMLElement* timeElem = weaponDataCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     XMLElement* weaponElem = root->FirstChildElement("weapon");
 
     while (weaponElem)
@@ -134,18 +132,37 @@ string WeaponDataCollector::getMergedData(string fileName, bool raw) const
     /* printer */
     XMLPrinter weaponDataCollectorPrinter;
     weaponDataCollectorDoc.Print(&weaponDataCollectorPrinter);
+    
+    string res = weaponDataCollectorPrinter.CStr();
 
-    string res;
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = weaponDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    weaponDataCollectorDoc.InsertFirstChild(timeElem);
+    
+    weaponDataCollectorPrinter.ClearBuffer();
+    weaponDataCollectorDoc.Print(&weaponDataCollectorPrinter);
+
+    res = "";
 
     if (!raw)
     {
-        res = "BEG\n";
+        res += "BEG\n";
         res += weaponDataCollectorPrinter.CStr();
         res += "END";
     }
     else
     {
-        res = weaponDataCollectorPrinter.CStr();
+        res += weaponDataCollectorPrinter.CStr();
     }
 
     return res;
@@ -164,6 +181,19 @@ void WeaponDataCollector::clear()
     magazines.clear();
     speeds.clear();
     powers.clear();
+}
+
+void WeaponDataCollector::clearLast(int client)
+{
+    last[client] = "";
+}
+
+void WeaponDataCollector::clearAllLast()
+{
+    for (size_t i = 0; i < last.size(); i++)
+    {
+        last[i] = "";
+    }
 }
 
 WeaponDataCollector::~WeaponDataCollector() 

@@ -40,13 +40,21 @@ float Global::getRandomNumber() const
     return (*dis)(*gen);
 }
 
-float Global::getTime() const
+float Global::getUpTime() const
 {
     auto now = chrono::system_clock::now();
 
     chrono::duration < float > diff = now - start;
     
     return diff.count();
+}
+
+unsigned int Global::getTime() const
+{
+    auto now = chrono::system_clock::now();
+    unsigned long long time = chrono::duration_cast < chrono::milliseconds >(now.time_since_epoch()).count();
+
+    return time % 1000000;
 }
 
 double Global::toRads(double angle) const

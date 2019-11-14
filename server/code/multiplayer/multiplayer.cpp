@@ -29,17 +29,17 @@
 Multiplayer::Multiplayer(Level* level, World* world)
 {
     node = new Node(5, 2, 5040);
-    playerDataCollector = new PlayerDataCollector();
+    playerDataCollector = new PlayerDataCollector(5);
     playerDataUpdater = new PlayerDataUpdater();
-    physicsObjectDataCollector = new PhysicsObjectDataCollector();
+    physicsObjectDataCollector = new PhysicsObjectDataCollector(5);
     physicsObjectDataUpdater = new PhysicsObjectDataUpdater();
-    weaponDataCollector = new WeaponDataCollector();
-    weaponPickerCollector = new WeaponPickerCollector();
+    weaponDataCollector = new WeaponDataCollector(5);
+    weaponPickerCollector = new WeaponPickerCollector(5);
     weaponPickerUpdater = new WeaponPickerUpdater(world);
-    weaponDropperCollector = new WeaponDropperCollector();
+    weaponDropperCollector = new WeaponDropperCollector(5);
     weaponDropperUpdater = new WeaponDropperUpdater();
-    playerConnectionCollector = new PlayerConnectionCollector();
-    playerDisconnectionCollector = new PlayerDisconnectionCollector();
+    playerConnectionCollector = new PlayerConnectionCollector(5);
+    playerDisconnectionCollector = new PlayerDisconnectionCollector(5);
 
     this->level = level;
     this->world = world;
@@ -81,7 +81,7 @@ void Multiplayer::broadcast()
             {
                 if (new_sockets[i] > 0)
                 {
-                    string message = physicsObjectDataCollector->getMergedData(level->getLevelPath() + "/physics_object.xml"); 
+                    string message = physicsObjectDataCollector->getMergedData(level->getLevelPath() + "/physics_object.xml", i); 
 
                     /* send here */
                     try
@@ -101,7 +101,7 @@ void Multiplayer::broadcast()
             {
                 if (new_sockets[i] > 0)
                 {
-                    string message = weaponDataCollector->getMergedData(level->getLevelPath() + "/weapon.xml");
+                    string message = weaponDataCollector->getMergedData(level->getLevelPath() + "/weapon.xml", i);
 
                     /* send here */
                     try
@@ -123,7 +123,7 @@ void Multiplayer::broadcast()
                     vector < Player* > players = level->getPlayers();
                     playerDataCollector->collect(players);
 
-                    string message = playerDataCollector->getMergedData(level->getLevelPath() + "/soldier.xml", true);
+                    string message = playerDataCollector->getMergedData(level->getLevelPath() + "/soldier.xml", i, true);
 
                     try
                     {
@@ -155,7 +155,7 @@ void Multiplayer::broadcast()
 
                     try
                     {
-                        node->sendMSG(sockets[i], playerConnectionCollector->getData());
+                        node->sendMSG(sockets[i], playerConnectionCollector->getData(i));
                     }
                     catch(exception& ex) {}
 
@@ -177,7 +177,7 @@ void Multiplayer::broadcast()
             {
                 try
                 {
-                    node->sendMSG(sockets[i], playerDisconnectionCollector->getData());
+                    node->sendMSG(sockets[i], playerDisconnectionCollector->getData(i));
                 }
                 catch(exception& ex) {}
             }
@@ -193,6 +193,14 @@ void Multiplayer::broadcast()
                     /* disconnected */
                     level->clearNoPlayersAndTheirWeaponsOwner(i);
                     level->getPlayer(i)->setConnected(false);
+
+                    playerDataCollector->clearLast(i);
+                    physicsObjectDataCollector->clearLast(i);
+                    weaponDataCollector->clearLast(i);
+                    weaponPickerCollector->clearAllLast();
+                    weaponDropperCollector->clearAllLast();
+                    playerConnectionCollector->clearAllLast();
+                    playerDisconnectionCollector->clearAllLast();
 
                     /* send here */
                     node->oldToNothing(i);
@@ -221,7 +229,7 @@ void Multiplayer::broadcast()
                 {
                     try
                     {
-                        node->sendMSG(sockets[j], playerDataCollector->getData());
+                        node->sendMSG(sockets[j], playerDataCollector->getData(j));
                     }
                     catch(exception& ex) {}
                 }
@@ -241,7 +249,14 @@ void Multiplayer::broadcast()
             {
                 try
                 {
-                    node->sendMSG(sockets[j], weaponPickerCollector->getData());
+                    string msg = weaponPickerCollector->getData(j);
+
+                    if (msg != "")
+                    {
+                        weaponDropperCollector->clearAllLast();
+                    }
+
+                    node->sendMSG(sockets[j], msg);
                 }
                 catch(exception& ex) {}
             }
@@ -260,7 +275,14 @@ void Multiplayer::broadcast()
             {
                 try
                 {
-                    node->sendMSG(sockets[j], weaponDropperCollector->getData());
+                    string msg = weaponDropperCollector->getData(j);
+
+                    if (msg != "")
+                    {
+                        weaponPickerCollector->clearAllLast();
+                    }
+
+                    node->sendMSG(sockets[j], msg);
                 }
                 catch(exception& ex) {}
             }
@@ -287,7 +309,7 @@ void Multiplayer::broadcast()
                     {
                         try
                         {
-                            node->sendMSG(sockets[j], physicsObjectDataCollector->getData());
+                            node->sendMSG(sockets[j], physicsObjectDataCollector->getData(j));
                         }
                         catch(exception& ex) {}
                     }

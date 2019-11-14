@@ -13,9 +13,10 @@
 
 #include "weapondroppercollector.hpp"
 
-WeaponDropperCollector::WeaponDropperCollector()
+WeaponDropperCollector::WeaponDropperCollector(int clients)
 {
     playerID = 0;
+    last.resize(clients, "");
 }
 
 void WeaponDropperCollector::collect(Player* player)
@@ -39,7 +40,7 @@ void WeaponDropperCollector::collect(Player* player)
     soldier->oldToNothing();
 }
 
-string WeaponDropperCollector::getData() const
+string WeaponDropperCollector::getData(int client) const
 {   
     if (names.empty())
     {
@@ -52,11 +53,6 @@ string WeaponDropperCollector::getData() const
     XMLNode* root = weaponDropperCollectorDoc.NewElement("Drop");
     weaponDropperCollectorDoc.InsertFirstChild(root);
     
-    /* timestamp */
-    XMLElement* timeElem = weaponDropperCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     /* playerID */
     XMLElement* playerIDElem = weaponDropperCollectorDoc.NewElement("id");
     playerIDElem->SetText(playerID);
@@ -80,7 +76,28 @@ string WeaponDropperCollector::getData() const
     XMLPrinter weaponDropperCollectorPrinter;
     weaponDropperCollectorDoc.Print(&weaponDropperCollectorPrinter);
 
-    string res("BEG\n");
+    string res = weaponDropperCollectorPrinter.CStr();
+
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = weaponDropperCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    weaponDropperCollectorDoc.InsertFirstChild(timeElem);
+    
+    weaponDropperCollectorPrinter.ClearBuffer();
+    weaponDropperCollectorDoc.Print(&weaponDropperCollectorPrinter);
+
+    res = "";
+
+    res += "BEG\n";
     res += weaponDropperCollectorPrinter.CStr();
     res += "END";
 
@@ -90,6 +107,19 @@ string WeaponDropperCollector::getData() const
 void WeaponDropperCollector::clear()
 {
     names.clear();
+}
+
+void WeaponDropperCollector::clearLast(int client)
+{
+    last[client] = "";
+}
+
+void WeaponDropperCollector::clearAllLast()
+{
+    for (size_t i = 0; i < last.size(); i++)
+    {
+        last[i] = "";
+    }
 }
 
 WeaponDropperCollector::~WeaponDropperCollector() {}

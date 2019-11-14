@@ -21,6 +21,8 @@ class PlayerDataUpdater
 
         map < int, vector < string > > pickedWeapons;
 
+        unsigned int timeStamp;
+
     public:
         PlayerDataUpdater();
 

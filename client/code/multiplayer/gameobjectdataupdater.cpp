@@ -38,13 +38,17 @@
 GameObjectDataUpdater::GameObjectDataUpdater() 
 {
     objParser = new PhysicsObjectDataParser();
+    timeStamp = 0;
 }
 
 void GameObjectDataUpdater::collect(string info)
 {
-    XMLDocument gameObjectDataUpdaterDoc;
+    XMLDocument gameObjectDataUpdaterDoc; 
     
     gameObjectDataUpdaterDoc.Parse(info.data());
+    
+    XMLElement* timeElem = gameObjectDataUpdaterDoc.FirstChildElement("time");
+    timeElem->QueryUnsignedAttribute("time", &timeStamp);
 
     /* root */
     XMLNode* root = gameObjectDataUpdaterDoc.FirstChildElement("Objs");
@@ -75,7 +79,7 @@ void GameObjectDataUpdater::updateData(GameObject* gameObject, bool interpolatio
         return;
     }
 
-    objParser->updatePhysicsObject(gameObject, interpolation);
+    objParser->updatePhysicsObject(gameObject, interpolation, timeStamp);
 }
 
 void GameObjectDataUpdater::updateData(map < string, GameObject* > gameObjects, bool interpolation)
@@ -86,7 +90,7 @@ void GameObjectDataUpdater::updateData(map < string, GameObject* > gameObjects, 
 
         if (it != gameObjects.end())
         {
-            objParser->updatePhysicsObject(it->second, interpolation);
+            objParser->updatePhysicsObject(it->second, interpolation, timeStamp);
         }
     }
 }
@@ -105,6 +109,8 @@ void GameObjectDataUpdater::clear()
 {
     objParser->clear();
     names.clear();
+
+    timeStamp = 0;
 }
 
 GameObjectDataUpdater::~GameObjectDataUpdater() 

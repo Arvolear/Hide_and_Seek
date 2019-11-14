@@ -13,9 +13,10 @@
 
 #include "weaponpickercollector.hpp"
 
-WeaponPickerCollector::WeaponPickerCollector()
+WeaponPickerCollector::WeaponPickerCollector(int clients)
 {
     playerID = 0;
+    last.resize(clients, "");
 }
 
 void WeaponPickerCollector::collect(Player* player)
@@ -39,7 +40,7 @@ void WeaponPickerCollector::collect(Player* player)
     soldier->newToWeapons();
 }
 
-string WeaponPickerCollector::getData() const
+string WeaponPickerCollector::getData(int client) const
 {   
     if (names.empty())
     {
@@ -52,11 +53,6 @@ string WeaponPickerCollector::getData() const
     XMLNode* root = weaponPickerCollectorDoc.NewElement("Pick");
     weaponPickerCollectorDoc.InsertFirstChild(root);
     
-    /* timestamp */
-    XMLElement* timeElem = weaponPickerCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     /* playerID */
     XMLElement* playerIDElem = weaponPickerCollectorDoc.NewElement("id");
     playerIDElem->SetText(playerID);
@@ -80,7 +76,28 @@ string WeaponPickerCollector::getData() const
     XMLPrinter weaponPickerCollectorPrinter;
     weaponPickerCollectorDoc.Print(&weaponPickerCollectorPrinter);
 
-    string res("BEG\n");
+    string res = weaponPickerCollectorPrinter.CStr();
+
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+
+    /* timestamp */
+    XMLElement* timeElem = weaponPickerCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    weaponPickerCollectorDoc.InsertFirstChild(timeElem);
+    
+    weaponPickerCollectorPrinter.ClearBuffer();
+    weaponPickerCollectorDoc.Print(&weaponPickerCollectorPrinter);
+
+    res = "";
+
+    res += "BEG\n";
     res += weaponPickerCollectorPrinter.CStr();
     res += "END";
 
@@ -90,6 +107,19 @@ string WeaponPickerCollector::getData() const
 void WeaponPickerCollector::clear()
 {
     names.clear();
+}
+
+void WeaponPickerCollector::clearLast(int client)
+{
+    last[client] = "";
+}
+
+void WeaponPickerCollector::clearAllLast()
+{
+    for (size_t i = 0; i < last.size(); i++)
+    {
+        last[i] = "";
+    }
 }
 
 WeaponPickerCollector::~WeaponPickerCollector() {}

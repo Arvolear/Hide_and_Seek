@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iomanip>
 #include <random>
+#include <chrono>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -61,6 +62,8 @@ class Global
 
         double toRads(double angle);
         double toDegs(double rads);
+
+        unsigned int getTime() const;
 
         ~Global();
 };

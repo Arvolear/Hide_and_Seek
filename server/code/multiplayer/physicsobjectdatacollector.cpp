@@ -9,7 +9,10 @@
 
 #include "physicsobjectdatacollector.hpp"
         
-PhysicsObjectDataCollector::PhysicsObjectDataCollector() {}
+PhysicsObjectDataCollector::PhysicsObjectDataCollector(int clients) 
+{
+    last.resize(clients, "");
+}
 
 void PhysicsObjectDataCollector::collect(PhysicsObject* physicsObject)
 {
@@ -27,7 +30,7 @@ void PhysicsObjectDataCollector::collect(map < string, PhysicsObject* > physicsO
     }
 }
 
-string PhysicsObjectDataCollector::getData(bool raw) const
+string PhysicsObjectDataCollector::getData(int client, bool raw) const
 {
     XMLDocument physicsObjectDataCollectorDoc;
 
@@ -35,11 +38,6 @@ string PhysicsObjectDataCollector::getData(bool raw) const
     XMLNode* root = physicsObjectDataCollectorDoc.NewElement("Objs");
     physicsObjectDataCollectorDoc.InsertFirstChild(root);
     
-    /* timestamp */
-    XMLElement* timeElem = physicsObjectDataCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     for (auto& i: pos)
     {
         /* obj */
@@ -67,24 +65,43 @@ string PhysicsObjectDataCollector::getData(bool raw) const
     /* printer */
     XMLPrinter physicsObjectDataCollectorPrinter;
     physicsObjectDataCollectorDoc.Print(&physicsObjectDataCollectorPrinter);
+    
+    string res = physicsObjectDataCollectorPrinter.CStr();
+    
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = physicsObjectDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    physicsObjectDataCollectorDoc.InsertFirstChild(timeElem);
+    
+    physicsObjectDataCollectorPrinter.ClearBuffer();
+    physicsObjectDataCollectorDoc.Print(&physicsObjectDataCollectorPrinter);
 
-    string res;
+    res = "";
 
     if (!raw)
     {
-        res = "BEG\n";
+        res += "BEG\n";
         res += physicsObjectDataCollectorPrinter.CStr();
         res += "END";
     }
     else
     {
-        res = physicsObjectDataCollectorPrinter.CStr();
+        res += physicsObjectDataCollectorPrinter.CStr();
     }
 
     return res;
 }
         
-string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) const
+string PhysicsObjectDataCollector::getMergedData(string fileName, int client, bool raw) const
 {
     XMLDocument physicsObjectDataCollectorDoc;
 
@@ -97,11 +114,6 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
         throw runtime_error("ERROR::PhysicsObjectDataCollector::getMergedData() failed to load XML");
     }
     
-    /* timestamp */
-    XMLElement* timeElem = physicsObjectDataCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     XMLElement* objElem = root->FirstChildElement("obj");
 
     while (objElem)
@@ -148,18 +160,37 @@ string PhysicsObjectDataCollector::getMergedData(string fileName, bool raw) cons
     /* printer */
     XMLPrinter physicsObjectDataCollectorPrinter;
     physicsObjectDataCollectorDoc.Print(&physicsObjectDataCollectorPrinter);
+    
+    string res = physicsObjectDataCollectorPrinter.CStr();
+    
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = physicsObjectDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    physicsObjectDataCollectorDoc.InsertFirstChild(timeElem);
+    
+    physicsObjectDataCollectorPrinter.ClearBuffer();
+    physicsObjectDataCollectorDoc.Print(&physicsObjectDataCollectorPrinter);
 
-    string res;
+    res = "";
 
     if (!raw)
     {
-        res = "BEG\n";
+        res += "BEG\n";
         res += physicsObjectDataCollectorPrinter.CStr();
         res += "END";
     }
     else
     {
-        res = physicsObjectDataCollectorPrinter.CStr();
+        res += physicsObjectDataCollectorPrinter.CStr();
     }
 
     return res;
@@ -173,6 +204,19 @@ void PhysicsObjectDataCollector::clear()
     }
 
     pos.clear();
+}
+
+void PhysicsObjectDataCollector::clearLast(int client)
+{
+    last[client] = "";
+}
+        
+void PhysicsObjectDataCollector::clearAllLast()
+{
+    for (size_t i = 0; i < last.size(); i++)
+    {
+        last[i] = "";
+    }
 }
 
 PhysicsObjectDataCollector::~PhysicsObjectDataCollector() 

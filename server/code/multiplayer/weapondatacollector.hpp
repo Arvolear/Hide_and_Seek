@@ -20,14 +20,18 @@ class WeaponDataCollector
         mutable map < string, float > speeds;
         mutable map < string, float > powers;
 
+        mutable vector < string > last;
+
     public:
-        WeaponDataCollector();
+        WeaponDataCollector(int clients);
 
         void collect(map < string, PhysicsObject* > physicsObjects);
 
-        string getMergedData(string fileName, bool raw = false) const;
+        string getMergedData(string fileName, int client, bool raw = false) const;
 
         void clear(); 
+        void clearLast(int client);
+        void clearAllLast();
 
         ~WeaponDataCollector();
 };

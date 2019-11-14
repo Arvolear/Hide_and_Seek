@@ -13,7 +13,10 @@
 
 #include "playerdatacollector.hpp"
         
-PlayerDataCollector::PlayerDataCollector() {}
+PlayerDataCollector::PlayerDataCollector(int clients)
+{
+    last.resize(clients, "");
+}
 
 void PlayerDataCollector::collect(Player* player)
 {
@@ -76,7 +79,7 @@ void PlayerDataCollector::collect(vector < Player* > players)
     }
 }
 
-string PlayerDataCollector::getData(bool weapons, bool raw) const
+string PlayerDataCollector::getData(int client, bool weapons, bool raw) const
 {
     if (playerIDs.empty())
     {
@@ -84,16 +87,11 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
     }
 
     XMLDocument playerDataCollectorDoc;
-
+    
     /* root */
     XMLNode* root = playerDataCollectorDoc.NewElement("Soldiers");
     playerDataCollectorDoc.InsertFirstChild(root);
 
-    /* timestamp */
-    XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-    
     for (size_t i = 0; i < playerIDs.size(); i++)
     {
         XMLElement* soldierElem = playerDataCollectorDoc.NewElement("soldier");
@@ -152,7 +150,26 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
     XMLPrinter playerDataCollectorPrinter;
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
-    string res = "";
+    string res = playerDataCollectorPrinter.CStr();
+    
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    playerDataCollectorDoc.InsertFirstChild(timeElem);
+    
+    playerDataCollectorPrinter.ClearBuffer();
+    playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
+
+    res = "";
 
     if (!raw)
     {
@@ -168,7 +185,7 @@ string PlayerDataCollector::getData(bool weapons, bool raw) const
     return res; 
 }
         
-string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool raw) const
+string PlayerDataCollector::getMergedData(string fileName, int client, bool weapons, bool raw) const
 {
     if (playerIDs.empty())
     {
@@ -186,11 +203,6 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
         throw runtime_error("ERROR::PlayerDataCollector::getMergedData() failed to load XML");
     }
     
-    /* timestamp */
-    XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     XMLElement* soldierElem = root->FirstChildElement("soldier");
 
     while (soldierElem)
@@ -290,8 +302,27 @@ string PlayerDataCollector::getMergedData(string fileName, bool weapons, bool ra
     /* printer */
     XMLPrinter playerDataCollectorPrinter;
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
+    
+    string res = playerDataCollectorPrinter.CStr();
+    
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    playerDataCollectorDoc.InsertFirstChild(timeElem);
+   
+    playerDataCollectorPrinter.ClearBuffer();
+    playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
-    string res = "";
+    res = "";
 
     if (!raw)
     {
@@ -319,6 +350,19 @@ void PlayerDataCollector::clear()
     }
 
     models.clear();
+}
+
+void PlayerDataCollector::clearLast(int client)
+{
+    last[client] = "";
+}
+
+void PlayerDataCollector::clearAllLast()
+{
+    for (size_t i = 0; i < last.size(); i++)
+    {
+        last[i] = "";
+    }
 }
 
 PlayerDataCollector::~PlayerDataCollector() 

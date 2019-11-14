@@ -123,6 +123,14 @@ double Global::toDegs(double rads)
     return rads * 180.0 / 3.14159265;
 }
 
+unsigned int Global::getTime() const
+{
+    auto now = chrono::system_clock::now();
+    unsigned long long time = chrono::duration_cast < chrono::milliseconds >(now.time_since_epoch()).count();
+
+    return time % 1000000;
+}
+
 Global::~Global() 
 {
     delete gen;

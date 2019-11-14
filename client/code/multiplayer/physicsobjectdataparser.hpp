@@ -26,7 +26,7 @@ class PhysicsObjectDataParser
 
         void parse(XMLElement* objElem);
         
-        void updatePhysicsObject(GameObject* gameObject, bool interpolation = false);
+        void updatePhysicsObject(GameObject* gameObject, bool interpolation = false, unsigned int timeStamp = 0);
 
         vector < string > getNames() const;
 

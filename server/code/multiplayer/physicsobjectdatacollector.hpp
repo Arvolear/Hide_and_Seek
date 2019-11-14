@@ -15,16 +15,20 @@ class PhysicsObjectDataCollector
     private:
         mutable map < string, btScalar* > pos;
 
+        mutable vector < string > last;
+
     public:
-        PhysicsObjectDataCollector();
+        PhysicsObjectDataCollector(int clients);
 
         void collect(PhysicsObject* physicsObject);
         void collect(map < string, PhysicsObject* > physicsObjects);
 
-        string getData(bool raw = false) const;
-        string getMergedData(string fileName, bool raw = false) const;
+        string getData(int client, bool raw = false) const;
+        string getMergedData(string fileName, int client, bool raw = false) const;
 
-        void clear(); 
+        void clear();
+        void clearLast(int client);
+        void clearAllLast();
 
         ~PhysicsObjectDataCollector();
 };

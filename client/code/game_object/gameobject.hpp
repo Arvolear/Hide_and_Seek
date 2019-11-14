@@ -49,10 +49,12 @@ class GameObject
 
         mat4 localTransform;
 
-        float interpolationCoeff;
+        /* interpolation */
         bool interpolation;
-        mat4 nextTransform;
+        float interpolationCoeff;
+        float interpolationDelta;
         mat4 prevTransform;
+        mat4 nextTransform;
 
         void* userPointer;
 
@@ -88,7 +90,7 @@ class GameObject
         void clearLocalTransform();
         void clearPhysicsObjectTransform();
 
-        void setPhysicsObjectTransform(mat4 model, bool interpolation = false);
+        void setPhysicsObjectTransform(mat4 model, bool interpolation = false, unsigned int timeStamp = 0);
 
         void setUserPointer(void* userPointer);
         

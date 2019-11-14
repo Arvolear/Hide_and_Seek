@@ -14,14 +14,18 @@ class PlayerConnectionCollector
     private:
         vector < int > clients;
 
+        mutable vector < string > last;
+
     public:
-        PlayerConnectionCollector();
+        PlayerConnectionCollector(int clients);
 
         void collect(vector < int > clients, int playerID);
 
-        string getData() const;
+        string getData(int client) const;
 
         void clear();
+        void clearLast(int client);
+        void clearAllLast();
         
         ~PlayerConnectionCollector();
 };

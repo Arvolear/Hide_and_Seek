@@ -14,14 +14,18 @@ class PlayerDisconnectionCollector
     private:
         vector < int > old_clients;
 
+        mutable vector < string > last;
+
     public:
-        PlayerDisconnectionCollector();
+        PlayerDisconnectionCollector(int clients);
 
         void collect(vector < int > old_clients);
 
-        string getData() const;
+        string getData(int client) const;
 
         void clear();
+        void clearLast(int client);
+        void clearAllLast();
         
         ~PlayerDisconnectionCollector();
 };

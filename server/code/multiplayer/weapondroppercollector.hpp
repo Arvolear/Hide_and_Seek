@@ -18,14 +18,18 @@ class WeaponDropperCollector
 
         vector < string > names;
 
+        mutable vector < string > last;
+
     public:
-        WeaponDropperCollector();
+        WeaponDropperCollector(int clients);
 
         void collect(Player* player);
 
-        string getData() const;
+        string getData(int client) const;
 
         void clear();
+        void clearLast(int client);
+        void clearAllLast();
 
         ~WeaponDropperCollector();
 };

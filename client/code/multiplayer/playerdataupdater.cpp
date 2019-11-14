@@ -41,6 +41,7 @@
 PlayerDataUpdater::PlayerDataUpdater() 
 {
     objParser = new PhysicsObjectDataParser();
+    timeStamp = 0;
 }
 
 void PlayerDataUpdater::collect(string info)
@@ -48,6 +49,9 @@ void PlayerDataUpdater::collect(string info)
     XMLDocument playerDataUpdaterDoc;
     
     playerDataUpdaterDoc.Parse(info.c_str());
+
+    XMLElement* timeElem = playerDataUpdaterDoc.FirstChildElement("time");
+    timeElem->QueryUnsignedAttribute("time", &timeStamp);
 
     /* root */
     XMLNode* root = playerDataUpdaterDoc.FirstChildElement("Soldiers");
@@ -129,7 +133,7 @@ void PlayerDataUpdater::updateData(Player* player, bool interpolation, map < str
 {
     int playerID = player->getID();
 
-    objParser->updatePhysicsObject(player->getGameObject(), interpolation);
+    objParser->updatePhysicsObject(player->getGameObject(), interpolation, timeStamp);
 
     player->setSpeed(speeds[playerID]);
     player->updateModel(moveDirections[playerID]);
@@ -172,7 +176,7 @@ void PlayerDataUpdater::updateData(vector < Player* > players, bool interpolatio
             }
         }
         
-        objParser->updatePhysicsObject(player->getGameObject(), interpolation);
+        objParser->updatePhysicsObject(player->getGameObject(), interpolation, timeStamp);
 
         player->setSpeed(speeds[playerID]);
         player->updateModel(moveDirections[playerID]);
@@ -217,6 +221,8 @@ void PlayerDataUpdater::clear()
     moveDirections.clear();
     objParser->clear();
     pickedWeapons.clear();
+
+    timeStamp = 0;
 }
 
 PlayerDataUpdater::~PlayerDataUpdater() 

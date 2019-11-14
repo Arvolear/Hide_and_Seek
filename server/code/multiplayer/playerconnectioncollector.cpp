@@ -11,7 +11,10 @@
 
 #include "playerconnectioncollector.hpp"
         
-PlayerConnectionCollector::PlayerConnectionCollector() {}
+PlayerConnectionCollector::PlayerConnectionCollector(int clients) 
+{
+    last.resize(clients, "");
+}
 
 void PlayerConnectionCollector::collect(vector < int > clients, int playerID)
 {
@@ -19,18 +22,13 @@ void PlayerConnectionCollector::collect(vector < int > clients, int playerID)
     this->clients[playerID] = 0;
 }
 
-string PlayerConnectionCollector::getData() const
+string PlayerConnectionCollector::getData(int client) const
 {
     XMLDocument playerConnectionCollectorDoc;
 
     /* root */
     XMLNode* root = playerConnectionCollectorDoc.NewElement("Con");
     
-    /* timestamp */
-    XMLElement* timeElem = playerConnectionCollectorDoc.NewElement("time");
-    timeElem->SetAttribute("time", global.getTime());
-    //root->InsertFirstChild(timeElem);
-
     int j = 0;
     for (size_t i = 0; i < clients.size(); i++)
     {
@@ -46,6 +44,7 @@ string PlayerConnectionCollector::getData() const
 
     if (!j)
     {
+        last[client] = "";
         return "";
     }
 
@@ -54,8 +53,29 @@ string PlayerConnectionCollector::getData() const
     /* printer */
     XMLPrinter playerConnectionCollectorPrinter;
     playerConnectionCollectorDoc.Print(&playerConnectionCollectorPrinter);
+    
+    string res = playerConnectionCollectorPrinter.CStr();
+    
+    if (res == last[client])
+    {
+        return "";
+    }
+    else
+    {
+        last[client] = res;
+    }
+    
+    /* timestamp */
+    XMLElement* timeElem = playerConnectionCollectorDoc.NewElement("time");
+    timeElem->SetAttribute("time", global.getTime());
+    playerConnectionCollectorDoc.InsertFirstChild(timeElem);
+    
+    playerConnectionCollectorPrinter.ClearBuffer();
+    playerConnectionCollectorDoc.Print(&playerConnectionCollectorPrinter);
 
-    string res("BEG\n");
+    res = "";
+
+    res += "BEG\n";
     res += playerConnectionCollectorPrinter.CStr();
     res += "END";
 
@@ -65,6 +85,19 @@ string PlayerConnectionCollector::getData() const
 void PlayerConnectionCollector::clear()
 {
     clients.clear();
+}
+        
+void PlayerConnectionCollector::clearLast(int client)
+{
+    last[client] = "";
+}
+
+void PlayerConnectionCollector::clearAllLast()
+{
+    for (size_t i = 0; i < last.size(); i++)
+    {
+        last[i] = "";
+    }
 }
 
 PlayerConnectionCollector::~PlayerConnectionCollector() {}

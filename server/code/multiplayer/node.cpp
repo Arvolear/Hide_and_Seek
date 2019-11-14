@@ -254,22 +254,25 @@ void Node::checkActivity(int size, float timeoutSec)
 
 void Node::sendMSG(int to, string msg, bool force)
 {
-    if (msg.empty() || msg == "" || to <= 0)
+    if (msg == "" || to <= 0)
     {
         return;
     }
 
     /* check the same message */
-    for (size_t i = 0; i < client_sockets.size(); i++)
+    if (!force)
     {
-        if (client_sockets[i] == to || new_client_sockets[i] == to)
+        for (size_t i = 0; i < client_sockets.size(); i++)
         {
-            if (lastMsgs[i] == msg)
+            if (client_sockets[i] == to || new_client_sockets[i] == to)
             {
-                return;
-            }
+                if (lastMsgs[i] == msg)
+                {
+                    return;
+                }
 
-            break;
+                break;
+            }
         }
     }
 

@@ -20,16 +20,20 @@ class PlayerDataCollector
         mutable map < int, btVector3 > moveDirections;
         mutable map < int, vector < string > > pickedWeapons;
 
+        mutable vector < string > last;
+
     public:
-        PlayerDataCollector();
+        PlayerDataCollector(int clients);
 
         void collect(Player* player);
         void collect(vector < Player* > players);
 
-        string getData(bool weapons = false, bool raw = false) const;
-        string getMergedData(string fileName, bool weapons = false, bool raw = false) const;
+        string getData(int client, bool weapons = false, bool raw = false) const;
+        string getMergedData(string fileName, int client, bool weapons = false, bool raw = false) const;
 
         void clear();
+        void clearLast(int client);
+        void clearAllLast();
         
         ~PlayerDataCollector();
 };

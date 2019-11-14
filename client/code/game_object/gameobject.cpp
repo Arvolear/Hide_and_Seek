@@ -279,7 +279,7 @@ void GameObject::clearPhysicsObjectTransform()
     interpolationCoeff = 1.0;
 }
         
-void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
+void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation, unsigned int timeStamp)
 {
     if (!physicsObject)
     {
@@ -293,14 +293,18 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation)
         unique_ptr < btScalar > transform(global.glmMat42BtScalar(model));
         physicsObject->setTransform(transform.get());
 
-        prevTransform = nextTransform = model;
         interpolationCoeff = 1.0;
+        interpolationDelta = 0.0;
+        prevTransform = nextTransform = model;
     }
     else
     {
+        unsigned int diffMill = global.getTime() - timeStamp + 50;
+
+        interpolationCoeff = 0.0;
+        interpolationDelta = 1.0 / (diffMill / (Global::fpsCounter->getFramesTime() * 1000.0));
         prevTransform = nextTransform;
         nextTransform = model;
-        interpolationCoeff = 0.0;
     }
 }
 
@@ -447,7 +451,7 @@ void GameObject::render(Shader* shader, bool viewCull)
 
         physicsObject->setTransform(scalarModel.get());
 
-        interpolationCoeff += 0.2;
+        interpolationCoeff += interpolationDelta;
     }
     
     if (visible && viewCull && viewFrustum && boundSphere)
