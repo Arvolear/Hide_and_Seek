@@ -742,7 +742,7 @@
         <rot x="0.0" y="1.0" z="0.0" angle="-10.0"/>
     </obj>
     
-    <obj name="gate0">
+    <obj name="gate00">
         <shape type="compound">
             <cshape type="box" x="0.15" y="4.0" z="0.15">
                 <pos x="-4.3" y="0.0" z="0.2"/>
@@ -759,18 +759,271 @@
         <rot x="0.0" y="1.0" z="0.0" angle="7.0"/>
     </obj>
     
+    <obj name="gate01">
+        <shape type="compound">
+            <cshape type="box" x="0.15" y="4.0" z="0.15">
+                <pos x="-4.3" y="0.0" z="0.2"/>
+            </cshape>
+            <cshape type="box" x="0.15" y="4.0" z="0.15">
+                <pos x="4.2" y="0.0" z="0.2"/>
+            </cshape>
+            <cshape type="box" x="4.5" y="0.35" z="0.15">
+                <pos x="0.0" y="4.5" z="0.2"/>
+            </cshape>
+        </shape>
+        <mass mass="0.0"/>
+        <pos x="-20.2" y="3.7" z="-4.8"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="70.0"/>
+    </obj>
+    
     <obj name="mountain00">
-        <shape type="box" x="45.0" y="20.0" z="24.0"/>
+        <shape type="box" x="45.0" y="20.0" z="20.0"/>
         <mass mass="0.0"/>
         <pos x="60.0" y="20.0" z="-15.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-80.0"/>
     </obj>
     
     <obj name="mountain01">
-        <shape type="box" x="45.0" y="20.0" z="24.0"/>
+        <shape type="box" x="45.0" y="20.0" z="20.0"/>
         <mass mass="0.0"/>
         <pos x="25.0" y="20.0" z="-50.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="170.0"/>
+    </obj>
+    
+    <obj name="fence20">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="43.5" y="11.9" z="15.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="10.0"/>
+    </obj>
+    
+    <obj name="fence21">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="40.6" y="11.9" z="3.8"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="20.0"/>
+    </obj>
+    
+    <obj name="fence22">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="36.0" y="11.9" z="-7.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="25.0"/>
+    </obj>
+    
+    <obj name="fence23">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="29.2" y="11.9" z="-17.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="45.0"/>
+    </obj>
+    
+    <obj name="fence24">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="19.6" y="11.9" z="-24.8"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="60.0"/>
+    </obj>
+    
+    <obj name="fence25">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="9.0" y="11.9" z="-30.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="65.0"/>
+    </obj>
+    
+    <obj name="fence26">
+        <shape type="box" x="0.15" y="4.0" z="6.1"/>
+        <mass mass="0.0"/>
+        <pos x="-2.2" y="11.9" z="-34.6"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="75.0"/>
+    </obj>
+    
+    <obj name="toilet0">
+        <shape type="box" x="2.1" y="3.7" z="2.1"/>
+        <mass mass="0.0"/>
+        <pos x="38.0" y="11.5" z="8.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="10.0"/>
+    </obj>
+    
+    <obj name="bench0">
+        <shape type="box" x="2.1" y="0.8" z="0.7"/>
+        <mass mass="0.0"/>
+        <pos x="38.0" y="8.6" z="14.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="95.0"/>
+    </obj>
+    
+    <obj name="poplar_tree04">
+        <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
+        <mass mass="0.0"/>
+        <pos x="36.0" y="20.3" z="2.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
+    </obj>
+    
+    <obj name="poplar_tree05">
+        <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
+        <mass mass="0.0"/>
+        <pos x="31.0" y="20.3" z="3.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-20.0"/>
+    </obj>
+    
+    <obj name="poplar_tree06">
+        <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
+        <mass mass="0.0"/>
+        <pos x="32.0" y="20.3" z="15.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-40.0"/>
+    </obj>
+    
+    <obj name="poplar_tree07">
+        <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
+        <mass mass="0.0"/>
+        <pos x="40.0" y="20.3" z="19.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-60.0"/>
+    </obj>
+    
+    <obj name="barrier10">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="20.0" y="8.9" z="15.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
+    </obj>
+    
+    <obj name="barrier11">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="19.2" y="8.9" z="12.4"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-60.0"/>
+    </obj>
+    
+    <obj name="barrier12">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="17.3" y="8.9" z="10.4"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
+    </obj>
+    
+    <obj name="barrier13">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="15.3" y="8.9" z="9.2"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-121.0"/>
+    </obj>
+    
+    <obj name="barrier14">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="0.0" y="8.9" z="13.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-10.0"/>
+    </obj>
+    
+    <obj name="barrier15">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="2.1" y="8.9" z="10.7"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="20.0"/>
+    </obj>
+    
+    <obj name="barrier16">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="4.7" y="8.9" z="10.3"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
+    </obj>
+    
+    <obj name="barrier17">
+        <shape type="box" x="1.1" y="1.1" z="1.1"/>
+        <mass mass="0.0"/>
+        <pos x="7.2" y="8.9" z="10.8"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-20.0"/>
+    </obj>
+    
+    <obj name="tent0">
+        <shape type="compound">
+            <cshape type="box" x="0.15" y="4.0" z="0.15">
+                <pos x="0.0" y="0.0" z="0.0"/>
+            </cshape>
+        </shape>
+        <mass mass="0.0"/>
+        <pos x="18.0" y="7.8" z="-8.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-30.0"/>
+    </obj>
+    
+    <obj name="crate00">
+        <shape type="box" x="3.6" y="1.2" z="1.2"/>
+        <mass mass="0.0"/>
+        <pos x="14.1" y="9.1" z="-14.5"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
+    </obj>
+    
+    <obj name="crate01">
+        <shape type="box" x="3.6" y="1.2" z="1.2"/>
+        <mass mass="0.0"/>
+        <pos x="14.2" y="11.5" z="-14.6"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
+    </obj>
+    
+    <obj name="crate02">
+        <shape type="box" x="3.6" y="1.2" z="1.2"/>
+        <mass mass="0.0"/>
+        <pos x="10.4" y="9.1" z="-8.1"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
+    </obj>
+    
+    <obj name="watch_tower0">
+        <shape type="compound">
+            <cshape type="box" x="0.15" y="4.0" z="0.15">
+                <pos x="0.0" y="0.0" z="0.0"/>
+            </cshape>
+        </shape>
+        <mass mass="0.0"/>
+        <pos x="-13.0" y="6.7" z="9.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-40.0"/>
+    </obj>
+    
+    <obj name="truck1">
+        <shape type="compound">
+            <cshape type="box" x="0.15" y="4.0" z="0.15">
+                <pos x="0.0" y="0.0" z="0.0"/>
+            </cshape>
+        </shape>
+        <mass mass="0.0"/>
+        <pos x="-3.0" y="7.8" z="-11.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-80.0"/>
+    </obj>
+    
+    <obj name="bonfire0">
+        <shape type="box" x="0.3" y="0.4" z="0.3"/>
+        <mass mass="0.0"/>
+        <pos x="-10.0" y="8.2" z="-7.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
+    </obj>
+    
+    <obj name="fence30">
+        <shape type="box" x="0.2" y="1.25" z="3.6"/>
+        <mass mass="0.0"/>
+        <pos x="-15.5" y="9.1" z="-16.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-13.0"/>
+    </obj>
+    
+    <obj name="fence31">
+        <shape type="box" x="0.2" y="1.25" z="3.6"/>
+        <mass mass="0.0"/>
+        <pos x="-21.5" y="9.1" z="5.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-14.0"/>
+    </obj>
+    
+    <obj name="fence32">
+        <shape type="box" x="0.2" y="1.25" z="3.6"/>
+        <mass mass="0.0"/>
+        <pos x="-6.5" y="9.1" z="17.4"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-94.0"/>
+    </obj>
+    
+    <obj name="fence33">
+        <shape type="box" x="0.2" y="1.25" z="3.6"/>
+        <mass mass="0.0"/>
+        <pos x="17.5" y="9.1" z="22.7"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-103.0"/>
     </obj>
     
 </Objs>
