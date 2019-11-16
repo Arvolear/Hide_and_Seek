@@ -88,6 +88,27 @@ void PhysicsObjectDataParser::parse(XMLElement* objElem)
 
             collShapes.insert({name, new btCapsuleShape(radius, height)});
         }
+        else if (!strcmp(type, "convex"))
+        {
+            ConvexHullShape* CHS = new ConvexHullShape();
+
+            XMLElement* pointElem = shapeElem->FirstChildElement("point");
+
+            while (pointElem)
+            {
+                float x = 0, y = 0, z = 0;
+
+                pointElem->QueryFloatAttribute("x", &x);
+                pointElem->QueryFloatAttribute("y", &y);
+                pointElem->QueryFloatAttribute("z", &z);
+
+                CHS->addPoint(btVector3(x, y, z));
+
+                pointElem = pointElem->NextSiblingElement();
+            }
+
+            convShapes.insert({name, CHS});
+        }
         else if (!strcmp(type, "compound"))
         {
             CompoundShape* CS = new CompoundShape;
@@ -139,6 +160,29 @@ void PhysicsObjectDataParser::parse(XMLElement* objElem)
                     childShapeElem->QueryFloatAttribute("h", &height);
 
                     childShape = new btCapsuleShape(radius, height);
+                }
+                else if (!strcmp(childType, "convex"))
+                {
+                    ConvexHullShape* CHS = new ConvexHullShape();
+
+                    XMLElement* pointElem = childShapeElem->FirstChildElement("point");
+
+                    while (pointElem)
+                    {
+                        float x = 0, y = 0, z = 0;
+
+                        pointElem->QueryFloatAttribute("x", &x);
+                        pointElem->QueryFloatAttribute("y", &y);
+                        pointElem->QueryFloatAttribute("z", &z);
+
+                        CHS->addPoint(btVector3(x, y, z));
+
+                        pointElem = pointElem->NextSiblingElement();
+                    }
+
+                    childShape = CHS->getShape();
+
+                    delete CHS;
                 }
                 else
                 {
@@ -242,6 +286,7 @@ void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool i
 
     auto collIt = collShapes.find(gameObject->getName());
     auto compIt = compShapes.find(gameObject->getName());
+    auto convIt = convShapes.find(gameObject->getName());
     auto massIt = masses.find(gameObject->getName());
     auto modelIt = models.find(gameObject->getName());
     auto aFactorIt = aFactors.find(gameObject->getName());
@@ -249,6 +294,10 @@ void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool i
     if (collIt != collShapes.end())
     {
         gameObject->getPhysicsObject()->setShape(collIt->second); 
+    }
+    else if (convIt != convShapes.end())
+    {
+        gameObject->getPhysicsObject()->setShape(convIt->second); 
     }
     else if (compIt != compShapes.end())
     {

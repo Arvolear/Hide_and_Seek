@@ -25,9 +25,30 @@ class CompoundShape
 
         btCompoundShape* getShape() const;
         btCollisionShape* getChildShape(unsigned int index) const;
+        vector < btCollisionShape* > getChildrenShapes() const;
         btTransform getChildTransform(unsigned int index) const;
 
         ~CompoundShape();
+};
+
+class ConvexHullShape
+{
+    private:
+        btConvexHullShape* shape;
+        vector < btVector3 > points;
+
+    public:
+        ConvexHullShape();
+        
+        void setShape(btConvexHullShape* shape);
+
+        void addPoint(btVector3 point);
+
+        btConvexHullShape* getShape() const;
+        btVector3 getPoint(unsigned int index) const;
+        vector < btVector3 > getPoints() const;
+
+        ~ConvexHullShape();
 };
 
 class PhysicsObject
@@ -40,6 +61,7 @@ class PhysicsObject
 
         float mass;
         btCollisionShape* phShape;
+        ConvexHullShape* conShape;
         CompoundShape* comShape;
         btRigidBody* body;
 
@@ -52,9 +74,11 @@ class PhysicsObject
     public:
         PhysicsObject(World* physicsWorld);
         PhysicsObject(World* physicsWorld, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
-        PhysicsObject(World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation);
+        PhysicsObject(World* physicsWorld, ConvexHullShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
+        PhysicsObject(World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation = btQuaternion(btVector3(0, 0, 1), 0));
 
         void setShape(btCollisionShape* shape);
+        void setShape(ConvexHullShape* shape);
         void setShape(CompoundShape* shape);
         void setMass(float mass, bool add = true);
         void setPosition(btVector3 position, bool add = true);
@@ -69,6 +93,7 @@ class PhysicsObject
 
         float getMass() const;
         btCollisionShape* getShape() const;
+        ConvexHullShape* getConvexHullShape() const;
         CompoundShape* getCompoundShape() const;
         btRigidBody* getRigidBody() const;
         bool isCollidable() const;

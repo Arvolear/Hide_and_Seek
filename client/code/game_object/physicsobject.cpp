@@ -15,6 +15,8 @@
 
 #include "openglmotionstate.hpp"
 #include "physicsobject.hpp"
+
+/********* COMPOUND SHAPE **********/
         
 CompoundShape::CompoundShape()
 {
@@ -52,6 +54,11 @@ btCollisionShape* CompoundShape::getChildShape(unsigned int index) const
 
     return childShapes[index];
 }
+
+vector < btCollisionShape* > CompoundShape::getChildrenShapes() const
+{
+    return childShapes;
+}
         
 btTransform CompoundShape::getChildTransform(unsigned int index) const
 {
@@ -75,6 +82,45 @@ CompoundShape::~CompoundShape()
         delete childShapes[i];
     }
 }
+
+/********* CONVEX HULL SHAPE **********/
+
+ConvexHullShape::ConvexHullShape()
+{
+    shape = new btConvexHullShape();
+}
+
+void ConvexHullShape::setShape(btConvexHullShape* shape)
+{
+    this->shape = shape;
+}
+
+void ConvexHullShape::addPoint(btVector3 point)
+{
+    shape->addPoint(point);
+}
+
+btConvexHullShape* ConvexHullShape::getShape() const
+{
+    return shape;
+}
+
+btVector3 ConvexHullShape::getPoint(unsigned int index) const
+{
+    if (index < 0 || index >= points.size())
+    {
+        throw range_error("ERROR convexhull shape has no " + to_string(index) + " point");
+    }
+    
+    return points[index];
+}
+
+vector < btVector3 > ConvexHullShape::getPoints() const
+{
+    return points;
+}
+
+ConvexHullShape::~ConvexHullShape() {}
 
 /********* PHYSICS OBJECT **********/
 
@@ -125,6 +171,7 @@ PhysicsObject::PhysicsObject(World* physicsWorld)
     this->physicsWorld = physicsWorld;
     this->mass = 0;
     this->phShape = nullptr;
+    this->conShape = nullptr;
     this->comShape = nullptr;
     this->body = nullptr;
     this->collidable = true;
@@ -144,6 +191,7 @@ PhysicsObject::PhysicsObject(World* physicsWorld, btCollisionShape* shape, float
     this->physicsWorld = physicsWorld;
     this->mass = mass;
     this->body = nullptr;
+    this->conShape = nullptr;
     this->comShape = nullptr;
     this->collidable = true;
     this->stat = mass ? false : true;
@@ -159,11 +207,35 @@ PhysicsObject::PhysicsObject(World* physicsWorld, btCollisionShape* shape, float
     updateBody(shape, mass, position, rotation);
 }
 
+PhysicsObject::PhysicsObject(World* physicsWorld, ConvexHullShape* shape, float mass, btVector3 position, btQuaternion rotation)
+{
+    this->physicsWorld = physicsWorld;
+    this->mass = mass;
+    this->body = nullptr;
+    this->conShape = nullptr;
+    this->comShape = nullptr;
+    this->collidable = true;
+    this->stat = mass ? false : true;
+    this->userPointer = nullptr;
+
+    btTransform transform;
+    transform.setIdentity();
+
+    motionState = new OpenGLMotionState(transform);
+    body = new btRigidBody(mass, motionState, nullptr);
+    body->setUserPointer(this);
+    
+    this->conShape = shape;
+    
+    updateBody(shape->getShape(), mass, position, rotation);
+}
+
 PhysicsObject::PhysicsObject(World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
 {
     this->physicsWorld = physicsWorld;
     this->mass = mass;
     this->body = nullptr;
+    this->conShape = nullptr;
     this->comShape = nullptr;
     this->collidable = true;
     this->stat = mass ? false : true;
@@ -185,16 +257,32 @@ void PhysicsObject::setShape(btCollisionShape* shape)
 {
     delete this->phShape;
     this->phShape = nullptr;
+    delete this->conShape;
+    this->conShape = nullptr;
     delete this->comShape;
     this->comShape = nullptr;
 
     updateBody(shape, mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation());
 }
 
+void PhysicsObject::setShape(ConvexHullShape* shape)
+{
+    delete this->phShape;
+    this->phShape = nullptr;
+    delete this->conShape;
+    this->conShape = shape;
+    delete this->comShape;
+    this->comShape = nullptr;
+    
+    updateBody(shape->getShape(), mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation());
+}
+
 void PhysicsObject::setShape(CompoundShape* shape)
 {
     delete this->phShape;
     this->phShape = nullptr;
+    delete this->conShape;
+    this->conShape = nullptr;
     delete this->comShape;
     this->comShape = shape;
     
@@ -308,6 +396,11 @@ btCollisionShape* PhysicsObject::getShape() const
     return phShape;
 }
 
+ConvexHullShape* PhysicsObject::getConvexHullShape() const
+{
+    return conShape;
+}
+
 CompoundShape* PhysicsObject::getCompoundShape() const
 {
     return comShape;
@@ -341,6 +434,7 @@ PhysicsObject::~PhysicsObject()
     }
 
     delete phShape;
+    delete conShape;
     delete comShape;
     delete body;
     delete motionState;

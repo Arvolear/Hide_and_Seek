@@ -80,6 +80,28 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
             PO->setShape(new btCapsuleShape(radius, height));    
             shape = true;
         }
+        else if (!strcmp(type, "convex"))
+        {
+            ConvexHullShape* CHS = new ConvexHullShape();
+
+            XMLElement* pointElem = shapeElem->FirstChildElement("point");
+
+            while (pointElem)
+            {
+                float x = 0, y = 0, z = 0;
+
+                pointElem->QueryFloatAttribute("x", &x);
+                pointElem->QueryFloatAttribute("y", &y);
+                pointElem->QueryFloatAttribute("z", &z);
+
+                CHS->addPoint(btVector3(x, y, z));
+
+                pointElem = pointElem->NextSiblingElement();
+            }
+
+            PO->setShape(CHS);
+            shape = true;
+        }
         else if (!strcmp(type, "compound"))
         {
             CompoundShape* CS = new CompoundShape;
@@ -131,6 +153,29 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
                     childShapeElem->QueryFloatAttribute("h", &height);
 
                     childShape = new btCapsuleShape(radius, height);
+                }
+                else if (!strcmp(childType, "convex"))
+                {
+                    ConvexHullShape* CHS = new ConvexHullShape();
+
+                    XMLElement* pointElem = childShapeElem->FirstChildElement("point");
+
+                    while (pointElem)
+                    {
+                        float x = 0, y = 0, z = 0;
+
+                        pointElem->QueryFloatAttribute("x", &x);
+                        pointElem->QueryFloatAttribute("y", &y);
+                        pointElem->QueryFloatAttribute("z", &z);
+
+                        CHS->addPoint(btVector3(x, y, z));
+
+                        pointElem = pointElem->NextSiblingElement();
+                    }
+
+                    childShape = CHS->getShape();
+
+                    delete CHS;
                 }
                 else
                 {
@@ -303,6 +348,28 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
             WE->setShape(new btCapsuleShape(radius, height));    
             shape = true;
         }
+        else if (!strcmp(type, "convex"))
+        {
+            ConvexHullShape* CHS = new ConvexHullShape();
+
+            XMLElement* pointElem = shapeElem->FirstChildElement("point");
+
+            while (pointElem)
+            {
+                float x = 0, y = 0, z = 0;
+
+                pointElem->QueryFloatAttribute("x", &x);
+                pointElem->QueryFloatAttribute("y", &y);
+                pointElem->QueryFloatAttribute("z", &z);
+
+                CHS->addPoint(btVector3(x, y, z));
+
+                shape = true;
+                pointElem = pointElem->NextSiblingElement();
+            }
+
+            WE->setShape(CHS);
+        }
         else if (!strcmp(type, "compound"))
         {
             CompoundShape* CS = new CompoundShape;
@@ -354,6 +421,29 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
                     childShapeElem->QueryFloatAttribute("h", &height);
 
                     childShape = new btCapsuleShape(radius, height);
+                }
+                else if (!strcmp(childType, "convex"))
+                {
+                    ConvexHullShape* CHS = new ConvexHullShape();
+
+                    XMLElement* pointElem = childShapeElem->FirstChildElement("point");
+
+                    while (pointElem)
+                    {
+                        float x = 0, y = 0, z = 0;
+
+                        pointElem->QueryFloatAttribute("x", &x);
+                        pointElem->QueryFloatAttribute("y", &y);
+                        pointElem->QueryFloatAttribute("z", &z);
+
+                        CHS->addPoint(btVector3(x, y, z));
+
+                        pointElem = pointElem->NextSiblingElement();
+                    }
+
+                    childShape = CHS->getShape();
+
+                    delete CHS;
                 }
                 else
                 {

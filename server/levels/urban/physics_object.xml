@@ -724,7 +724,13 @@
     <!-- ********************************************************* -->
 
     <obj name="cliff0">
-        <shape type="box" x="1.0" y="1.0" z="1.0"/>
+        <shape type="compound">
+            <cshape type="convex">
+                <point x="-20.0" y="4.2" z="0.0"/>
+                <point x="20.0" y="4.2" z="0.0"/>
+                <point x="0.0" y="4.2" z="-20.0"/>
+            </cshape>
+        </shape>
         <mass mass="0.0"/>
         <pos x="20.0" y="3.7" z="2.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-105.0"/>

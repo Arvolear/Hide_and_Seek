@@ -16,6 +16,7 @@ class PhysicsObjectDataParser
     private:
         vector < string > names;
         map < string, btCollisionShape* > collShapes; 
+        map < string, ConvexHullShape* > convShapes;
         map < string, CompoundShape* > compShapes;
         map < string, float > masses;
         map < string, mat4 > models;
