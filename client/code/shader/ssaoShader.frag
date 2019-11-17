@@ -4,13 +4,12 @@ layout (location = 0) out float ssaoColor;
 
 struct GBuffer
 {
-    sampler2D texture_position;
-    sampler2D texture_normal;
+    sampler2D texture_normalDepth;
 };
 
 in vec2 UV;
 
-#define MAX_KERNEL_SIZE 128
+#define MAX_KERNEL_SIZE 64
 
 uniform int kernelSize;
 uniform int noiseSize;
@@ -30,11 +29,11 @@ uniform vec3 sphereSamples[MAX_KERNEL_SIZE];
 
 uniform vec2 renderSize;
 
-vec4 reconstruct_vs_pos(vec2 tc)
+vec4 reconstructViewPos(vec2 tc)
 {
-    float depth = texture(gBuffer.texture_position, tc).x;
+    float depth = texture(gBuffer.texture_normalDepth, tc).w;
     
-    vec4 p = vec4(tc.x, tc.y, depth, 1.0) * 2.0 + 1.0;
+    vec4 p = vec4(tc.x * 2.0 - 1.0, tc.y * 2.0 - 1.0, depth, 1.0);
     vec4 p_cs = invProjection * p;
 
     return p_cs / p_cs.w;
@@ -44,8 +43,8 @@ void main()
 {
     vec2 noiseScale = renderSize / float(noiseSize);
 
-    vec3 fragPos = reconstruct_vs_pos(UV).rgb;
-    vec3 N = normalize(texture(gBuffer.texture_normal, UV).rgb);
+    vec3 fragPos = reconstructViewPos(UV).rgb;
+    vec3 N = normalize(texture(gBuffer.texture_normalDepth, UV).rgb);
     vec3 randomVec = normalize(texture(texture_noise, UV * noiseScale).rgb);
 
     vec3 T = normalize(randomVec - N * dot(randomVec, N));
@@ -64,7 +63,7 @@ void main()
         sphereOffset.xyz /= sphereOffset.w;
         sphereOffset = sphereOffset * 0.5 + 0.5;
 
-        float sphereSampleDepth = reconstruct_vs_pos(sphereOffset.xy).z;
+        float sphereSampleDepth = reconstructViewPos(sphereOffset.xy).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sphereSampleDepth));
         occlusion += (sphereSampleDepth >= sphereSample.z + bias ? 1.0 : 0.0) * rangeCheck;

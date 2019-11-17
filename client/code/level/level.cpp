@@ -107,8 +107,7 @@ void Level::loadLevel(string level)
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, // albedo
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, // metroughao
                 {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}, // scatter
-                {GL_R16F, GL_RED, GL_FLOAT}, // ssao depth 
-                {GL_RGB16F, GL_RGB, GL_FLOAT}, // ssao norm
+                {GL_RGBA16F, GL_RGBA, GL_FLOAT}, // ssao norm + depth
                 {GL_R8, GL_RED, GL_UNSIGNED_BYTE} // static depth
             });
     

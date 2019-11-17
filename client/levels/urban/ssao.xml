@@ -6,7 +6,7 @@
         <kernelsize size="4"/>
         <noisesize size="4"/>
         <blurscale scale="2"/>
-        <radius radius="2.0"/>
+        <radius radius="1.0"/>
         <bias bias="0.025"/>
         <power power="1.0"/>
     </ssao>

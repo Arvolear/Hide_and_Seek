@@ -7,10 +7,9 @@ layout (location = 3) out vec4 gMetRoughAOCos;
 
 layout (location = 4) out vec4 gLightScattering;
 
-layout (location = 5) out float ssaoPosition;
-layout (location = 6) out vec3 ssaoNormal;
+layout (location = 5) out vec4 ssaoNormalDepth;
 
-layout (location = 7) out float staticDepth;
+layout (location = 6) out float staticDepth;
 
 struct Material
 {
@@ -28,7 +27,6 @@ in vec3 fragmentNorm;
 
 in mat3 TBN;
 
-in vec3 ssaoFragmentPos;
 in vec3 ssaoFragmentNorm;
 
 in mat3 ssaoTBN;
@@ -60,27 +58,26 @@ void main()
     
     gLightScattering = vec4(0, 0, 0, texture(material.texture_diffuse1, textureCoords).a);
 
-    /*** SSAO ***/
-
-    ssaoPosition = ssaoFragmentPos.z;
-    
-    if (ssaoTBN == mat3(0))
-    {
-        ssaoNormal = normalize(ssaoFragmentNorm); 
-    }
-    else /* ssao normal mapping */
-    {
-        ssaoNormal = texture(material.texture_normal1, textureCoords).rgb;
-        ssaoNormal = normalize(ssaoNormal * 2.0 - 1.0);
-        ssaoNormal = normalize(ssaoTBN * ssaoNormal);
-    }
-
     if (isStatic == 1)
     {
         staticDepth = gl_FragCoord.z;
     }
     else
     {
+        /*** SSAO only for dynamic objects ***/
+        ssaoNormalDepth.w = gl_FragCoord.z;
+        
+        if (ssaoTBN == mat3(0))
+        {
+            ssaoNormalDepth.xyz = normalize(ssaoFragmentNorm); 
+        }
+        else /* ssao normal mapping */
+        {
+            ssaoNormalDepth.xyz = texture(material.texture_normal1, textureCoords).rgb;
+            ssaoNormalDepth.xyz = normalize(ssaoNormalDepth.xyz * 2.0 - 1.0);
+            ssaoNormalDepth.xyz = normalize(ssaoTBN * ssaoNormalDepth.xyz);
+        }
+
         staticDepth = 0.0; 
     }
 

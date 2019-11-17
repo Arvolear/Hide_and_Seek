@@ -111,20 +111,15 @@ void GBuffer::render(Shader* shader)
     /* static depth */
     glActiveTexture(GL_TEXTURE0 + 4);
     shader->setInt("gBuffer.texture_staticDepth", 4);
-    glBindTexture(GL_TEXTURE_2D, texturesID[7]);
+    glBindTexture(GL_TEXTURE_2D, texturesID[6]);
 }
         
 void GBuffer::renderSsao(Shader* shader)
 {
-    /* ssao position */
+    /* ssao normal + depth */
     glActiveTexture(GL_TEXTURE0);
-    shader->setInt("gBuffer.texture_position", 0);
+    shader->setInt("gBuffer.texture_normalDepth", 0);
     glBindTexture(GL_TEXTURE_2D, texturesID[5]);
-
-    /* ssao normal */
-    glActiveTexture(GL_TEXTURE0 + 1);
-    shader->setInt("gBuffer.texture_normal", 1);
-    glBindTexture(GL_TEXTURE_2D, texturesID[6]);
 }
 
 void GBuffer::renderStaticDepth(Shader* shader)
@@ -132,7 +127,7 @@ void GBuffer::renderStaticDepth(Shader* shader)
     /* static depth */
     glActiveTexture(GL_TEXTURE0);
     shader->setInt("depthTexture", 0);
-    glBindTexture(GL_TEXTURE_2D, texturesID[7]);
+    glBindTexture(GL_TEXTURE_2D, texturesID[6]);
 }
         
 GBuffer::~GBuffer() 

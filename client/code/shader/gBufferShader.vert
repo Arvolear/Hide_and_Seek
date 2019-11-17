@@ -29,7 +29,6 @@ out vec3 fragmentNorm;
 
 out mat3 TBN;
 
-out vec3 ssaoFragmentPos;
 out vec3 ssaoFragmentNorm;
 
 out mat3 ssaoTBN;
@@ -70,7 +69,6 @@ void main()
     fragmentPos = vec3(model * localTransform * instanceMat * bonesTransform * vec4(position, 1.0));
     fragmentNorm = vec3(model * localTransform * instanceMat * bonesTransform * vec4(normal, 0.0));
 
-    ssaoFragmentPos = vec3(view * vec4(fragmentPos, 1.0));
     ssaoFragmentNorm = vec3(view * vec4(fragmentNorm, 0.0));
 
     /* flip UV */

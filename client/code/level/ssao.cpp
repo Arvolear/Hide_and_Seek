@@ -133,8 +133,8 @@ void SSAO::renderInfo(Shader* shader)
     shader->setFloat("bias", bias);
     shader->setFloat("power", power);
 
-    glActiveTexture(GL_TEXTURE0 + 2);
-    shader->setInt("texture_noise", 2);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    shader->setInt("texture_noise", 1);
     glBindTexture(GL_TEXTURE_2D, texture_noise);
 
     for (size_t i = 0; i < kernel.size(); i++)

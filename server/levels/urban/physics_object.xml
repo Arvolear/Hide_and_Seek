@@ -726,14 +726,164 @@
     <obj name="cliff0">
         <shape type="compound">
             <cshape type="convex">
-                <point x="-20.0" y="4.2" z="0.0"/>
-                <point x="20.0" y="4.2" z="0.0"/>
-                <point x="0.0" y="4.2" z="-20.0"/>
+                <point x="-22.78" y="4.2" z="-2.90"/>
+                <point x="-12.26" y="4.2" z="-0.7"/>
+                <point x="21.39" y="4.2" z="2.91"/>
+                <point x="21.19" y="4.2" z="-7.85"/>
+                <point x="20.22" y="4.2" z="-13.01"/>
+                <point x="19.5" y="4.2" z="-15.8"/>
+                <point x="14.6" y="4.2" z="-26.06"/>
+                <point x="6.25" y="4.2" z="-39.52"/>
+                <point x="-3.73" y="4.2" z="-34.75"/>
+                <point x="-10.85" y="4.2" z="-27.24"/>
             </cshape>
+            <cshape type="convex">
+                <point x="-12.26" y="4.2" z="-0.7"/>
+                <point x="-22.78" y="4.2" z="-2.90"/>
+                <point x="-26.8" y="4.2" z="6.0"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-15.3" y="4.2" z="0.6"/>
+                <point x="-26.8" y="4.2" z="6.0"/>
+                <point x="-29.5" y="4.2" z="16.0"/>
+                <point x="-30.1" y="4.2" z="22.37"/>
+                <point x="-30.0" y="4.2" z="29.6"/>
+                <point x="-29.5" y="4.2" z="36.21"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-15.95" y="4.2" z="2.13"/>
+                <point x="-29.5" y="4.2" z="36.21"/>
+                <point x="-27.3" y="4.2" z="37.4"/>
+                <point x="-19.14" y="4.2" z="40.43"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-16.04" y="4.2" z="3.19"/>
+                <point x="-19.14" y="4.2" z="40.43"/>
+                <point x="-5.0" y="4.2" z="39.5"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-16.04" y="4.2" z="3.19"/>
+                <point x="-5.0" y="4.2" z="39.5"/>
+                <point x="0.91" y="4.2" z="39.41"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-15.14" y="4.2" z="5.13"/>
+                <point x="0.91" y="4.2" z="39.41"/>
+                <point x="13.3" y="4.2" z="40.6"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-13.67" y="4.2" z="7.1"/>
+                <point x="13.3" y="4.2" z="40.6"/>
+                <point x="18.96" y="4.2" z="39.66"/>
+                <point x="21.71" y="4.2" z="38.36"/>
+                <point x="23.67" y="4.2" z="36.61"/>
+                <point x="24.73" y="4.2" z="31.24"/>
+                <point x="22.71" y="4.2" z="25.11"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-9.87" y="4.2" z="9.14"/>
+                <point x="22.71" y="4.2" z="25.11"/>
+                <point x="21.34" y="4.2" z="11.26"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-8.09" y="4.2" z="-0.3"/>
+                <point x="10.31" y="4.2" z="10.6"/>
+                <point x="21.34" y="4.2" z="11.26"/>
+                <point x="21.39" y="4.2" z="2.91"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-5.59" y="4.2" z="9.5"/>
+                <point x="10.31" y="4.2" z="10.6"/>
+                <point x="-3.6" y="4.2" z="5.73"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-4.06" y="4.2" z="2.0"/>
+                <point x="10.31" y="4.2" z="10.6"/>
+                <point x="-3.6" y="4.2" z="5.73"/>
+            </cshape>
+
+            <!-- ** -->
+
+            <cshape type="convex">
+                <point x="-29.5" y="4.2" z="36.21"/>
+                <point x="-27.3" y="4.2" z="37.4"/>
+                <point x="-27.3" y="-2.8" z="37.4"/>
+                <point x="-29.5" y="-2.8" z="36.21"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-27.3" y="4.2" z="37.4"/>
+                <point x="-19.14" y="4.2" z="40.43"/>
+                <point x="-19.14" y="-2.8" z="40.43"/>
+                <point x="-27.3" y="-2.8" z="37.4"/>
+            </cshape>
+            <cshape type="convex">
+                <point x="-19.14" y="4.2" z="40.43"/>
+                <point x="-5.0" y="4.2" z="39.5"/>
+                <point x="-5.0" y="-2.8" z="39.5"/>
+                <point x="-19.14" y="-2.8" z="40.43"/>
+            </cshape>
+            
+            <!-- ** -->
+            
+            <cshape type="convex">
+                <point x="3.0" y="-2.7" z="39.9"/>
+                <point x="5.4" y="-2.7" z="40.1"/>
+                <point x="5.4" y="-2.7" z="35.0"/>
+                <point x="3.0" y="-2.7" z="35.0"/>
+            </cshape>            
+            <cshape type="convex">
+                <point x="0.4" y="-0.47" z="39.7"/>
+                <point x="0.4" y="1.86" z="39.7"/>
+                <point x="0.4" y="1.86" z="35.0"/>
+                <point x="0.4" y="-0.47" z="35.0"/>
+            </cshape>            
+            <cshape type="convex">
+                <point x="7.9" y="-0.47" z="40.4"/>
+                <point x="7.9" y="1.86" z="40.4"/>
+                <point x="7.9" y="1.86" z="35.0"/>
+                <point x="7.9" y="-0.47" z="35.0"/>
+            </cshape>            
+            <cshape type="convex">
+                <point x="3.0" y="4.1" z="39.9"/>
+                <point x="5.4" y="4.1" z="40.1"/>
+                <point x="5.4" y="4.1" z="35.0"/>
+                <point x="3.0" y="4.1" z="35.0"/>
+            </cshape>
+
+            <!-- ** -->
+            
+            <cshape type="convex">
+                <point x="19.67" y="-2.7" z="-14.54"/>
+                <point x="18.77" y="-2.7" z="-17.09"/>
+                <point x="15.03" y="-2.7" z="-16.17"/>
+                <point x="15.52" y="-2.7" z="-13.71"/>
+            </cshape>            
+            <cshape type="convex">
+                <point x="20.55" y="-0.47" z="-12.25"/>
+                <point x="20.55" y="1.86" z="-12.25"/>
+                <point x="16.24" y="1.86" z="-11.65"/>
+                <point x="16.24" y="-0.47" z="-11.65"/>
+            </cshape>            
+            <cshape type="convex">
+                <point x="18.0" y="-0.47" z="-19.45"/>
+                <point x="18.0" y="1.86" z="-19.45"/>
+                <point x="14.56" y="1.86" z="-18.46"/>
+                <point x="14.56" y="-0.47" z="-18.46"/>
+            </cshape>            
+            <cshape type="convex">
+                <point x="19.67" y="4.1" z="-14.54"/>
+                <point x="18.77" y="4.1" z="-17.09"/>
+                <point x="15.03" y="4.1" z="-16.17"/>
+                <point x="15.52" y="4.1" z="-13.71"/>
+            </cshape>
+
+            <!-- ** -->
+
         </shape>
         <mass mass="0.0"/>
-        <pos x="20.0" y="3.7" z="2.0"/>
-        <rot x="0.0" y="1.0" z="0.0" angle="-105.0"/>
+        <pos x="0.0" y="3.6" z="0.0"/>
+        <!-- <pos x="20.0" y="3.6" z="2.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="-105.0"/> -->
     </obj>
     
     <obj name="clay0">
@@ -744,7 +894,7 @@
             </cshape>
         </shape>
         <mass mass="0.0"/>
-        <pos x="5.0" y="0.0" z="22.0"/>
+        <pos x="5.0" y="-0.1" z="22.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-10.0"/>
     </obj>
     
@@ -761,7 +911,7 @@
             </cshape>
         </shape>
         <mass mass="0.0"/>
-        <pos x="30.5" y="3.7" z="25.0"/>
+        <pos x="30.5" y="3.6" z="24.7"/>
         <rot x="0.0" y="1.0" z="0.0" angle="7.0"/>
     </obj>
     
@@ -778,7 +928,7 @@
             </cshape>
         </shape>
         <mass mass="0.0"/>
-        <pos x="-20.2" y="3.7" z="-4.8"/>
+        <pos x="-20.2" y="3.6" z="-4.8"/>
         <rot x="0.0" y="1.0" z="0.0" angle="70.0"/>
     </obj>
     
@@ -799,147 +949,147 @@
     <obj name="fence20">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="43.5" y="11.9" z="15.5"/>
+        <pos x="43.5" y="11.8" z="15.5"/>
         <rot x="0.0" y="1.0" z="0.0" angle="10.0"/>
     </obj>
     
     <obj name="fence21">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="40.6" y="11.9" z="3.8"/>
+        <pos x="40.6" y="11.8" z="3.8"/>
         <rot x="0.0" y="1.0" z="0.0" angle="20.0"/>
     </obj>
     
     <obj name="fence22">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="36.0" y="11.9" z="-7.5"/>
+        <pos x="36.0" y="11.8" z="-7.5"/>
         <rot x="0.0" y="1.0" z="0.0" angle="25.0"/>
     </obj>
     
     <obj name="fence23">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="29.2" y="11.9" z="-17.5"/>
+        <pos x="29.2" y="11.8" z="-17.5"/>
         <rot x="0.0" y="1.0" z="0.0" angle="45.0"/>
     </obj>
     
     <obj name="fence24">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="19.6" y="11.9" z="-24.8"/>
+        <pos x="19.6" y="11.8" z="-24.8"/>
         <rot x="0.0" y="1.0" z="0.0" angle="60.0"/>
     </obj>
     
     <obj name="fence25">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="9.0" y="11.9" z="-30.5"/>
+        <pos x="9.0" y="11.8" z="-30.5"/>
         <rot x="0.0" y="1.0" z="0.0" angle="65.0"/>
     </obj>
     
     <obj name="fence26">
         <shape type="box" x="0.15" y="4.0" z="6.1"/>
         <mass mass="0.0"/>
-        <pos x="-2.2" y="11.9" z="-34.6"/>
+        <pos x="-2.2" y="11.8" z="-34.6"/>
         <rot x="0.0" y="1.0" z="0.0" angle="75.0"/>
     </obj>
     
     <obj name="toilet0">
         <shape type="box" x="2.1" y="3.7" z="2.1"/>
         <mass mass="0.0"/>
-        <pos x="38.0" y="11.5" z="8.0"/>
+        <pos x="38.0" y="11.4" z="8.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="10.0"/>
     </obj>
     
     <obj name="bench0">
         <shape type="box" x="2.1" y="0.8" z="0.7"/>
         <mass mass="0.0"/>
-        <pos x="38.0" y="8.6" z="14.5"/>
+        <pos x="38.0" y="8.5" z="14.5"/>
         <rot x="0.0" y="1.0" z="0.0" angle="95.0"/>
     </obj>
     
     <obj name="poplar_tree04">
         <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
         <mass mass="0.0"/>
-        <pos x="36.0" y="20.3" z="2.0"/>
+        <pos x="36.0" y="20.2" z="2.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
     </obj>
     
     <obj name="poplar_tree05">
         <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
         <mass mass="0.0"/>
-        <pos x="31.0" y="20.3" z="3.0"/>
+        <pos x="31.0" y="20.2" z="3.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-20.0"/>
     </obj>
     
     <obj name="poplar_tree06">
         <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
         <mass mass="0.0"/>
-        <pos x="32.0" y="20.3" z="15.0"/>
+        <pos x="32.0" y="20.2" z="15.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-40.0"/>
     </obj>
     
     <obj name="poplar_tree07">
         <shape type="cylinder" r="0.5" h="12.0" zup="0.5"/>
         <mass mass="0.0"/>
-        <pos x="40.0" y="20.3" z="19.0"/>
+        <pos x="40.0" y="20.2" z="19.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-60.0"/>
     </obj>
     
     <obj name="barrier10">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="20.0" y="8.9" z="15.0"/>
+        <pos x="20.0" y="8.8" z="15.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
     </obj>
     
     <obj name="barrier11">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="19.2" y="8.9" z="12.4"/>
+        <pos x="19.2" y="8.8" z="12.4"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-60.0"/>
     </obj>
     
     <obj name="barrier12">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="17.3" y="8.9" z="10.4"/>
+        <pos x="17.3" y="8.8" z="10.4"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
     </obj>
     
     <obj name="barrier13">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="15.3" y="8.9" z="9.2"/>
+        <pos x="15.3" y="8.8" z="9.2"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-121.0"/>
     </obj>
     
     <obj name="barrier14">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="0.0" y="8.9" z="13.0"/>
+        <pos x="0.0" y="8.8" z="13.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-10.0"/>
     </obj>
     
     <obj name="barrier15">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="2.1" y="8.9" z="10.7"/>
+        <pos x="2.1" y="8.8" z="10.7"/>
         <rot x="0.0" y="1.0" z="0.0" angle="20.0"/>
     </obj>
     
     <obj name="barrier16">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="4.7" y="8.9" z="10.3"/>
+        <pos x="4.7" y="8.8" z="10.3"/>
         <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
     </obj>
     
     <obj name="barrier17">
         <shape type="box" x="1.1" y="1.1" z="1.1"/>
         <mass mass="0.0"/>
-        <pos x="7.2" y="8.9" z="10.8"/>
+        <pos x="7.2" y="8.8" z="10.8"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-20.0"/>
     </obj>
     
@@ -950,28 +1100,28 @@
             </cshape>
         </shape>
         <mass mass="0.0"/>
-        <pos x="18.0" y="7.8" z="-8.0"/>
+        <pos x="18.0" y="7.7" z="-8.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-30.0"/>
     </obj>
     
     <obj name="crate00">
         <shape type="box" x="3.6" y="1.2" z="1.2"/>
         <mass mass="0.0"/>
-        <pos x="14.1" y="9.1" z="-14.5"/>
+        <pos x="14.1" y="9.0" z="-14.5"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
     </obj>
     
     <obj name="crate01">
         <shape type="box" x="3.6" y="1.2" z="1.2"/>
         <mass mass="0.0"/>
-        <pos x="14.2" y="11.5" z="-14.6"/>
+        <pos x="14.2" y="11.4" z="-14.6"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
     </obj>
     
     <obj name="crate02">
         <shape type="box" x="3.6" y="1.2" z="1.2"/>
         <mass mass="0.0"/>
-        <pos x="10.4" y="9.1" z="-8.1"/>
+        <pos x="10.4" y="9.0" z="-8.1"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-120.0"/>
     </obj>
     
@@ -982,7 +1132,7 @@
             </cshape>
         </shape>
         <mass mass="0.0"/>
-        <pos x="-13.0" y="6.7" z="9.0"/>
+        <pos x="-13.0" y="6.6" z="9.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-40.0"/>
     </obj>
     
@@ -993,42 +1143,42 @@
             </cshape>
         </shape>
         <mass mass="0.0"/>
-        <pos x="-3.0" y="7.8" z="-11.0"/>
+        <pos x="-3.0" y="7.7" z="-11.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-80.0"/>
     </obj>
     
     <obj name="bonfire0">
         <shape type="box" x="0.3" y="0.4" z="0.3"/>
         <mass mass="0.0"/>
-        <pos x="-10.0" y="8.2" z="-7.0"/>
+        <pos x="-10.0" y="8.1" z="-7.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="0.0"/>
     </obj>
     
     <obj name="fence30">
         <shape type="box" x="0.2" y="1.25" z="3.6"/>
         <mass mass="0.0"/>
-        <pos x="-15.5" y="9.1" z="-16.0"/>
+        <pos x="-15.5" y="9.0" z="-16.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-13.0"/>
     </obj>
     
     <obj name="fence31">
         <shape type="box" x="0.2" y="1.25" z="3.6"/>
         <mass mass="0.0"/>
-        <pos x="-21.5" y="9.1" z="5.0"/>
+        <pos x="-21.5" y="9.0" z="5.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-14.0"/>
     </obj>
     
     <obj name="fence32">
         <shape type="box" x="0.2" y="1.25" z="3.6"/>
         <mass mass="0.0"/>
-        <pos x="-6.5" y="9.1" z="17.4"/>
+        <pos x="-6.5" y="9.0" z="17.4"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-94.0"/>
     </obj>
     
     <obj name="fence33">
         <shape type="box" x="0.2" y="1.25" z="3.6"/>
         <mass mass="0.0"/>
-        <pos x="17.5" y="9.1" z="22.7"/>
+        <pos x="17.5" y="9.0" z="22.7"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-103.0"/>
     </obj>
     

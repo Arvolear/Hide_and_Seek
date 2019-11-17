@@ -962,7 +962,7 @@
             </debugobject>
         </gameobject>
         
-        <gameobject name="clay0">
+        <!-- <gameobject name="clay0">
             <graphicsobject path="/static_models/Clay0/clay0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="1.2" y="2.0" z="1.6"/>
@@ -1410,7 +1410,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject>
+        </gameobject> -->
   
     </gameobjects>
 </GameObjectFile>
