@@ -86,7 +86,7 @@ Game::Game(Window* window, string levelName)
     quad = new RenderQuad();
 
     gaussianBlur = new GaussianBlur < ColorBuffer >();
-    gaussianBlur->genBuffer(window->getRenderSize(), {GL_RGBA16F, GL_RGBA, GL_FLOAT}, 4);
+    gaussianBlur->genBuffer(window->getRenderSize(), {GL_RGBA16F, GL_RGBA, GL_FLOAT}, 2);
 
     multiplayer = new Multiplayer(window, level, physicsWorld);
 

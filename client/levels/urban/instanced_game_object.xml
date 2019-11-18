@@ -1,6 +1,31 @@
 <?xml version="1.0"?>
 <InstancedGameObjectFile>
     <instancedgameobjects>
+        
+        <instancedgameobject name="tree0">
+            <graphicsobject path="/static_models/Vegetation0/Tree0/tree0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="7.0"/>
+                    <border x0="-105.0" y0="-105.0" x1="105.0" y1="105.0"/>
+                    <without>
+                        <point x="-85.0" y="-85.0"/>
+                        <point x="85.0" y="-85.0"/>
+                        <point x="85.0" y="85.0"/>
+                        <point x="-85.0" y="85.0"/>
+                    </without>
+                </fillarea>
+            </info>
+        </instancedgameobject>
 
         <!-- left bottom -->
         <instancedgameobject name="grass00">
@@ -132,7 +157,28 @@
             <info>
                 <fillarea id="0">
                     <radius radius="0.45"/>
-                    <border x0="-82.0" y0="27.0" x1="-70.0" y1="47.0"/>
+                    <border x0="-82.0" y0="22.0" x1="-70.0" y1="47.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 1 bottom + 2 -->
+        <instancedgameobject name="grass05">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-71.0" y0="22.0" x1="-43.0" y1="29.0"/>
                 </fillarea>
             </info>
         </instancedgameobject>
@@ -140,7 +186,7 @@
         <!-- ********************************************************* -->
 
         <!-- left + 2 bottom -->
-        <instancedgameobject name="grass05">
+        <instancedgameobject name="grass06">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -169,7 +215,7 @@
         </instancedgameobject>
         
         <!-- left + 2 bottom + 1 -->
-        <instancedgameobject name="grass06">
+        <instancedgameobject name="grass07">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -200,7 +246,7 @@
         </instancedgameobject>
         
         <!-- left + 3 bottom -->
-        <instancedgameobject name="grass07">
+        <instancedgameobject name="grass08">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -231,7 +277,7 @@
         </instancedgameobject>
         
         <!-- left + 3 bottom + 1 -->
-        <instancedgameobject name="grass08">
+        <instancedgameobject name="grass09">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -264,7 +310,7 @@
         </instancedgameobject>
         
         <!-- left + 4 bottom -->
-        <instancedgameobject name="grass09">
+        <instancedgameobject name="grass10">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -285,7 +331,7 @@
         </instancedgameobject>
         
         <!-- left + 4 bottom + 1 -->
-        <instancedgameobject name="grass010">
+        <instancedgameobject name="grass011">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -318,7 +364,7 @@
         </instancedgameobject>
         
         <!-- left + 5 bottom -->
-        <instancedgameobject name="grass011">
+        <instancedgameobject name="grass012">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -339,7 +385,7 @@
         </instancedgameobject>
         
         <!-- left + 5 bottom + 1 -->
-        <instancedgameobject name="grass012">
+        <instancedgameobject name="grass013">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -372,7 +418,7 @@
         </instancedgameobject>
         
         <!-- left + 2 bottom + 2 -->
-        <instancedgameobject name="grass013">
+        <instancedgameobject name="grass014">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -387,13 +433,13 @@
             <info>
                 <fillarea id="0">
                     <radius radius="0.45"/>
-                    <border x0="-43.0" y0="22.0" x1="-22.0" y1="43.0"/>
+                    <border x0="-45.0" y0="22.0" x1="-22.0" y1="43.0"/>
                 </fillarea>
             </info>
         </instancedgameobject>
         
         <!-- left + 3 bottom + 2 -->
-        <instancedgameobject name="grass014">
+        <instancedgameobject name="grass015">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -425,7 +471,7 @@
         </instancedgameobject>
         
         <!-- left + 4 bottom + 2 -->
-        <instancedgameobject name="grass015">
+        <instancedgameobject name="grass016">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -457,7 +503,7 @@
         </instancedgameobject>
         
         <!-- left + 5 bottom + 2 -->
-        <instancedgameobject name="grass016">
+        <instancedgameobject name="grass017">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -496,7 +542,7 @@
         </instancedgameobject>
         
         <!-- left + 3 bottom + 3 -->
-        <instancedgameobject name="grass017">
+        <instancedgameobject name="grass018">
             <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
                 <cullfaces apply="false"/>
                 <minnormalcosangle angle="0.05"/>
@@ -516,9 +562,9 @@
             </info>
         </instancedgameobject>
 
-<!-- ********************************************************* -->
-        
-        <!-- left + 2 bottom + 2 -->
+    <!-- ********************************************************* -->
+    
+    <!-- left + 1 bottom + 2 -->
         <instancedgameobject name="bush00">
             <graphicsobject path="/static_models/Vegetation0/Grass0/bush0.obj">
                 <minnormalcosangle angle="0.04"/>
@@ -533,13 +579,33 @@
             <info>
                 <fillarea id="0">
                     <radius radius="3.0"/>
-                    <border x0="-43.0" y0="22.0" x1="-22.0" y1="43.0"/>
+                    <border x0="-82.0" y0="22.0" x1="-42.0" y1="29.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 2 bottom + 2 -->
+        <instancedgameobject name="bush01">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/bush0.obj">
+                <minnormalcosangle angle="0.04"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="3.0"/>
+                     <border x0="-45.0" y0="22.0" x1="-22.0" y1="43.0"/>
                 </fillarea>
             </info>
         </instancedgameobject>
         
         <!-- left + 3 bottom + 2 -->
-        <instancedgameobject name="bush01">
+        <instancedgameobject name="bush02">
             <graphicsobject path="/static_models/Vegetation0/Grass0/bush0.obj">
                 <minnormalcosangle angle="0.04"/>
                 <shadow apply="false"/>
@@ -565,6 +631,257 @@
                         <point x="-13.4" y="39.9"/>
                         <point x="-20.2" y="44.9"/>
                         <point x="-27.8" y="53.8"/>
+                    </without>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+    <!-- ********************************************************* -->
+    
+        <!-- left bottom + 4 -->
+        <instancedgameobject name="grass020">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-82.0" y0="2.0" x1="-62.0" y1="23.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 1 bottom + 4 -->
+        <instancedgameobject name="grass021">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-63.0" y0="2.0" x1="-42.0" y1="23.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 2 bottom + 4 -->
+        <instancedgameobject name="grass022">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-43.0" y0="2.0" x1="-22.0" y1="23.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left bottom + 5 -->
+        <instancedgameobject name="grass023">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-82.0" y0="-25.0" x1="-62.0" y1="3.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 1 bottom + 5 -->
+        <instancedgameobject name="grass024">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-63.0" y0="-18.0" x1="-42.0" y1="3.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 2 bottom + 5 -->
+        <instancedgameobject name="grass025">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-43.0" y0="-18.0" x1="-17.0" y1="3.0"/>
+                    <without>
+                        <point x="-19.4" y="-7.0"/>
+                        <point x="-20.5" y="-2.0"/>
+                        <point x="-17.0" y="-1.5"/>
+                        <point x="-16.6" y="-5.9"/>
+                    </without>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 1 bottom + 6 -->
+        <instancedgameobject name="grass026">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-63.0" y0="-33.0" x1="-42.0" y1="-17.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 2 bottom + 6 -->
+        <instancedgameobject name="grass027">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-43.0" y0="-40.0" x1="-22.0" y1="-17.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left + 3 bottom + 6 -->
+        <instancedgameobject name="grass028">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/grass0.obj">
+                <cullfaces apply="false"/>
+                <minnormalcosangle angle="0.05"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="0.45"/>
+                    <border x0="-23.0" y0="-38.0" x1="-12.0" y1="-17.0"/>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+    <!-- ********************************************************* -->
+    
+        <!-- left bottom + 4 -->
+        <instancedgameobject name="bush03">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/bush0.obj">
+                <minnormalcosangle angle="0.04"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="3.0"/>
+                    <border x0="-82.0" y0="-40.0" x1="-15.0" y1="26.0"/>
+                    <without>
+                        <point x="-19.4" y="-7.0"/>
+                        <point x="-20.5" y="-1.0"/>
+                        <point x="-17.0" y="-1.5"/>
+                        <point x="-16.6" y="-5.9"/>
+                    </without>
+                </fillarea>
+            </info>
+        </instancedgameobject>
+        
+        <!-- left bottom + 4 -->
+        <instancedgameobject name="crop00">
+            <graphicsobject path="/static_models/Vegetation0/Grass0/crop0.obj">
+                <minnormalcosangle angle="0.1"/>
+                <shadow apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.0" y="1.0" z="1.0"/>
+                <position x="0.0" y="1.0" z="0.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+            <info>
+                <fillarea id="0">
+                    <radius radius="2.5"/>
+                    <border x0="-82.0" y0="-40.0" x1="-15.0" y1="26.0"/>
+                    <without>
+                        <point x="-19.4" y="-7.0"/>
+                        <point x="-20.5" y="-1.0"/>
+                        <point x="-17.0" y="-1.5"/>
+                        <point x="-16.6" y="-5.9"/>
                     </without>
                 </fillarea>
             </info>

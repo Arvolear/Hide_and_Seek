@@ -95,27 +95,51 @@ bool Player::isGroundStanding()
     btVector3 Max;
 
     player->getPhysicsObject()->getRigidBody()->getAabb(Min, Max);
-     
-    btVector3 from = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
+            
+    btVector3 center = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
     btVector3 to = btVector3(0, -1, 0);
+
+    float playerBottomDist = center.y() - Min.y();
+
+    Min.setY(center.y());
+    Max.setY(center.y());
+
+    float radius = (Max - Min).length() / (2 * sqrt(2));
+
+    float rayStep = 0.1;
+    float whenFloor = 0.1;
     
-    float playerBottomDist = from.y() - Min.y();
-
-    unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
-
-    if (!result)
+    for (float i = Min.x(); i < Max.x(); i += rayStep)
     {
-        return false;
+        for (float j = Min.z(); j < Max.z(); j += rayStep)
+        {
+            btVector3 from = center;
+            from.setX(i);
+            from.setZ(j);
+
+            /* cutting extra bounding box */
+            if ((center - from).length() > radius)
+            {
+                continue;
+            }
+
+            unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
+
+            if (!result)
+            {
+                continue;
+            }
+
+            float dist = (from - result->hitPoint).length();
+
+            if (dist < playerBottomDist + whenFloor)
+            {
+                return true;
+            }
+        }
     }
 
-    float dist = (from - result->hitPoint).length();
-
-    if (dist > playerBottomDist + 0.1)
-    {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 void Player::jump()
@@ -211,7 +235,7 @@ void Player::moveGround()
     player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
 
     btVector3 velocity = player->getPhysicsObject()->getRigidBody()->getLinearVelocity();
-    
+
     /* disable sliding effect */
     if (velocity.length() < 0.05)
     {
@@ -245,7 +269,6 @@ void Player::moveAir()
     if (abs(velocity.y()) < 0.05)
     {
         player->getPhysicsObject()->getRigidBody()->forceActivationState(ACTIVE_TAG);
-        player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(player->getPhysicsObject()->getRigidBody()->getGravity());
     }
 }
 
@@ -354,7 +377,7 @@ void Player::setModelOffset(vec3 modelOffset)
 {
     this->modelOffset = modelOffset;
 }
-        
+
 void Player::setModelForward(vec3 modelForward)
 {
     this->modelForward = modelForward;
@@ -509,7 +532,7 @@ void Player::update(bool events)
             Pos += moveDirection * speed; 
         }
     }
-   
+
     //cout << getPosition().x << ' ' << getPosition().z << endl;
 }
 

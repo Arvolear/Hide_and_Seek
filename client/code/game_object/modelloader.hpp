@@ -46,7 +46,9 @@ class ModelLoader
         Mesh* processMesh(aiMesh *mesh); 
 
         vector < Mesh::Texture > loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName); 
-        unsigned int textureFromFile(string filename); 
+        unsigned int textureFromFile(string filename);
+        unsigned int loadCompressed(const char* path);
+        unsigned int loadNotCompressed(string filename);
 
         Bone* findBone(string name) const; 
         int findBoneId(string name) const; 

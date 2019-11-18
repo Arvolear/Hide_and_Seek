@@ -2,7 +2,7 @@
 # Material Count: 6
 
 newmtl Material.003
-Ns 94.117647
+Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
@@ -16,7 +16,7 @@ map_Ke textures/worn-bumpy-rock-ue/metalness.png
 map_Ks textures/worn-bumpy-rock-ue/roughness.png
 
 newmtl Material.022
-Ns 94.117647
+Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000
@@ -29,7 +29,7 @@ map_Bump textures/worn-bumpy-rock-ue/normal.png
 map_Ke textures/worn-bumpy-rock-ue/metalness.png
 
 newmtl Material.029
-Ns 94.117647
+Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
 Ks 0.500000 0.500000 0.500000

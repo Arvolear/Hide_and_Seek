@@ -2,6 +2,7 @@
 
 //native
 #include <stdexcept>
+#include <thread>
 
 //openGL
 #include <GLFW/glfw3.h>

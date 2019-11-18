@@ -288,7 +288,7 @@ vector < Mesh::Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTe
         {
             Mesh::Texture texture;
 
-            texture.id = textureFromFile(texPath.c_str()); 
+            texture.id = textureFromFile(texPath); 
             texture.type = typeName; 
             texture.path = texPath; 
 
@@ -302,16 +302,174 @@ vector < Mesh::Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTe
 
 unsigned int ModelLoader::textureFromFile(string filename)
 {
+    string extension = filename.substr(filename.find_last_of('.'));
+
+    if (extension == ".dds")
+    {
+        return loadCompressed(filename.data());
+    }
+    else
+    {
+        return loadNotCompressed(filename);
+    }
+}
+
+unsigned int ModelLoader::loadCompressed(const char* path) 
+{
+    unsigned char* header;
+
+    unsigned int width;
+    unsigned int height;
+    unsigned int mipMapCount;
+
+    unsigned int blockSize;
+    unsigned int format;
+
+    unsigned int w;
+    unsigned int h;
+
+    unsigned char* buffer = 0;
+
+    GLuint tid = 0;
+
+    FILE* f;
+
+    if ((f = fopen(path, "rb")) == 0)
+    {
+        return 0;
+    }
+    
+    fseek(f, 0, SEEK_END);
+    unsigned int file_size = ftell(f); 
+    fseek(f, 0, SEEK_SET);
+
+    header = (unsigned char*)malloc(128);
+    unsigned int bytesRead = fread(header, 1, 128, f);
+
+    assert(bytesRead == 128);
+
+    if (memcmp(header, "DDS ", 4) != 0)
+    {
+        free(buffer);
+        free(header);
+        fclose(f);
+        return tid;
+    }
+
+    height = (header[12]) | (header[13] << 8) | (header[14] << 16) | (header[15] << 24);
+    width = (header[16]) | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
+    mipMapCount = (header[28]) | (header[29] << 8) | (header[30] << 16) | (header[31] << 24);
+
+    //cout << height << ' ' << width << ' ' << mipMapCount << endl;
+
+    if(header[84] == 'D') 
+    {
+        switch(header[87]) 
+        {
+            case '1': // DXT1
+                {
+                    format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                    blockSize = 8;
+                    break;
+                }
+            case '3': // DXT3
+                {
+                    format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                    blockSize = 16;
+                    break;
+                }
+            case '5': // DXT5
+                {
+                    format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                    blockSize = 16;
+                    break;
+                }
+            default: 
+                {
+                    free(buffer);
+                    free(header);
+                    fclose(f);
+                    return tid;
+                }
+        }
+    } 
+    else
+    {
+        free(buffer);
+        free(header);
+        fclose(f);
+        return tid;
+    }
+
+    buffer = (unsigned char*)malloc(file_size - 128);
+
+    if (buffer == 0)
+    {
+        free(buffer);
+        free(header);
+        fclose(f);
+        return tid;
+    }
+    
+    bytesRead = fread(buffer, 1, file_size, f);
+    
+    assert(bytesRead == file_size - 128);
+
+    glGenTextures(1, &tid);
+    
+    if (tid == 0)
+    {
+        free(buffer);
+        free(header);
+        fclose(f);
+        return tid;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, tid);
+        
+    glGenerateMipmap(GL_TEXTURE_2D); 
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount - 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    unsigned int offset = 0;
+    unsigned int size = 0;
+    w = width;
+    h = height;
+
+    for (unsigned int i = 0; i < mipMapCount; i++) 
+    {
+        size = ((w + 3) / 4) * ((h + 3) / 4) * blockSize;
+
+        glCompressedTexImage2D(GL_TEXTURE_2D, i, format, w, h, 0, size, buffer + offset);
+
+        offset += size;
+        w /= 2;
+        h /= 2;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    free(buffer);
+    free(header);
+    fclose(f);
+    return tid;
+}
+
+unsigned int ModelLoader::loadNotCompressed(string filename)
+{
     unsigned int textureID;
     glGenTextures(1, &textureID); 
     glBindTexture(GL_TEXTURE_2D, textureID); 
 
     int W, H; 
-    unsigned char* image = SOIL_load_image(filename.c_str(), &W, &H, 0, SOIL_LOAD_RGBA); 
+    unsigned char* image = SOIL_load_image(filename.data(), &W, &H, 0, SOIL_LOAD_RGBA); 
 
     if (image) 
     {
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); 
 
         glGenerateMipmap(GL_TEXTURE_2D); 
@@ -322,10 +480,13 @@ unsigned int ModelLoader::textureFromFile(string filename)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         SOIL_free_image_data(image); 
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     else
     {
         SOIL_free_image_data(image);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         throw runtime_error("ERROR::Failed to load texture at path: " + filename);
     } 
 

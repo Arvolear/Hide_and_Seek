@@ -216,12 +216,6 @@ void PoissonDisk::setBorders(vec2 leftTop, vec2 rightBottom)
 
     this->width = abs(rightBottom.x - leftTop.x);
     this->height = abs(leftTop.y - rightBottom.y);
-
-    initSamples.push_back(vec2(0, 0));
-    initSamples.push_back(vec2(width - 1, 0));
-    initSamples.push_back(vec2(width / 2.0, height / 2.0));
-    initSamples.push_back(vec2(0, height - 1));
-    initSamples.push_back(vec2(width - 1, height - 1));
 }
         
 void PoissonDisk::setWithoutPolygons(vector < vector < vec2 > > &without)
@@ -232,6 +226,12 @@ void PoissonDisk::setWithoutPolygons(vector < vector < vec2 > > &without)
 void PoissonDisk::generate()
 {
     clear();
+
+    initSamples.push_back(vec2(radius, radius));
+    initSamples.push_back(vec2(width - radius - 1, radius));
+    initSamples.push_back(vec2(width / 2.0, height / 2.0));
+    initSamples.push_back(vec2(radius, height - radius - 1));
+    initSamples.push_back(vec2(width - radius - 1, height - radius - 1));
 
     this->sampleSize = radius / sqrt(2);
 
