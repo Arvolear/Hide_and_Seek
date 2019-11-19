@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Bridge_safety_fence_normal.jpg
-map_Kd textures/Bridge_safety_fence_albedo.jpg
-map_Ke textures/Bridge_safety_fence_metallic.jpg
-map_Ks textures/Bridge_safety_fence_roughness.jpg
+map_Bump textures/Bridge_safety_fence_normal.dds
+map_Kd textures/Bridge_safety_fence_albedo.dds
+map_Ke textures/Bridge_safety_fence_metallic.dds
+map_Ks textures/Bridge_safety_fence_roughness.dds

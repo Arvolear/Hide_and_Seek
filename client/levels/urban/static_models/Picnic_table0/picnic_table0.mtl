@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Wood2_normal.png
-map_Ka textures/Wood2_AO.jpg
-map_Kd textures/Wood2_albedo.jpg
-map_Ke textures/Wood2_metallic.jpg
-map_Ks textures/Wood2_roughness.jpg
+map_Bump textures/Wood2_normal.dds
+map_Ka textures/Wood2_AO.dds
+map_Kd textures/Wood2_albedo.dds
+map_Ke textures/Wood2_metallic.dds
+map_Ks textures/Wood2_roughness.dds

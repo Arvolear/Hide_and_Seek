@@ -2,7 +2,7 @@
 
 FLAGS = -std=c++11 -Wall -O3
 
-LIBS = -lGLEW -lGL -lSOIL -lassimp -lglfw3 -lX11 -lpthread -ldl -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
+LIBS = -lGLEW -lGL -lSOIL -lnv_dds -lassimp -lglfw3 -lX11 -lpthread -ldl -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
 
 RELEASE = -Wl,-rpath,./lib
 

@@ -10,11 +10,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 3
-map_Kd textures/Drevo[Albedo].png
-map_Bump textures/Drevo[Normal].png
-map_Ka textures/AO.png
-map_Ke textures/Drevo[Gloss].png
-map_d textures/Drevo[Albedo].png
+map_Kd textures/Drevo[Albedo].dds
+map_Bump textures/Drevo[Normal].dds
+map_Ka textures/AO.dds
+map_Ke textures/Drevo[Gloss].dds
+map_d textures/Drevo[Albedo].dds
 
 newmtl dum
 Ns 94.117647
@@ -25,10 +25,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 3
-map_Kd textures/Zed[Albedo].png
-map_Bump textures/Zed[Normal].png
-map_Ke textures/Zed[Gloss].png
-map_d textures/Zed[Albedo].png
+map_Kd textures/Zed[Albedo].dds
+map_Bump textures/Zed[Normal].dds
+map_Ke textures/Zed[Gloss].dds
+map_d textures/Zed[Albedo].dds
 
 newmtl okna
 Ns 94.117647
@@ -39,10 +39,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 3
-map_Kd textures/okno[Albedo].png
-map_Bump textures/okno[Norm].png
-map_Ke textures/okno[Gloss].png
-map_d textures/okno[Albedo].png
+map_Kd textures/okno[Albedo].dds
+map_Bump textures/okno[Norm].dds
+map_Ke textures/okno[Gloss].dds
+map_d textures/okno[Albedo].dds
 
 newmtl props
 Ns 94.117647
@@ -53,8 +53,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/props[Albedo].png
-map_Bump textures/props[Norm].png
-map_Ka textures/props_ao.png
-map_Ke textures/props[Gloss].png
-map_d textures/props[Albedo].png
+map_Kd textures/props[Albedo].dds
+map_Bump textures/props[Norm].dds
+map_Ka textures/props_ao.dds
+map_Ke textures/props[Gloss].dds
+map_d textures/props[Albedo].dds

@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/rubble_Material.001_Normal.png
-map_Ka textures/rubbleAO.png
-map_Kd textures/rubble_Material.001_BaseColor.png
-map_Ke textures/rubble_Material.001_Metallic.png
-map_Ks textures/rubble_Material.001_Roughness.png
+map_Bump textures/rubble_Material.001_Normal.dds
+map_Ka textures/rubbleAO.dds
+map_Kd textures/rubble_Material.001_BaseColor.dds
+map_Ke textures/rubble_Material.001_Metallic.dds
+map_Ks textures/rubble_Material.001_Roughness.dds

@@ -10,11 +10,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/blinn6SG_normal.png
-map_Ka textures/blinn6SG_AO.jpg
-map_Kd textures/blinn6SG_albedo.jpg
-map_Ke textures/blinn6SG_metallic.jpg
-map_Ks textures/blinn6SG_roughness.jpg
+map_Bump textures/blinn6SG_normal.dds
+map_Ka textures/blinn6SG_AO.dds
+map_Kd textures/blinn6SG_albedo.dds
+map_Ke textures/blinn6SG_metallic.dds
+map_Ks textures/blinn6SG_roughness.dds
 
 newmtl Material.002
 Ns 96.078431
@@ -25,11 +25,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/blinn5SG_normal.png
-map_Ka textures/blinn5SG_AO.jpg
-map_Kd textures/blinn5SG_albedo.jpg
-map_Ke textures/blinn5SG_metallic.jpg
-map_Ks textures/blinn5SG_roughness.jpg
+map_Bump textures/blinn5SG_normal.dds
+map_Ka textures/blinn5SG_AO.dds
+map_Kd textures/blinn5SG_albedo.dds
+map_Ke textures/blinn5SG_metallic.dds
+map_Ks textures/blinn5SG_roughness.dds
 
 newmtl Material.003
 Ns 96.078431
@@ -40,8 +40,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/blinn7SG_normal.png
-map_Ka textures/blinn7SG_AO.jpg
-map_Kd textures/blinn7SG_albedo.jpg
-map_Ke textures/blinn7SG_metallic.jpg
-map_Ks textures/blinn7SG_roughness.jpg
+map_Bump textures/blinn7SG_normal.dds
+map_Ka textures/blinn7SG_AO.dds
+map_Kd textures/blinn7SG_albedo.dds
+map_Ke textures/blinn7SG_metallic.dds
+map_Ks textures/blinn7SG_roughness.dds

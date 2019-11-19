@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/well2_toSP_low_Default_Normal.png
-map_Kd textures/well2_toSP_low_Default_BaseColor.png
-map_Ke textures/well2_toSP_low_Default_Metallic.png
-map_Ks textures/well2_toSP_low_Default_Roughness.png
+map_Bump textures/well2_toSP_low_Default_Normal.dds
+map_Kd textures/well2_toSP_low_Default_BaseColor.dds
+map_Ke textures/well2_toSP_low_Default_Metallic.dds
+map_Ks textures/well2_toSP_low_Default_Roughness.dds

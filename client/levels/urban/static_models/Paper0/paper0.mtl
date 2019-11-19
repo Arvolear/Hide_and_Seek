@@ -10,11 +10,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Bump textures/Scattered_Papers_normal.png
-map_Ka textures/Scattered_Papers_ambientOcclusion.png
-map_Kd textures/Scattered_Papers_base_color.png
-map_Ks textures/Scattered_Papers_roughness.png
-map_d textures/Scattered_Papers_base_color.png
+map_Bump textures/Scattered_Papers_normal.dds
+map_Ka textures/Scattered_Papers_ambientOcclusion.dds
+map_Kd textures/Scattered_Papers_base_color.dds
+map_Ks textures/Scattered_Papers_roughness.dds
+map_d textures/Scattered_Papers_base_color.dds
 
 newmtl Material.002
 Ns 96.078431
@@ -25,7 +25,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/MAT_Cardboard_Normal_DirectX.png
-map_Ka textures/MAT_Cardboard_Mixed_AO.png
-map_Kd textures/MAT_Cardboard_Base_Color.png
-map_Ks textures/MAT_Cardboard_Roughness.png
+map_Bump textures/MAT_Cardboard_Normal_DirectX.dds
+map_Ka textures/MAT_Cardboard_Mixed_AO.dds
+map_Kd textures/MAT_Cardboard_Base_Color.dds
+map_Ks textures/MAT_Cardboard_Roughness.dds

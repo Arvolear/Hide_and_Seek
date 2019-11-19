@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/standard_Modelling_normal.png
-map_Ka textures/standard_Modelling_AO.jpg
-map_Kd textures/standard_Modelling_albedo.jpg
-map_Ke textures/standard_Modelling_metallic.jpg
-map_Ks textures/standard_Modelling_roughness.jpg
+map_Bump textures/standard_Modelling_normal.dds
+map_Ka textures/standard_Modelling_AO.dds
+map_Kd textures/standard_Modelling_albedo.dds
+map_Ke textures/standard_Modelling_metallic.dds
+map_Ks textures/standard_Modelling_roughness.dds

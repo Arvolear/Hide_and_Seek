@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Bot_Normal.png
-map_Ka textures/Bot_AO.png
-map_Kd textures/Bot_Albedo.png
-map_Ks textures/Bot_Specular.png
+map_Bump textures/Bot_Normal.dds
+map_Ka textures/Bot_AO.dds
+map_Kd textures/Bot_Albedo.dds
+map_Ks textures/Bot_Specular.dds
 
 newmtl Material.002
 Ns 96.078431
@@ -24,10 +24,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Door_Normal.png
-map_Ka textures/Door_AO.png
-map_Kd textures/Door_Albedo.png
-map_Ks textures/Door_Specular.png
+map_Bump textures/Door_Normal.dds
+map_Ka textures/Door_AO.dds
+map_Kd textures/Door_Albedo.dds
+map_Ks textures/Door_Specular.dds
 
 newmtl Material.003
 Ns 96.078431
@@ -38,10 +38,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Hole_Normal.png
-map_Ka textures/Hole_AO.png
-map_Kd textures/Hole_Albedo.png
-map_Ks textures/Hole_Specular.png
+map_Bump textures/Hole_Normal.dds
+map_Ka textures/Hole_AO.dds
+map_Kd textures/Hole_Albedo.dds
+map_Ks textures/Hole_Specular.dds
 
 newmtl Material.004
 Ns 96.078431
@@ -52,10 +52,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Mid_Normal.png
-map_Ka textures/Mid_AO.png
-map_Kd textures/Mid_Albedo.png
-map_Ks textures/Mid_Specular.png
+map_Bump textures/Mid_Normal.dds
+map_Ka textures/Mid_AO.dds
+map_Kd textures/Mid_Albedo.dds
+map_Ks textures/Mid_Specular.dds
 
 newmtl Material.005
 Ns 96.078431
@@ -66,7 +66,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Roof_Normal.png
-map_Ka textures/Roof_AO.png
-map_Kd textures/Roof_Albedo.png
-map_Ks textures/Roof_Specular.png
+map_Bump textures/Roof_Normal.dds
+map_Ka textures/Roof_AO.dds
+map_Kd textures/Roof_Albedo.dds
+map_Ks textures/Roof_Specular.dds

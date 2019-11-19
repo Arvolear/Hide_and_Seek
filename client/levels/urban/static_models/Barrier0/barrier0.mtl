@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/2_None_Normal.png
-map_Kd textures/2_None_BaseColor.png
-map_Ke textures/2_None_Metallic.png
-map_Ks textures/2_None_Roughness.png
+map_Bump textures/2_None_Normal.dds
+map_Kd textures/2_None_BaseColor.dds
+map_Ke textures/2_None_Metallic.dds
+map_Ks textures/2_None_Roughness.dds

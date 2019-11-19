@@ -10,9 +10,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Bump textures/T_Ferns_Normal.png
-map_Ka textures/T_Ferns_AO.png
-map_Kd textures/T_Ferns_BaseColor.png
-map_Ke textures/T_Ferns_SS.png
-map_Ks textures/T_Ferns_Roughness.png
-map_d textures/T_Ferns_BaseColor.png
+map_Bump textures/T_Ferns_Normal.dds
+map_Ka textures/T_Ferns_AO.dds
+map_Kd textures/T_Ferns_BaseColor.dds
+map_Ke textures/T_Ferns_SS.dds
+map_Ks textures/T_Ferns_Roughness.dds
+map_d textures/T_Ferns_BaseColor.dds

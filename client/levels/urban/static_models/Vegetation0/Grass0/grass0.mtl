@@ -10,12 +10,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.008
 Ns 92.156863
@@ -26,12 +26,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.009
 Ns 92.156863
@@ -42,12 +42,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.010
 Ns 92.156863
@@ -58,12 +58,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.011
 Ns 92.156863
@@ -74,12 +74,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.083
 Ns 92.156863
@@ -90,12 +90,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.084
 Ns 92.156863
@@ -106,12 +106,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.085
 Ns 92.156863
@@ -122,12 +122,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.086
 Ns 92.156863
@@ -138,12 +138,12 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds
 
 newmtl Material.087
 Ns 92.156863
@@ -154,9 +154,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/T_Grass_BaseColor.png
-map_Bump textures/T_Grass_Normal.png
-map_Ka textures/T_Grass_AO.png
-map_Ke textures/T_Grass_SS.png
-map_Ks textures/T_Grass_Roughness.png
-map_d textures/T_Grass_BaseColor.png
+map_Kd textures/T_Grass_BaseColor.dds
+map_Bump textures/T_Grass_Normal.dds
+map_Ka textures/T_Grass_AO.dds
+map_Ke textures/T_Grass_SS.dds
+map_Ks textures/T_Grass_Roughness.dds
+map_d textures/T_Grass_BaseColor.dds

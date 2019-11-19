@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Dry_dirt/albedo.png
-map_Bump Dry_dirt/normal.png
-map_Ka Dry_dirt/ao.png
-map_Ke Dry_dirt/metalness.png
+map_Kd Dry_dirt/albedo.dds
+map_Bump Dry_dirt/normal.dds
+map_Ka Dry_dirt/ao.dds
+map_Ke Dry_dirt/metalness.dds
 
 newmtl Material.002
 Ns 92.156863
@@ -24,7 +24,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Gravel_path/albedo.png
-map_Bump Gravel_path/normal.png
-map_Ka Gravel_path/ao.png
-map_Ke Gravel_path/metalness.png
+map_Kd Gravel_path/albedo.dds
+map_Bump Gravel_path/normal.dds
+map_Ka Gravel_path/ao.dds
+map_Ke Gravel_path/metalness.dds

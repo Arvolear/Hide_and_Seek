@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Concrete_normal.png
-map_Kd textures/Concrete_basecolor.png
-map_Ke textures/Concrete_metallic.png
-map_Ks textures/Concrete_roughness.png
+map_Bump textures/Concrete_normal.dds
+map_Kd textures/Concrete_basecolor.dds
+map_Ke textures/Concrete_metallic.dds
+map_Ks textures/Concrete_roughness.dds
 
 newmtl Grade
 Ns 249.019608
@@ -24,9 +24,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Bump textures/grade_normalmap.png
-map_Kd textures/grade.png
-map_d textures/grade.png
+map_Bump textures/grade_normalmap.dds
+map_Kd textures/grade.dds
+map_d textures/grade.dds
 
 newmtl Metal
 Ns 249.019608
@@ -37,7 +37,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Metal_normal.png
-map_Kd textures/Metal_basecolor.png
-map_Ke textures/Metal_metallic.png
-map_Ks textures/Metal_roughness.png
+map_Bump textures/Metal_normal.dds
+map_Kd textures/Metal_basecolor.dds
+map_Ke textures/Metal_metallic.dds
+map_Ks textures/Metal_roughness.dds

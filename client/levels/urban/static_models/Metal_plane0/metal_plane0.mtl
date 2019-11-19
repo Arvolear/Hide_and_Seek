@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Color_Plane001_normal.tga.png
-map_Ka textures/Color_Plane001_ao.tga.png
-map_Kd textures/Color_Plane001_albedo.tga.png
-map_Ke textures/Color_Plane001_metalness.tga.png
-map_Ks textures/Color_Plane001_roughness.tga.png
+map_Bump textures/Color_Plane001_normal.tga.dds
+map_Ka textures/Color_Plane001_ao.tga.dds
+map_Kd textures/Color_Plane001_albedo.tga.dds
+map_Ke textures/Color_Plane001_metalness.tga.dds
+map_Ks textures/Color_Plane001_roughness.tga.dds

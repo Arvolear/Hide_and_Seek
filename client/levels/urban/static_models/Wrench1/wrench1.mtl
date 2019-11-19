@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/pipe_wrench_Normal.png
-map_Kd textures/pipe_wrench_BaseColor.png
-map_Ke textures/pipe_wrench_Metalness.png
-map_Ks textures/pipe_wrench_Roughness.png
+map_Bump textures/pipe_wrench_Normal.dds
+map_Kd textures/pipe_wrench_BaseColor.dds
+map_Ke textures/pipe_wrench_Metalness.dds
+map_Ks textures/pipe_wrench_Roughness.dds
 
 newmtl Material.002
 Ns 96.078431
@@ -24,10 +24,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/pipe_wrench_Normal.png
-map_Kd textures/pipe_wrench_BaseColor.png
-map_Ke textures/pipe_wrench_Metalness.png
-map_Ks textures/pipe_wrench_Roughness.png
+map_Bump textures/pipe_wrench_Normal.dds
+map_Kd textures/pipe_wrench_BaseColor.dds
+map_Ke textures/pipe_wrench_Metalness.dds
+map_Ks textures/pipe_wrench_Roughness.dds
 
 newmtl Material.003
 Ns 96.078431
@@ -38,10 +38,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/pipe_wrench_Normal.png
-map_Kd textures/pipe_wrench_BaseColor.png
-map_Ke textures/pipe_wrench_Metalness.png
-map_Ks textures/pipe_wrench_Roughness.png
+map_Bump textures/pipe_wrench_Normal.dds
+map_Kd textures/pipe_wrench_BaseColor.dds
+map_Ke textures/pipe_wrench_Metalness.dds
+map_Ks textures/pipe_wrench_Roughness.dds
 
 newmtl Material.004
 Ns 96.078431
@@ -52,7 +52,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/pipe_wrench_Normal.png
-map_Kd textures/pipe_wrench_BaseColor.png
-map_Ke textures/pipe_wrench_Metalness.png
-map_Ks textures/pipe_wrench_Roughness.png
+map_Bump textures/pipe_wrench_Normal.dds
+map_Kd textures/pipe_wrench_BaseColor.dds
+map_Ke textures/pipe_wrench_Metalness.dds
+map_Ks textures/pipe_wrench_Roughness.dds

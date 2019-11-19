@@ -10,11 +10,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Mid_normal.png
-map_Ka textures/Mid_AO.jpg
-map_Kd textures/Mid_albedo.jpg
-map_Ke textures/Mid_metallic.jpg
-map_Ks textures/Mid_roughness.jpg
+map_Bump textures/Mid_normal.dds
+map_Ka textures/Mid_AO.dds
+map_Kd textures/Mid_albedo.dds
+map_Ke textures/Mid_metallic.dds
+map_Ks textures/Mid_roughness.dds
 
 newmtl Material.002
 Ns 96.078431
@@ -25,11 +25,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Wheel_normal.png
-map_Ka textures/Wheel_AO.jpg
-map_Kd textures/Wheel_albedo.jpg
-map_Ke textures/Wheel_metallic.jpg
-map_Ks textures/Wheel_roughness.jpg
+map_Bump textures/Wheel_normal.dds
+map_Ka textures/Wheel_AO.dds
+map_Kd textures/Wheel_albedo.dds
+map_Ke textures/Wheel_metallic.dds
+map_Ks textures/Wheel_roughness.dds
 
 newmtl Material.003
 Ns 96.078431
@@ -40,11 +40,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Screw_normal.png
-map_Ka textures/Screw_AO.jpg
-map_Kd textures/Screw_albedo.jpg
-map_Ke textures/Screw_metallic.jpg
-map_Ks textures/Screw_roughness.jpg
+map_Bump textures/Screw_normal.dds
+map_Ka textures/Screw_AO.dds
+map_Kd textures/Screw_albedo.dds
+map_Ke textures/Screw_metallic.dds
+map_Ks textures/Screw_roughness.dds
 
 newmtl Material.004
 Ns 96.078431
@@ -55,11 +55,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Screw_normal.png
-map_Ka textures/Screw_AO.jpg
-map_Kd textures/Screw_albedo.jpg
-map_Ke textures/Screw_metallic.jpg
-map_Ks textures/Screw_roughness.jpg
+map_Bump textures/Screw_normal.dds
+map_Ka textures/Screw_AO.dds
+map_Kd textures/Screw_albedo.dds
+map_Ke textures/Screw_metallic.dds
+map_Ks textures/Screw_roughness.dds
 
 newmtl Material.005
 Ns 96.078431
@@ -70,11 +70,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Wheel_normal.png
-map_Ka textures/Wheel_AO.jpg
-map_Kd textures/Wheel_albedo.jpg
-map_Ke textures/Wheel_metallic.jpg
-map_Ks textures/Wheel_roughness.jpg
+map_Bump textures/Wheel_normal.dds
+map_Ka textures/Wheel_AO.dds
+map_Kd textures/Wheel_albedo.dds
+map_Ke textures/Wheel_metallic.dds
+map_Ks textures/Wheel_roughness.dds
 
 newmtl Material.006
 Ns 96.078431
@@ -85,11 +85,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Mid_normal.png
-map_Ka textures/Mid_AO.jpg
-map_Kd textures/Mid_albedo.jpg
-map_Ke textures/Mid_metallic.jpg
-map_Ks textures/Mid_roughness.jpg
+map_Bump textures/Mid_normal.dds
+map_Ka textures/Mid_AO.dds
+map_Kd textures/Mid_albedo.dds
+map_Ke textures/Mid_metallic.dds
+map_Ks textures/Mid_roughness.dds
 
 newmtl Material.007
 Ns 96.078431
@@ -100,11 +100,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Screw_normal.png
-map_Ka textures/Screw_AO.jpg
-map_Kd textures/Screw_albedo.jpg
-map_Ke textures/Screw_metallic.jpg
-map_Ks textures/Screw_roughness.jpg
+map_Bump textures/Screw_normal.dds
+map_Ka textures/Screw_AO.dds
+map_Kd textures/Screw_albedo.dds
+map_Ke textures/Screw_metallic.dds
+map_Ks textures/Screw_roughness.dds
 
 newmtl Material.008
 Ns 96.078431
@@ -115,11 +115,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Wheel_normal.png
-map_Ka textures/Wheel_AO.jpg
-map_Kd textures/Wheel_albedo.jpg
-map_Ke textures/Wheel_metallic.jpg
-map_Ks textures/Wheel_roughness.jpg
+map_Bump textures/Wheel_normal.dds
+map_Ka textures/Wheel_AO.dds
+map_Kd textures/Wheel_albedo.dds
+map_Ke textures/Wheel_metallic.dds
+map_Ks textures/Wheel_roughness.dds
 
 newmtl Material.009
 Ns 96.078431
@@ -130,8 +130,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Mid_normal.png
-map_Ka textures/Mid_AO.jpg
-map_Kd textures/Mid_albedo.jpg
-map_Ke textures/Mid_metallic.jpg
-map_Ks textures/Mid_roughness.jpg
+map_Bump textures/Mid_normal.dds
+map_Ka textures/Mid_AO.dds
+map_Kd textures/Mid_albedo.dds
+map_Ke textures/Mid_metallic.dds
+map_Ks textures/Mid_roughness.dds

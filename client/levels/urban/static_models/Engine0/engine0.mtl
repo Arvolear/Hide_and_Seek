@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Engine_Normal_OpenGL.png
-map_Ka textures/Engine_Mixed_AO.png
-map_Kd textures/Engine_Base_Color.png
-map_Ke textures/Engine_Metallic.png
-map_Ks textures/Engine_Roughness.png
+map_Bump textures/Engine_Normal_OpenGL.dds
+map_Ka textures/Engine_Mixed_AO.dds
+map_Kd textures/Engine_Base_Color.dds
+map_Ke textures/Engine_Metallic.dds
+map_Ks textures/Engine_Roughness.dds

@@ -72,7 +72,7 @@ void main()
     ssaoFragmentNorm = vec3(view * vec4(fragmentNorm, 0.0));
 
     /* flip UV */
-    textureCoords = vec2(uv.x, -uv.y);
+    textureCoords = vec2(uv.x, uv.y);
 
     /* normal mapped? */
     if (meshNormalMapped == 1)

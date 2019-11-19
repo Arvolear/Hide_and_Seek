@@ -20,6 +20,9 @@
 
 #include <SOIL/SOIL.h>
 
+#include <nv_dds/nv_dds.h>
+
+using namespace nv_dds;
 using namespace std;
 using namespace glm;
 using namespace Assimp;
@@ -47,7 +50,7 @@ class ModelLoader
 
         vector < Mesh::Texture > loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName); 
         unsigned int textureFromFile(string filename);
-        unsigned int loadCompressed(const char* path);
+        unsigned int loadCompressed(string filename);
         unsigned int loadNotCompressed(string filename);
 
         Bone* findBone(string name) const; 

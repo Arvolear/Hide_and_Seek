@@ -10,11 +10,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Container_normal.jpg
-map_Ka textures/Container_AO.jpg
-map_Kd textures/Container_basecolor.jpg
-map_Ke textures/Container_metallic.jpg
-map_Ks textures/Container_roughness.jpg
+map_Bump textures/Container_normal.dds
+map_Ka textures/Container_AO.dds
+map_Kd textures/Container_basecolor.dds
+map_Ke textures/Container_metallic.dds
+map_Ks textures/Container_roughness.dds
 
 newmtl Material.002
 Ns 96.078431
@@ -25,11 +25,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Container_normal.jpg
-map_Ka textures/Container_AO.jpg
-map_Kd textures/Container_basecolor.jpg
-map_Ke textures/Container_metallic.jpg
-map_Ks textures/Container_roughness.jpg
+map_Bump textures/Container_normal.dds
+map_Ka textures/Container_AO.dds
+map_Kd textures/Container_basecolor.dds
+map_Ke textures/Container_metallic.dds
+map_Ks textures/Container_roughness.dds
 
 newmtl Material.003
 Ns 96.078431
@@ -40,8 +40,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/Container_normal.jpg
-map_Ka textures/Container_AO.jpg
-map_Kd textures/Container_basecolor.jpg
-map_Ke textures/Container_metallic.jpg
-map_Ks textures/Container_roughness.jpg
+map_Bump textures/Container_normal.dds
+map_Ka textures/Container_AO.dds
+map_Kd textures/Container_basecolor.dds
+map_Ke textures/Container_metallic.dds
+map_Ks textures/Container_roughness.dds

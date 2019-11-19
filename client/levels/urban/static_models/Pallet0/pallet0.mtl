@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/wooden_pallet_BaseColor.png
-map_Bump textures/wooden_pallet_Normal.png
-map_Ke textures/wooden_pallet_Metallic.png
-map_Ks textures/wooden_pallet_Roughness.png
+map_Kd textures/wooden_pallet_BaseColor.dds
+map_Bump textures/wooden_pallet_Normal.dds
+map_Ke textures/wooden_pallet_Metallic.dds
+map_Ks textures/wooden_pallet_Roughness.dds
 
 newmtl Material.002
 Ns 94.117647
@@ -24,10 +24,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/wooden_pallet_BaseColor.png
-map_Bump textures/wooden_pallet_Normal.png
-map_Ke textures/wooden_pallet_Metallic.png
-map_Ks textures/wooden_pallet_Roughness.png
+map_Kd textures/wooden_pallet_BaseColor.dds
+map_Bump textures/wooden_pallet_Normal.dds
+map_Ke textures/wooden_pallet_Metallic.dds
+map_Ks textures/wooden_pallet_Roughness.dds
 
 newmtl Material.003
 Ns 94.117647
@@ -38,7 +38,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/wooden_pallet_BaseColor.png
-map_Bump textures/wooden_pallet_Normal.png
-map_Ke textures/wooden_pallet_Metallic.png
-map_Ks textures/wooden_pallet_Roughness.png
+map_Kd textures/wooden_pallet_BaseColor.dds
+map_Bump textures/wooden_pallet_Normal.dds
+map_Ke textures/wooden_pallet_Metallic.dds
+map_Ks textures/wooden_pallet_Roughness.dds

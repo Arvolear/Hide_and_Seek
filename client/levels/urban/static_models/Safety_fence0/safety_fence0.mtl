@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/barriere_low_normal.png
-map_Ka textures/barriere_low_ao.png
-map_Kd textures/barriere_low_baseColor.png
-map_Ke textures/barriere_low_metalness.png
-map_Ks textures/barriere_low_roughness.png
+map_Bump textures/barriere_low_normal.dds
+map_Ka textures/barriere_low_ao.dds
+map_Kd textures/barriere_low_baseColor.dds
+map_Ke textures/barriere_low_metalness.dds
+map_Ks textures/barriere_low_roughness.dds

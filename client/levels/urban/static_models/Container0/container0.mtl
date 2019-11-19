@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
-map_Bump textures/shipCMiddleDoor_Material_Normal.png
-map_Ke textures/shipCMiddleDoor_Material_Metallic.png
-map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.dds
+map_Bump textures/shipCMiddleDoor_Material_Normal.dds
+map_Ke textures/shipCMiddleDoor_Material_Metallic.dds
+map_Ks textures/shipCMiddleDoor_Material_Roughness.dds
 
 newmtl Material.003
 Ns 96.078431
@@ -24,10 +24,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
-map_Bump textures/shipCMiddleDoor_Material_Normal.png
-map_Ke textures/shipCMiddleDoor_Material_Metallic.png
-map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.dds
+map_Bump textures/shipCMiddleDoor_Material_Normal.dds
+map_Ke textures/shipCMiddleDoor_Material_Metallic.dds
+map_Ks textures/shipCMiddleDoor_Material_Roughness.dds
 
 newmtl Material.004
 Ns 96.078431
@@ -38,10 +38,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
-map_Bump textures/shipCMiddleDoor_Material_Normal.png
-map_Ke textures/shipCMiddleDoor_Material_Metallic.png
-map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.dds
+map_Bump textures/shipCMiddleDoor_Material_Normal.dds
+map_Ke textures/shipCMiddleDoor_Material_Metallic.dds
+map_Ks textures/shipCMiddleDoor_Material_Roughness.dds
 
 newmtl Material.005
 Ns 96.078431
@@ -52,10 +52,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
-map_Bump textures/shipCMiddleDoor_Material_Normal.png
-map_Ke textures/shipCMiddleDoor_Material_Metallic.png
-map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.dds
+map_Bump textures/shipCMiddleDoor_Material_Normal.dds
+map_Ke textures/shipCMiddleDoor_Material_Metallic.dds
+map_Ks textures/shipCMiddleDoor_Material_Roughness.dds
 
 newmtl Material.006
 Ns 96.078431
@@ -66,10 +66,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/shipCMiddleDoor_Material_BaseColor.png
-map_Bump textures/shipCMiddleDoor_Material_Normal.png
-map_Ke textures/shipCMiddleDoor_Material_Metallic.png
-map_Ks textures/shipCMiddleDoor_Material_Roughness.png
+map_Kd textures/shipCMiddleDoor_Material_BaseColor.dds
+map_Bump textures/shipCMiddleDoor_Material_Normal.dds
+map_Ke textures/shipCMiddleDoor_Material_Metallic.dds
+map_Ks textures/shipCMiddleDoor_Material_Roughness.dds
 
 newmtl Material.009
 Ns 96.078431
@@ -80,7 +80,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/shipCMiddleDoor_Material_Normal.png
-map_Kd textures/shipCMiddleDoor_DefaultMaterial_BaseColor.png
-map_Ke textures/shipCMiddleDoor_DefaultMaterial_Metallic.png
-map_Ks textures/shipCMiddleDoor_DefaultMaterial_Roughness.png
+map_Bump textures/shipCMiddleDoor_Material_Normal.dds
+map_Kd textures/shipCMiddleDoor_DefaultMaterial_BaseColor.dds
+map_Ke textures/shipCMiddleDoor_DefaultMaterial_Metallic.dds
+map_Ks textures/shipCMiddleDoor_DefaultMaterial_Roughness.dds

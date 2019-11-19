@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/Wood_albedo.jpg
-map_Bump textures/Wood_normal.jpg
-map_Ke textures/Wood_metallic.jpg
-map_Ks textures/Wood_roughness.jpg
+map_Kd textures/Wood_albedo.dds
+map_Bump textures/Wood_normal.dds
+map_Ke textures/Wood_metallic.dds
+map_Ks textures/Wood_roughness.dds
 
 newmtl Material.002
 Ns 94.117647
@@ -24,7 +24,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/Tent_albedo.jpg
-map_Bump textures/Tent_normal.jpg
-map_Ke textures/Wood_metallic.jpg
-map_Ks textures/Tent_roughness.jpg
+map_Kd textures/Tent_albedo.dds
+map_Bump textures/Tent_normal.dds
+map_Ke textures/Wood_metallic.dds
+map_Ks textures/Tent_roughness.dds

@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/BurnBarrelMat_normal.png
-map_Ka textures/BurnBarrelMat_AO.jpg
-map_Kd textures/BurnBarrelMat_albedo.jpg
-map_Ke textures/BurnBarrelMat_metallic.jpg
-map_Ks textures/BurnBarrelMat_roughness.jpg
+map_Bump textures/BurnBarrelMat_normal.dds
+map_Ka textures/BurnBarrelMat_AO.dds
+map_Kd textures/BurnBarrelMat_albedo.dds
+map_Ke textures/BurnBarrelMat_metallic.dds
+map_Ks textures/BurnBarrelMat_roughness.dds

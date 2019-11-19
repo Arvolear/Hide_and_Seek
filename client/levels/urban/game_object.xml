@@ -26,7 +26,7 @@
             </debugobject>
         </gameobject> 
         
-        <!-- <gameobject name="fence00">
+        <gameobject name="fence00">
             <graphicsobject path="/static_models/Fence0/fence0.obj">
                 <viewfrustum apply="true"/>
                 <scale x="2.0" y="2.0" z="2.0"/>
@@ -342,7 +342,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> -->
+        </gameobject>
         
         <gameobject name="building0">
             <graphicsobject path="/static_models/Building0/building0.obj">
@@ -357,7 +357,7 @@
     
         <!-- ********************************************************* -->
         
-        <!-- <gameobject name="poplar_tree00">
+        <gameobject name="poplar_tree00">
             <graphicsobject path="/static_models/Poplar_tree0/poplar_tree0.obj">
                 <viewfrustum apply="true"/>
                 <cullfaces apply="false"/>
@@ -946,7 +946,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> -->
+        </gameobject>
         
         <!-- ********************************************************* -->
 
@@ -974,7 +974,7 @@
             </debugobject>
         </gameobject>
         
-        <!-- <gameobject name="gate00">
+        <gameobject name="gate00">
             <graphicsobject path="/static_models/Gate0/gate0.obj">
                 <cullfaces apply="false"/>
                 <viewfrustum apply="true"/>
@@ -998,7 +998,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> -->
+        </gameobject>
         
         <gameobject name="mountain00">
             <graphicsobject path="/static_models/Mountain0/mountain0.obj">
@@ -1024,7 +1024,7 @@
             </debugobject>
         </gameobject>
         
-        <!-- <gameobject name="fence20">
+        <gameobject name="fence20">
             <graphicsobject path="/static_models/Fence1/fence1.obj">
                 <viewfrustum apply="true"/>
                 <scale x="3.0" y="3.0" z="3.0"/>
@@ -1410,7 +1410,7 @@
             <debugobject>
                 <debugsphere detail="3"/>
             </debugobject>
-        </gameobject> -->
+        </gameobject>
         
         <gameobject name="fence34">
             <graphicsobject path="/static_models/Fence0/fence0.obj">

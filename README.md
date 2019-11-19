@@ -27,7 +27,7 @@
 ## Libraries
 
 The game is implemented via OpenGL (mesaGL) and Bullet Physics engines. 
-It also includes GLFW3 library to handle windows, ASSIMP library to load models, SOIL library to load textures and tinyXML2 library to work with XML.
+It also includes GLFW3 library to handle windows, ASSIMP library to load models, SOIL and nv_dds libraries to load textures and tinyXML2 library to work with XML.
 
 ## Models and textures
 

@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/TrainWagon_01_Diff.jpg
-map_Bump textures/TrainWagon_01_NRM.jpg
-map_Ke textures/TrainWagon_01_Metallic.jpg
-map_Ks textures/TrainWagon_01_Rough.jpg
+map_Kd textures/TrainWagon_01_Diff.dds
+map_Bump textures/TrainWagon_01_NRM.dds
+map_Ke textures/TrainWagon_01_Metallic.dds
+map_Ks textures/TrainWagon_01_Rough.dds

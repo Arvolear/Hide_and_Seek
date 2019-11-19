@@ -10,11 +10,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/TexturesCom_Branches0025_1_M_COLOR.png
-map_Bump textures/TexturesCom_Branches0025_1_M_NRM.png
-map_Ka textures/TexturesCom_Branches0025_1_M_OCC.png
-map_Ks textures/TexturesCom_Branches0025_1_M_SPEC.png
-map_d textures/TexturesCom_Branches0025_1_M_COLOR.png
+map_Kd textures/leaves.dds
+map_Bump textures/leavesNorm.dds
+map_Ka textures/leavesAO.dds
+map_Ks textures/leavesMetal.dds
+map_d textures/leaves.dds
 
 newmtl Material.002
 Ns 249.019608
@@ -25,7 +25,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/BARK1_COLOR.png
-map_Bump textures/BARK1_NRM.png
-map_Ka textures/BARK1_OCC.png
-map_Ks textures/BARK1_SPEC.png
+map_Kd textures/BARK1_COLOR.dds
+map_Bump textures/BARK1_NRM.dds
+map_Ka textures/BARK1_OCC.dds
+map_Ks textures/BARK1_SPEC.dds

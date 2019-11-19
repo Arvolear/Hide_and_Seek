@@ -10,10 +10,10 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 2
-map_Kd textures/leaves.png
-map_Bump textures/leavesNorm.png
-map_Ke textures/leavesMetal.png
-map_d textures/leaves.png
+map_Kd textures/leaves.dds
+map_Bump textures/leavesNorm.dds
+map_Ke textures/leavesMetal.dds
+map_d textures/leaves.dds
 
 newmtl bark.001
 Ns 92.156863
@@ -24,6 +24,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/bark.png
-map_Bump textures/barkNorm.png
-map_Ke textures/barkMetal.png
+map_Kd textures/bark.dds
+map_Bump textures/barkNorm.dds
+map_Ke textures/barkMetal.dds

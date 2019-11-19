@@ -306,7 +306,7 @@ unsigned int ModelLoader::textureFromFile(string filename)
 
     if (extension == ".dds")
     {
-        return loadCompressed(filename.data());
+        return loadCompressed(filename);
     }
     else
     {
@@ -314,149 +314,33 @@ unsigned int ModelLoader::textureFromFile(string filename)
     }
 }
 
-unsigned int ModelLoader::loadCompressed(const char* path) 
+unsigned int ModelLoader::loadCompressed(string filename) 
 {
-    unsigned char* header;
+    CDDSImage image;
+    image.load(filename);
 
-    unsigned int width;
-    unsigned int height;
-    unsigned int mipMapCount;
+    unsigned int textureID;
+    glGenTextures(1, &textureID); 
+    glBindTexture(GL_TEXTURE_2D, textureID); 
 
-    unsigned int blockSize;
-    unsigned int format;
+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, image.get_format(), image.get_width(), image.get_height(), 0, image.get_size(), image);
 
-    unsigned int w;
-    unsigned int h;
-
-    unsigned char* buffer = 0;
-
-    GLuint tid = 0;
-
-    FILE* f;
-
-    if ((f = fopen(path, "rb")) == 0)
-    {
-        return 0;
-    }
-    
-    fseek(f, 0, SEEK_END);
-    unsigned int file_size = ftell(f); 
-    fseek(f, 0, SEEK_SET);
-
-    header = (unsigned char*)malloc(128);
-    unsigned int bytesRead = fread(header, 1, 128, f);
-
-    assert(bytesRead == 128);
-
-    if (memcmp(header, "DDS ", 4) != 0)
-    {
-        free(buffer);
-        free(header);
-        fclose(f);
-        return tid;
-    }
-
-    height = (header[12]) | (header[13] << 8) | (header[14] << 16) | (header[15] << 24);
-    width = (header[16]) | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
-    mipMapCount = (header[28]) | (header[29] << 8) | (header[30] << 16) | (header[31] << 24);
-
-    //cout << height << ' ' << width << ' ' << mipMapCount << endl;
-
-    if(header[84] == 'D') 
-    {
-        switch(header[87]) 
-        {
-            case '1': // DXT1
-                {
-                    format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-                    blockSize = 8;
-                    break;
-                }
-            case '3': // DXT3
-                {
-                    format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-                    blockSize = 16;
-                    break;
-                }
-            case '5': // DXT5
-                {
-                    format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-                    blockSize = 16;
-                    break;
-                }
-            default: 
-                {
-                    free(buffer);
-                    free(header);
-                    fclose(f);
-                    return tid;
-                }
-        }
-    } 
-    else
-    {
-        free(buffer);
-        free(header);
-        fclose(f);
-        return tid;
-    }
-
-    buffer = (unsigned char*)malloc(file_size - 128);
-
-    if (buffer == 0)
-    {
-        free(buffer);
-        free(header);
-        fclose(f);
-        return tid;
-    }
-    
-    bytesRead = fread(buffer, 1, file_size, f);
-    
-    assert(bytesRead == file_size - 128);
-
-    glGenTextures(1, &tid);
-    
-    if (tid == 0)
-    {
-        free(buffer);
-        free(header);
-        fclose(f);
-        return tid;
-    }
-
-    glBindTexture(GL_TEXTURE_2D, tid);
-        
-    glGenerateMipmap(GL_TEXTURE_2D); 
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount - 1);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, image.get_num_mipmaps());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    unsigned int offset = 0;
-    unsigned int size = 0;
-    w = width;
-    h = height;
-
-    for (unsigned int i = 0; i < mipMapCount; i++) 
+    for (unsigned int i = 0; i < image.get_num_mipmaps(); i++)
     {
-        size = ((w + 3) / 4) * ((h + 3) / 4) * blockSize;
+        CSurface mipmap = image.get_mipmap(i);
 
-        glCompressedTexImage2D(GL_TEXTURE_2D, i, format, w, h, 0, size, buffer + offset);
-
-        offset += size;
-        w /= 2;
-        h /= 2;
+        glCompressedTexImage2D(GL_TEXTURE_2D, i + 1, image.get_format(), mipmap.get_width(), mipmap.get_height(), 0, mipmap.get_size(), mipmap);
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    free(buffer);
-    free(header);
-    fclose(f);
-    return tid;
+    return textureID;
 }
 
 unsigned int ModelLoader::loadNotCompressed(string filename)

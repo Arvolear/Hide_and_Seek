@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump textures/fahrrad_initialShadingGroup_Normal.png
-map_Ka textures/fahrrad_initialShadingGroup_AO.png
-map_Kd textures/fahrrad_initialShadingGroup_BaseColor.png
-map_Ke textures/fahrrad_initialShadingGroup_Metallic.png
-map_Ks textures/fahrrad_initialShadingGroup_Roughness.png
+map_Bump textures/fahrrad_initialShadingGroup_Normal.dds
+map_Ka textures/fahrrad_initialShadingGroup_AO.dds
+map_Kd textures/fahrrad_initialShadingGroup_BaseColor.dds
+map_Ke textures/fahrrad_initialShadingGroup_Metallic.dds
+map_Ks textures/fahrrad_initialShadingGroup_Roughness.dds

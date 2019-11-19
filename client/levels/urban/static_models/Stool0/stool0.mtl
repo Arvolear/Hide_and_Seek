@@ -10,8 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd textures/Stool_albedo.jpg
-map_Bump textures/Stool_normal.png
-map_Ka textures/Stool_AO.jpg
-map_Ke textures/Stool_metallic.jpg
-map_Ks textures/Stool_roughness.jpg
+map_Kd textures/Stool_albedo.dds
+map_Bump textures/Stool_normal.dds
+map_Ka textures/Stool_AO.dds
+map_Ke textures/Stool_metallic.dds
+map_Ks textures/Stool_roughness.dds
