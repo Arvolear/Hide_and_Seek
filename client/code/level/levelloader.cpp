@@ -310,7 +310,7 @@ void LevelLoader::loadGameObject(XMLElement* gameObjectElem, GameObject*& GO)
     const char* name = nullptr;
     gameObjectElem->QueryStringAttribute("name", &name);
 
-    GO = new GameObject(name);
+    GO = new GameObject(window, name);
 
     /* graphics object */
     XMLElement* graphicsObjectElem = gameObjectElem->FirstChildElement("graphicsobject");
@@ -338,7 +338,7 @@ void LevelLoader::loadInstancedGameObject(XMLElement* instancedGameObjectElem, I
     const char* name = nullptr;
     instancedGameObjectElem->QueryStringAttribute("name", &name);
 
-    GameObject* GO = new InstancedGameObject(name);
+    GameObject* GO = new InstancedGameObject(window, name);
 
     /* graphics object */
     XMLElement* graphicsObjectElem = instancedGameObjectElem->FirstChildElement("graphicsobject");

@@ -13,5 +13,6 @@ illum 2
 map_Kd textures/albedo.dds
 map_Bump textures/normal.dds
 map_Ka textures/ao.dds
-map_Ke textures/roughness.dds
+map_Ke textures/metalness.dds
+map_Ks textures/roughness.dds
 map_d textures/albedo.dds

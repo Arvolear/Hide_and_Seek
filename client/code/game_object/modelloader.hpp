@@ -3,6 +3,9 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include <stdexcept>
 #include <map>
 
@@ -42,12 +45,20 @@ class ModelLoader
         map < string, aiNode* > nodes; 
         vector < map < string, AnimationData* > > animations; 
 
+        Window* window;
+
+        mutex mtx;
+        mutex mtx2;
+        mutex mtx3;
+
         void processNode(aiNode *node); 
         void processNodeAnim(); 
         void processBone(); 
         void processMeshes(aiNode *node); 
         Mesh* processMesh(aiMesh *mesh); 
 
+        void loadDiffNorm(aiMaterial* material, vector < Mesh::Texture > &textures);
+        void loadRoughMetAO(aiMaterial* material, vector < Mesh::Texture > &textures);
         vector < Mesh::Texture > loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName); 
         unsigned int textureFromFile(string filename);
         unsigned int loadCompressed(string filename);
@@ -59,7 +70,7 @@ class ModelLoader
         vector < AnimationData* > findAiNodeAnims(string name) const; 
 
     public:
-        ModelLoader();
+        ModelLoader(Window* window);
 
         void loadModel(string path); 
 

@@ -14,8 +14,6 @@ using namespace glm;
 class Weapon : public GameObject
 {
     protected:
-        Window* window;
-
         vec3 offset;
         quat twist;
 

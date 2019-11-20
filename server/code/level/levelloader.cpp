@@ -18,13 +18,10 @@ LevelLoader::LevelLoader(World* physicsWorld)
     this->physicsWorld = physicsWorld;
 }
         
-void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject*& PO)
+void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject*& PO, string name)
 {
     if (!PO)
     {
-        const char* name = nullptr;
-        physicsObjectElem->QueryStringAttribute("name", &name);
-    
         PO = new PhysicsObject(name, physicsWorld);
     }
 
@@ -286,13 +283,10 @@ void LevelLoader::loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject
     }
 }
 
-void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE)
+void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE, string name)
 {
     if (!WE)
     {
-        const char* name = nullptr;
-        weaponElem->QueryStringAttribute("name", &name);
-
         WE = new Weapon(name, physicsWorld);
     }
 
@@ -637,23 +631,36 @@ void LevelLoader::loadPhysicsObjects()
 
     while (physicsObjectElem)
     {
-        const char* name = nullptr;
-        physicsObjectElem->QueryStringAttribute("name", &name);
+        const char* baseName = nullptr;
+        physicsObjectElem->QueryStringAttribute("name", &baseName);
 
-        /* new */
-        if (physicsObjects.find(name) == physicsObjects.end())
+        int quantity = 1;
+        physicsObjectElem->QueryIntAttribute("quantity", &quantity);
+
+        for (int i = 0; i < quantity; i++)
         {
-            PhysicsObject* PO = nullptr;
+            string name = baseName;
+            
+            if (quantity > 1)
+            {
+                name += to_string(i);
+            }
 
-            loadPhysicsObject(physicsObjectElem, PO);
+            /* new */
+            if (physicsObjects.find(name) == physicsObjects.end())
+            {
+                PhysicsObject* PO = nullptr;
 
-            physicsObjects.insert({PO->getName(), PO});
-        }
-        else // update
-        {
-            PhysicsObject* PO = physicsObjects.find(name)->second;
+                loadPhysicsObject(physicsObjectElem, PO, name);
 
-            loadPhysicsObject(physicsObjectElem, PO);
+                physicsObjects.insert({PO->getName(), PO});
+            }
+            else // update
+            {
+                PhysicsObject* PO = physicsObjects.find(name)->second;
+
+                loadPhysicsObject(physicsObjectElem, PO, name);
+            }
         }
 
         physicsObjectElem = physicsObjectElem->NextSiblingElement();
@@ -677,24 +684,37 @@ void LevelLoader::loadWeapons()
 
     while (weaponElem)
     {
-        const char* name = nullptr;
-        weaponElem->QueryStringAttribute("name", &name);
+        const char* baseName = nullptr;
+        weaponElem->QueryStringAttribute("name", &baseName);
 
-        /* new */
-        if (physicsObjects.find(name) == physicsObjects.end())
+        int quantity = 1;
+        weaponElem->QueryIntAttribute("quantity", &quantity);
+
+        for (int i = 0; i < quantity; i++)
         {
-            Weapon* WE = nullptr;
+            string name = baseName;
 
-            loadWeapon(weaponElem, WE);
+            if (quantity > 1)
+            {
+                name += to_string(i);
+            }
 
-            physicsObjects.insert({WE->getName(), WE});
+            /* new */
+            if (physicsObjects.find(name) == physicsObjects.end())
+            {
+                Weapon* WE = nullptr;
 
-        }
-        else // update
-        {
-            Weapon* WE = dynamic_cast < Weapon* >(physicsObjects.find(name)->second);
+                loadWeapon(weaponElem, WE, name);
 
-            loadWeapon(weaponElem, WE);
+                physicsObjects.insert({WE->getName(), WE});
+
+            }
+            else // update
+            {
+                Weapon* WE = dynamic_cast < Weapon* >(physicsObjects.find(name)->second);
+
+                loadWeapon(weaponElem, WE, name);
+            }
         }
 
         weaponElem = weaponElem->NextSiblingElement();
@@ -763,7 +783,7 @@ void LevelLoader::loadSoldiers()
             {
                 PhysicsObject* PO = nullptr;
 
-                loadPhysicsObject(physicsObjectElem, PO);
+                loadPhysicsObject(physicsObjectElem, PO, name);
 
                 physicsObjects.insert({PO->getName(), PO});
 
@@ -773,7 +793,7 @@ void LevelLoader::loadSoldiers()
             {
                 PhysicsObject* PO = physicsObjects.find(name)->second;
 
-                loadPhysicsObject(physicsObjectElem, PO);
+                loadPhysicsObject(physicsObjectElem, PO, name);
             }
         }
 

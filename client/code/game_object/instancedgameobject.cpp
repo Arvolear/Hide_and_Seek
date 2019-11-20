@@ -29,7 +29,7 @@
 #include "gameobject.hpp"
 #include "instancedgameobject.hpp"
 
-InstancedGameObject::InstancedGameObject(string name) : GameObject(name) 
+InstancedGameObject::InstancedGameObject(Window* window, string name) : GameObject(window, name) 
 {
     poissonDisk = new PoissonDisk();
 

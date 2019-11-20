@@ -13,6 +13,7 @@ illum 2
 map_Kd textures/leaves.dds
 map_Bump textures/leavesNorm.dds
 map_Ke textures/leavesMetal.dds
+map_Ks textures/leavesRough.dds
 map_d textures/leaves.dds
 
 newmtl bark.001
@@ -27,3 +28,4 @@ illum 2
 map_Kd textures/bark.dds
 map_Bump textures/barkNorm.dds
 map_Ke textures/barkMetal.dds
+map_Ks textures/barkRough.dds

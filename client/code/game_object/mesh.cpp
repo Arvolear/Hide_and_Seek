@@ -116,8 +116,8 @@ void Mesh::render(Shader *shader, bool instanced) const
         //cout << "material." + textures[i].type + number << endl;
         //cout << textures[i].id << endl;
 
-        shader->setInt("material." + textures[i].type + number, i); // send the texture to the shader (example: material.texture_diffuse1)
-        glBindTexture(GL_TEXTURE_2D, textures[i].id); // bind this texture
+        shader->setInt("material." + textures[i].type + number, i);
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
     if (normalNR == 1)
@@ -144,8 +144,11 @@ void Mesh::render(Shader *shader, bool instanced) const
 
     glBindVertexArray(0); // unbind VAO
     
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    for (size_t i = 0; i < textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 }
 
 vector < Mesh::Vertex > Mesh::getVertices() const

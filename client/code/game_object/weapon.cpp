@@ -28,10 +28,8 @@
 #include "gameobject.hpp"
 #include "weapon.hpp"
         
-Weapon::Weapon(Window* window, string name) : GameObject(name)
+Weapon::Weapon(Window* window, string name) : GameObject(window, name)
 {
-    this->window = window;
-    
     this->offset = vec3(0);
     this->twist = quat(0, vec3(0, 1, 0));
 

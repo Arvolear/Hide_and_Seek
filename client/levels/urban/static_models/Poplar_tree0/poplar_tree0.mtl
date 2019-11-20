@@ -13,7 +13,8 @@ illum 2
 map_Kd textures/leaves.dds
 map_Bump textures/leavesNorm.dds
 map_Ka textures/leavesAO.dds
-map_Ks textures/leavesMetal.dds
+map_Ke textures/leavesMetal.dds
+map_Ks textures/leavesRough.dds
 map_d textures/leaves.dds
 
 newmtl Material.002

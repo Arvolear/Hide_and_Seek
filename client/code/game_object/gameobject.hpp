@@ -30,6 +30,8 @@ class GameObject
         bool shadow;
         bool cull;
 
+        Window* window;
+
         float minNormalCosAngle;
 
         ModelLoader* modelLoader;
@@ -67,7 +69,7 @@ class GameObject
         void removeGraphicsObject();
 
     public:
-        GameObject(string name);
+        GameObject(Window* window, string name);
 
         void setName(string name);
         void setCull(bool cull);

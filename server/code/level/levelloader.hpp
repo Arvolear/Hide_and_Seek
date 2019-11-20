@@ -21,8 +21,8 @@ class LevelLoader
         vector < Player* > players;
 
         /* helpers */
-        void loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject*& PO);
-        void loadWeapon(XMLElement* weaponElem, Weapon*& WE);
+        void loadPhysicsObject(XMLElement* physicsObjectElem, PhysicsObject*& PO, string name);
+        void loadWeapon(XMLElement* weaponElem, Weapon*& WE, string name);
 
         /* main */
         void loadPhysicsObjects();

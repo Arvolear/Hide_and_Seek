@@ -13,6 +13,7 @@ illum 2
 map_Kd textures/worn-bumpy-rock-ue/albedo.dds
 map_Bump textures/worn-bumpy-rock-ue/normal.dds
 map_Ke textures/worn-bumpy-rock-ue/metalness.dds
+map_Ka textures/worn-bumpy-rock-ue/ao.dds
 map_Ks textures/worn-bumpy-rock-ue/roughness.dds
 
 newmtl Material.022
@@ -27,6 +28,8 @@ illum 2
 map_Kd textures/worn-bumpy-rock-ue/albedo.dds
 map_Bump textures/worn-bumpy-rock-ue/normal.dds
 map_Ke textures/worn-bumpy-rock-ue/metalness.dds
+map_Ka textures/worn-bumpy-rock-ue/ao.dds
+map_Ks textures/worn-bumpy-rock-ue/roughness.dds
 
 newmtl Material.029
 Ns 92.156863
@@ -56,6 +59,7 @@ map_Kd textures/Mossy_ground/albedo.dds
 map_Bump textures/Mossy_ground/normal.dds
 map_Ka textures/Mossy_ground/ao.dds
 map_Ke textures/Mossy_ground/metalness.dds
+map_Ks textures/Mossy_ground/roughness.dds
 
 newmtl tunnel
 Ns 92.156863

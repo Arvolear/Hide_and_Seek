@@ -5,7 +5,7 @@
         <instancedgameobject name="tree0">
             <graphicsobject path="/static_models/Vegetation0/Tree0/tree0.obj">
                 <cullfaces apply="false"/>
-                <minnormalcosangle angle="0.05"/>
+                <minnormalcosangle angle="0.03"/>
                 <viewfrustum apply="true"/>
                 <scale x="1.0" y="1.0" z="1.0"/>
                 <position x="0.0" y="1.0" z="0.0"/>

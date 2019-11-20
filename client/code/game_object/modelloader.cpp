@@ -2,6 +2,10 @@
 
 #include "../shader/shader.hpp"
 
+#include "../window/renderquad.hpp"
+#include "../window/glfwevents.hpp"
+#include "../window/window.hpp"
+
 #include "animation.hpp"
 #include "mesh.hpp"
 #include "bone.hpp"
@@ -14,7 +18,10 @@ using namespace Assimp;
         
 map < string, Mesh::Texture > ModelLoader::textures_loaded; 
 
-ModelLoader::ModelLoader(){}
+ModelLoader::ModelLoader(Window* window)
+{
+    this->window = window;
+}
 
 void ModelLoader::loadModel(string path)
 {
@@ -240,17 +247,25 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
 
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; 
     
+    window->detachCurrentContext();
+
+    thread diffNormLoader(&ModelLoader::loadDiffNorm, this, material, ref(textures));
+    thread roughMetAOLoader(&ModelLoader::loadRoughMetAO, this, material, ref(textures));
+    
+    //loadDiffNorm(material, textures);
+    //loadRoughMetAO(material, textures);
+    
+    diffNormLoader.join();
+    roughMetAOLoader.join();
+    
+    window->makeCurrentContext();
+
+    return new Mesh(vertices, indices, textures);
+}
+        
+void ModelLoader::loadDiffNorm(aiMaterial* material, vector < Mesh::Texture > &textures)
+{
     vector < Mesh::Texture > diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); 
-    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
-    
-    vector < Mesh::Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_roughness");
-    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
-    
-    vector < Mesh::Texture > specularMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_metallic"); 
-    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    
-    vector < Mesh::Texture > aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ao");
-    textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
     
     /* .obj */
     vector < Mesh::Texture > normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal"); 
@@ -261,9 +276,25 @@ Mesh* ModelLoader::processMesh(aiMesh *mesh)
         normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal"); 
     }
 
-    textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+    unique_lock < mutex > lk(mtx);
 
-    return new Mesh(vertices, indices, textures);
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end()); 
+    textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+}
+        
+void ModelLoader::loadRoughMetAO(aiMaterial* material, vector < Mesh::Texture > &textures)
+{
+    vector < Mesh::Texture > roughnessMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_roughness");
+    
+    vector < Mesh::Texture > specularMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_metallic"); 
+    
+    vector < Mesh::Texture > aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_ao");
+    
+    unique_lock < mutex > lk(mtx);
+
+    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+    textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
 }
 
 vector < Mesh::Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
@@ -277,8 +308,10 @@ vector < Mesh::Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTe
         mat->GetTexture(type, i, &helpStr); 
 
         string texPath = directory + string(helpStr.C_Str());
-
+        
+        unique_lock < mutex > lk(mtx2);
         auto it = textures_loaded.find(texPath);
+        lk.unlock();
 
         if (it != textures_loaded.end()) 
         {
@@ -293,7 +326,10 @@ vector < Mesh::Texture > ModelLoader::loadMaterialTextures(aiMaterial *mat, aiTe
             texture.path = texPath; 
 
             textures.push_back(texture); 
+
+            lk.lock();
             textures_loaded.insert({texPath, texture}); 
+            lk.unlock();
         }
     }
 
@@ -318,9 +354,13 @@ unsigned int ModelLoader::loadCompressed(string filename)
 {
     CDDSImage image;
     image.load(filename);
+    
+    unique_lock < mutex > lk(mtx3);
+    window->makeCurrentContext();
 
     unsigned int textureID;
-    glGenTextures(1, &textureID); 
+    glGenTextures(1, &textureID);
+
     glBindTexture(GL_TEXTURE_2D, textureID); 
 
     glCompressedTexImage2D(GL_TEXTURE_2D, 0, image.get_format(), image.get_width(), image.get_height(), 0, image.get_size(), image);
@@ -340,17 +380,22 @@ unsigned int ModelLoader::loadCompressed(string filename)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    window->detachCurrentContext();
+
     return textureID;
 }
 
 unsigned int ModelLoader::loadNotCompressed(string filename)
 {
+    unique_lock < mutex > lk(mtx3);
+    window->makeCurrentContext();
+    
+    int W, H; 
+    unsigned char* image = SOIL_load_image(filename.data(), &W, &H, 0, SOIL_LOAD_RGBA); 
+
     unsigned int textureID;
     glGenTextures(1, &textureID); 
     glBindTexture(GL_TEXTURE_2D, textureID); 
-
-    int W, H; 
-    unsigned char* image = SOIL_load_image(filename.data(), &W, &H, 0, SOIL_LOAD_RGBA); 
 
     if (image) 
     {
@@ -373,6 +418,8 @@ unsigned int ModelLoader::loadNotCompressed(string filename)
 
         throw runtime_error("ERROR::Failed to load texture at path: " + filename);
     } 
+    
+    window->detachCurrentContext();
 
     return textureID;
 }

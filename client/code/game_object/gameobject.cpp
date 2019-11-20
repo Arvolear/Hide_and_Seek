@@ -29,12 +29,14 @@
 
 set < string > GameObject::globalNames;
 
-GameObject::GameObject(string name)
+GameObject::GameObject(Window* window, string name)
 {
     if (globalNames.find(name) != globalNames.end())
     {
         throw runtime_error("ERROR::GameObject invalid name");
     }
+
+    this->window = window;
 
     globalNames.insert(name);
     this->name = name;
@@ -45,7 +47,7 @@ GameObject::GameObject(string name)
         
     minNormalCosAngle = 0.0;
 
-    modelLoader = new ModelLoader();
+    modelLoader = new ModelLoader(window);
     physicsObject = nullptr;
 
     skeleton = nullptr;

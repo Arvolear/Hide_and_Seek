@@ -28,7 +28,7 @@ class InstancedGameObject : public GameObject
         PoissonDisk* poissonDisk;
 
     public:
-        InstancedGameObject(string name);
+        InstancedGameObject(Window* window, string name);
         void createBoundSphere() override;
 
         void setRadius(int index, float radius);

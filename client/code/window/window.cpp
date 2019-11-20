@@ -188,6 +188,16 @@ float Window::getTime() const
 
 /******************/
 
+void Window::makeCurrentContext()
+{
+    glfwMakeContextCurrent(window);
+}
+
+void Window::detachCurrentContext()
+{
+    glfwMakeContextCurrent(NULL);
+}
+
 void Window::hideCursor()
 {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

@@ -72,6 +72,9 @@ class Window : public GLFWEvents
 
         /**********/
 
+        void makeCurrentContext();
+        void detachCurrentContext();
+
         void pollEvents();
 
         void hideCursor();

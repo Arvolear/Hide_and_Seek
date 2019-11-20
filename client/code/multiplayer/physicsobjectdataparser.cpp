@@ -38,243 +38,257 @@ PhysicsObjectDataParser::PhysicsObjectDataParser() {}
 
 void PhysicsObjectDataParser::parse(XMLElement* objElem)
 {
-    const char* name = nullptr;
-    objElem->QueryStringAttribute("name", &name);
-    names.push_back(name);
+    const char* baseName = nullptr;
+    objElem->QueryStringAttribute("name", &baseName);
+    
+    int quantity = 1;
+    objElem->QueryIntAttribute("quantity", &quantity);
 
-    /* shape */
-    XMLElement* shapeElem = objElem->FirstChildElement("shape");
-
-    if (shapeElem)
+    for (int inst = 0; inst < quantity; inst++)
     {
-        const char* type = nullptr;
-        shapeElem->QueryStringAttribute("type", &type);
+        string name = baseName;
 
-        if (!strcmp(type, "box"))
+        if (quantity > 1)
         {
-            float x = 0, y = 0, z = 0;
-
-            shapeElem->QueryFloatAttribute("x", &x);
-            shapeElem->QueryFloatAttribute("y", &y);
-            shapeElem->QueryFloatAttribute("z", &z);
-
-            collShapes.insert({name, new btBoxShape(btVector3(x, y, z))});    
+            name += to_string(inst);
         }
-        else if (!strcmp(type, "cylinder"))
+
+        names.push_back(name);
+
+        /* shape */
+        XMLElement* shapeElem = objElem->FirstChildElement("shape");
+
+        if (shapeElem)
         {
-            float radius = 0, height = 0, zup = 0;
+            const char* type = nullptr;
+            shapeElem->QueryStringAttribute("type", &type);
 
-            shapeElem->QueryFloatAttribute("r", &radius);
-            shapeElem->QueryFloatAttribute("h", &height);
-            shapeElem->QueryFloatAttribute("zup", &zup);
-
-            collShapes.insert({name, new btCylinderShape(btVector3(radius, height, zup))});    
-        }
-        else if (!strcmp(type, "sphere"))
-        {
-            float radius = 0;
-
-            shapeElem->QueryFloatAttribute("r", &radius);
-
-            collShapes.insert({name, new btSphereShape(radius)});
-        }
-        else if (!strcmp(type, "capsule"))
-        {
-            float radius = 0;
-            float height = 0;
-
-            shapeElem->QueryFloatAttribute("r", &radius);
-            shapeElem->QueryFloatAttribute("h", &height);
-
-            collShapes.insert({name, new btCapsuleShape(radius, height)});
-        }
-        else if (!strcmp(type, "convex"))
-        {
-            ConvexHullShape* CHS = new ConvexHullShape();
-
-            XMLElement* pointElem = shapeElem->FirstChildElement("point");
-
-            while (pointElem)
+            if (!strcmp(type, "box"))
             {
                 float x = 0, y = 0, z = 0;
 
-                pointElem->QueryFloatAttribute("x", &x);
-                pointElem->QueryFloatAttribute("y", &y);
-                pointElem->QueryFloatAttribute("z", &z);
+                shapeElem->QueryFloatAttribute("x", &x);
+                shapeElem->QueryFloatAttribute("y", &y);
+                shapeElem->QueryFloatAttribute("z", &z);
 
-                CHS->addPoint(btVector3(x, y, z));
-
-                pointElem = pointElem->NextSiblingElement();
+                collShapes.insert({name, new btBoxShape(btVector3(x, y, z))});    
             }
-
-            convShapes.insert({name, CHS});
-        }
-        else if (!strcmp(type, "compound"))
-        {
-            CompoundShape* CS = new CompoundShape;
-
-            XMLElement* childShapeElem = shapeElem->FirstChildElement("cshape");
-
-            while (childShapeElem)
+            else if (!strcmp(type, "cylinder"))
             {
-                const char* childType = nullptr;
-                childShapeElem->QueryStringAttribute("type", &childType);
+                float radius = 0, height = 0, zup = 0;
 
-                /* child shape */
-                btCollisionShape* childShape = nullptr;
+                shapeElem->QueryFloatAttribute("r", &radius);
+                shapeElem->QueryFloatAttribute("h", &height);
+                shapeElem->QueryFloatAttribute("zup", &zup);
 
-                if (!strcmp(childType, "box"))
+                collShapes.insert({name, new btCylinderShape(btVector3(radius, height, zup))});    
+            }
+            else if (!strcmp(type, "sphere"))
+            {
+                float radius = 0;
+
+                shapeElem->QueryFloatAttribute("r", &radius);
+
+                collShapes.insert({name, new btSphereShape(radius)});
+            }
+            else if (!strcmp(type, "capsule"))
+            {
+                float radius = 0;
+                float height = 0;
+
+                shapeElem->QueryFloatAttribute("r", &radius);
+                shapeElem->QueryFloatAttribute("h", &height);
+
+                collShapes.insert({name, new btCapsuleShape(radius, height)});
+            }
+            else if (!strcmp(type, "convex"))
+            {
+                ConvexHullShape* CHS = new ConvexHullShape();
+
+                XMLElement* pointElem = shapeElem->FirstChildElement("point");
+
+                while (pointElem)
                 {
                     float x = 0, y = 0, z = 0;
 
-                    childShapeElem->QueryFloatAttribute("x", &x);
-                    childShapeElem->QueryFloatAttribute("y", &y);
-                    childShapeElem->QueryFloatAttribute("z", &z);
+                    pointElem->QueryFloatAttribute("x", &x);
+                    pointElem->QueryFloatAttribute("y", &y);
+                    pointElem->QueryFloatAttribute("z", &z);
 
-                    childShape = new btBoxShape(btVector3(x, y, z));
+                    CHS->addPoint(btVector3(x, y, z));
+
+                    pointElem = pointElem->NextSiblingElement();
                 }
-                else if (!strcmp(childType, "cylinder"))
+
+                convShapes.insert({name, CHS});
+            }
+            else if (!strcmp(type, "compound"))
+            {
+                CompoundShape* CS = new CompoundShape;
+
+                XMLElement* childShapeElem = shapeElem->FirstChildElement("cshape");
+
+                while (childShapeElem)
                 {
-                    float radius = 0, height = 0, zup = 0;
+                    const char* childType = nullptr;
+                    childShapeElem->QueryStringAttribute("type", &childType);
 
-                    childShapeElem->QueryFloatAttribute("r", &radius);
-                    childShapeElem->QueryFloatAttribute("h", &height);
-                    childShapeElem->QueryFloatAttribute("zup", &zup);
+                    /* child shape */
+                    btCollisionShape* childShape = nullptr;
 
-                    childShape = new btCylinderShape(btVector3(radius, height, zup));
-                }
-                else if (!strcmp(childType, "sphere"))
-                {
-                    float radius = 0;
-
-                    childShapeElem->QueryFloatAttribute("r", &radius);
-
-                    childShape = new btSphereShape(radius);
-                }
-                else if (!strcmp(childType, "capsule"))
-                {
-                    float radius = 0;
-                    float height = 0;
-
-                    childShapeElem->QueryFloatAttribute("r", &radius);
-                    childShapeElem->QueryFloatAttribute("h", &height);
-
-                    childShape = new btCapsuleShape(radius, height);
-                }
-                else if (!strcmp(childType, "convex"))
-                {
-                    ConvexHullShape* CHS = new ConvexHullShape();
-
-                    XMLElement* pointElem = childShapeElem->FirstChildElement("point");
-
-                    while (pointElem)
+                    if (!strcmp(childType, "box"))
                     {
                         float x = 0, y = 0, z = 0;
 
-                        pointElem->QueryFloatAttribute("x", &x);
-                        pointElem->QueryFloatAttribute("y", &y);
-                        pointElem->QueryFloatAttribute("z", &z);
+                        childShapeElem->QueryFloatAttribute("x", &x);
+                        childShapeElem->QueryFloatAttribute("y", &y);
+                        childShapeElem->QueryFloatAttribute("z", &z);
 
-                        CHS->addPoint(btVector3(x, y, z));
+                        childShape = new btBoxShape(btVector3(x, y, z));
+                    }
+                    else if (!strcmp(childType, "cylinder"))
+                    {
+                        float radius = 0, height = 0, zup = 0;
 
-                        pointElem = pointElem->NextSiblingElement();
+                        childShapeElem->QueryFloatAttribute("r", &radius);
+                        childShapeElem->QueryFloatAttribute("h", &height);
+                        childShapeElem->QueryFloatAttribute("zup", &zup);
+
+                        childShape = new btCylinderShape(btVector3(radius, height, zup));
+                    }
+                    else if (!strcmp(childType, "sphere"))
+                    {
+                        float radius = 0;
+
+                        childShapeElem->QueryFloatAttribute("r", &radius);
+
+                        childShape = new btSphereShape(radius);
+                    }
+                    else if (!strcmp(childType, "capsule"))
+                    {
+                        float radius = 0;
+                        float height = 0;
+
+                        childShapeElem->QueryFloatAttribute("r", &radius);
+                        childShapeElem->QueryFloatAttribute("h", &height);
+
+                        childShape = new btCapsuleShape(radius, height);
+                    }
+                    else if (!strcmp(childType, "convex"))
+                    {
+                        ConvexHullShape* CHS = new ConvexHullShape();
+
+                        XMLElement* pointElem = childShapeElem->FirstChildElement("point");
+
+                        while (pointElem)
+                        {
+                            float x = 0, y = 0, z = 0;
+
+                            pointElem->QueryFloatAttribute("x", &x);
+                            pointElem->QueryFloatAttribute("y", &y);
+                            pointElem->QueryFloatAttribute("z", &z);
+
+                            CHS->addPoint(btVector3(x, y, z));
+
+                            pointElem = pointElem->NextSiblingElement();
+                        }
+
+                        childShape = CHS->getShape();
+
+                        delete CHS;
+                    }
+                    else
+                    {
+                        childShapeElem = childShapeElem->NextSiblingElement();
+                        continue;
                     }
 
-                    childShape = CHS->getShape();
+                    /* child position */
+                    btVector3 childPosition = btVector3(0, 0, 0);
+                    XMLElement* childPositionElem = childShapeElem->FirstChildElement("pos");
 
-                    delete CHS;
-                }
-                else
-                {
+                    if (childPositionElem)
+                    {
+                        float x = 0, y = 0, z = 0;
+
+                        childPositionElem->QueryFloatAttribute("x", &x);
+                        childPositionElem->QueryFloatAttribute("y", &y);
+                        childPositionElem->QueryFloatAttribute("z", &z);
+
+                        childPosition = btVector3(x, y, z);
+                    }
+
+                    /* child rotation */
+                    btQuaternion childRotation = btQuaternion(btVector3(0, 0, 1), 0);
+                    XMLElement* childRotationElem = childShapeElem->FirstChildElement("rot");
+
+                    if (childRotationElem)
+                    {
+                        float x = 0, y = 0, z = 1, angle = 0;
+
+                        childRotationElem->QueryFloatAttribute("x", &x);
+                        childRotationElem->QueryFloatAttribute("y", &y);
+                        childRotationElem->QueryFloatAttribute("z", &z);
+                        childRotationElem->QueryFloatAttribute("angle", &angle);
+
+                        childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
+                    }
+
+                    CS->add(childShape, childPosition, childRotation);
+
                     childShapeElem = childShapeElem->NextSiblingElement();
-                    continue;
                 }
 
-                /* child position */
-                btVector3 childPosition = btVector3(0, 0, 0);
-                XMLElement* childPositionElem = childShapeElem->FirstChildElement("pos");
-
-                if (childPositionElem)
-                {
-                    float x = 0, y = 0, z = 0;
-
-                    childPositionElem->QueryFloatAttribute("x", &x);
-                    childPositionElem->QueryFloatAttribute("y", &y);
-                    childPositionElem->QueryFloatAttribute("z", &z);
-
-                    childPosition = btVector3(x, y, z);
-                }
-
-                /* child rotation */
-                btQuaternion childRotation = btQuaternion(btVector3(0, 0, 1), 0);
-                XMLElement* childRotationElem = childShapeElem->FirstChildElement("rot");
-
-                if (childRotationElem)
-                {
-                    float x = 0, y = 0, z = 1, angle = 0;
-
-                    childRotationElem->QueryFloatAttribute("x", &x);
-                    childRotationElem->QueryFloatAttribute("y", &y);
-                    childRotationElem->QueryFloatAttribute("z", &z);
-                    childRotationElem->QueryFloatAttribute("angle", &angle);
-
-                    childRotation = btQuaternion(btVector3(x, y, z), global.toRads(angle));
-                }
-
-                CS->add(childShape, childPosition, childRotation);
-
-                childShapeElem = childShapeElem->NextSiblingElement();
+                compShapes.insert({name, CS});
             }
-
-            compShapes.insert({name, CS});
         }
-    }
 
-    /* mass */
-    XMLElement* massElem = objElem->FirstChildElement("mass");
+        /* mass */
+        XMLElement* massElem = objElem->FirstChildElement("mass");
 
-    if (massElem)
-    {
-        float mass = 0;
-        massElem->QueryFloatAttribute("mass", &mass);
-
-        masses.insert({name, mass});
-    }
-
-    /* angular factor */
-    XMLElement* angularElem = objElem->FirstChildElement("afactor");
-
-    if (angularElem)
-    {
-        float x = 0, y = 0, z = 0;
-
-        angularElem->QueryFloatAttribute("x", &x);
-        angularElem->QueryFloatAttribute("y", &y);
-        angularElem->QueryFloatAttribute("z", &z);
-
-        aFactors.insert({name, vec3(x, y, z)});
-    }
-
-    mat4 model = mat4(1.0);
-
-    /* model */
-    XMLElement* modelElem = objElem->FirstChildElement("mdl");
-
-    if (modelElem)
-    {
-        for (int i = 0; i < 4; i++)
+        if (massElem)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                string str;
-                str = char('a' + (i * 4 + j));
+            float mass = 0;
+            massElem->QueryFloatAttribute("mass", &mass);
 
-                modelElem->QueryFloatAttribute(str.data(), &model[i][j]);
+            masses.insert({name, mass});
+        }
+
+        /* angular factor */
+        XMLElement* angularElem = objElem->FirstChildElement("afactor");
+
+        if (angularElem)
+        {
+            float x = 0, y = 0, z = 0;
+
+            angularElem->QueryFloatAttribute("x", &x);
+            angularElem->QueryFloatAttribute("y", &y);
+            angularElem->QueryFloatAttribute("z", &z);
+
+            aFactors.insert({name, vec3(x, y, z)});
+        }
+
+        mat4 model = mat4(1.0);
+
+        /* model */
+        XMLElement* modelElem = objElem->FirstChildElement("mdl");
+
+        if (modelElem)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    string str;
+                    str = char('a' + (i * 4 + j));
+
+                    modelElem->QueryFloatAttribute(str.data(), &model[i][j]);
+                }
             }
         }
-    }
 
-    models.insert({name, model});
+        models.insert({name, model});
+    }
 }
 
 void PhysicsObjectDataParser::updatePhysicsObject(GameObject* gameObject, bool interpolation, unsigned int timeStamp)

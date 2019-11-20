@@ -14,3 +14,4 @@ map_Bump textures/Default OBJ_normal.dds
 map_Ka textures/Default OBJ_AO.dds
 map_Kd textures/Default OBJ_albedo.dds
 map_Ks textures/Default OBJ_roughness.dds
+map_Ke textures/Default OBJ_metalness.dds
