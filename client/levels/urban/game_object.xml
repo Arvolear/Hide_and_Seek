@@ -948,6 +948,18 @@
             </debugobject>
         </gameobject>
         
+        <gameobject name="fence16">
+            <graphicsobject path="/static_models/Fence0/fence0.obj">
+                <viewfrustum apply="true"/>
+                <scale x="2.0" y="2.0" z="2.0"/>
+                <position x="0.0" y="-0.96" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="180.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
         <!-- ********************************************************* -->
 
         <gameobject name="cliff0">
@@ -1467,6 +1479,19 @@
                 <viewfrustum apply="true"/>
                 <scale x="2.0" y="2.0" z="2.0"/>
                 <position x="0.0" y="-4.6" z="0.0"/>
+                <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
+            </graphicsobject>
+            <debugobject>
+                <debugsphere detail="3"/>
+            </debugobject>
+        </gameobject>
+        
+        <gameobject name="water_tower0">
+            <graphicsobject path="/static_models/Water_tower0/water_tower0.obj">
+                <cullfaces apply="false"/>
+                <viewfrustum apply="true"/>
+                <scale x="1.5" y="1.5" z="1.5"/>
+                <position x="0.0" y="0.0" z="0.0"/>
                 <rotation x="0.0" y="1.0" z="0.0" angle="90.0"/>
             </graphicsobject>
             <debugobject>

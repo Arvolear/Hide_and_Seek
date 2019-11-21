@@ -19,6 +19,7 @@
 DirLight::DirLight()
 {
     direction = color = vec3(0.0);
+    coeff = 1.0;
     shadowViewOffset = 0.0;
 
     shadowView = shadowProjection = mat4(1.0);
@@ -35,6 +36,7 @@ DirLight::DirLight(vec3 direction, vec3 color)
 {
     this->direction = direction;
     this->color = color;
+    coeff = 1.0;
     shadowViewOffset = 0.0;
 
     shadowView = shadowProjection = mat4(1.0);
@@ -81,6 +83,11 @@ void DirLight::setDirection(vec3 dir)
 void DirLight::setColor(vec3 color)
 {
     this->color = color;
+}
+
+void DirLight::setColorCoeff(float coeff)
+{
+    this->coeff = coeff;
 }
 
 void DirLight::setSphereColor(vec3 color)
@@ -157,7 +164,7 @@ void DirLight::blurScatter(vec2 center)
 void DirLight::renderShadow(Shader* shader, GLuint index)
 {
     shader->setVec3("dirLights[" + to_string(index) + "].direction", direction);
-    shader->setVec3("dirLights[" + to_string(index) + "].color", color);
+    shader->setVec3("dirLights[" + to_string(index) + "].color", color * coeff);
 
     GLuint shadowTexture = getShadowTexture();
 

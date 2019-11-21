@@ -60,6 +60,7 @@ class Atmosphere
         void updateSunPos();
 
         vec3 getSunPos() const;
+        float getRelativeSunGradient() const;
 
         ColorBuffer* getBuffer() const;
         GLuint getTexture(int index = 0) const;

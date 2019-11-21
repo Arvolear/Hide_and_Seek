@@ -225,8 +225,11 @@
     
     <obj name="building0">
         <shape type="compound">
-            <cshape type="box" x="7.55" y="13.3" z="9.5">
-                <pos x="-8.5" y="0.0" z="-1.0"/>
+            <cshape type="box" x="7.55" y="7.5" z="9.5">
+                <pos x="-8.5" y="5.3" z="-1.0"/>
+            </cshape>
+            <cshape type="box" x="6.0" y="4.0" z="9.5">
+                <pos x="4.7" y="1.6" z="-1.0"/>
             </cshape>
         </shape>
         <mass mass="0.0"/>
@@ -574,7 +577,7 @@
     <obj name="door01">
         <shape type="box" x="2.8" y="0.1" z="1.2"/>
         <mass mass="0.0"/>
-        <pos x="29.0" y="0.98" z="49.0"/>
+        <pos x="29.0" y="0.98" z="45.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="10.0"/>
     </obj>
     
@@ -610,6 +613,13 @@
         <shape type="box" x="5.27" y="3.81" z="0.28"/>
         <mass mass="0.0"/>
         <pos x="44.5" y="3.7" z="32.9"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="90.0"/>
+    </obj>
+    
+    <obj name="fence16">
+        <shape type="box" x="5.27" y="3.81" z="0.28"/>
+        <mass mass="0.0"/>
+        <pos x="44.5" y="3.7" z="22.36"/>
         <rot x="0.0" y="1.0" z="0.0" angle="90.0"/>
     </obj>
     
@@ -825,14 +835,14 @@
     </obj>
     
     <obj name="mountain00">
-        <shape type="box" x="45.0" y="20.0" z="20.0"/>
+        <shape type="box" x="45.0" y="20.0" z="21.0"/>
         <mass mass="0.0"/>
         <pos x="60.0" y="20.0" z="-15.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="-80.0"/>
     </obj>
     
     <obj name="mountain01">
-        <shape type="box" x="45.0" y="20.0" z="20.0"/>
+        <shape type="box" x="45.0" y="20.0" z="19.0"/>
         <mass mass="0.0"/>
         <pos x="25.0" y="20.0" z="-50.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="170.0"/>
@@ -1077,7 +1087,7 @@
     <!-- ********************************************************* -->
     
     <obj name="mountain02">
-        <shape type="box" x="45.0" y="20.0" z="20.0"/>
+        <shape type="box" x="45.0" y="20.0" z="22.0"/>
         <mass mass="0.0"/>
         <pos x="-60.0" y="20.0" z="-50.0"/>
         <rot x="0.0" y="1.0" z="0.0" angle="20.0"/>
@@ -1117,6 +1127,20 @@
         <shape type="box" x="1.0" y="1.0" z="1.0"/>
         <mass mass="0.0"/>
         <pos x="0.0" y="0.0" z="0.0"/>
+    </obj>
+    
+    <obj name="water_tower0">
+        <shape type="compound">
+            <cshape type="cylinder" r="4.2" h="5.0" zup="4.2">
+                <pos x="0.0" y="10.3" z="0.0"/>
+            </cshape>
+            <cshape type="box" x="3.9" y="2.6" z="3.9">
+                <pos x="0.0" y="2.8" z="0.0"/>
+            </cshape>
+        </shape>
+        <mass mass="0.0"/>
+        <pos x="-60.0" y="1.0" z="-4.0"/>
+        <rot x="0.0" y="1.0" z="0.0" angle="45.0"/>
     </obj>
     
 </Objs>

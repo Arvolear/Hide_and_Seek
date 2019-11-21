@@ -50,7 +50,7 @@ Atmosphere::Atmosphere(vec3 rayOrigin, vec3 sunPos, float sunIntensity, float pl
     
     this->iBeauty = this->jBeauty = 0;
     
-    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
+    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 2, 0.0);
 }
         
 void Atmosphere::genBuffer(int width, int height)
@@ -89,7 +89,7 @@ void Atmosphere::setSunPos(vec3 sunPos)
 {
     this->sunPos = sunPos;
     
-    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
+    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 2, 0.0);
 }
 
 void Atmosphere::setSunIntensity(float sunIntensity)
@@ -183,6 +183,42 @@ void Atmosphere::updateSunPos()
 vec3 Atmosphere::getSunPos() const
 {
     return sunPos;
+}
+
+float Atmosphere::getRelativeSunGradient() const
+{
+    vec3 nSunPos = sunPos;
+    
+    if (nSunPos.length() != 0)
+    {   
+        nSunPos = normalize(nSunPos);
+    }
+
+    vec3 crossAxis = nSunPos;
+    crossAxis.y = 0.0;
+
+    if (crossAxis.length() != 0)
+    {
+        crossAxis = normalize(crossAxis);
+    }
+
+    float cosAngle = dot(nSunPos, crossAxis);
+    float aCosAngle = acos(cosAngle);
+    float degs = global.toDegs(aCosAngle);
+
+    if (sunPos.y < 0.0)
+    {
+        if (degs > 10.0)
+        {
+            return 1.0;
+        }
+        else
+        {
+            return aCosAngle / (global.toRads(10.0));
+        }
+    }
+
+    return 0.0;
 }
 
 ColorBuffer* Atmosphere::getBuffer() const

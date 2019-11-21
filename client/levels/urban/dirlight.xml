@@ -9,7 +9,7 @@
             <scatter>
                 <sphere>
                     <color r="6.91" g="5.82" b="1.76"/>
-                    <center x="0.0" y="-10.0" z="-100.0"/>
+                    <center x="0.0" y="0.0" z="0.0"/>
                     <radius radius="8"/>
                     <quality quality="5"/>
                 </sphere>

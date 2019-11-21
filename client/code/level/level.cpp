@@ -339,6 +339,8 @@ void Level::render()
         levelColorBuffer->use();
         gameObjectShader->use();
 
+        dirLights[i]->setColorCoeff(abs(atmosphere->getRelativeSunGradient() - 1.0));
+
         dirLights[i]->renderShadow(gameObjectShader, i);
     }
 
@@ -406,14 +408,20 @@ void Level::render()
      * */
 
     glCullFace(GL_BACK);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 
     skyBoxShader->use();
 
+    skyBoxShader->setFloat("alpha", atmosphere->getRelativeSunGradient());
     skyBoxShader->setMat4("view", staticView);
     skyBoxShader->setMat4("projection", projection);
 
-    gBuffer->renderStaticDepth(domeShader);
-    //skyBox->render(skyBoxShader);
+    gBuffer->renderStaticDepth(skyBoxShader);
+    skyBox->render(skyBoxShader);
+    
+    glDisable(GL_BLEND);
 
     /************************************
      * SCATTERED LIGHT BLENDING
