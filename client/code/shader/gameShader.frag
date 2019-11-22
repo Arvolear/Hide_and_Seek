@@ -6,6 +6,7 @@ in vec2 UV;
 
 uniform sampler2D scene;
 uniform sampler2D blurBloom;
+uniform sampler2D lensFlare;
 
 uniform float exposure;
 
@@ -35,6 +36,7 @@ void main()
 
     vec3 hdrColor = texture(scene, UV).rgb;
     vec3 bloomColor = texture(blurBloom, UV).rgb;
+    vec3 flareColor = texture(lensFlare, UV).rgb;
 
     /*
     hdrColor = rgb2hsv(hdrColor); 
@@ -45,7 +47,7 @@ void main()
     hdrColor = hsv2rgb(hdrColor);
     */
 
-    hdrColor += bloomColor;
+    hdrColor += bloomColor + flareColor;
 
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
 

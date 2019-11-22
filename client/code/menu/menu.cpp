@@ -45,6 +45,8 @@
 #include "../multiplayer/client.hpp"
 #include "../multiplayer/playerdatacollector.hpp"
 
+#include "../level/bloom.hpp"
+#include "../level/lensflare.hpp"
 #include "../level/dirlightsoftshadow.hpp"
 #include "../level/dirlight.hpp"
 #include "../level/ssao.hpp"

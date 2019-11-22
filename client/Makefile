@@ -18,7 +18,7 @@ WINDOW = window.o glfwevents.o renderquad.o
 MENU = menu.o 
 GAME = game.o
 MULTIPLAYER = multiplayer.o client.o physicsobjectdataparser.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weapondataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
-LEVEL = level.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
+LEVEL = level.o bloom.o lensflare.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
 GAME_OBJECT = rifle.o weapon.o instancedgameobject.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
@@ -155,6 +155,12 @@ $(OUTPUTDIR)/playerdisconnectionupdater.o: $(INPUTDIR)/multiplayer/playerdisconn
 
 $(OUTPUTDIR)/level.o: $(INPUTDIR)/level/level.cpp $(INPUTDIR)/level/level.hpp
 	g++ -c $(INPUTDIR)/level/level.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/bloom.o: $(INPUTDIR)/level/bloom.cpp $(INPUTDIR)/level/bloom.hpp
+	g++ -c $(INPUTDIR)/level/bloom.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/lensflare.o: $(INPUTDIR)/level/lensflare.cpp $(INPUTDIR)/level/lensflare.hpp
+	g++ -c $(INPUTDIR)/level/lensflare.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/dirlight.o: $(INPUTDIR)/level/dirlight.cpp $(INPUTDIR)/level/dirlight.hpp
 	g++ -c $(INPUTDIR)/level/dirlight.cpp -o $@ $(FLAGS)

@@ -20,11 +20,12 @@ class Game
         Level* level;
         World* physicsWorld;
 
+        Bloom* bloom;
+        LensFlare* lensFlare;
+
         Shader* gameShader;
         ColorBuffer* gameBuffer;
         RenderQuad* quad;
-
-        GaussianBlur < ColorBuffer >* gaussianBlur;
 
         /* multiplayer */
         Multiplayer* multiplayer;

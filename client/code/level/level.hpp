@@ -23,6 +23,7 @@ class Level
         LevelLoader* levelLoader;
         
         string levelName;
+        string levelPath;
 
         ColorBuffer* levelColorBuffer;
         GBuffer* gBuffer;
@@ -85,6 +86,7 @@ class Level
         vec3 getSunPosition() const;
 
         string getLevelName() const;
+        string getLevelPath() const;
 
         /* DEBUG */
         void toggleDebug();

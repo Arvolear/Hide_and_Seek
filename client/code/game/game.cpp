@@ -43,6 +43,8 @@
 
 #include "../player/player.hpp"
 
+#include "../level/bloom.hpp"
+#include "../level/lensflare.hpp"
 #include "../level/dirlightsoftshadow.hpp"
 #include "../level/dirlight.hpp"
 #include "../level/ssao.hpp"
@@ -80,13 +82,14 @@ Game::Game(Window* window, string levelName)
     level = new Level(window, physicsWorld);
     level->loadLevel(levelName);
 
+    bloom = new Bloom();
+    lensFlare = new LensFlare();
+
     gameShader = new Shader();
 
     gameBuffer = new ColorBuffer();
     quad = new RenderQuad();
 
-    gaussianBlur = new GaussianBlur < ColorBuffer >();
-    gaussianBlur->genBuffer(window->getRenderSize(), {GL_RGBA16F, GL_RGBA, GL_FLOAT}, 2);
 
     multiplayer = new Multiplayer(window, level, physicsWorld);
 
@@ -149,6 +152,10 @@ void Game::init()
 {
     physicsWorld->createDebugDrawer();
 
+    bloom->genBlurBuffer(window->getRenderSize(), 2);
+    lensFlare->genBuffer(window->getRenderSize(), 2);
+    lensFlare->loadHelperTextures(level->getLevelPath() + "/lens_flare");
+
     gameShader->loadShaders(global.path("code/shader/gameShader.vert"), global.path("code/shader/gameShader.frag"));
     gameBuffer->genBuffer(window->getRenderSize(), {{GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE}});
 
@@ -188,30 +195,33 @@ void Game::gameLoop()
         /***********************************
          * GAMEBUFFER
          * */
-
-        /* bloom */
-        GLuint blured = gaussianBlur->blur(level->getRenderTexture(1), 2, 1);
         
+        /* bloom */
+        bloom->setBloomTexture(level->getRenderTexture(1));
+        bloom->blurBloom(2);
+
+        /* lens flare */
+        lensFlare->setBaseTexture(level->getRenderTexture(1));
+        lensFlare->renderFlares();
+        
+        /* render */
         gameBuffer->use();
         gameBuffer->clear();
         
         gameShader->use();
+        
+        gameShader->setFloat("exposure", 1.0);
 
         glActiveTexture(GL_TEXTURE0);
         gameShader->setInt("scene", 0);
         glBindTexture(GL_TEXTURE_2D, level->getRenderTexture(0));
-        
-        glActiveTexture(GL_TEXTURE0 + 1);
-        gameShader->setInt("blurBloom", 1);
-        glBindTexture(GL_TEXTURE_2D, blured);
-
-        gameShader->setFloat("exposure", 1.0);
+         
+        bloom->render(gameShader);
+        lensFlare->render(gameShader);
 
         quad->render(gameShader);
  
-        //window->render(blured);
         window->render(gameBuffer->getTexture());
-        //window->render(level->getRenderTexture());
     
         Global::fpsCounter->update(window->getTime());
         //cout << global.fpsCounter->getFPS() << endl;
@@ -226,11 +236,12 @@ Game::~Game()
     delete level;
     delete physicsWorld;
 
+    delete bloom;
+    delete lensFlare;
+
     delete gameShader;
     delete gameBuffer;
     delete quad;
 
-    delete gaussianBlur;
-    
     delete multiplayer;
 }
