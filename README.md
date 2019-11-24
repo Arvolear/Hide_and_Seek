@@ -13,6 +13,7 @@
   - Light shafts.
   - Bloom.
   - SSAO.
+  - Lens flares.
 
 - Modern game techniques
   - Model's skeletal animation (feel free to read my [tutorial](https://code-hub.org/tutorials/skeletal-animation-with-assimp-in-opengl/)).

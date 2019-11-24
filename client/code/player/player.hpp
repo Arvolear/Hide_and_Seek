@@ -22,7 +22,6 @@ class Player : public Camera
         
         bool connected;
         bool active;
-        bool jumpAllowed;
         bool speedLock;
 
         RayTracer* rayTracer;
@@ -34,6 +33,7 @@ class Player : public Camera
         vec3 modelForward;
         
         bool isGroundStanding();
+        bool isJumpAllowed();
         void jump();
         
         void moveAction() override;

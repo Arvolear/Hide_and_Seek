@@ -201,7 +201,7 @@ void Game::gameLoop()
         bloom->blurBloom(2);
 
         /* lens flare */
-        lensFlare->setBaseTexture(level->getRenderTexture(1));
+        lensFlare->setBaseTexture(bloom->getTexture());
         lensFlare->renderFlares();
         
         /* render */

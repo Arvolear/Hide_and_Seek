@@ -47,7 +47,6 @@ Player::Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, float
     rayTracer = nullptr;
     player = nullptr;
 
-    jumpAllowed = true;
     speedLock = false;
 
     cameraOffset = modelOffset = vec3(0);
@@ -70,7 +69,6 @@ Player::Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTr
     rayTracer = tracer;
     this->player = player;
     
-    jumpAllowed = true;
     speedLock = false;
     
     cameraOffset = modelOffset = vec3(0);
@@ -84,7 +82,7 @@ Player::Player(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTr
 dist > 2.2
 */
 
-bool Player::isGroundStanding()
+bool Player::isJumpAllowed()
 {
     if (!(player && player->getPhysicsObject() && rayTracer))
     {
@@ -101,6 +99,44 @@ bool Player::isGroundStanding()
 
     float playerBottomDist = center.y() - Min.y();
 
+    float whenFloor = 0.1;
+
+    btVector3 from = center;
+
+    unique_ptr < RayResult > result(rayTracer->rayCast(from, to, false));
+
+    if (!result)
+    {
+        return false;
+    }
+
+    float dist = (from - result->hitPoint).length();
+
+    if (dist < playerBottomDist + whenFloor)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Player::isGroundStanding()
+{
+    if (!(player && player->getPhysicsObject() && rayTracer))
+    {
+        return false;
+    }
+
+    btVector3 Min;
+    btVector3 Max;
+
+    player->getPhysicsObject()->getRigidBody()->getAabb(Min, Max);
+
+    btVector3 center = player->getPhysicsObject()->getRigidBody()->getCenterOfMassPosition();
+    btVector3 to = btVector3(0, -1, 0);
+
+    float playerBottomDist = center.y() - Min.y();
+
     Min.setY(center.y());
     Max.setY(center.y());
 
@@ -108,7 +144,7 @@ bool Player::isGroundStanding()
 
     float rayStep = 0.1;
     float whenFloor = 0.1;
-    
+
     for (float i = Min.x(); i < Max.x(); i += rayStep)
     {
         for (float j = Min.z(); j < Max.z(); j += rayStep)
@@ -144,7 +180,7 @@ bool Player::isGroundStanding()
 
 void Player::jump()
 {
-    if (!(player && player->getPhysicsObject() && rayTracer && jumpAllowed))
+    if (!(player && player->getPhysicsObject() && rayTracer && isJumpAllowed()))
     {
         return;
     }
@@ -160,8 +196,6 @@ void Player::jump()
     player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
 
     player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(0, 1, 0) * power);
-
-    jumpAllowed = false;
 }
 
 void Player::moveAction()
@@ -246,8 +280,6 @@ void Player::moveGround()
     velocity = btVector3(velocity.x() * (1.0 / friction), velocity.y(), velocity.z() * (1.0 / friction));
 
     player->getPhysicsObject()->getRigidBody()->setLinearVelocity(velocity);
-
-    jumpAllowed = true;
 }
 
 void Player::moveAir()
@@ -257,8 +289,6 @@ void Player::moveAir()
     XZVelocity.setY(0.0);
 
     float speedFactor = XZVelocity.length() / 2.5 + 2.5;
-
-    jumpAllowed = false;
 
     /* push the body */
     player->getPhysicsObject()->getRigidBody()->applyCentralImpulse(btVector3(moveDirection.x, 0, moveDirection.z) * speed * speedFactor);
