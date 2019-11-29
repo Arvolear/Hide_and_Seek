@@ -19,7 +19,7 @@ class WeaponDataUpdater
         map < string, int > sizes;
         map < string, int > magazines;
         map < string, float > speeds;
-        map < string, float > powers;
+        map < string, int > powers;
 
     public:
         WeaponDataUpdater();

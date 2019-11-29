@@ -58,9 +58,34 @@ void Weapon::setShotSpeed(float shotSpeed)
     this->shotSpeed = shotSpeed;
 }
 
-void Weapon::setShotPower(float shotPower)
+void Weapon::setShotPower(int shotPower)
 {
     this->shotPower = shotPower;
+}
+
+bool Weapon::fire()
+{
+    if (!magazineBullets)
+    {
+        return false;
+    }
+
+    magazineBullets--;
+
+    return true;
+}
+
+void Weapon::reload()
+{
+    if (!storageBullets || magazineSize == magazineBullets)
+    {
+        return;
+    }
+    
+    int toMove = std::min(storageBullets, magazineSize - magazineBullets);
+
+    storageBullets -= toMove;
+    magazineBullets += toMove;
 }
 
 int Weapon::getStorageBullets() const
@@ -83,7 +108,7 @@ float Weapon::getShotSpeed() const
     return shotSpeed;
 }
 
-float Weapon::getShotPower() const
+int Weapon::getShotPower() const
 {
     return shotPower;
 }

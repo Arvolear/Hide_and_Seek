@@ -23,6 +23,7 @@ class Multiplayer
         WeaponPickerUpdater* weaponPickerUpdater;
         WeaponDropperCollector* weaponDropperCollector;
         WeaponDropperUpdater* weaponDropperUpdater;
+        WeaponFireUpdater* weaponFireUpdater;
         PlayerConnectionCollector* playerConnectionCollector;
         PlayerDisconnectionCollector* playerDisconnectionCollector;
 

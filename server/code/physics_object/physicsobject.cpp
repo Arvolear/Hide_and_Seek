@@ -115,7 +115,7 @@ ConvexHullShape::~ConvexHullShape() {}
 
 set < string > PhysicsObject::globalNames;
 
-void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
+void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation, int group)
 {
     if (!shape)
     {
@@ -152,7 +152,7 @@ void PhysicsObject::updateBody(btCollisionShape* shape, float mass, btVector3 po
     body->setMassProps(mass, localInertia); 
     
     physicsWorld->getWorld()->removeRigidBody(body);
-    physicsWorld->getWorld()->addRigidBody(body);
+    physicsWorld->getWorld()->addRigidBody(body, group, btBroadphaseProxy::AllFilter);
     
     body->forceActivationState(ACTIVE_TAG);
 }        
@@ -167,6 +167,7 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld)
     this->body = nullptr;
     this->collidable = true;
     this->stat = true;
+    this->kinematic = false;
     this->userPointer = nullptr;
 
     btTransform transform;
@@ -195,6 +196,7 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld, btCollisionShape*
     this->comShape = nullptr;
     this->collidable = true;
     this->stat = mass ? false : true;
+    this->kinematic = false;
     this->userPointer = nullptr;
 
     btTransform transform;
@@ -225,6 +227,7 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld, ConvexHullShape* 
     this->comShape = nullptr;
     this->collidable = true;
     this->stat = mass ? false : true;
+    this->kinematic = false;
     this->userPointer = nullptr;
 
     btTransform transform;
@@ -255,6 +258,7 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld, CompoundShape* sh
     this->comShape = nullptr;
     this->collidable = true;
     this->stat = mass ? false : true;
+    this->kinematic = false;
     this->userPointer = nullptr;
 
     btTransform transform;
@@ -420,6 +424,28 @@ void PhysicsObject::setStatic(bool stat)
     }
 }
 
+void PhysicsObject::setKinematic(bool kinematic)
+{
+    if (this->kinematic != kinematic)
+    {
+        this->kinematic = kinematic;
+
+        if (body)
+        {
+            if (kinematic)
+            {
+                body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+            }
+            else
+            {
+                body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CollisionFlags::CF_KINEMATIC_OBJECT);
+            }
+        }
+    
+        updateBody(phShape, mass, motionState->getBTTransform().getOrigin(), motionState->getBTTransform().getRotation(), btBroadphaseProxy::KinematicFilter);
+    }
+}
+
 void PhysicsObject::setUserPointer(void* userPointer)
 {
     this->userPointer = userPointer;
@@ -468,6 +494,11 @@ bool PhysicsObject::isCollidable() const
 bool PhysicsObject::isStatic() const
 {
     return stat;
+}
+
+bool PhysicsObject::isKinematic() const
+{
+    return kinematic;
 }
 
 void* PhysicsObject::getUserPointer() const

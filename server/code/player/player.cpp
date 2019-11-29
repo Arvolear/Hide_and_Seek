@@ -24,6 +24,8 @@ Player::Player(int id, float speed)
     physicsObject = nullptr;
     moveDirection = btVector3(0, 0, 0);
     this->connected = false;
+
+    ready = true;
 }
         
 Player::Player(int id, PhysicsObject* physicsObject, float speed)
@@ -42,6 +44,8 @@ Player::Player(int id, PhysicsObject* physicsObject, float speed)
     physicsObject->setUserPointer(this);
     
     setConnected(false);
+    
+    ready = true;
 }
 
 void Player::setConnected(bool connected)
@@ -54,6 +58,7 @@ void Player::setConnected(bool connected)
         {
             physicsObject->setCollidable(true);
             physicsObject->setStatic(false);
+            physicsObject->setKinematic(false);
         }
     }
     else
@@ -62,6 +67,7 @@ void Player::setConnected(bool connected)
         {
             physicsObject->setCollidable(false);
             physicsObject->setStatic(true);
+            physicsObject->setKinematic(true);
         }
     }
 }
@@ -78,6 +84,7 @@ void Player::removePhysicsObject()
     physicsObject->setUserPointer(nullptr);
     physicsObject->setCollidable(true);
     physicsObject->setStatic(false);
+    physicsObject->setKinematic(false);
     physicsObject = nullptr;
 }
 

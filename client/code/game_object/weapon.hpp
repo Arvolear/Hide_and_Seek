@@ -27,7 +27,7 @@ class Weapon : public GameObject
 
         /* animaiton duration? */
         float shotSpeed;
-        float shotPower;
+        int shotPower;
 
     public:
         Weapon(Window* window, string name);
@@ -40,7 +40,7 @@ class Weapon : public GameObject
         void setMagazineBullets(int magazineBullets);
 
         void setShotSpeed(float shotSpeed);
-        void setShotPower(float shotPower);
+        void setShotPower(int shotPower);
 
         void reload();
         void drop(vec3 where, bool active);
@@ -57,7 +57,7 @@ class Weapon : public GameObject
         int getMagazineBullets() const;
 
         float getShotSpeed() const;
-        float getShotPower() const;
+        int getShotPower() const;
 
         void updateStatus();
         void updateRotation(mat3 rotation);

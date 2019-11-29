@@ -2,10 +2,10 @@
 
 RayTracer::RayTracer(btDynamicsWorld* world)
 {
-    this->world = world; // pointer to our physics world
+    this->world = world; // pointer to the physics world
 }
 
-RayResult* RayTracer::rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool missStatic) const
+RayResult* RayTracer::rayCast(btRigidBody* me, btVector3 rayFrom, btVector3 rayTo, bool missStatic, bool missKinematic) const
 {
     if (!world)
     {
@@ -29,9 +29,9 @@ RayResult* RayTracer::rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool missSta
             return nullptr;
         }
 
-        if ((body->isStaticObject() || body->isKinematicObject()) && missStatic)
+        if ((body == me) || (body->isStaticObject() && missStatic) || (body->isKinematicObject() && missKinematic))
         {
-            return nullptr;
+            return rayCast(me, rayCallback.m_hitPointWorld, rayTo, missStatic, missKinematic); 
         }
 
         RayResult* result = new RayResult();

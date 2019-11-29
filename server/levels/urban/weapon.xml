@@ -24,7 +24,7 @@
             <size size="30"/>
             <magazine amount="30"/>
             <speed speed="0.1"/>
-            <power power="0.0"/>
+            <power power="60"/>
         </info>
     </weapon>
 </Weapons>

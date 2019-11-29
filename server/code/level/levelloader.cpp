@@ -605,9 +605,9 @@ void LevelLoader::loadWeapon(XMLElement* weaponElem, Weapon*& WE, string name)
 
         if (shotPowerElem)
         {
-            float power = 0;
+            int power = 0;
 
-            shotPowerElem->QueryFloatAttribute("power", &power);
+            shotPowerElem->QueryIntAttribute("power", &power);
 
             WE->setShotPower(power);
         }
@@ -750,6 +750,15 @@ void LevelLoader::loadSoldiers()
         {
             speedElem->QueryFloatAttribute("speed", &speed);
         }
+        
+        /* health */
+        XMLElement* healthElem = soldierElem->FirstChildElement("health");
+        int health = 1.0;
+
+        if (healthElem)
+        {
+            healthElem->QueryIntAttribute("health", &health);
+        }
 
         Soldier* soldier = nullptr;
 
@@ -766,7 +775,7 @@ void LevelLoader::loadSoldiers()
 
         if (!found)
         {
-            soldier = new Soldier(id, speed);
+            soldier = new Soldier(health, id, speed);
             players.push_back(soldier);
         }
 

@@ -23,8 +23,7 @@ class RayTracer
     public:
         RayTracer(btDynamicsWorld* world);
 
-        btVector3 getPickingRay(double posx, double posy) const;
-        RayResult* rayCast(btVector3 &rayFrom, btVector3 &rayTo, bool missStatic = true) const;
+        RayResult* rayCast(btRigidBody* me, btVector3 rayFrom, btVector3 rayTo, bool missStatic = true, bool missKinematic = true) const;
 
         ~RayTracer();
 };

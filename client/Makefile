@@ -17,7 +17,7 @@ FRAMEBUFFER = framebuffer.o colorbuffer.o depthbuffer.o shadowbuffer.o gbuffer.o
 WINDOW = window.o glfwevents.o renderquad.o 
 MENU = menu.o 
 GAME = game.o
-MULTIPLAYER = multiplayer.o client.o physicsobjectdataparser.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weapondataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o playerconnectionupdater.o playerdisconnectionupdater.o
+MULTIPLAYER = multiplayer.o client.o physicsobjectdataparser.o playerdatacollector.o playerdataupdater.o gameobjectdatacollector.o gameobjectdataupdater.o weapondataupdater.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o weaponfirecollector.o playerconnectionupdater.o playerdisconnectionupdater.o
 LEVEL = level.o bloom.o lensflare.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
@@ -144,6 +144,9 @@ $(OUTPUTDIR)/weapondroppercollector.o: $(INPUTDIR)/multiplayer/weapondroppercoll
 
 $(OUTPUTDIR)/weapondropperupdater.o: $(INPUTDIR)/multiplayer/weapondropperupdater.cpp $(INPUTDIR)/multiplayer/weapondropperupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/weapondropperupdater.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/weaponfirecollector.o: $(INPUTDIR)/multiplayer/weaponfirecollector.cpp $(INPUTDIR)/multiplayer/weaponfirecollector.hpp
+	g++ -c $(INPUTDIR)/multiplayer/weaponfirecollector.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/playerconnectionupdater.o: $(INPUTDIR)/multiplayer/playerconnectionupdater.cpp $(INPUTDIR)/multiplayer/playerconnectionupdater.hpp
 	g++ -c $(INPUTDIR)/multiplayer/playerconnectionupdater.cpp -o $@ $(FLAGS)

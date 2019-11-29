@@ -73,16 +73,27 @@ void PlayerDataUpdater::collect(string info)
         soldierElem->QueryIntAttribute("id", &playerID);
 
         playerIDs.push_back(playerID);
-
+        
         /* speed */
         XMLElement* speedElem = soldierElem->FirstChildElement("speed");
 
         if (speedElem)
         {
-            float speed;
+            float speed = 1.0;
             speedElem->QueryFloatAttribute("speed", &speed);
 
             speeds.insert({playerID, speed});
+        }
+        
+        /* health */
+        XMLElement* healthElem = soldierElem->FirstChildElement("health");
+
+        if (healthElem)
+        {
+            int health = 1.0;
+            healthElem->QueryIntAttribute("health", &health);
+
+            healths.insert({playerID, health});
         }
 
         /* moveDirection */
@@ -102,7 +113,10 @@ void PlayerDataUpdater::collect(string info)
         /* obj */
         XMLElement* objElem = soldierElem->FirstChildElement("obj");
 
-        objParser->parse(objElem);
+        if (objElem)
+        {
+            objParser->parse(objElem);
+        }
 
         /* weapons */
         XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
@@ -135,13 +149,30 @@ void PlayerDataUpdater::updateData(Player* player, bool interpolation, map < str
 
     objParser->updatePhysicsObject(player->getGameObject(), interpolation, timeStamp);
 
-    player->setSpeed(speeds[playerID]);
-    player->updateModel(moveDirections[playerID]);
-    player->updateAnimation(moveDirections[playerID]);
+    if (speeds.find(playerID) != speeds.end())
+    {
+        player->setSpeed(speeds[playerID]);
+    }
+
+    if (moveDirections.find(playerID) != moveDirections.end())
+    {
+        player->updateModel(moveDirections[playerID]);
+        player->updateAnimation(moveDirections[playerID]);
+    }
 
     Soldier* soldier = dynamic_cast < Soldier* >(player);
 
-    if (!soldier || pickedWeapons.empty() || gameObjects.empty())
+    if (!soldier)
+    {
+        return;
+    }
+
+    if (healths.find(playerID) != healths.end())
+    {
+        soldier->setHealth(healths[playerID]);
+    }
+
+    if (pickedWeapons.empty() || gameObjects.empty())
     {
         return;
     }
@@ -178,13 +209,30 @@ void PlayerDataUpdater::updateData(vector < Player* > players, bool interpolatio
         
         objParser->updatePhysicsObject(player->getGameObject(), interpolation, timeStamp);
 
-        player->setSpeed(speeds[playerID]);
-        player->updateModel(moveDirections[playerID]);
-        player->updateAnimation(moveDirections[playerID]);
+        if (speeds.find(playerID) != speeds.end())
+        {
+            player->setSpeed(speeds[playerID]);
+        }
+
+        if (moveDirections.find(playerID) != moveDirections.end())
+        {
+            player->updateModel(moveDirections[playerID]);
+            player->updateAnimation(moveDirections[playerID]);
+        }
 
         Soldier* soldier = dynamic_cast < Soldier* >(player);
 
-        if (!soldier || pickedWeapons.empty() || gameObjects.empty())
+        if (!soldier)
+        {
+            return;
+        }
+
+        if (healths.find(playerID) != healths.end())
+        {
+            soldier->setHealth(healths[playerID]);
+        }
+
+        if (pickedWeapons.empty() || gameObjects.empty())
         {
             continue;
         }
@@ -221,6 +269,7 @@ void PlayerDataUpdater::clear()
     moveDirections.clear();
     objParser->clear();
     pickedWeapons.clear();
+    healths.clear();
 
     timeStamp = 0;
 }

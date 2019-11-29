@@ -73,6 +73,11 @@ void Camera::lookAction()
 
     prevCoords = pos;
 }
+        
+void Camera::resetViewRotation()
+{
+    horizontalViewRotation = verticalViewRotation = mat3(1.0);
+}
 
 void Camera::resetPrevCoords()
 {

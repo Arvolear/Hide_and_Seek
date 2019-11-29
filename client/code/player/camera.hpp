@@ -43,6 +43,7 @@ class Camera
     public:
         Camera(Window* window, vec3 cameraPos, vec3 cameraForward, float speed = 1);
 
+        void resetViewRotation();
         void resetPrevCoords();
         void setPosition(float worldX, float worldY, float worldZ);
         void setUp(vec3 Up);

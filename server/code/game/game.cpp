@@ -24,6 +24,7 @@
 #include "../multiplayer/weaponpickerupdater.hpp"
 #include "../multiplayer/weapondroppercollector.hpp"
 #include "../multiplayer/weapondropperupdater.hpp"
+#include "../multiplayer/weaponfireupdater.hpp"
 #include "../multiplayer/playerconnectioncollector.hpp"
 #include "../multiplayer/playerdisconnectioncollector.hpp"
 #include "../multiplayer/multiplayer.hpp"

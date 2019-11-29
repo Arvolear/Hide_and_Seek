@@ -114,8 +114,8 @@ void WeaponDataUpdater::collect(string info)
 
             if (powerElem)
             {
-                float power;
-                powerElem->QueryFloatAttribute("power", &power);
+                int power;
+                powerElem->QueryIntAttribute("power", &power);
 
                 powers.insert({name, power});
             } 

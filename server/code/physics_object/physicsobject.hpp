@@ -64,6 +64,7 @@ class PhysicsObject
 
         bool collidable;
         bool stat;
+        bool kinematic;
 
         float mass;
         btCollisionShape* phShape;
@@ -75,7 +76,7 @@ class PhysicsObject
 
         void* userPointer;
 
-        void updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation);
+        void updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation, int group = btBroadphaseProxy::DefaultFilter);
 
     public:
         PhysicsObject(string name, World* physicsWorld);
@@ -96,6 +97,7 @@ class PhysicsObject
         void clearTransform();
         void setCollidable(bool collidable);
         void setStatic(bool stat);
+        void setKinematic(bool kinematic);
 
         void setUserPointer(void* userPointer);
 
@@ -108,6 +110,7 @@ class PhysicsObject
         btRigidBody* getRigidBody() const;
         bool isCollidable() const;
         bool isStatic() const; 
+        bool isKinematic() const;
 
         void* getUserPointer() const;
 

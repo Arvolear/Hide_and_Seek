@@ -6,6 +6,8 @@
 #include <cmath>
 #include <stdexcept>
 #include <memory>
+#include <mutex>
+#include <condition_variable>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -26,12 +28,16 @@ class Player
         PhysicsObject* physicsObject;
 
         btVector3 moveDirection;
+
+        mutable mutex mtx;
+        mutable condition_variable cv;
+        mutable bool ready;
         
     public:
         Player(int id, float speed = 1);
         Player(int id, PhysicsObject* physicsObject, float speed = 1);
 
-        void setConnected(bool connected);
+        virtual void setConnected(bool connected);
         void setPhysicsObject(PhysicsObject* player);
         void removePhysicsObject();
 

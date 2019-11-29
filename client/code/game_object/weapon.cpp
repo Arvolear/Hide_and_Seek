@@ -74,7 +74,7 @@ void Weapon::setShotSpeed(float shotSpeed)
     this->shotSpeed = shotSpeed;
 }
 
-void Weapon::setShotPower(float shotPower)
+void Weapon::setShotPower(int shotPower)
 {
     this->shotPower = shotPower;
 }
@@ -211,7 +211,7 @@ float Weapon::getShotSpeed() const
     return shotSpeed;
 }
 
-float Weapon::getShotPower() const
+int Weapon::getShotPower() const
 {
     return shotPower;
 }

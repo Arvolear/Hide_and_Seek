@@ -42,6 +42,7 @@
 #include "../game_object/rifle.hpp"
 
 #include "../player/player.hpp"
+#include "../player/soldier.hpp"
 
 #include "../level/bloom.hpp"
 #include "../level/lensflare.hpp"
@@ -64,6 +65,7 @@
 #include "../multiplayer/weaponpickerupdater.hpp"
 #include "../multiplayer/weapondroppercollector.hpp"
 #include "../multiplayer/weapondropperupdater.hpp"
+#include "../multiplayer/weaponfirecollector.hpp"
 #include "../multiplayer/playerconnectionupdater.hpp"
 #include "../multiplayer/playerdisconnectionupdater.hpp"
 #include "../multiplayer/multiplayer.hpp"
@@ -104,6 +106,9 @@ void Game::checkEvents()
         if (mode == PLAY)
         {
             window->showCursor();
+            level->getConnectedPlayer(true)->resetViewRotation();
+            
+            //cout << dynamic_cast < Soldier* >(level->getConnectedPlayer())->getHealth() << endl;
             
             mode = ESCAPE;
         }

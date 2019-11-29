@@ -16,7 +16,7 @@ class Weapon : public PhysicsObject
         int magazineBullets;
 
         float shotSpeed;
-        float shotPower;
+        int shotPower;
 
     public:
         Weapon(string name, World* physicsWorld);
@@ -28,14 +28,17 @@ class Weapon : public PhysicsObject
         void setMagazineBullets(int magazineBullets);
 
         void setShotSpeed(float shotSpeed);
-        void setShotPower(float shotPower);
+        void setShotPower(int shotPower);
+
+        bool fire();
+        void reload();
 
         int getStorageBullets() const;
         int getMagazineSize() const;
         int getMagazineBullets() const;
 
         float getShotSpeed() const;
-        float getShotPower() const;
+        int getShotPower() const;
 
         ~Weapon();
 };

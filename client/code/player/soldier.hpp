@@ -14,18 +14,25 @@ using namespace std;
 class Soldier : public Player
 {
     private:
+        int health;
+
         deque < Weapon* > weapons;
 
-        vec3 pickFrom;
-        vec3 pickTo;
+        pair < vec3, vec3 > pickRay;
 
-        bool dropTo = true;
+        map < string, vector < pair < vec3, vec3 > > > fireInfo;
+
+        bool dropTo;
         
         void weaponAction();
 
         void nextWeapon();
         
         void updateWeapon();
+        
+        void drop();
+        void pick();
+        void fire();
 
     public:
         Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
@@ -34,20 +41,21 @@ class Soldier : public Player
         void setActive(bool active) override;
         void setConnected(bool connected) override;
 
+        void setHealth(int health);
+        
         void drop(Weapon* weapon);
-        void drop();
         void pick(Weapon* weapon);
-        void pick();
 
         deque < Weapon* > getWeapons() const;
         Weapon* getWeapon(int index) const;
-        pair < vec3, vec3 > getPickRay() const;
-        bool isDrop() const;
+
+        pair < vec3, vec3 > getPickRay();
+        bool isDrop();
+        map < string, vector < pair < vec3, vec3 > > > getFire();
+
+        int getHealth() const;
 
         void update(bool events = true) override;
 
-        void clearPickData();
-        void clearDropData();
-        
         ~Soldier();
 };

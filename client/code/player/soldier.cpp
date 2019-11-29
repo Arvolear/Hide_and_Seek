@@ -37,13 +37,15 @@
 
 Soldier::Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed) : Player(id, window, playerPos, cameraForward, speed) 
 {
-    pickFrom = pickTo = vec3(0);
+    health = 1;
+    pickRay = {vec3(0.0), vec3(0.0)};
     dropTo = false;
 }
         
 Soldier::Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, RayTracer* tracer, GameObject* player, float speed, bool active) : Player(id, window, playerPos, cameraForward, tracer, player, speed, active) 
 {
-    pickFrom = pickTo = vec3(0);
+    health = 1;
+    pickRay = {vec3(0.0), vec3(0.0)};
     dropTo = false;
 }
 
@@ -88,6 +90,41 @@ void Soldier::setConnected(bool connected)
     }
 }
 
+void Soldier::setHealth(int health)
+{
+    if (!this->health && health)
+    {
+        if (player)
+        {
+            player->setVisible(!active);
+            player->setCollidable(true);
+            player->setStatic(false);
+            updateModel(vec3(0));
+        }
+
+        if (!weapons.empty())
+        {
+            weapons[0]->setVisible(active);
+        }
+    }
+    else if (this->health && !health)
+    {
+        if (player)
+        {
+            player->setVisible(false);
+            player->setCollidable(false);
+            player->setStatic(true);
+        }
+
+        if (!weapons.empty())
+        {
+            weapons[0]->setVisible(false); 
+        }
+    }
+    
+    this->health = health;
+}
+
 void Soldier::weaponAction()
 {
     if (window->isKeyPressedOnce(GLFW_KEY_G))
@@ -104,7 +141,7 @@ void Soldier::weaponAction()
 
         if (window->isButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            weapons[0]->fire(); 
+            fire(); 
         }
     }
 
@@ -161,8 +198,20 @@ void Soldier::pick()
         return;
     }
 
-    pickFrom = getPosition();
-    pickTo = getForward();
+    pickRay = {getPosition(), getForward()};
+}
+
+void Soldier::fire()
+{
+    if (dropTo)
+    {
+        return;
+    }
+        
+    if (weapons[0]->fire())
+    { 
+        fireInfo[weapons[0]->getName()].push_back({getPosition(), getForward()});
+    }
 }
 
 deque < Weapon* > Soldier::getWeapons() const
@@ -180,7 +229,7 @@ Weapon* Soldier::getWeapon(int index) const
     return weapons[index];
 }
 
-pair < vec3, vec3 > Soldier::getPickRay() const
+pair < vec3, vec3 > Soldier::getPickRay()
 {
     unique_lock < mutex > lk(mtx);
 
@@ -189,10 +238,14 @@ pair < vec3, vec3 > Soldier::getPickRay() const
         cv.wait(lk);
     }
 
-    return {pickFrom, pickTo};
+    pair < vec3, vec3 > res = pickRay;
+
+    pickRay = {vec3(0.0), vec3(0.0)};
+
+    return res;
 }
 
-bool Soldier::isDrop() const
+bool Soldier::isDrop()
 {   
     unique_lock < mutex > lk(mtx);
 
@@ -200,8 +253,31 @@ bool Soldier::isDrop() const
     {
         cv.wait(lk);
     }
+    
+    bool res = dropTo;
+    dropTo = false;
 
-    return dropTo;
+    return res;
+}
+        
+map < string, vector < pair < vec3, vec3 > > > Soldier::getFire()
+{
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+    
+    map < string, vector < pair < vec3, vec3 > > > res = fireInfo;
+    fireInfo.clear();
+
+    return res;
+}
+
+int Soldier::getHealth() const
+{
+    return health;
 }
 
 void Soldier::update(bool events)
@@ -211,7 +287,7 @@ void Soldier::update(bool events)
 
     moveDirection = vec3(0, 0, 0);
 
-    if (events && active)
+    if (events && active && health)
     {
         lookAction();
         moveAction();
@@ -242,16 +318,6 @@ void Soldier::update(bool events)
     }
 
    //cout << getPosition().x << ' ' << getPosition().z << endl;
-}
-
-void Soldier::clearPickData()
-{
-    pickFrom = pickTo = vec3(0.0);
-}
-
-void Soldier::clearDropData()
-{   
-    dropTo = false;
 }
 
 Soldier::~Soldier() {}

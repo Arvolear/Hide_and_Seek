@@ -21,6 +21,8 @@ class PlayerDataUpdater
 
         map < int, vector < string > > pickedWeapons;
 
+        map < int, int > healths;
+
         unsigned int timeStamp;
 
     public:

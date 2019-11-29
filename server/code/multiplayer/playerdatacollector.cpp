@@ -41,8 +41,10 @@ void PlayerDataCollector::collect(Player* player)
 
             if (!tmp.empty())
             {
-                pickedWeapons.insert({player->getID(), tmp});
+                pickedWeapons.insert({soldier->getID(), tmp});
             }
+        
+            healths.insert({soldier->getID(), soldier->getHealth()});
         }
     }
 }
@@ -74,12 +76,14 @@ void PlayerDataCollector::collect(vector < Player* > players)
                 {
                     pickedWeapons.insert({players[i]->getID(), tmp});
                 }
+            
+                healths.insert({soldier->getID(), soldier->getHealth()});
             }
         }
     }
 }
 
-string PlayerDataCollector::getData(int client, bool weapons, bool raw) const
+string PlayerDataCollector::getData(int client, bool position, bool health, bool weapons, bool raw) const
 {
     if (playerIDs.empty())
     {
@@ -98,34 +102,45 @@ string PlayerDataCollector::getData(int client, bool weapons, bool raw) const
 
         /* playerID */
         soldierElem->SetAttribute("id", playerIDs[i]);
-        
-        /* moveDirection */
-        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-        moveDirectionElem->SetAttribute("x", global.cutFloat(moveDirections[playerIDs[i]].x(), 4));
-        moveDirectionElem->SetAttribute("y", global.cutFloat(moveDirections[playerIDs[i]].y(), 4));
-        moveDirectionElem->SetAttribute("z", global.cutFloat(moveDirections[playerIDs[i]].z(), 4));
-
-        soldierElem->InsertEndChild(moveDirectionElem);
-
-        /* obj */
-        XMLElement* objElem = playerDataCollectorDoc.NewElement("obj");
-
-        objElem->SetAttribute("name", names[playerIDs[i]].c_str());
-
-        /* model */
-        XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
-
-        for (int j = 0; j < 16; j++)
+       
+        if (health)
         {
-            string str;
-            str = char('a' + j);
+            XMLElement* healthElem = playerDataCollectorDoc.NewElement("health");
+            healthElem->SetAttribute("health", healths[playerIDs[i]]);
 
-            modelElem->SetAttribute(str.data(), global.cutFloat(models[playerIDs[i]][j], 4));
+            soldierElem->InsertEndChild(healthElem);
         }
 
-        objElem->InsertEndChild(modelElem);
+        if (position)
+        {
+            /* moveDirection */
+            XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+            moveDirectionElem->SetAttribute("x", global.cutFloat(moveDirections[playerIDs[i]].x(), 4));
+            moveDirectionElem->SetAttribute("y", global.cutFloat(moveDirections[playerIDs[i]].y(), 4));
+            moveDirectionElem->SetAttribute("z", global.cutFloat(moveDirections[playerIDs[i]].z(), 4));
 
-        soldierElem->InsertEndChild(objElem);
+            soldierElem->InsertEndChild(moveDirectionElem);
+
+            /* obj */
+            XMLElement* objElem = playerDataCollectorDoc.NewElement("obj");
+
+            objElem->SetAttribute("name", names[playerIDs[i]].c_str());
+
+            /* model */
+            XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
+
+            for (int j = 0; j < 16; j++)
+            {
+                string str;
+                str = char('a' + j);
+
+                modelElem->SetAttribute(str.data(), global.cutFloat(models[playerIDs[i]][j], 4));
+            }
+
+            objElem->InsertEndChild(modelElem);
+
+            soldierElem->InsertEndChild(objElem);
+        }
 
         /* weapons */
         if (weapons && !pickedWeapons.empty())
@@ -151,7 +166,7 @@ string PlayerDataCollector::getData(int client, bool weapons, bool raw) const
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
     string res = playerDataCollectorPrinter.CStr();
-    
+
     if (res == last[client])
     {
         return "";
@@ -160,12 +175,12 @@ string PlayerDataCollector::getData(int client, bool weapons, bool raw) const
     {
         last[client] = res;
     }
-    
+
     /* timestamp */
     XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
     timeElem->SetAttribute("time", global.getTime());
     playerDataCollectorDoc.InsertFirstChild(timeElem);
-    
+
     playerDataCollectorPrinter.ClearBuffer();
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
@@ -184,8 +199,8 @@ string PlayerDataCollector::getData(int client, bool weapons, bool raw) const
 
     return res; 
 }
-        
-string PlayerDataCollector::getMergedData(string fileName, int client, bool weapons, bool raw) const
+
+string PlayerDataCollector::getMergedData(string fileName, int client, bool position, bool health, bool weapons, bool raw) const
 {
     if (playerIDs.empty())
     {
@@ -202,7 +217,7 @@ string PlayerDataCollector::getMergedData(string fileName, int client, bool weap
     {
         throw runtime_error("ERROR::PlayerDataCollector::getMergedData() failed to load XML");
     }
-    
+
     XMLElement* soldierElem = root->FirstChildElement("soldier");
 
     while (soldierElem)
@@ -218,8 +233,22 @@ string PlayerDataCollector::getMergedData(string fileName, int client, bool weap
             continue;
         }
 
+        XMLElement* healthElem = soldierElem->FirstChildElement("health");
+
+        if (healthElem)
+        {
+            if (!health)
+            {
+                soldierElem->DeleteChild(healthElem);
+            }
+            else
+            {
+                healthElem->SetAttribute("health", healths[id]);
+            }
+        }
+
         XMLElement* positionElem = soldierElem->FirstChildElement("pos");
-        
+
         if (positionElem)
         {
             soldierElem->DeleteChild(positionElem);
@@ -232,52 +261,55 @@ string PlayerDataCollector::getMergedData(string fileName, int client, bool weap
             soldierElem->DeleteChild(rotationElem);
             rotationElem = rotationElem->NextSiblingElement();
         }
-        
+
         XMLElement* armoryElem = soldierElem->FirstChildElement("armory");
 
         if (armoryElem)
         {
             soldierElem->DeleteChild(armoryElem);
         }
-        
-        /* moveDirection */
-        XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
-        moveDirectionElem->SetAttribute("x", global.cutFloat(moveDirections[id].x(), 4));
-        moveDirectionElem->SetAttribute("y", global.cutFloat(moveDirections[id].y(), 4));
-        moveDirectionElem->SetAttribute("z", global.cutFloat(moveDirections[id].z(), 4));
 
-        soldierElem->InsertEndChild(moveDirectionElem);
-
-        XMLElement* objElem = soldierElem->FirstChildElement("obj");
-
-        if (objElem)
+        if (position)
         {
-            XMLElement* positionElem = soldierElem->FirstChildElement("pos");
+            /* moveDirection */
+            XMLElement* moveDirectionElem = playerDataCollectorDoc.NewElement("dir");
+            moveDirectionElem->SetAttribute("x", global.cutFloat(moveDirections[id].x(), 4));
+            moveDirectionElem->SetAttribute("y", global.cutFloat(moveDirections[id].y(), 4));
+            moveDirectionElem->SetAttribute("z", global.cutFloat(moveDirections[id].z(), 4));
 
-            if (positionElem)
+            soldierElem->InsertEndChild(moveDirectionElem);
+
+            XMLElement* objElem = soldierElem->FirstChildElement("obj");
+
+            if (objElem)
             {
-                objElem->DeleteChild(positionElem);
+                XMLElement* positionElem = soldierElem->FirstChildElement("pos");
+
+                if (positionElem)
+                {
+                    objElem->DeleteChild(positionElem);
+                }
+
+                XMLElement* rotationElem = soldierElem->FirstChildElement("rot");
+
+                if (rotationElem)
+                {
+                    objElem->DeleteChild(rotationElem);
+                }
+
+                /* model */
+                XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
+
+                for (int j = 0; j < 16; j++)
+                {
+                    string str;
+                    str = char('a' + j);
+
+                    modelElem->SetAttribute(str.data(), global.cutFloat(models[id][j], 4));
+                }
+
+                objElem->InsertEndChild(modelElem);
             }
-            
-            XMLElement* rotationElem = soldierElem->FirstChildElement("rot");
-
-            if (rotationElem)
-            {
-                objElem->DeleteChild(rotationElem);
-            }
-
-            /* model */
-            XMLElement* modelElem = playerDataCollectorDoc.NewElement("mdl");
-
-            for (int j = 0; j < 16; j++)
-            {
-                string str;
-                str = char('a' + j);
-
-                modelElem->SetAttribute(str.data(), global.cutFloat(models[id][j], 4));
-            }
-
-            objElem->InsertEndChild(modelElem);
         }
 
         /* weapons */
@@ -302,9 +334,9 @@ string PlayerDataCollector::getMergedData(string fileName, int client, bool weap
     /* printer */
     XMLPrinter playerDataCollectorPrinter;
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
-    
+
     string res = playerDataCollectorPrinter.CStr();
-    
+
     if (res == last[client])
     {
         return "";
@@ -313,12 +345,12 @@ string PlayerDataCollector::getMergedData(string fileName, int client, bool weap
     {
         last[client] = res;
     }
-    
+
     /* timestamp */
     XMLElement* timeElem = playerDataCollectorDoc.NewElement("time");
     timeElem->SetAttribute("time", global.getTime());
     playerDataCollectorDoc.InsertFirstChild(timeElem);
-   
+
     playerDataCollectorPrinter.ClearBuffer();
     playerDataCollectorDoc.Print(&playerDataCollectorPrinter);
 
@@ -343,6 +375,7 @@ void PlayerDataCollector::clear()
     playerIDs.clear();
     moveDirections.clear();
     pickedWeapons.clear();
+    healths.clear();
 
     for (auto& i: models)
     {   

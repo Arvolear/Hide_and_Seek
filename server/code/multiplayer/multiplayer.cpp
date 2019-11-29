@@ -22,6 +22,7 @@
 #include "weaponpickerupdater.hpp"
 #include "weapondroppercollector.hpp"
 #include "weapondropperupdater.hpp"
+#include "weaponfireupdater.hpp"
 #include "playerconnectioncollector.hpp"
 #include "playerdisconnectioncollector.hpp"
 #include "multiplayer.hpp"
@@ -38,6 +39,7 @@ Multiplayer::Multiplayer(Level* level, World* world)
     weaponPickerUpdater = new WeaponPickerUpdater(world);
     weaponDropperCollector = new WeaponDropperCollector(5);
     weaponDropperUpdater = new WeaponDropperUpdater();
+    weaponFireUpdater = new WeaponFireUpdater(world);
     playerConnectionCollector = new PlayerConnectionCollector(5);
     playerDisconnectionCollector = new PlayerDisconnectionCollector(5);
 
@@ -123,7 +125,7 @@ void Multiplayer::broadcast()
                     vector < Player* > players = level->getPlayers();
                     playerDataCollector->collect(players);
 
-                    string message = playerDataCollector->getMergedData(level->getLevelPath() + "/soldier.xml", i, true);
+                    string message = playerDataCollector->getMergedData(level->getLevelPath() + "/soldier.xml", i, true, true, true);
 
                     try
                     {
@@ -225,19 +227,24 @@ void Multiplayer::broadcast()
 
             for (size_t j = 0; j < sockets.size(); j++)
             {
-                if ((int)j != players[i]->getID())
+                try
                 {
-                    try
+                    /* another player, pos + ... */
+                    if ((int)j != players[i]->getID())
                     {
-                        node->sendMSG(sockets[j], playerDataCollector->getData(j));
+                        node->sendMSG(sockets[j], playerDataCollector->getData(j, true, true));
                     }
-                    catch(exception& ex) {}
+                    else /* this player, don't include pos */
+                    {
+                        node->sendMSG(sockets[j], playerDataCollector->getData(j, false, true));
+                    }
                 }
+                catch(exception& ex) {}
             }
 
             playerDataCollector->clear();
         }
-        
+
         /* pickWeapons */
         for (size_t i = 0; i < players.size(); i++)
         {
@@ -289,7 +296,7 @@ void Multiplayer::broadcast()
 
             weaponDropperCollector->clear();
         }
-        
+
         /* physicsobject data */
         map < string, PhysicsObject* > physicsObjects = level->getNoPlayersAndTheirWeaponsPhysicsObjects();
 
@@ -369,6 +376,15 @@ void Multiplayer::update()
 
                 weaponDropperUpdater->clear();
             }
+            else if (messages[i].find("Fire") != string::npos)
+            {
+                weaponFireUpdater->collect(messages[i]);
+                Player* player = level->getPlayer(weaponFireUpdater->getPlayerID());
+
+                weaponFireUpdater->updateData(player, level->getPhysicsObjects());
+
+                weaponFireUpdater->clear();
+            }
             else if (messages[i].find("Obj") != string::npos)
             {
                 physicsObjectDataUpdater->collect(messages[i]);
@@ -397,6 +413,7 @@ Multiplayer::~Multiplayer()
     delete weaponPickerUpdater;
     delete weaponDropperCollector;
     delete weaponDropperUpdater;
+    delete weaponFireUpdater;
     delete playerConnectionCollector;
     delete playerDisconnectionCollector;
 }

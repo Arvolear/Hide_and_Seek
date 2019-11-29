@@ -75,9 +75,12 @@ void WeaponPickerUpdater::collect(string info)
 
         pickTo = btVector3(x, y, z);
     }
+}
 
+void WeaponPickerUpdater::updateData(Player* player)
+{
     /* rayTracer */
-    unique_ptr < RayResult > result(rayTracer->rayCast(pickFrom, pickTo, false));
+    unique_ptr < RayResult > result(rayTracer->rayCast(player->getPhysicsObject()->getRigidBody(), pickFrom, pickTo, false));
 
     if (!result.get())
     {
@@ -94,15 +97,12 @@ void WeaponPickerUpdater::collect(string info)
     }
 
     weapon = dynamic_cast < Weapon* >(static_cast < PhysicsObject* >(result->body->getUserPointer()));
-}
 
-void WeaponPickerUpdater::updateData(Player* player)
-{
     Soldier* soldier = dynamic_cast < Soldier* >(player);
 
     if (!soldier)
     {
-        throw(runtime_error("ERROR::WeaponPickerUPdater::updatedata() player is not a soldier"));
+        throw(runtime_error("ERROR::WeaponPickerUpdater::updatedata() player is not a soldier"));
     }
 
     if (weapon)

@@ -61,6 +61,7 @@
 #include "weaponpickerupdater.hpp"
 #include "weapondroppercollector.hpp"
 #include "weapondropperupdater.hpp"
+#include "weaponfirecollector.hpp"
 #include "playerconnectionupdater.hpp"
 #include "playerdisconnectionupdater.hpp"
 #include "multiplayer.hpp"
@@ -77,6 +78,7 @@ Multiplayer::Multiplayer(Window* window, Level* level, World* world)
     weaponPickerUpdater = new WeaponPickerUpdater();
     weaponDropperCollector = new WeaponDropperCollector();
     weaponDropperUpdater = new WeaponDropperUpdater();
+    weaponFireCollector = new WeaponFireCollector();
     playerConnectionUpdater = new PlayerConnectionUpdater();
     playerDisconnectionUpdater = new PlayerDisconnectionUpdater();
 
@@ -169,6 +171,7 @@ void Multiplayer::connect()
     gameObjectDataCollector->setSenderID(playerID);
     weaponPickerCollector->setPlayerID(playerID);
     weaponDropperCollector->setPlayerID(playerID);
+    weaponFireCollector->setPlayerID(playerID);
 
     level->getConnectedPlayer()->setConnected(true);
     level->getConnectedPlayer()->setActive(true);
@@ -229,6 +232,11 @@ void Multiplayer::broadcast()
         weaponDropperCollector->collect(level->getConnectedPlayer());
         client->sendMSG(weaponDropperCollector->getData());
         weaponDropperCollector->clear();
+        
+        /* fire */
+        weaponFireCollector->collect(level->getConnectedPlayer());
+        client->sendMSG(weaponFireCollector->getData(), true);
+        weaponFireCollector->clear();
     }
 }
 
@@ -334,6 +342,7 @@ Multiplayer::~Multiplayer()
     delete weaponPickerUpdater;
     delete weaponDropperCollector;
     delete weaponDropperUpdater;
+    delete weaponFireCollector;
     delete playerConnectionUpdater;
     delete playerDisconnectionUpdater;
 }

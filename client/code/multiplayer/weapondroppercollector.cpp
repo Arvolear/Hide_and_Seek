@@ -71,8 +71,6 @@ void WeaponDropperCollector::collect(Player* player)
     {
         model = weapons[0]->getPhysicsObjectTransform();
     }
-
-    soldier->clearDropData();
 }
 
 string WeaponDropperCollector::getData() const
