@@ -246,20 +246,25 @@ string PlayerDataCollector::getMergedData(string fileName, int client, bool posi
                 healthElem->SetAttribute("health", healths[id]);
             }
         }
+        
+        XMLElement* objElem = soldierElem->FirstChildElement("obj");
 
-        XMLElement* positionElem = soldierElem->FirstChildElement("pos");
-
-        if (positionElem)
+        if (objElem)
         {
-            soldierElem->DeleteChild(positionElem);
-        }
+            XMLElement* positionElem = objElem->FirstChildElement("pos");
 
-        XMLElement* rotationElem = soldierElem->FirstChildElement("rot");
+            if (positionElem)
+            {
+                objElem->DeleteChild(positionElem);
+            }
 
-        while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
-        {
-            soldierElem->DeleteChild(rotationElem);
-            rotationElem = rotationElem->NextSiblingElement();
+            XMLElement* rotationElem = objElem->FirstChildElement("rot");
+
+            while (rotationElem && !strcmp(rotationElem->Value(), "rot"))
+            {
+                objElem->DeleteChild(rotationElem);
+                rotationElem = rotationElem->NextSiblingElement();
+            }
         }
 
         XMLElement* armoryElem = soldierElem->FirstChildElement("armory");

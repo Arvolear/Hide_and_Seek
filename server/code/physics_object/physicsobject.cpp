@@ -185,6 +185,8 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld)
     globalNames.insert(name);
     this->name = name;
     ownerID = -1;
+
+    ready = true;
 }
 
 PhysicsObject::PhysicsObject(string name, World* physicsWorld, btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -216,6 +218,8 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld, btCollisionShape*
     globalNames.insert(name);
     this->name = name;
     ownerID = -1;
+    
+    ready = true;
 }
 
 PhysicsObject::PhysicsObject(string name, World* physicsWorld, ConvexHullShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -247,6 +251,8 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld, ConvexHullShape* 
     globalNames.insert(name);
     this->name = name;
     ownerID = -1;
+    
+    ready = true;
 }
 
 PhysicsObject::PhysicsObject(string name, World* physicsWorld, CompoundShape* shape, float mass, btVector3 position, btQuaternion rotation)
@@ -280,6 +286,8 @@ PhysicsObject::PhysicsObject(string name, World* physicsWorld, CompoundShape* sh
     globalNames.insert(name);
     this->name = name;
     ownerID = -1;
+    
+    ready = true;
 }
 
 void PhysicsObject::setName(string name)
@@ -367,21 +375,39 @@ void PhysicsObject::setRotation(btQuaternion rotation, bool add)
         
 void PhysicsObject::setTransform(btTransform transform)
 {
+    unique_lock < mutex > lk(mtx);
+    ready = false;
+
     motionState->setBTTransform(transform);
     body->setWorldTransform(motionState->getBTTransform());     
     body->forceActivationState(ACTIVE_TAG);
+
+    ready = true;
+    cv.notify_all();
 }
 
 void PhysicsObject::setTransform(btScalar* transform)
 {
+    unique_lock < mutex > lk(mtx);
+    ready = false;
+
     motionState->setGLTransform(transform);
     body->setWorldTransform(motionState->getBTTransform());     
     body->forceActivationState(ACTIVE_TAG);
+    
+    ready = true;
+    cv.notify_all();
 }
 
 void PhysicsObject::clearTransform()
 {
+    unique_lock < mutex > lk(mtx);
+    ready = false;
+    
     updateBody(phShape, mass, btVector3(0, 0, 0), btQuaternion(btVector3(0, 1, 0), 0));
+    
+    ready = true;
+    cv.notify_all();
 }
 
 void PhysicsObject::setCollidable(bool collidable)
@@ -508,6 +534,13 @@ void* PhysicsObject::getUserPointer() const
 
 btScalar* PhysicsObject::getTransform() const
 {
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
     return motionState->getGLTransform();
 }
 

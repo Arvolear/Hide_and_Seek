@@ -15,6 +15,8 @@ class Level
         World* physicsWorld;
 
         LevelLoader* levelLoader;
+
+        Spawner* spawner;
         
         string levelName;
         string levelPath;
@@ -36,7 +38,9 @@ class Level
         void removePhysicsObject(PhysicsObject* physicsObject);
         void removePhysicsObject(string name);
 
+        void spawn(int client);
         void update();
+        void deSpawn(int client);
        
         void clearNoPlayersAndTheirWeaponsOwner(int owner);
 

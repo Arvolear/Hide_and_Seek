@@ -18,6 +18,9 @@ class Soldier : public Player
         int maxHealth;
         int health;
 
+        int deathTime;
+        bool respawn;
+
         deque < Weapon* > weapons;
         deque < Weapon* > new_weapons;
         deque < Weapon* > old_weapons;
@@ -31,6 +34,8 @@ class Soldier : public Player
         void setMaxHealth(int maxHealth);
         void setHealth(int health);
         void damage(int dmg);
+        void setDeathTime(int deathTime);
+        void setRespawn(bool respawn);
 
         void pick(Weapon* weapon);
         void drop(btScalar* model);
@@ -40,6 +45,9 @@ class Soldier : public Player
 
         int getMaxHealth() const;
         int getHealth() const;
+        int getDeathTime() const;
+
+        bool isRespawn() const;
 
         deque < Weapon* > getWeapons() const;
         deque < Weapon* > getNewWeapons() const;

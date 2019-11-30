@@ -16,6 +16,8 @@ class LevelLoader
 
         string levelName;
 
+        Spawner* spawner;
+
         map < string, PhysicsObject* > physicsObjects;
         
         vector < Player* > players;
@@ -30,11 +32,15 @@ class LevelLoader
 
         void loadSoldiers();
 
+        void loadSpawner();
+
     public:
         LevelLoader(World* physicsWorld);
 
         void loadLevel(string name);
         void updateLevel();
+
+        void getSpawner(Spawner*& spawner);
 
         void getPhysicsObjectsData(map < string, PhysicsObject* > &physicsObjects) const;
         void getPlayersData(vector < Player* > &players) const;

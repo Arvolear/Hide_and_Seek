@@ -13,7 +13,7 @@ MAIN = main.o
 GLOBAL = global.o
 GAME = game.o
 MULTIPLAYER = multiplayer.o node.o playerdatacollector.o playerdataupdater.o physicsobjectdatacollector.o physicsobjectdataupdater.o weapondatacollector.o weaponpickercollector.o weaponpickerupdater.o weapondroppercollector.o weapondropperupdater.o weaponfireupdater.o playerconnectioncollector.o playerdisconnectioncollector.o
-LEVEL = level.o levelloader.o
+LEVEL = level.o spawner.o levelloader.o
 WORLD = world.o bulletevents.o raytracer.o
 PLAYER = player.o soldier.o
 PHYSICS_OBJECT = physicsobject.o openglmotionstate.o weapon.o
@@ -95,6 +95,9 @@ $(OUTPUTDIR)/playerdisconnectioncollector.o: $(INPUTDIR)/multiplayer/playerdisco
 
 $(OUTPUTDIR)/level.o: $(INPUTDIR)/level/level.cpp $(INPUTDIR)/level/level.hpp
 	g++ -c $(INPUTDIR)/level/level.cpp -o $@ $(FLAGS)
+
+$(OUTPUTDIR)/spawner.o: $(INPUTDIR)/level/spawner.cpp $(INPUTDIR)/level/spawner.hpp
+	g++ -c $(INPUTDIR)/level/spawner.cpp -o $@ $(FLAGS)
 
 $(OUTPUTDIR)/levelloader.o: $(INPUTDIR)/level/levelloader.cpp $(INPUTDIR)/level/levelloader.hpp
 	g++ -c $(INPUTDIR)/level/levelloader.cpp -o $@ $(FLAGS)

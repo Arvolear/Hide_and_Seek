@@ -11,6 +11,7 @@
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
+#include "spawner.hpp"
 #include "levelloader.hpp"
 #include "level.hpp"
 
@@ -31,6 +32,7 @@ void Level::loadLevel(string level)
     levelLoader->loadLevel(levelPath);
 
     /*** GET LOADED DATA ***/
+    levelLoader->getSpawner(spawner);
     levelLoader->getPlayersData(players);
     levelLoader->getPhysicsObjectsData(physicsObjects);
 }
@@ -79,9 +81,62 @@ void Level::removePhysicsObject(string name)
         physicsObjects.erase(it);
     }
 }
+        
+void Level::spawn(int client)
+{
+    Soldier* soldier = nullptr;
+
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        if (players[i]->getID() == client)
+        {
+            soldier = dynamic_cast < Soldier* >(players[client]);
+
+            if (!soldier)
+            {
+                return;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    soldier->getPhysicsObject()->setTransform(spawner->getTransform(soldier->getID()));
+    soldier->setHealth(soldier->getMaxHealth());
+}
 
 void Level::update()
 {
+    int respawnTime = 5000;
+
+    /* respawn */
+    for (size_t i = 0; i < players.size(); i++)
+    {
+        if (!players[i]->isConnected())
+        {
+            continue;
+        }
+
+        Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
+
+        if (!soldier)
+        {
+            continue;
+        }
+
+        if (soldier->getDeathTime() >= 0 && !soldier->isRespawn())
+        {
+            if ((soldier->getDeathTime() + respawnTime) % 1000000 <= (int)global.getTime())
+            {
+                spawn(soldier->getID());
+
+                soldier->setRespawn(true);
+            }
+        }
+    }
+
     /* update owners */
     for (size_t i = 0; i < players.size(); i++)
     {
@@ -106,7 +161,12 @@ void Level::update()
         }
     }
 }
-        
+
+void Level::deSpawn(int client)
+{
+    spawner->clearPrev(client);
+}
+
 void Level::clearNoPlayersAndTheirWeaponsOwner(int owner)
 {
     map < string, PhysicsObject* > tmp = getNoPlayersAndTheirWeaponsPhysicsObjects();
@@ -117,7 +177,7 @@ void Level::clearNoPlayersAndTheirWeaponsOwner(int owner)
         {
             it.second->getRigidBody()->forceActivationState(ACTIVE_TAG);
             it.second->getRigidBody()->applyCentralImpulse(it.second->getRigidBody()->getGravity());
-            
+
             it.second->setOwnerID(-1);
         }
     }
@@ -139,7 +199,7 @@ map < string, PhysicsObject* > Level::getNoPlayersPhysicsObjects() const
 
     return tmp;
 }
-        
+
 map < string, PhysicsObject* > Level::getNoPlayersAndTheirWeaponsPhysicsObjects() const
 {
     map < string, PhysicsObject* > tmp = physicsObjects;
@@ -175,7 +235,7 @@ Player* Level::getPlayer(int id) const
 
     return nullptr;
 }
-        
+
 vector < Player* > Level::getPlayers() const
 {
     return players;
@@ -184,7 +244,7 @@ vector < Player* > Level::getPlayers() const
 vector < Player* > Level::getPlayersExcept(int id) const
 {
     vector < Player* > tmp = players;
-    
+
     for (size_t i = 0; i < tmp.size(); i++)
     {
         if (tmp[i]->getID() == id)
@@ -210,6 +270,7 @@ string Level::getLevelPath() const
 Level::~Level()
 {
     delete levelLoader;
+    delete spawner;
 
     for (auto& i : physicsObjects)
     {

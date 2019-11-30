@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <mutex>
+#include <condition_variable>
 
 //bullet
 #include <bullet/btBulletCollisionCommon.h>
@@ -77,6 +79,10 @@ class PhysicsObject
         void* userPointer;
 
         void updateBody(btCollisionShape* shape, float mass, btVector3 position, btQuaternion rotation, int group = btBroadphaseProxy::DefaultFilter);
+
+        mutable mutex mtx;
+        mutable condition_variable cv;
+        bool ready;
 
     public:
         PhysicsObject(string name, World* physicsWorld);

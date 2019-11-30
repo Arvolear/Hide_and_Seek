@@ -11,6 +11,7 @@
 #include "player/player.hpp"
 #include "player/soldier.hpp"
 
+#include "level/spawner.hpp"
 #include "level/levelloader.hpp"
 #include "level/level.hpp"
 

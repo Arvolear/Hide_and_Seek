@@ -11,6 +11,7 @@
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
+#include "spawner.hpp"
 #include "levelloader.hpp"
 
 LevelLoader::LevelLoader(World* physicsWorld)
@@ -837,6 +838,37 @@ void LevelLoader::loadSoldiers()
         soldierElem = soldierElem->NextSiblingElement();
     }
 }
+        
+void LevelLoader::loadSpawner()
+{
+    XMLDocument spawnerDoc;
+
+    spawnerDoc.LoadFile((levelName + "/spawn.xml").c_str());
+
+    XMLNode* root = spawnerDoc.FirstChildElement("Spawner");
+
+    if (!root)
+    {
+        throw runtime_error("ERROR::LevelLoader::loadSpawner() failed to load XML");
+    }
+
+    spawner = new Spawner(players.size());
+
+    XMLElement* posElem = root->FirstChildElement("pos");
+
+    while (posElem)
+    {
+        float x = 0.0, y = 0.0, z = 0.0;
+
+        posElem->QueryFloatAttribute("x", &x);
+        posElem->QueryFloatAttribute("y", &y);
+        posElem->QueryFloatAttribute("z", &z);
+
+        spawner->addPosition(btVector3(x, y, z));
+
+        posElem = posElem->NextSiblingElement();
+    }
+}
 
 void LevelLoader::loadLevel(string name)
 {
@@ -846,6 +878,8 @@ void LevelLoader::loadLevel(string name)
     loadWeapons();
 
     loadSoldiers();
+
+    loadSpawner();
 
     if (players.empty())
     {
@@ -857,6 +891,11 @@ void LevelLoader::updateLevel()
 {
     loadPhysicsObjects();
     loadWeapons();
+}
+        
+void LevelLoader::getSpawner(Spawner*& spawner)
+{
+    spawner = this->spawner;
 }
 
 void LevelLoader::getPhysicsObjectsData(map < string, PhysicsObject* > &physicsObjects) const

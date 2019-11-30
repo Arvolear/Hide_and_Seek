@@ -301,7 +301,7 @@ void GameObject::setPhysicsObjectTransform(mat4 model, bool interpolation, unsig
     }
     else
     {
-        unsigned int diffMill = global.getTime() - timeStamp + 50;
+        unsigned int diffMill = ((global.getTime() + 1000000) - timeStamp + 50) % 1000000;
 
         interpolationCoeff = 0.0;
         interpolationDelta = 1.0 / (diffMill / (Global::fpsCounter->getFramesTime() * 1000.0));

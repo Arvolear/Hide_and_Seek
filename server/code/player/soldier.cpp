@@ -1,3 +1,5 @@
+#include "../global/globaluse.hpp"
+
 #include "../world/raytracer.hpp"
 #include "../world/bulletevents.hpp"
 #include "../world/world.hpp"
@@ -17,6 +19,8 @@ Soldier::Soldier(int maxHealth, int id, float speed) : Player(id, speed)
     }
 
     this->maxHealth = this->health = maxHealth;
+    deathTime = -1;
+    respawn = false;
 }
 
 Soldier::Soldier(int maxHealth, int id, PhysicsObject* physicsObject, float speed) : Player(id, physicsObject, speed) 
@@ -27,6 +31,8 @@ Soldier::Soldier(int maxHealth, int id, PhysicsObject* physicsObject, float spee
     }
 
     this->maxHealth = this->health = maxHealth;
+    deathTime = -1;
+    respawn = false;
 }
 
 void Soldier::setConnected(bool connected)
@@ -44,7 +50,8 @@ void Soldier::setConnected(bool connected)
     }
     else
     {
-        setHealth(maxHealth);
+        respawn = false;
+        deathTime = -1;
 
         if (physicsObject)
         {
@@ -85,6 +92,8 @@ void Soldier::setHealth(int health)
             physicsObject->setStatic(true);
             physicsObject->setKinematic(true);
         }
+        
+        deathTime = global.getTime();
     }
     else if (!this->health && health)
     {
@@ -94,6 +103,8 @@ void Soldier::setHealth(int health)
             physicsObject->setStatic(false);
             physicsObject->setKinematic(false);
         }
+        
+        deathTime = -1;
     }
     
     this->health = std::min(health, maxHealth);
@@ -117,10 +128,22 @@ void Soldier::damage(int dmg)
             physicsObject->setStatic(true);
             physicsObject->setKinematic(true);
         }
+    
+        deathTime = global.getTime();
     }
 
     ready = true;
     cv.notify_all();
+}
+
+void Soldier::setDeathTime(int deathTime)
+{
+    this->deathTime = deathTime;
+}
+        
+void Soldier::setRespawn(bool respawn)
+{
+    this->respawn = respawn;
 }
 
 void Soldier::pick(Weapon* weapon)
@@ -189,6 +212,23 @@ int Soldier::getHealth() const
     }
 
     return health;
+}
+        
+bool Soldier::isRespawn() const
+{
+    return respawn;
+}
+
+int Soldier::getDeathTime() const
+{
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+
+    return deathTime;
 }
 
 deque < Weapon* > Soldier::getWeapons() const

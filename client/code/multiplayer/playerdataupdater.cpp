@@ -147,6 +147,8 @@ void PlayerDataUpdater::updateData(Player* player, bool interpolation, map < str
 {
     int playerID = player->getID();
 
+    interpolation = player->isActive() ? false : interpolation;
+
     objParser->updatePhysicsObject(player->getGameObject(), interpolation, timeStamp);
 
     if (speeds.find(playerID) != speeds.end())

@@ -9,6 +9,7 @@
 #include "../player/player.hpp"
 #include "../player/soldier.hpp"
 
+#include "../level/spawner.hpp"
 #include "../level/levelloader.hpp"
 #include "../level/level.hpp"
 
@@ -66,6 +67,7 @@ void Multiplayer::broadcast()
                     cout << "Join playerID: " << i << endl;
                     level->getPlayer(i)->getPhysicsObject()->setOwnerID(i);
                     level->getPlayer(i)->setConnected(true);
+                    level->spawn(i);
                     
                     string message = "BEG\n<join>" + to_string(i) + "</join>\nEND";
                     try
@@ -195,6 +197,7 @@ void Multiplayer::broadcast()
                     /* disconnected */
                     level->clearNoPlayersAndTheirWeaponsOwner(i);
                     level->getPlayer(i)->setConnected(false);
+                    level->deSpawn(i);
 
                     playerDataCollector->clearLast(i);
                     physicsObjectDataCollector->clearLast(i);
@@ -219,27 +222,45 @@ void Multiplayer::broadcast()
             {
                 continue;
             }
+            
+            Soldier* soldier = dynamic_cast < Soldier* >(players[i]);
+            bool respawnOld = soldier->isRespawn();
 
             playerDataCollector->collect(players[i]);
 
-            /* send position info */
-            vector < int > sockets = node->getClientSockets();
-
-            for (size_t j = 0; j < sockets.size(); j++)
+            if (respawnOld == soldier->isRespawn())
             {
-                try
+                /* send position info */
+                vector < int > sockets = node->getClientSockets();
+
+                for (size_t j = 0; j < sockets.size(); j++)
                 {
-                    /* another player, pos + ... */
-                    if ((int)j != players[i]->getID())
+                    try
                     {
-                        node->sendMSG(sockets[j], playerDataCollector->getData(j, true, true));
+                        /* another player, pos + ... */
+                        if ((int)j != players[i]->getID())
+                        {
+                            string msg = playerDataCollector->getData(j, true, true);
+                            node->sendMSG(sockets[j], msg);
+                        }
+                        else /* this player */
+                        {
+                            if (respawnOld)
+                            {
+                                string msg = playerDataCollector->getData(j, true, true);
+                                node->sendMSG(sockets[j], msg, true);
+                            
+                                soldier->setRespawn(false);
+                                respawnOld = false;
+                            }
+                            else
+                            {
+                                node->sendMSG(sockets[j], playerDataCollector->getData(j, false, true));
+                            }
+                        }
                     }
-                    else /* this player, don't include pos */
-                    {
-                        node->sendMSG(sockets[j], playerDataCollector->getData(j, false, true));
-                    }
+                    catch(exception& ex) {}
                 }
-                catch(exception& ex) {}
             }
 
             playerDataCollector->clear();
