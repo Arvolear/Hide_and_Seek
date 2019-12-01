@@ -195,8 +195,8 @@ void Multiplayer::broadcast()
                     cout << "Quit playerID: " << i << endl;
 
                     /* disconnected */
-                    level->clearNoPlayersAndTheirWeaponsOwner(i);
                     level->getPlayer(i)->setConnected(false);
+                    level->clearNoPlayersAndTheirWeaponsOwner(i);
                     level->deSpawn(i);
 
                     playerDataCollector->clearLast(i);
@@ -249,9 +249,6 @@ void Multiplayer::broadcast()
                             {
                                 string msg = playerDataCollector->getData(j, true, true);
                                 node->sendMSG(sockets[j], msg, true);
-                            
-                                soldier->setRespawn(false);
-                                respawnOld = false;
                             }
                             else
                             {
@@ -260,6 +257,11 @@ void Multiplayer::broadcast()
                         }
                     }
                     catch(exception& ex) {}
+                }
+                                
+                if (respawnOld)
+                {
+                    soldier->setRespawn(false);
                 }
             }
 
@@ -375,7 +377,12 @@ void Multiplayer::update()
                 playerDataUpdater->collect(messages[i]);
                 Player* player = level->getPlayer(playerDataUpdater->getPlayerID());
 
-                playerDataUpdater->updateData(player);
+                Soldier* soldier = dynamic_cast < Soldier* >(player);
+
+                if (!soldier->isRespawn())
+                {
+                    playerDataUpdater->updateData(player);
+                }
 
                 playerDataUpdater->clear();
             }
