@@ -164,7 +164,8 @@ void DirLight::blurScatter(vec2 center)
 void DirLight::renderShadow(Shader* shader, GLuint index)
 {
     shader->setVec3("dirLights[" + to_string(index) + "].direction", direction);
-    shader->setVec3("dirLights[" + to_string(index) + "].color", color * coeff);
+    shader->setVec3("dirLights[" + to_string(index) + "].color", color);
+    shader->setFloat("dirLights[" + to_string(index) + "].coeff", coeff);
 
     GLuint shadowTexture = getShadowTexture();
 

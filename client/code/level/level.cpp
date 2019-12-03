@@ -144,6 +144,8 @@ void Level::loadLevel(string level)
     levelLoader->getProjectionData(projection);
     levelLoader->getViewFrustumData(viewFrustum);
 
+
+    skyBox->setAxis(atmosphere->getSunAxis());
     quad->init();
     
     /* DEBUG */
@@ -490,6 +492,8 @@ void Level::updatePlayers(int mode)
 void Level::updateSunPos()
 {
     atmosphere->updateSunPos();
+    skyBox->updatePos();
+
     vec3 sunPos = atmosphere->getSunPos();
 
     dirLights[0]->setDirection(-normalize(sunPos));

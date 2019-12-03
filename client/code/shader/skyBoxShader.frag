@@ -11,6 +11,8 @@ uniform samplerCube skybox;
 
 void main()
 {
+    float gamma = 2.2;
+
     vec2 UV = gl_FragCoord.xy / textureSize(depthTexture, 0);
 
     if (texture(depthTexture, UV).x != 0.0)
@@ -18,7 +20,7 @@ void main()
         discard;
     }
 
-    fragColor = vec4(texture(skybox, textureCoords).rgb, alpha);    
+    fragColor = vec4(pow(texture(skybox, textureCoords).rgb, vec3(gamma)), alpha);    
 
     float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
 

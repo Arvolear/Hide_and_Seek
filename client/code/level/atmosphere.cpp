@@ -28,7 +28,7 @@ Atmosphere::Atmosphere()
 
     this->iBeauty = this->jBeauty = 0;
 
-    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 4, 0.0);
+    this->axis = vec3(1.0, (global.getRandomNumber() - 0.5) * 2, 0.0);
 }
         
 Atmosphere::Atmosphere(vec3 rayOrigin, vec3 sunPos, float sunIntensity, float planetRadius, float atmoRadius, vec3 rayleighCoeff, float mieCoeff, float rayleighHeight, float mieHeight, float mieDir)
@@ -183,6 +183,11 @@ void Atmosphere::updateSunPos()
 vec3 Atmosphere::getSunPos() const
 {
     return sunPos;
+}
+
+vec3 Atmosphere::getSunAxis() const
+{
+    return axis;
 }
 
 float Atmosphere::getRelativeSunGradient() const

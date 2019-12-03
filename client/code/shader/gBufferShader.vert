@@ -1,5 +1,6 @@
 #version 330 core
 
+#define MAX_BONES_AMOUNT 50
 #define BONES_AMOUNT 6
 
 layout (location = 0) in vec3 position;
@@ -17,7 +18,6 @@ uniform mat4 projection;
 
 uniform int meshInstanced;
 
-#define MAX_BONES_AMOUNT 50
 uniform mat4 bones[MAX_BONES_AMOUNT];
 uniform int meshWithBones;
 uniform int meshNormalMapped;

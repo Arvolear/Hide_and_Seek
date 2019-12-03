@@ -17,6 +17,8 @@ struct DirLight
     vec3 direction;
     vec3 color;
 
+    float coeff;
+
     int isShadow; 
     sampler2D texture_shadow1; // depth
     
@@ -110,6 +112,7 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec4 calcDirLights()
 {
     float gamma = 2.2;
+    float dirLightsCoeff = 0.0;
 
     vec3 fragPos = texture(gBuffer.texture_position, UV).xyz;
     vec3 fragNorm = texture(gBuffer.texture_normal, UV).xyz;
@@ -154,7 +157,7 @@ vec4 calcDirLights()
 
         float nDotL = max(dot(fragNorm, lightDir), minNormalCosAngle);
 
-        vec3 L00 = (kD * fragAlbedo / PI + specular) * radiance * nDotL;
+        vec3 L00 = (kD * fragAlbedo / PI + specular) * radiance * nDotL * dirLights[i].coeff;
 
         if (dirLights[i].isShadow == 1 && staticDepth == 0.0)
         {
@@ -166,11 +169,15 @@ vec4 calcDirLights()
         }
 
         L0 += L00;
+        dirLightsCoeff += dirLights[i].coeff;
     }
+    
+    dirLightsCoeff /= MAX_DIR_LIGHTS;
 
     float ssao = texture(texture_ssao, UV).r;
+    float ambCoeff = max(0.015, 0.035 * dirLightsCoeff);
 
-    vec3 ambient = vec3(0.03) * fragAlbedo * ssao; // * fragAO;
+    vec3 ambient = vec3(ambCoeff) * fragAlbedo * ssao; // * fragAO;
     vec3 res = ambient + L0;
 
     return vec4(res, 1.0);

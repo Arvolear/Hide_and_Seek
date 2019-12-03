@@ -60,6 +60,7 @@ class Atmosphere
         void updateSunPos();
 
         vec3 getSunPos() const;
+        vec3 getSunAxis() const;
         float getRelativeSunGradient() const;
 
         ColorBuffer* getBuffer() const;

@@ -10,6 +10,9 @@ SkyBox::SkyBox()
     VAO = 0;
     VBO = 0;
     textureID = 0;
+
+    model = mat4(1.0);
+    axis = vec3(0.0);
 }
 
 void SkyBox::init()
@@ -64,9 +67,25 @@ void SkyBox::loadSkyBox(string path)
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
+void SkyBox::setAxis(vec3 axis)
+{
+    this->axis = axis;
+}
+
+void SkyBox::updatePos()
+{
+    float theta = 0.03;
+
+    mat4 rotMat = rotate(radians(theta), axis);
+
+    model = model * rotMat;
+}
+
 void SkyBox::render(Shader* shader)
 {
     glDepthFunc(GL_LEQUAL);
+            
+    shader->setMat4("model", model);
 
     glActiveTexture(GL_TEXTURE0 + 1); 
     shader->setInt("skybox", 1);

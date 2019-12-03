@@ -9,7 +9,7 @@ uniform float decay;
 uniform float density;
 uniform float weight;
 
-#define NUM_SAMPLES 50
+#define NUM_SAMPLES 60
 
 out vec4 fragColor;
 

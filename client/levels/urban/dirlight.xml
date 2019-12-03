@@ -15,9 +15,9 @@
                 </sphere>
                 <blurscale scale="2.0"/>
                 <exposure exposure="2.0"/>
-                <decay decay="0.85"/>
-                <density density="1.17"/>
-                <weight weight="0.3"/>
+                <decay decay="0.87"/>
+                <density density="1.18"/>
+                <weight weight="0.08"/>
             </scatter>
             <shadow>
                 <shadowbuffer x="1024" y="1024"/>

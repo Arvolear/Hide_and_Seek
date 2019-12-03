@@ -2,7 +2,5 @@
 <SkyBoxFile>
     <skyboxes>
         <skybox path="/skyboxes/Space"/>
-            
-        <!-- <skybox path="/skyboxes/Bluerocky"/> -->
     </skyboxes>
 </SkyBoxFile>
