@@ -543,10 +543,6 @@ void Player::update(bool events)
         moveDirection = normalize(moveDirection);
     }
 
-    ready = true;
-    lk.unlock();
-    cv.notify_all();
-
     if (active)
     {
         if (player && player->getPhysicsObject())
@@ -562,6 +558,9 @@ void Player::update(bool events)
             Pos += moveDirection * speed; 
         }
     }
+    
+    ready = true;
+    cv.notify_all();
 
     //cout << getPosition().x << ' ' << getPosition().z << endl;
 }

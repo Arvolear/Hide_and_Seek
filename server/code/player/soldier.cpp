@@ -64,6 +64,8 @@ void Soldier::setConnected(bool connected)
         {
             drop(physicsObject->getTransform());
         }
+
+        oldToNothing();
     }
 }
 

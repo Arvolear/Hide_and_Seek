@@ -29,6 +29,8 @@ class Weapon : public GameObject
         float shotSpeed;
         int shotPower;
 
+        bool reloaded;
+
     public:
         Weapon(Window* window, string name);
 
@@ -45,7 +47,6 @@ class Weapon : public GameObject
         void reload();
         void drop(vec3 where, bool active);
         void pick(vec3 forward, vec3 up, bool active = true);
-        void choose();
         
         virtual bool fire() = 0;
 
@@ -58,6 +59,7 @@ class Weapon : public GameObject
 
         float getShotSpeed() const;
         int getShotPower() const;
+        bool isReloaded();
 
         void updateStatus();
         void updateRotation(mat3 rotation);

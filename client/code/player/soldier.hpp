@@ -20,6 +20,7 @@ class Soldier : public Player
 
         pair < vec3, vec3 > pickRay;
 
+        map < string, bool > reloadInfo;
         map < string, vector < pair < vec3, vec3 > > > fireInfo;
 
         bool dropTo;
@@ -33,6 +34,7 @@ class Soldier : public Player
         void drop();
         void pick();
         void fire();
+        void reload();
 
     public:
         Soldier(int id, Window* window, vec3 playerPos, vec3 cameraForward, float speed = 1);
@@ -52,6 +54,7 @@ class Soldier : public Player
         pair < vec3, vec3 > getPickRay();
         bool isDrop();
         map < string, vector < pair < vec3, vec3 > > > getFire();
+        map < string, bool > getReload();
 
         int getHealth() const;
 

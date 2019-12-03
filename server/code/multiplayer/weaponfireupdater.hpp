@@ -19,6 +19,7 @@ class WeaponFireUpdater
         int playerID;
        
         map < string, vector < pair < btVector3, btVector3 > > > fireInfo;
+        map < string, bool > reloadInfo;
 
     public:
         WeaponFireUpdater(World* world);

@@ -136,7 +136,7 @@ void Soldier::weaponAction()
     {
         if (window->isKeyPressedOnce(GLFW_KEY_R))
         {
-            weapons[0]->reload(); 
+            reload();
         }
 
         if (window->isButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
@@ -159,6 +159,11 @@ void Soldier::updateWeapon()
         weapons[0]->updatePosition(getPosition(), getForward(), getUp());
         weapons[0]->updateRotation(getHorizontalViewRotation());
         weapons[0]->updateRotation(getVerticalViewRotation());
+
+        if (weapons[0]->isReloaded())
+        {
+            reloadInfo.insert({weapons[0]->getName(), true});
+        }
     }
 }
 
@@ -212,6 +217,17 @@ void Soldier::fire()
     { 
         fireInfo[weapons[0]->getName()].push_back({getPosition(), getForward()});
     }
+}
+
+void Soldier::reload()
+{
+    if (dropTo)
+    {
+        return;
+    }
+   
+    /* check updateWeapon() */
+    weapons[0]->reload();
 }
 
 deque < Weapon* > Soldier::getWeapons() const
@@ -274,6 +290,21 @@ map < string, vector < pair < vec3, vec3 > > > Soldier::getFire()
 
     return res;
 }
+        
+map < string, bool > Soldier::getReload()
+{
+    unique_lock < mutex > lk(mtx);
+
+    while (!ready)
+    {
+        cv.wait(lk);
+    }
+    
+    map < string, bool > res = reloadInfo;
+    reloadInfo.clear();
+
+    return res; 
+}
 
 int Soldier::getHealth() const
 {
@@ -299,10 +330,6 @@ void Soldier::update(bool events)
         moveDirection = normalize(moveDirection);
     }
 
-    ready = true;
-    lk.unlock();
-    cv.notify_all();
-
     if (active)
     {
         if (player && player->getPhysicsObject())
@@ -316,6 +343,9 @@ void Soldier::update(bool events)
 
         updateWeapon();
     }
+    
+    ready = true;
+    cv.notify_all();
 
    //cout << getPosition().x << ' ' << getPosition().z << endl;
 }

@@ -52,6 +52,18 @@ void WeaponFireUpdater::collect(string info)
         const char* name = nameElem->GetText();
 
         vector < pair < btVector3, btVector3 > > bullets;
+        
+        XMLElement* reloadElem = weaponElem->FirstChildElement("rld");
+
+        if (reloadElem)
+        {
+            const char* reload = reloadElem->GetText();
+            
+            if (!strcmp(reload, "1"))
+            {
+                reloadInfo.insert({name, true});
+            }
+        }
 
         XMLElement* bulletElem = weaponElem->FirstChildElement("bllt");
 
@@ -92,7 +104,10 @@ void WeaponFireUpdater::collect(string info)
             bulletElem = bulletElem->NextSiblingElement();
         }
 
-        fireInfo.insert({name, bullets});
+        if (!bullets.empty())
+        {
+            fireInfo.insert({name, bullets});
+        }
 
         weaponElem = weaponElem->NextSiblingElement();
     }
@@ -114,6 +129,15 @@ void WeaponFireUpdater::updateData(Player* player, map < string, PhysicsObject* 
         if (!WE)
         {
             continue;
+        }
+
+        auto jt = reloadInfo.find(i.first);
+
+        if (jt != reloadInfo.end())
+        {
+            WE->reload();
+
+            reloadInfo.erase(i.first);
         }
 
         for (auto &j : i.second)
@@ -147,6 +171,25 @@ void WeaponFireUpdater::updateData(Player* player, map < string, PhysicsObject* 
             soldier->damage(dmg);
         }
     }
+    
+    for (auto &i : reloadInfo)
+    {
+        auto it = physicsObjects.find(i.first);
+
+        if (it == physicsObjects.end())
+        {
+            continue;
+        }
+
+        Weapon* WE = dynamic_cast < Weapon* >(it->second);
+
+        if (!WE)
+        {
+            continue;
+        }
+
+        WE->reload();
+    }
 }
 
 int WeaponFireUpdater::getPlayerID() const
@@ -159,6 +202,7 @@ void WeaponFireUpdater::clear()
     playerID = 0;
 
     fireInfo.clear();
+    reloadInfo.clear();
 }
 
 WeaponFireUpdater::~WeaponFireUpdater()

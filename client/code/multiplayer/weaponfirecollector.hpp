@@ -15,6 +15,7 @@ class WeaponFireCollector
         int playerID;
 
         map < string, vector < pair < vec3, vec3 > > > fireInfo;
+        mutable map < string, bool > reloadInfo;
 
     public:
         WeaponFireCollector();

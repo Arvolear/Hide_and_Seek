@@ -57,11 +57,12 @@ void WeaponFireCollector::collect(Player* player)
     }
 
     fireInfo = soldier->getFire();
+    reloadInfo = soldier->getReload();
 }
 
 string WeaponFireCollector::getData() const
 {
-    if (fireInfo.empty())
+    if (fireInfo.empty() && reloadInfo.empty())
     {
         return "";
     }
@@ -88,6 +89,21 @@ string WeaponFireCollector::getData() const
         
         weaponElem->InsertEndChild(nameElem);
 
+        auto it = reloadInfo.find(i.first);
+
+        if (it != reloadInfo.end())
+        {
+            if (it->second)
+            {
+                XMLElement* reloadElem = weaponFireDoc.NewElement("rld");
+                reloadElem->SetText("1");
+
+                weaponElem->InsertEndChild(reloadElem);
+            }
+
+            reloadInfo.erase(i.first);
+        }
+        
         for (auto& j : i.second)
         {
             XMLElement* bulletElem = weaponFireDoc.NewElement("bllt");
@@ -113,6 +129,26 @@ string WeaponFireCollector::getData() const
 
         root->InsertEndChild(weaponElem);
     }
+    
+    for (auto& i : reloadInfo)
+    {     
+        XMLElement* weaponElem = weaponFireDoc.NewElement("wpn");
+
+        XMLElement* nameElem = weaponFireDoc.NewElement("name");
+        nameElem->SetText(i.first.data());
+
+        weaponElem->InsertEndChild(nameElem);
+
+        if (i.second)
+        {
+            XMLElement* reloadElem = weaponFireDoc.NewElement("rld");
+            reloadElem->SetText("1");
+
+            weaponElem->InsertEndChild(reloadElem);
+        }
+        
+        root->InsertEndChild(weaponElem);
+    }
 
     /* printer */
     XMLPrinter weaponFirePrinter;
@@ -128,6 +164,7 @@ string WeaponFireCollector::getData() const
 void WeaponFireCollector::clear()
 {
     fireInfo.clear();
+    reloadInfo.clear();
 }
 
 WeaponFireCollector::~WeaponFireCollector() {}

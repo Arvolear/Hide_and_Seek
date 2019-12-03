@@ -40,6 +40,8 @@ Weapon::Weapon(Window* window, string name) : GameObject(window, name)
 
     this->shotSpeed = 0;
     this->shotPower = 0;
+
+    reloaded = false;
 }
 
 void Weapon::setOffset(vec3 offset)
@@ -216,6 +218,14 @@ int Weapon::getShotPower() const
     return shotPower;
 }
 
+bool Weapon::isReloaded()
+{
+    bool tmp = reloaded;
+    reloaded = false;
+
+    return tmp;
+}
+
 void Weapon::updateStatus()
 {
     Animation* anim = getActiveAnimation();
@@ -224,12 +234,13 @@ void Weapon::updateStatus()
     {
         if (anim->getName() == "reload1" || anim->getName() == "reload2")
         {
-            if (anim->getCurFrame() + anim->getSpeed() > anim->getEndFrame())
+            if (anim->getEndFrame() > 0.0 && anim->getCurFrame() + anim->getSpeed() > anim->getEndFrame())
             {
                 int toMove = std::min(storageBullets, magazineSize - magazineBullets);
 
                 storageBullets -= toMove;
                 magazineBullets += toMove;
+                reloaded = true;
             }
         }
     }
