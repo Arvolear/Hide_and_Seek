@@ -233,7 +233,15 @@ void Window::render(GLuint finalTexture)
     clearEventsData();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, width, height); // set visible
+
+    /* The default framebuffer is measured in pixels, which is not the same as
+       the window size on a scaled (HiDPI) display - on a 2x screen it is twice
+       as large in each axis. Asking GLFW each frame also keeps this correct
+       when the window is dragged between displays of differing scale. */
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+
+    glViewport(0, 0, framebufferWidth, framebufferHeight); // set visible
 
     glClearColor(0.0f, 0.2f, 0.0f, 1.0f); // green
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
