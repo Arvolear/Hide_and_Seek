@@ -4,7 +4,9 @@ BREW = $(shell brew --prefix)
 
 INCLUDES = -I$(BREW)/include -I$(BREW)/include/bullet
 
-FLAGS = -std=c++11 -Wall -O3 $(INCLUDES)
+# GLM_FORCE_CTOR_INIT restores the pre-0.9.9 behaviour of default-constructed
+# GLM types being identity/zero initialised, which this code assumes.
+FLAGS = -std=c++11 -Wall -O3 -DGLM_FORCE_CTOR_INIT $(INCLUDES)
 
 LIBS = -L$(BREW)/lib -lpthread -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
 

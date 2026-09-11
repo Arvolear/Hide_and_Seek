@@ -6,7 +6,12 @@ LOCAL = $(HOME)/.local
 INCLUDES = -I$(BREW)/include -I$(BREW)/include/bullet -I$(LOCAL)/include
 
 # GL is deprecated on macOS but still functional; silence the per-call noise.
-FLAGS = -std=c++11 -Wall -O3 -DGL_SILENCE_DEPRECATION $(INCLUDES)
+#
+# GLM_FORCE_CTOR_INIT: GLM 0.9.9 stopped zero/identity-initialising types built
+# with their default constructor. This code was written against the older
+# behaviour and declares e.g. `mat4 res;` before compounding into it, so without
+# this the matrices start from whatever was on the stack.
+FLAGS = -std=c++11 -Wall -O3 -DGL_SILENCE_DEPRECATION -DGLM_FORCE_CTOR_INIT $(INCLUDES)
 
 # OpenGL and the window system come from frameworks here, so there is no
 # -lGL and no -lX11. -ldl is unnecessary: dlopen lives in libSystem.
