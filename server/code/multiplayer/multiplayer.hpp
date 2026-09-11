@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
-#include <tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 using namespace tinyxml2;
 using namespace std;

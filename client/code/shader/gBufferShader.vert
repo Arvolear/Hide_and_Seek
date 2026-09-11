@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_BONES_AMOUNT 50
+#define MAX_BONES_AMOUNT 64
 #define BONES_AMOUNT 6
 
 layout (location = 0) in vec3 position;

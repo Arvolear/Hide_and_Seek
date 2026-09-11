@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-#include <tinyxml2/tinyxml2.h>
+#include <tinyxml2.h>
 
 using namespace std;
 using namespace tinyxml2;

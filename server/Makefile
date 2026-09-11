@@ -1,10 +1,14 @@
-.PHONY: release all clean cleanall
+.PHONY: all clean cleanall
 
-FLAGS = -std=c++11 -Wall -O3
+BREW = $(shell brew --prefix)
 
-LIBS = -lpthread -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
+INCLUDES = -I$(BREW)/include -I$(BREW)/include/bullet
 
-RELEASE = -Wl,-rpath,./lib
+# GLM_FORCE_CTOR_INIT restores the pre-0.9.9 behaviour of default-constructed
+# GLM types being identity/zero initialised, which this code assumes.
+FLAGS = -std=c++11 -Wall -O3 -DGLM_FORCE_CTOR_INIT $(INCLUDES)
+
+LIBS = -L$(BREW)/lib -lpthread -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
 
 INPUTDIR = ./code
 OUTPUTDIR = ./build
@@ -26,11 +30,6 @@ all: server
 
 server: $(OBJECTFILES)
 	g++ -o server $(OBJECTFILES) $(LIBS) $(FLAGS) 
-
-### RELEASE ###
-
-release: $(OBJECTFILES)
-	g++ -o server $(OBJECTFILES) $(RELEASE) $(LIBS) $(FLAGS)
 
 ### MAIN ###
 

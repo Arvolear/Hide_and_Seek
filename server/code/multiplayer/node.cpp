@@ -19,11 +19,16 @@ Node::Node(int max_clients, int max_queue, int port)
         throw(runtime_error("ERROR::Node::Node() master_socket"));
     }
 
+    /* Without this the listening port stays unbindable for the duration of
+       TIME_WAIT after a shutdown, so the server cannot be restarted promptly. */
+    int reuse = 1;
+    setsockopt(master_sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(port);
 
-    if (bind(master_sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
+    if (::bind(master_sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
     {
         throw(runtime_error("ERROR::Node::Node() bind"));
     }

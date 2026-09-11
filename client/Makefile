@@ -1,10 +1,25 @@
-.PHONY: release all clean cleanall
+.PHONY: all clean cleanall
 
-FLAGS = -std=c++11 -Wall -O3
+BREW = $(shell brew --prefix)
+LOCAL = $(HOME)/.local
 
-LIBS = -lGLEW -lGL -lSOIL -lnv_dds -lassimp -lglfw3 -lX11 -lpthread -ldl -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
+INCLUDES = -I$(BREW)/include -I$(BREW)/include/bullet -I$(LOCAL)/include
 
-RELEASE = -Wl,-rpath,./lib
+# GL is deprecated on macOS but still functional; silence the per-call noise.
+#
+# GLM_FORCE_CTOR_INIT: GLM 0.9.9 stopped zero/identity-initialising types built
+# with their default constructor. This code was written against the older
+# behaviour and declares e.g. `mat4 res;` before compounding into it, so without
+# this the matrices start from whatever was on the stack.
+FLAGS = -std=c++11 -Wall -O3 -DGL_SILENCE_DEPRECATION -DGLM_FORCE_CTOR_INIT $(INCLUDES)
+
+# OpenGL and the window system come from frameworks here, so there is no
+# -lGL and no -lX11. -ldl is unnecessary: dlopen lives in libSystem.
+FRAMEWORKS = -framework OpenGL -framework Cocoa -framework IOKit
+
+LIBS = -L$(BREW)/lib -L$(LOCAL)/lib $(FRAMEWORKS) \
+       -lGLEW -lglfw -lsoil2 -lassimp -lpthread \
+       -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
 
 INPUTDIR = ./code
 OUTPUTDIR = ./build
@@ -21,9 +36,10 @@ MULTIPLAYER = multiplayer.o client.o physicsobjectdataparser.o playerdatacollect
 LEVEL = level.o bloom.o lensflare.o dirlight.o dirlightsoftshadow.o skybox.o atmosphere.o ssao.o levelloader.o
 WORLD = world.o bulletevents.o constrainthandler.o raytracer.o
 PLAYER = camera.o player.o soldier.o
+VENDOR = nv_dds.o
 GAME_OBJECT = rifle.o weapon.o instancedgameobject.o gameobject.o physicsobject.o openglmotionstate.o modelloader.o viewfrustum.o boundsphere.o skeleton.o bone.o mesh.o animation.o sphere.o
 
-OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT)) 
+OBJECTFILES = $(addprefix $(OUTPUTDIR)/, $(MAIN) $(GLOBAL) $(DEBUG) $(SHADER) $(FRAMEBUFFER) $(WINDOW) $(MENU) $(GAME) $(MULTIPLAYER) $(LEVEL) $(WORLD) $(PLAYER) $(GAME_OBJECT) $(VENDOR)) 
 
 ### ALL ###
 
@@ -31,11 +47,6 @@ all: Hide_and_Seek
 
 Hide_and_Seek: $(OBJECTFILES)
 	g++ -o Hide_and_Seek $(OBJECTFILES) $(LIBS) $(FLAGS) 
-
-### RELEASE ###
-
-release: $(OBJECTFILES)
-	g++ -o Hide_and_Seek $(OBJECTFILES) $(RELEASE) $(LIBS) $(FLAGS)
 
 ### MAIN ###
 
@@ -251,6 +262,11 @@ $(OUTPUTDIR)/animation.o: $(INPUTDIR)/game_object/animation.cpp $(INPUTDIR)/game
 
 $(OUTPUTDIR)/sphere.o: $(INPUTDIR)/game_object/sphere.cpp $(INPUTDIR)/game_object/sphere.hpp
 	g++ -c $(INPUTDIR)/game_object/sphere.cpp -o $@ $(FLAGS)
+
+### VENDOR ###
+
+$(OUTPUTDIR)/nv_dds.o: $(INPUTDIR)/vendor/nv_dds/nv_dds.cpp $(INPUTDIR)/vendor/nv_dds/nv_dds.h
+	g++ -c $(INPUTDIR)/vendor/nv_dds/nv_dds.cpp -o $@ $(FLAGS)
 
 ### CLEAN ###
 

@@ -31,16 +31,13 @@ Window::Window() : GLFWEvents()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+#ifdef __APPLE__
+    /* macOS only ever hands out a forward-compatible core context, and
+       refuses the request outright without this hint. */
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
     window = glfwCreateWindow(width, height, "Hide&Seek", NULL, NULL);
-
-    glfwGetPrimaryMonitor();
-
-    int monitorPosX, monitorPosY;
-    glfwGetMonitorPos(glfwGetPrimaryMonitor(), &monitorPosX, &monitorPosY);
-
-    glfwSetWindowPos(window, monitorPosX + 100, monitorPosY + 100);
-    glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
-    glfwSetWindowAspectRatio(window, width, height);
 
     if (!window)
     {
@@ -48,6 +45,13 @@ Window::Window() : GLFWEvents()
 
         throw runtime_error("ERROR::Failed to initialize window");
     }
+
+    int monitorPosX, monitorPosY;
+    glfwGetMonitorPos(glfwGetPrimaryMonitor(), &monitorPosX, &monitorPosY);
+
+    glfwSetWindowPos(window, monitorPosX + 100, monitorPosY + 100);
+    glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    glfwSetWindowAspectRatio(window, width, height);
 
     glfwSetWindowUserPointer(window, this);
     glfwMakeContextCurrent(window); // make current widow active
@@ -229,7 +233,15 @@ void Window::render(GLuint finalTexture)
     clearEventsData();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, width, height); // set visible
+
+    /* The default framebuffer is measured in pixels, which is not the same as
+       the window size on a scaled (HiDPI) display - on a 2x screen it is twice
+       as large in each axis. Asking GLFW each frame also keeps this correct
+       when the window is dragged between displays of differing scale. */
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+
+    glViewport(0, 0, framebufferWidth, framebufferHeight); // set visible
 
     glClearColor(0.0f, 0.2f, 0.0f, 1.0f); // green
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

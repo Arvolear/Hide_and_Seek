@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <SOIL/SOIL.h>
+#include <SOIL2/SOIL2.h>
 
 using namespace std;
 using namespace glm;

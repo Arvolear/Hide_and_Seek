@@ -21,9 +21,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <SOIL/SOIL.h>
+#include <SOIL2/SOIL2.h>
 
-#include <nv_dds/nv_dds.h>
+#include "../vendor/nv_dds/nv_dds.h"
 
 using namespace nv_dds;
 using namespace std;

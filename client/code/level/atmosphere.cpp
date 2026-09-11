@@ -173,7 +173,9 @@ void Atmosphere::renderDome(Shader* shader)
         
 void Atmosphere::updateSunPos()
 {
-    float theta = 0.03;
+    /* Applied per frame rather than per unit time, so the sun's apparent
+       speed follows the framerate. */
+    float theta = 0.003;
 
     mat4 rotMat = rotate(radians(theta), axis);
 
