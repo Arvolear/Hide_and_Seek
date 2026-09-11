@@ -42,15 +42,18 @@ uniform vec3 viewPos;
 
 const float PI = 3.1415926535;
 
-float calcDirShadow(DirLight light, vec4 shadowCoords)
+/* Takes the shadow map and its factors directly rather than a DirLight.
+   DirLight holds a sampler2D, and passing the struct by value makes the
+   Apple GLSL compiler copy that opaque member, which it cannot do. */
+float calcDirShadow(sampler2D shadowMap, float esmFactor, float bias, vec4 shadowCoords)
 {
     vec4 projCoords = shadowCoords / shadowCoords.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
-    currentDepth += light.bias;
+    currentDepth += bias;
 
-    float moment = texture(light.texture_shadow1, projCoords.xy).r;
+    float moment = texture(shadowMap, projCoords.xy).r;
 
     if (currentDepth < moment)
     {
@@ -62,8 +65,8 @@ float calcDirShadow(DirLight light, vec4 shadowCoords)
         return 1.0; 
     }
 
-    float occluder = exp(light.esmFactor * moment);
-    float receiver = exp(-light.esmFactor * currentDepth);
+    float occluder = exp(esmFactor * moment);
+    float receiver = exp(-esmFactor * currentDepth);
     float shadow = smoothstep(0.2, 1.0, occluder * receiver);
 
     return shadow;
@@ -164,7 +167,10 @@ vec4 calcDirLights()
             // calc shadow coords
             vec4 dirShadowCoords = dirLights[i].shadowProjection * dirLights[i].shadowView * vec4(fragPos, 1.0);
 
-            float shadow = calcDirShadow(dirLights[i], dirShadowCoords);
+            float shadow = calcDirShadow(dirLights[i].texture_shadow1,
+                                         dirLights[i].esmFactor,
+                                         dirLights[i].bias,
+                                         dirShadowCoords);
             L00 *= shadow;
         }
 

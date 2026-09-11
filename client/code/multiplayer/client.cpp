@@ -182,7 +182,7 @@ void Client::recvMSG(int size, int timeoutSec)
             else if (bytes_read < 0)
             {
                 /* temporary unavailable */
-                if (errno != 11)
+                if (errno != EAGAIN && errno != EWOULDBLOCK)
                 {
                     cerr << "ERROR::Client::recvMSG(); code " << errno << " = " << strerror(errno) << endl;
                     break;

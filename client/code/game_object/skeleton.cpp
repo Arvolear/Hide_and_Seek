@@ -30,7 +30,10 @@ void Skeleton::renderBonesMatrices(Shader* shader)
         int index = 0;
         map < string, Bone* >::iterator it = bones.begin();
 
-        for (int i = 0; i < MAX_BONES_AMOUNT; i++, it++) 
+        /* The iterator is advanced only in the branch that reads it. Advancing
+           it unconditionally walked it past end() once i reached bones.size(),
+           which is undefined behaviour and faults with libc++. */
+        for (int i = 0; i < MAX_BONES_AMOUNT; i++) 
         {
             if (i >= int(bones.size())) 
             {
@@ -44,6 +47,8 @@ void Skeleton::renderBonesMatrices(Shader* shader)
                 bonesMatrices.push_back(res); 
 
                 index = it->second->getId();
+
+                it++;
             }
 
             shader->setMat4("bones[" + to_string(index) + "]", bonesMatrices[i]); 
