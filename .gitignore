@@ -1,0 +1,8 @@
+# build artifacts
+*.o
+server/server
+client/Hide_and_Seek
+
+# third-party sources fetched locally
+third_party/
+*.o.tmp

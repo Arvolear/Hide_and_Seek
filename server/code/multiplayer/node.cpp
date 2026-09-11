@@ -23,7 +23,7 @@ Node::Node(int max_clients, int max_queue, int port)
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(port);
 
-    if (bind(master_sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
+    if (::bind(master_sock, (struct sockaddr*) &addr, sizeof(addr)) < 0)
     {
         throw(runtime_error("ERROR::Node::Node() bind"));
     }

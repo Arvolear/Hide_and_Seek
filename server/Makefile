@@ -1,10 +1,12 @@
-.PHONY: release all clean cleanall
+.PHONY: all clean cleanall
 
-FLAGS = -std=c++11 -Wall -O3
+BREW = $(shell brew --prefix)
 
-LIBS = -lpthread -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
+INCLUDES = -I$(BREW)/include -I$(BREW)/include/bullet
 
-RELEASE = -Wl,-rpath,./lib
+FLAGS = -std=c++11 -Wall -O3 $(INCLUDES)
+
+LIBS = -L$(BREW)/lib -lpthread -lBulletCollision -lBulletDynamics -lLinearMath -ltinyxml2
 
 INPUTDIR = ./code
 OUTPUTDIR = ./build
@@ -26,11 +28,6 @@ all: server
 
 server: $(OBJECTFILES)
 	g++ -o server $(OBJECTFILES) $(LIBS) $(FLAGS) 
-
-### RELEASE ###
-
-release: $(OBJECTFILES)
-	g++ -o server $(OBJECTFILES) $(RELEASE) $(LIBS) $(FLAGS)
 
 ### MAIN ###
 
