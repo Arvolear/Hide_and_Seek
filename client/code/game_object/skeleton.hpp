@@ -11,7 +11,7 @@
 using namespace std;
 using namespace glm;
 
-#define MAX_BONES_AMOUNT 50
+#define MAX_BONES_AMOUNT 64
 
 class Skeleton
 {
