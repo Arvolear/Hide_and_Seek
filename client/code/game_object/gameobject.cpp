@@ -176,6 +176,10 @@ void GameObject::createBoundSphere()
     boundSphere->construct();
 }
 
+/* The rotation recovered by decompose() is re-applied as toMat4(rot).
+   It used to be conjugated here to work around glm::decompose returning a
+   conjugated quaternion; GLM fixed that, so conjugating now inverts the
+   rotation instead of preserving it. */
 void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
 {
     unique_lock < mutex > lk(mtx);
@@ -200,7 +204,7 @@ void GameObject::setLocalRotation(vec3 axis, float angle, bool add)
 
     if (add)
     {
-        localTransform *= toMat4(conjugate(rot));
+        localTransform *= toMat4(rot);
     }
 }
 
@@ -230,7 +234,7 @@ void GameObject::setLocalScale(vec3 growth, bool add)
     }
     
     localTransform *= translate(tran);
-    localTransform *= toMat4(conjugate(rot));
+    localTransform *= toMat4(rot);
 }
 
 void GameObject::setLocalPosition(vec3 translation, bool add)
@@ -259,7 +263,7 @@ void GameObject::setLocalPosition(vec3 translation, bool add)
         localTransform *= translate(tran);
     }
     
-    localTransform *= toMat4(conjugate(rot));
+    localTransform *= toMat4(rot);
 }
         
 void GameObject::setLocalTransform(mat4 localTransform)
