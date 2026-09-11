@@ -31,16 +31,13 @@ Window::Window() : GLFWEvents()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+#ifdef __APPLE__
+    /* macOS only ever hands out a forward-compatible core context, and
+       refuses the request outright without this hint. */
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
     window = glfwCreateWindow(width, height, "Hide&Seek", NULL, NULL);
-
-    glfwGetPrimaryMonitor();
-
-    int monitorPosX, monitorPosY;
-    glfwGetMonitorPos(glfwGetPrimaryMonitor(), &monitorPosX, &monitorPosY);
-
-    glfwSetWindowPos(window, monitorPosX + 100, monitorPosY + 100);
-    glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
-    glfwSetWindowAspectRatio(window, width, height);
 
     if (!window)
     {
@@ -48,6 +45,13 @@ Window::Window() : GLFWEvents()
 
         throw runtime_error("ERROR::Failed to initialize window");
     }
+
+    int monitorPosX, monitorPosY;
+    glfwGetMonitorPos(glfwGetPrimaryMonitor(), &monitorPosX, &monitorPosY);
+
+    glfwSetWindowPos(window, monitorPosX + 100, monitorPosY + 100);
+    glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    glfwSetWindowAspectRatio(window, width, height);
 
     glfwSetWindowUserPointer(window, this);
     glfwMakeContextCurrent(window); // make current widow active

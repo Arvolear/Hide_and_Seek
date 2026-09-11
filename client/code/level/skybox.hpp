@@ -6,7 +6,7 @@
 //openGL
 #define GLEW_STATIC
 #include <GL/glew.h>
-#include <SOIL/SOIL.h>
+#include <SOIL2/SOIL2.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
